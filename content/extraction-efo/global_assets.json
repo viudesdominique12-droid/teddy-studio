@@ -1,0 +1,32 @@
+{
+  "logo": [
+    {
+      "page": "https://ethiopianfilmoffice.com/",
+      "local_path": "pages/home/images/logo/02_9c9b95.png",
+      "width": 5000,
+      "height": 1813,
+      "alt": "Ethiopian Film Office"
+    },
+    {
+      "page": "https://ethiopianfilmoffice.com/",
+      "local_path": "pages/home/images/logo/42_dd20b9.png",
+      "width": 1182,
+      "height": 417,
+      "alt": "Ethiopian Film Office"
+    },
+    {
+      "page": "https://ethiopianfilmoffice.com/vacancy",
+      "local_path": "pages/vacancy/images/logo/03_dd20b9.png",
+      "width": 1182,
+      "height": 417,
+      "alt": "Ethiopian Film Office"
+    },
+    {
+      "page": "https://ethiopianfilmoffice.com/vacancy",
+      "local_path": "pages/vacancy/images/logo/02_9c9b95.png",
+      "width": 5000,
+      "height": 1813,
+      "alt": "Ethiopian Film Office"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "base_url": "https://ethiopianfilmoffice.com",
+  "business_type": "generic",
+  "business_subtype": null,
+  "extracted_at": "2026-09-18T17:38:18.531198Z",
+  "stats": {
+    "images_kept": 45,
+    "images_rejected": 2,
+    "page": 2,
+    "total": 2
+  },
+  "errors": []
+}

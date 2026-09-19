@@ -1,0 +1,360 @@
+/* ══════════════ BASE ══════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto; /* Lenis conduit ; on ne double pas le pilote */
+}
+html.is-locked { overflow: hidden; }
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--cream);
+  font-family: var(--ff-t);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-variation-settings: 'wdth' 100, 'wght' 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* La traversée d'un monde à l'autre : on ne clignote pas. */
+  transition: background-color 420ms var(--e-settle), color 420ms var(--e-settle);
+}
+
+h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+ul, ol, dl, dd { margin: 0; padding: 0; }
+li { list-style: none; }
+img, video, svg, iframe { display: block; max-width: 100%; }
+img, video { height: auto; }
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+address { font-style: normal; }
+sup { font-size: 0.6em; vertical-align: super; line-height: 0; }
+em { font-style: normal; }
+
+/* ── Sélectionner, c'est dégager ── */
+::selection { background: var(--gold); color: var(--night); }
+
+/* ── Focus : toujours visible, jamais discret ── */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+.skip {
+  position: fixed; top: 0; left: 0; z-index: 200;
+  padding: var(--s-3) var(--s-5);
+  background: var(--go); color: var(--on-go);
+  font-family: var(--ff-m); font-size: var(--fs-mono);
+  letter-spacing: var(--ls-mono); text-transform: uppercase;
+  transform: translateY(-110%);
+  transition: transform var(--d-settle) var(--e-clear);
+}
+.skip:focus { transform: translateY(0); }
+
+.u-sr, .sr-flat {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* ── Le lexique typographique ── */
+
+.mono {
+  font-family: var(--ff-m);
+  font-size: var(--fs-mono);
+  font-variation-settings: 'wdth' 100, 'wght' 400;
+  letter-spacing: var(--ls-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-family: var(--ff-m);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-3);
+  margin-bottom: var(--s-5);
+}
+
+/* Le vert ne s'applique QU'À un changement d'état. Jamais à une décoration. */
+.go { color: var(--go-text); }
+
+.go-dot {
+  display: inline-block;
+  width: 0.45em; height: 0.45em;
+  border-radius: 50%;
+  background: var(--go);
+  vertical-align: 0.06em;
+  flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .go-dot { animation: pulse 3.4s var(--e-settle) infinite; }
+}
+@keyframes pulse {
+  0%, 62%, 100% { opacity: 1; transform: scale(1); }
+  76%           { opacity: 0.45; transform: scale(0.82); }
+}
+
+/* Les lignes masquées de SplitText */
+.ln { display: block; }
+
+/* ── Le curseur ── */
+.cursor { position: fixed; inset: 0; z-index: 300; pointer-events: none; opacity: 0; }
+.cursor.is-on { opacity: 1; }
+@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+
+.cursor__d, .cursor__r {
+  position: absolute; top: 0; left: 0; display: block;
+  border-radius: 50%; will-change: transform;
+}
+.cursor__d {
+  width: 6px; height: 6px; margin: -3px 0 0 -3px;
+  background: var(--go);
+  transition: width var(--d-settle) var(--e-clear), height var(--d-settle) var(--e-clear),
+              margin var(--d-settle) var(--e-clear);
+}
+.cursor__r {
+  width: 30px; height: 30px; margin: -15px 0 0 -15px;
+  border: 1px solid var(--fg-3);
+  transition: width var(--d-settle) var(--e-clear), height var(--d-settle) var(--e-clear),
+              margin var(--d-settle) var(--e-clear), border-color var(--d-settle) var(--e-settle),
+              opacity var(--d-settle) var(--e-settle);
+}
+/* Au survol d'une intention, le curseur ne GROSSIT pas : il passe à l'état GO. */
+.cursor[data-state] .cursor__r { border-color: var(--go); width: 40px; height: 40px; margin: -20px 0 0 -20px; }
+.cursor[data-state='book'] .cursor__d,
+.cursor[data-state='call'] .cursor__d { width: 10px; height: 10px; margin: -5px 0 0 -5px; }
+.cursor[data-state='text'] .cursor__r { opacity: 0; }
+.cursor[data-state='text'] .cursor__d { width: 2px; height: 22px; margin: -11px 0 0 -1px; border-radius: 0; }
+
+/* L'état DRAG : au-dessus de la galerie, le curseur devient une pastille qui
+   dit ce qu'on peut faire. Sa position ET son enfoncement passent par GSAP —
+   une échelle en CSS écraserait la translation du ticker. */
+.cursor__t {
+  position: absolute; top: 0; left: 0;
+  display: grid; place-items: center;
+  width: 4.75rem; height: 2rem; margin: -1rem 0 0 -2.375rem;
+  border-radius: var(--r-pill);
+  background: var(--gold); color: var(--night);
+  font-family: var(--ff-m); font-size: var(--fs-nano); font-style: normal;
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0; will-change: transform;
+  transition: opacity var(--d-settle) var(--e-settle);
+}
+.cursor[data-state='drag'] .cursor__t { opacity: 1; }
+.cursor[data-state='drag'] .cursor__d,
+.cursor[data-state='drag'] .cursor__r { opacity: 0; }
+
+/* ── Le preloader ──
+   Pas d'amorce 3-2-1 : une seule donnée se résout, l'horloge d'Addis,
+   et quand elle se pose la marque verte apparaît. */
+.pre {
+  position: fixed; inset: 0; z-index: 400;
+  display: grid; place-items: center;
+  background: var(--bg);
+}
+.pre__in { text-align: center; }
+.pre__k { color: var(--fg-3); margin-bottom: var(--s-3); }
+.pre__clock {
+  font-size: clamp(2.6rem, 9vw, 5.5rem);
+  font-variation-settings: 'wdth' 100, 'wght' 300;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  line-height: 1;
+}
+.pre__go {
+  display: flex; align-items: center; justify-content: center; gap: var(--s-2);
+  margin-top: var(--s-5);
+  font-family: var(--ff-m); font-size: var(--fs-mono);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--go-text);
+  opacity: 0;
+}
+html.is-loading body { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+
+/* ══════════════ TRANSITIONS DE PAGE ══════════════
+   Elles vivent entièrement dans `src/js/wipe.js` : un chevron à proue qui
+   couvre puis découvre.
+
+   La voie native (`@view-transition { navigation: auto }`) a été retirée après
+   mesure : `onpageswap` est exposé par des navigateurs où la transition
+   inter-documents ne part jamais. La détection passait, le volet JS se mettait
+   en retrait — et il n'y avait plus aucune transition, silencieusement. Un
+   seul système, identique partout. */
+
+/* ── Révélations ──
+   Il n'y a plus qu'un système, et il est entièrement en JS : le blur-in
+   (`src/js/reveal.js`). Aucune règle CSS ne cache plus rien au repos —
+   sans JS, ou si un déclencheur est manqué, le contenu est simplement là.
+   Une animation ne conditionne jamais l'existence. */
+
+/* ══════════════ LE CIEL ══════════════
+   Quatre calques fixes derrière toute la page. Les étoiles sont peintes une
+   seule fois ; seuls les deux calques de scintillement bougent, et c'est le
+   compositor qui s'en charge — coût JS nul, quel que soit le nombre d'étoiles. */
+
+.sky {
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  contain: strict;
+}
+
+/* ── LA PROFONDEUR ──
+   Le fond n'est pas une couleur, c'est un CALQUE. Le même vert `#182d19`,
+   opaque en haut, transparent à 70 %, posé en `mix-blend-mode: multiply` à
+   85 % d'opacité. Le vert multiplié par lui-même donne `#020802` — presque
+   noir. Le haut de l'écran plonge donc dans le noir et s'ouvre vers le bas,
+   et comme le calque est FIXE, la nuit ne défile jamais.
+
+   Le piège, et je suis tombé dedans : le mélange doit être porté par
+   L'ÉLÉMENT LUI-MÊME. Placé sur un pseudo-élément à l'intérieur d'un conteneur
+   `position: fixed` avec `z-index`, il ne se mélange qu'avec le vide de ce
+   conteneur — qui est son propre contexte d'empilement. Rien ne se passe.
+
+   Ordre de peinture : le ciel d'abord, ce calque ensuite (même z-index, donc
+   l'ordre du DOM tranche), le contenu par-dessus. Ce sont les ÉTOILES qu'on
+   assombrit, jamais le texte. */
+.depth {
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: linear-gradient(180deg, #182d19 0%, #182d1900 70%);
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+}
+
+/* La lueur : d'où vient la lumière. Second élément, second mode de mélange —
+   `screen` et `multiply` ne peuvent pas cohabiter sur une même couche. */
+.depth-glow {
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(58% 46% at 70% 24%,
+    #5d9a5f38 0%, #2d52301f 45%, #182d1900 100%);
+  mix-blend-mode: screen;
+}
+
+/* ══════════════ TRANSITIONS DE PAGE ══════════════
+   Elles vivent entièrement dans `src/js/wipe.js` : un chevron à proue qui
+   couvre puis découvre.
+
+   La voie native (`@view-transition { navigation: auto }`) a été retirée après
+   mesure : `onpageswap` est exposé par des navigateurs où la transition
+   inter-documents ne part jamais. La détection passait, le volet JS se mettait
+   en retrait — et il n'y avait plus aucune transition, silencieusement. Un
+   seul système, identique partout. */
+
+/* ── Révélations ──
+   Il n'y a plus qu'un système, et il est entièrement en JS : le blur-in
+   (`src/js/reveal.js`). Aucune règle CSS ne cache plus rien au repos —
+   sans JS, ou si un déclencheur est manqué, le contenu est simplement là.
+   Une animation ne conditionne jamais l'existence. */
+
+/* ══════════════ LE CIEL ══════════════
+   Quatre calques fixes derrière toute la page. Les étoiles sont peintes une
+   seule fois ; seuls les deux calques de scintillement bougent, et c'est le
+   compositor qui s'en charge — coût JS nul, quel que soit le nombre d'étoiles. */
+
+.sky {
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  contain: strict;
+}
+
+/* ── LA PROFONDEUR ──
+   Le fond était un vert PLAT. La référence pose par-dessus son ciel un calque
+   fixe en `mix-blend-mode: multiply` : le même vert, multiplié par lui-même,
+   assombrit le haut jusqu'au presque-noir et s'ouvre vers le bas.
+
+   Le calque est en z-index 0,5 — AU-DESSUS des étoiles, EN DESSOUS du
+   contenu. C'est le ciel qu'il assombrit, jamais le texte : un `multiply` sur
+   du texte crème le rendrait illisible.
+
+   Et un second, radial, décentré vers le haut-droite : la lueur d'où vient la
+   lumière. Sans elle, l'assombrissement est uniforme et donc plat lui aussi. */
+.depth {
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.depth::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(180deg, var(--night) 0%, #182d1900 70%);
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+}
+.depth::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(64% 52% at 72% 26%,
+    #3c6b3e5c 0%, #24422647 42%, #182d1900 100%);
+  mix-blend-mode: screen;
+}
+.sky__l { position: absolute; inset: 0; display: block; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sky__tw-a { animation: tw-a 4.1s var(--e-inout) -1.3s infinite alternate; }
+  .sky__tw-b { animation: tw-b 5.7s var(--e-inout) -3.1s infinite alternate; }
+}
+@keyframes tw-a { from { opacity: 0.42; } to { opacity: 1; } }
+@keyframes tw-b { from { opacity: 1; } to { opacity: 0.5; } }
+
+/* Le contenu vit au-dessus du ciel. */
+.bar, main, .ftr, .dock, .index, .tl { position: relative; z-index: 1; }
+.tl { position: fixed; }
+.bar { z-index: 90; }
+.index { z-index: 150; }
+
+/* Le gate du hero : le contenu est masqué jusqu'à ce que le JS ait posé
+   les états de départ. Sans lui, le texte apparaît un frame puis s'efface. */
+html.hero-gate [data-hero] { opacity: 0; }
+
+/* ═══════════ LE GRAIN ═══════════
+   La pellicule, en une pseudo-élément. Deux tuiles du même bruit, décalées de
+   197 x 113 px pour casser la répétition — sans ce décalage, l'oeil voit la
+   grille au bout de deux secondes.
+
+   Le secret est dans `steps(2, end)` : un grain qui GLISSE est un dégradé
+   animé ; un grain qui SAUTE est de la pellicule. C'est la seule différence
+   entre les deux, et c'est toute la différence. */
+body::after {
+  content: '';
+  position: fixed; inset: -40%;
+  width: 180%; height: 180%;
+  z-index: 210;                    /* au-dessus du contenu, sous le curseur (300) */
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-position: 0 0, 197px 113px;
+  background-size: 9rem, 9rem;
+  mix-blend-mode: soft-light;
+  opacity: 0.055;
+  animation: grain 0.9s steps(2, end) infinite;
+  will-change: transform;
+}
+@keyframes grain {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(-2.4%, -1.8%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
+}

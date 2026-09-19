@@ -1,0 +1,99 @@
+{
+  "url": "https://ethiopianfilmoffice.com/vacancy",
+  "extracted_at": "2026-09-18T17:38:18.073964Z",
+  "type": "page",
+  "business_type": "generic",
+  "business_subtype": null,
+  "extraction_sources": {
+    "page_title": "title_tag",
+    "description": "meta_description",
+    "og_title": "og",
+    "canonical": "canonical",
+    "h1": "h1"
+  },
+  "fields": {
+    "page_title": "Ethiopian Film Office : Vacancy | Ethiopian Film Office",
+    "description": "Teddy Studio, a dynamic and innovative media and production company specializing in movie production,documentary production, advertisement production and placement, TV shows, event management, social media content, podcast production, studio rental, and digital printing is seeking talented and motivated professionals to join our growing team. We are excited to announce the following career opportunities",
+    "og_title": "Ethiopian Film Office : Vacancy",
+    "canonical": "https://ethiopianfilmoffice.com/vacancy",
+    "h1": "About Us"
+  },
+  "images": [
+    {
+      "url": "https://ethiopianfilmoffice.com/img/logo.png",
+      "source": "og:image",
+      "role": "social_share",
+      "alt": "",
+      "quality_check": {
+        "keep": true,
+        "reason": null,
+        "width": 5000,
+        "height": 1813,
+        "size_bytes": 216797
+      },
+      "local_path": "images/social_share/00_9ff69a.png",
+      "width": 5000,
+      "height": 1813,
+      "size_bytes": 216797
+    },
+    {
+      "url": "https://ethiopianfilmoffice.com/img/logo.png",
+      "source": "og:image",
+      "role": "social_share",
+      "alt": "",
+      "quality_check": {
+        "keep": true,
+        "reason": null,
+        "width": 5000,
+        "height": 1813,
+        "size_bytes": 216797
+      },
+      "local_path": "images/social_share/01_9ff69a.png",
+      "width": 5000,
+      "height": 1813,
+      "size_bytes": 216797
+    },
+    {
+      "url": "https://ethiopianfilmoffice.com/_ipx/_/img/logo.png",
+      "source": "srcset",
+      "role": "logo",
+      "alt": "Ethiopian Film Office",
+      "quality_check": {
+        "keep": true,
+        "reason": null,
+        "width": 5000,
+        "height": 1813,
+        "size_bytes": 427151
+      },
+      "local_path": "images/logo/02_9c9b95.png",
+      "width": 5000,
+      "height": 1813,
+      "size_bytes": 427151
+    },
+    {
+      "url": "https://ethiopianfilmoffice.com/_ipx/_/img/logo-white.png",
+      "source": "srcset",
+      "role": "logo",
+      "alt": "Ethiopian Film Office",
+      "quality_check": {
+        "keep": true,
+        "reason": null,
+        "width": 1182,
+        "height": 417,
+        "size_bytes": 113669
+      },
+      "local_path": "images/logo/03_dd20b9.png",
+      "width": 1182,
+      "height": 417,
+      "size_bytes": 113669
+    }
+  ],
+  "raw_jsonld": null,
+  "sections": [
+    {
+      "name": "fixed-top-10-z-30-w-full-xl-px-16-lg-px-10-px-4-bg",
+      "headings": [],
+      "paragraphs": []
+    }
+  ]
+}

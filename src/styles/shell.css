@@ -1,0 +1,431 @@
+/* ══════════════════════════════════════════════════════════════
+   LA COQUILLE — barre, index, fiche, pied de page.
+   Tout ce qui entoure les actes, et rien de ce qui les compose :
+   aucune classe de layout n'est partagée entre deux actes.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ─────────────── LA BARRE ───────────────
+   Quatre choses, toutes fonctionnelles : qui, l'index, l'heure là-bas, le numéro.
+   Pas de liste de rubriques, pas de burger. */
+
+/* Sur l'ouverture, la barre flotte en blanc sur la plaque ; dès qu'on quitte
+   l'image, elle prend le papier et devient une barre de document.
+   (`mix-blend-mode` a été essayé et jeté : illisible dès que l'image bouge.) */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+  display: flex; align-items: center; gap: var(--s-5);
+  padding: 0.85rem var(--pad-x);
+  color: #fff;
+  pointer-events: none;
+  transition: background-color var(--d-settle) var(--e-settle),
+              color var(--d-settle) var(--e-settle),
+              border-color var(--d-settle) var(--e-settle),
+              transform 420ms var(--e-clear);
+  border-bottom: 1px solid transparent;
+  text-shadow: 0 1px 12px rgba(7, 15, 6, 0.6);
+}
+.bar > * { pointer-events: auto; }
+
+.bar.is-paper {
+  color: var(--fg);
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom-color: var(--line-2);
+  text-shadow: none;
+}
+/* On la range en descente franche, on la rappelle dès qu'on remonte. */
+.bar.is-away { transform: translateY(-102%); }
+
+/* ── LA MARQUE ──
+   Elle était un mot de 1,16 rem parmi d'autres. C'est le nom du studio : il
+   doit être la première chose qu'on lit. Fraunces à `WONK 1` et `SOFT 24`
+   donne des formes qui ne ressemblent à rien d'autre sur la page — c'est
+   exactement ce qu'on demande à un logotype. */
+.logo { display: inline-block; line-height: 1; margin-right: var(--s-2); }
+.logo__w {
+  display: block;
+  font-family: var(--ff-p);
+  font-size: clamp(1.45rem, 1.9vw, 1.9rem);
+  font-variation-settings: 'opsz' 144, 'wght' 700, 'SOFT' 24, 'WONK' 1;
+  letter-spacing: -0.028em;
+  /* En petites capitales plutôt qu'en capitales pleines : le « T » garde sa
+     hauteur, tout le reste descend d'un cran. Le mot a un dessin, pas juste
+     une graisse. */
+  text-transform: lowercase; font-variant-caps: small-caps;
+  word-spacing: 0.02em;
+}
+/* La barre n'est pas un filet décoratif : c'est le feu vert lui-même. */
+.logo__bar {
+  display: block; width: 100%; height: 0.115em; margin-top: 0.2em;
+  background: var(--go); transform-origin: left center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.is-ready .logo__bar { animation: bar-clear var(--d-clear) var(--e-clear) both; }
+}
+@keyframes bar-clear { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* ── LE HAMBURGER ──
+   Trois barres d'or de 2 rem sur 0,125 rem, dans un carré de 3 rem en
+   `overflow: hidden`. À l'ouverture elles se croisent : la première descend et
+   pivote, la dernière monte et pivote en sens inverse, et celle du milieu
+   SORT PAR LA DROITE — elle ne disparaît pas en fondu, elle s'en va. */
+.burger {
+  position: relative; flex: none;
+  width: 3rem; height: 3rem;
+  display: flex; flex-flow: column; justify-content: center; align-items: center;
+  gap: 0.5rem;
+  background: none; border: 0; padding: 0;
+  color: var(--gold); cursor: pointer;
+  overflow: hidden;
+}
+.burger__b {
+  display: block; width: 2rem; height: 0.125rem;
+  background: currentColor;
+  transition: transform 0.52s var(--e-expressive), opacity 0.3s var(--e-response);
+}
+.burger[aria-expanded='true'] { color: var(--night); }
+.burger[aria-expanded='true'] .burger__b:nth-child(1) { transform: translateY(0.625rem) rotate(45deg); }
+.burger[aria-expanded='true'] .burger__b:nth-child(2) { transform: translateX(3rem); opacity: 0; }
+.burger[aria-expanded='true'] .burger__b:nth-child(3) { transform: translateY(-0.625rem) rotate(-45deg); }
+
+.bar__clock {
+  margin-left: auto; display: flex; align-items: center; gap: 0.5em;
+  font-variant-numeric: tabular-nums;
+}
+.bar__city { opacity: 0.62; text-transform: uppercase; letter-spacing: 0.1em; }
+.bar__tel { letter-spacing: 0.02em; }
+.bar__tel:hover { color: var(--go); }
+
+/* Un producteur doit pouvoir engager la conversation depuis n'importe quel
+   écran. Les studios créatifs peuvent se permettre un simple lien ; un fixer
+   qui vend de la logistique, non. */
+.bar__cta {
+  padding: 0.62em 1.05em;
+  /* Encre nuit sur l'or : le blanc sur or plafonne à 1,8:1, illisible. */
+  background: var(--go-solid); color: var(--on-go);
+  font-family: var(--ff-m); font-size: var(--fs-micro);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  white-space: nowrap;
+  transition: background var(--d-settle) var(--e-settle);
+}
+.bar__cta:hover { background: var(--go-press); }
+
+@media (max-width: 64rem) { .bar__tel { display: none; } }
+@media (max-width: 52rem) {
+  .bar { gap: var(--s-3); }
+  .bar__city { display: none; }
+  .bar__cta { padding: 0.55em 0.8em; }
+}
+@media (max-width: 30rem) {
+  .bar__cta span { display: none; }
+  .bar__cta::after { content: 'Start'; }
+}
+
+/* ─────────────── L'INDEX ───────────────
+   Le sommaire d'un classeur : points de conduite, et la donnée à droite. */
+
+/* ── LA TUILE ──
+   Plein écran, en OR. Les liens sont centrés, énormes, et chacun roule sur
+   place : le `<span>` porte une copie de lui-même 1,3 em plus bas
+   (`text-shadow: 0 1.3em 0`), le `li` est en `overflow: hidden`, et on fait
+   monter le texte — il se remplace par sa propre ombre. Une seule déclaration
+   au lieu d'un second élément à synchroniser. */
+.index { position: fixed; inset: 0; z-index: 150; visibility: hidden; }
+/* `hidden` pilote l'existence, `visibility` la peinture : tant que l'attribut
+   n'est pas remis, la tuile doit rester peinte — sinon elle disparaît d'un coup
+   au lieu de remonter. */
+.index:not([hidden]) { visibility: visible; }
+
+/* La barre crée son propre contexte d'empilement à z-90 : le hamburger ne peut
+   pas en sortir tout seul. C'est la BARRE qu'il faut faire passer au-dessus de
+   la tuile, sinon le bouton qui ouvre est recouvert par ce qu'il a ouvert. */
+html.is-locked .bar { z-index: 160; }
+/* Sur la tuile d'or, la barre n'a plus de fond ni d'encre claire : elle passe
+   en encre nuit, et tout ce qui n'est pas la marque ou le hamburger s'efface —
+   un menu ouvert ne doit pas rester encombré par la page qu'il recouvre. */
+html.is-locked .bar {
+  background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+  border-bottom-color: transparent; color: var(--night); text-shadow: none;
+}
+html.is-locked .bar__clock,
+html.is-locked .bar__tel,
+html.is-locked .bar__cta { opacity: 0; pointer-events: none; transition: opacity 0.3s var(--e-response); }
+html.is-locked .logo { color: var(--night); }
+html.is-locked .logo__bar { background: var(--night); }
+.index__in {
+  position: absolute; inset: 0;
+  background: var(--gold);
+  display: flex; flex-flow: column; justify-content: center; align-items: center;
+  padding: calc(var(--bar-h) + var(--s-6)) var(--pad-x) var(--s-7);
+}
+
+.index__close { display: none; }
+
+.index__nav {
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(0.1rem, 0.4vh, 0.5rem);
+  width: 100%;
+}
+.index__nav a {
+  position: relative; overflow: hidden;
+  display: flex; align-items: baseline; gap: 0.6em;
+  padding: 0 0.075em;
+  color: var(--night);
+  line-height: 1.12;
+}
+.index__n {
+  display: block;
+  font-family: var(--ff-p);
+  /* Neuf entrées doivent tenir dans une hauteur d'écran, en-tête et pied
+     compris. `vh` plutôt que `vw` : c'est la hauteur qui contraint, pas la
+     largeur. */
+  font-size: clamp(1.35rem, min(5.4vw, 7.4vh), 4.2rem);
+  font-variation-settings: 'opsz' 144, 'wght' 300, 'SOFT' 0, 'WONK' 1;
+  letter-spacing: -0.03em;
+  overflow: hidden;
+}
+/* La copie, 1,3 em plus bas, dans la même encre. */
+.index__n > span {
+  display: block;
+  text-shadow: 0 1.3em 0 currentColor;
+  transition: transform 0.56s var(--e-expressive);
+}
+.index__nav a:hover .index__n > span,
+.index__nav a:focus-visible .index__n > span { transform: translateY(-1.3em); }
+
+.index__v {
+  flex: none; color: #182d1999;
+  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  align-self: center;
+}
+.index__nav a:hover .index__v { color: var(--night); }
+
+/* L'entrée : la tuile descend d'un bloc, les liens montent l'un après l'autre.
+   Piloté en CSS, donc `prefers-reduced-motion` est gratuit. */
+.index__in { transform: translateY(-100%); transition: transform 0.72s var(--e-expressive); }
+.index[data-open] .index__in { transform: translateY(0); }
+.index__nav a { transform: translateY(110%); opacity: 0; }
+.index[data-open] .index__nav a {
+  transform: none; opacity: 1;
+  transition: transform 0.62s var(--e-expressive) calc(0.18s + var(--i, 0) * 0.045s),
+              opacity 0.3s var(--e-response) calc(0.18s + var(--i, 0) * 0.045s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .index__in, .index__nav a, .index__n > span, .burger__b { transition: none; }
+  .index__nav a { transform: none; opacity: 1; }
+}
+
+.index__foot {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--s-4); padding-top: var(--s-5); border-top: 1px solid var(--line);
+}
+.index__world {
+  display: inline-flex; align-items: center; gap: 0.6em;
+  font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--fg-2);
+  padding: 0.7em 1em; border: 1px solid var(--line);
+}
+/* Ce n'est plus un bouton : c'est l'état du bureau. Pas de survol. */
+/* Sur l'or, le pied reprend l'encre nuit : le filet, la pastille et l'appel
+   à l'action étaient réglés pour le vert, ils y disparaissaient. */
+.index__foot {
+  border-top-color: #182d1930;
+  color: var(--night);
+}
+.index__world { margin: 0; border-color: #182d1940; color: #182d19b5; }
+.index__world .go-dot { background: var(--night); }
+.index__foot .btn {
+  background: var(--night); border-color: var(--night); color: var(--gold);
+}
+.index__foot .btn:hover { background: var(--night-3); border-color: var(--night-3); }
+
+/* ─────────────── LA FICHE QUI SUIT ───────────────
+   Elle s'écrit toute seule au fil de la visite, puis devient la page. */
+
+.dock {
+  position: fixed; left: var(--pad-x); bottom: var(--s-4); z-index: 80;
+  width: min(17rem, calc(100vw - 2 * var(--pad-x)));
+  border: 1px solid var(--line);
+  background: var(--bg);
+  opacity: 0; transform: translateY(0.8rem); pointer-events: none;
+  transition: opacity var(--d-settle) var(--e-settle), transform var(--d-settle) var(--e-clear);
+}
+.dock.is-live { opacity: 1; transform: none; pointer-events: auto; }
+.dock.is-home { opacity: 0; pointer-events: none; }  /* elle se range quand la vraie feuille est là */
+
+.dock__toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  width: 100%; padding: 0.7rem 0.85rem;
+  font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--fg-2);
+}
+.dock__n {
+  min-width: 1.7em; padding: 0.15em 0.4em; text-align: center;
+  background: var(--go-solid); color: var(--on-go);
+  font-variant-numeric: tabular-nums;
+}
+.dock__body { padding: 0 0.85rem 0.85rem; border-top: 1px solid var(--line-2); }
+.dock__log { margin-top: 0.7rem; max-height: 9rem; overflow-y: auto; }
+.dock__log li {
+  position: relative; padding-left: 1.1em; margin-bottom: 0.4em;
+  font-size: var(--fs-micro); color: var(--fg-2); line-height: 1.5;
+}
+.dock__log li::before {
+  content: ''; position: absolute; left: 0; top: 0.55em;
+  width: 0.36em; height: 0.36em; border-radius: 50%; background: var(--go);
+}
+.dock__go {
+  display: block; margin-top: 0.7rem; padding-top: 0.6rem;
+  border-top: 1px solid var(--line-2);
+  font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--go-text);
+}
+
+@media (max-width: 48rem) {
+  .dock { left: 0; right: 0; bottom: 0; width: auto; border-left: 0; border-right: 0; border-bottom: 0; }
+}
+
+/* ─────────────── PIED DE PAGE ─────────────── */
+
+.ftr {
+  border-top: 1px solid var(--line);
+  padding: var(--s-8) var(--pad-x) var(--s-5);
+}
+.ftr__top {
+  display: grid; gap: var(--s-7);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+  max-width: var(--maxw); margin-inline: auto;
+}
+@media (max-width: 60rem) { .ftr__top { grid-template-columns: 1fr 1fr; } .ftr__brand { grid-column: 1 / -1; } }
+@media (max-width: 34rem) { .ftr__top { grid-template-columns: 1fr; } }
+
+.logo--ftr .logo__w { font-size: 1.5rem; }
+.ftr__about { max-width: 46ch; margin-top: var(--s-4); font-size: var(--fs-sm); color: var(--fg-2); }
+.ftr__soc { display: flex; flex-wrap: wrap; gap: var(--s-4); margin-top: var(--s-5); font-family: var(--ff-m); font-size: var(--fs-micro); letter-spacing: var(--ls-mono); }
+.ftr__soc a { color: var(--fg-3); }
+.ftr__soc a:hover { color: var(--go-text); }
+
+.ftr__h {
+  font-family: var(--ff-m); font-size: var(--fs-micro);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--fg-3); margin-bottom: var(--s-4); font-weight: 400;
+}
+.ftr__nav ul { columns: 2; column-gap: var(--s-5); font-size: var(--fs-sm); }
+.ftr__nav a, .ftr__touch a { color: var(--fg-2); }
+.ftr__nav a:hover, .ftr__touch a:hover { color: var(--go-text); }
+.ftr__nav li { margin-bottom: 0.35em; break-inside: avoid; }
+.ftr__touch p { font-size: var(--fs-sm); color: var(--fg-2); margin-bottom: var(--s-3); }
+.ftr__hours { color: var(--fg-2); }
+
+.ftr__mark { max-width: var(--maxw); margin: var(--s-8) auto var(--s-5); color: var(--line); }
+.mortar { width: clamp(120px, 16vw, 210px); height: auto; }
+
+.ftr__legal {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3);
+  max-width: var(--maxw); margin-inline: auto;
+  padding-top: var(--s-4); border-top: 1px solid var(--line-2);
+  font-family: var(--ff-m); font-size: var(--fs-micro);
+  letter-spacing: var(--ls-mono); color: var(--fg-3);
+}
+.ftr__legal strong { font-weight: 400; color: var(--fg-2); }
+.ftr__loc { font-variant-numeric: tabular-nums; }
+
+/* ─────────────── LE SEUIL ───────────────
+   Une donnée qui se résout, pas un mur : 900 ms plafond, sauté en visite répétée. */
+
+.boot {
+  position: fixed; inset: 0; z-index: 400;
+  display: grid; place-items: center;
+  background: var(--bg);
+}
+.boot__clock {
+  font-size: clamp(2rem, 7vw, 4rem);
+  font-variation-settings: 'wdth' 112.5, 'wght' 300;
+  letter-spacing: -0.02em; line-height: 1;
+}
+html.is-booting body { overflow: hidden; }
+
+/* ═══════════ LE CHEVRON (transition de page) ═══════════
+   La forme est entièrement pilotée en JS (`wipe.js`) : ici on ne pose que la
+   surface et les deux encres. z-index 350 : sous le seuil d'ouverture (400),
+   au-dessus de tout le reste. */
+.wipe {
+  position: fixed; inset: 0; z-index: 350;
+  pointer-events: none;
+}
+.wipe[hidden] { display: none; }
+.wipe__gold, .wipe__ink {
+  position: absolute; inset: 0;
+  display: block;
+  will-change: clip-path;
+}
+/* L'or est dessous : l'encre le recouvre partout sauf sur la proue, où il
+   reste un liseré. C'est la lumière qui ouvre le plan. */
+.wipe__gold { background: var(--gold); }
+.wipe__ink  { background: var(--night-2); }
+
+@media (prefers-reduced-motion: reduce) { .wipe { display: none; } }
+
+/* ═══════════ LA BARRE DE MONTAGE ═══════════
+   Un banc de montage en bas de page : le numéro de scène à gauche, la bobine
+   au milieu, le timecode à droite. La largeur de chaque segment est la hauteur
+   RÉELLE de sa section — c'est ce qui empêche la barre de mentir. */
+.tl {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: var(--s-4);
+  padding: 0.55rem var(--pad-x) 0.6rem;
+  background: color-mix(in oklab, var(--night-2) 88%, transparent);
+  border-top: 1px solid var(--line-2);
+  backdrop-filter: blur(14px);
+  font-size: var(--fs-nano);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--cream-3);
+}
+.tl__scene { margin: 0; white-space: nowrap; color: var(--cream-2); }
+.tl__tc    { margin: 0; white-space: nowrap; color: var(--gold); font-variant-numeric: tabular-nums; }
+
+.tl__strip {
+  position: relative;
+  display: flex; gap: 2px;
+  margin: 0; padding: 0; list-style: none;
+  min-width: 0;
+}
+.tl__seg { position: relative; min-width: 2px; }
+.tl__seg button {
+  display: block; width: 100%; height: 0.75rem;
+  border: 0; padding: 0; margin: 0; cursor: pointer;
+  background: var(--line);
+  /* Le nom reste dans le DOM pour les lecteurs d'écran, mais la barre ne
+     l'affiche pas : dix mots sur une bobine seraient illisibles. */
+  font-size: 0; color: transparent;
+  transition: background var(--d-settle) var(--e-settle),
+              height var(--d-settle) var(--e-response);
+}
+.tl__seg:hover button { background: var(--cream-3); height: 1rem; }
+.tl__seg.is-on button { background: var(--gold); height: 1rem; }
+.tl__seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* La tête de lecture : un trait fin qui traverse la bobine. */
+.tl__head {
+  position: absolute; top: -0.2rem; bottom: -0.2rem; left: 0;
+  width: 1px; background: var(--cream);
+  box-shadow: 0 0 10px 1px #eae0d066;
+  pointer-events: none;
+  transform: translateX(-0.5px);
+}
+
+/* La fiche de service remonte au-dessus de la bobine. */
+.has-tl .dock { bottom: calc(var(--s-4) + 2.2rem); }
+
+@media (max-width: 600px) {
+  .tl { gap: var(--s-3); padding-inline: var(--s-4); }
+  .tl__seg button { height: 0.6rem; }
+  .tl__seg:hover button, .tl__seg.is-on button { height: 0.85rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tl__seg button { transition: none; }
+}

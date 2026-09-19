@@ -1,0 +1,182 @@
+/* ══════════════════════════════════════════════════════════════
+   TEDDY STUDIO — TOKENS
+   Palette et matière alignées sur la référence validée par le client :
+   vert nuit, crème, or. Le vert reste le fond du monde ; l'or est
+   l'accent rare ; la crème est l'encre.
+   ══════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-var.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('/fonts/instrument-sans-var.woff2') format('woff2-variations');
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/fraunces-var.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ─────────────── LE MONDE ─────────────── */
+  --night:    #182d19;   /* le fond, vert nuit */
+  --night-2:  #101b13;   /* écran du téléphone, surfaces enfoncées */
+  --night-3:  #1e3720;   /* surfaces relevées */
+  --cream:    #eae0d0;   /* l'encre */
+  --cream-2:  #eae0d0b8; /* encre secondaire */
+  --cream-3:  #eae0d073; /* encre tertiaire */
+  --gold:     #ecc779;   /* l'accent */
+  --gold-lt:  #ffd989;
+  --gold-dp:  #c9a44f;
+  --line:     #ffffff2e;
+  --line-2:   #ffffff17;
+  --shadow-border: #ecc77980;
+  --shadow-light:  #ecc77966;
+
+  /* Le blanc reste disponible pour les rares surfaces claires. */
+  --paper: #ffffff;
+
+  /* ─────────────── Typographie ─────────────── */
+  /* L'AFFICHE. Fraunces est une serif à caractère, variable sur quatre axes —
+     dont `WONK`, qui débride les formes aux grandes tailles. Sur un fond
+     sombre elle tient : une didone y perdrait ses déliés, une grotesque de
+     plus n'aurait rien dit. C'est elle qui porte le nom et les titres.
+       opsz 9→144 · wght 100→900 · SOFT 0→100 · WONK 0/1 */
+  --ff-p: 'Fraunces', 'Iowan Old Style', Georgia, serif;            /* affiche */
+  --ff-d: 'Archivo', 'Helvetica Neue', Impact, sans-serif;          /* display */
+  --ff-t: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;   /* titres + corps */
+  --ff-m: 'Instrument Sans', ui-monospace, Menlo, monospace;        /* données */
+
+  /* Échelle fluide, 390 → 1440 px. Rapport display ÷ corps ≈ 8:1. */
+  --fs-hero:  clamp(4rem, 12.4vw, 10.5rem);
+  --fs-d1:    clamp(2.4rem, 5.6vw, 4.75rem);
+  --fs-d2:    clamp(1.95rem, 3.9vw, 3.25rem);
+  --fs-d3:    clamp(1.5rem, 2.6vw, 2.25rem);
+  --fs-h3:    clamp(1.25rem, 1.9vw, 1.6rem);
+  --fs-lede:  clamp(1.1rem, 1.35vw, 1.3rem);
+  --fs-body:  clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --fs-sm:    0.9375rem;
+  --fs-xs:    0.875rem;
+  --fs-micro: 0.75rem;
+  --fs-nano:  0.6875rem;
+
+  --lh-tight: 0.88;
+  --lh-h: 1.06;
+  --lh-body: 1.6;
+
+  --ls-hero: -0.025em;
+  --ls-d: -0.018em;
+  --ls-eyebrow: 0.18em;
+
+  /* ─────────────── Espacement ─────────────── */
+  --s-1: 0.3125rem; --s-2: 0.5625rem; --s-3: 0.875rem;
+  --s-4: clamp(1rem, 0.94rem + 0.24vw, 1.1875rem);
+  --s-5: clamp(1.5rem, 1.37rem + 0.38vw, 1.75rem);
+  --s-6: clamp(2rem, 1.74rem + 0.76vw, 2.5rem);
+  --s-7: clamp(3rem, 2.61rem + 1.14vw, 3.75rem);
+  --s-8: clamp(4.5rem, 3.86rem + 1.90vw, 5.75rem);
+  --s-9: clamp(6.5rem, 5.48rem + 3.05vw, 8.5rem);
+
+  --pad-x: clamp(1.25rem, 0.8036rem + 1.831vw, 3.5rem);
+  --sec-y: clamp(4.5rem, 2.9rem + 6.5vw, 9rem);
+  --maxw: 90rem;
+  --measure: 62ch;
+
+  /* ─────────────── Rayons ─────────────── */
+  --r-s: 0.5rem;
+  --r-m: 1rem;
+  --r-l: 2rem;
+  --r-pill: 999px;
+
+  /* ─────────────── Motion ───────────────
+     QUATRE courbes, nommées par ce qu'elles font — jamais une bézier écrite à
+     la main dans un tween. C'est ce que font tous les studios du corpus sans
+     exception : c'est ce qui fait qu'un site entier semble tenu par la même
+     main. Le reste du fichier s'y accroche.
+
+       response   ce qui répond au doigt         — sort vite, s'arrête net
+       settle     ce qui se pose                 — la même, en plus douce
+       expressive ce qui traverse l'écran        — symétrique, appuyée
+       travel     ce qui parcourt une distance   — la plus longue détente
+  */
+  --e-response:   cubic-bezier(0.23, 1, 0.32, 1);
+  --e-settle-2:   cubic-bezier(0.22, 1, 0.36, 1);
+  --e-expressive: cubic-bezier(0.76, 0, 0.24, 1);
+  --e-travel:     cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Les constantes d'interaction : un appui doit toujours peser pareil. */
+  --d-press-in:  0.10s;
+  --d-press-out: 0.16s;
+  --s-press:     0.985;
+  --d-response:  0.18s;
+
+  /* Le flou se mesure en `em`, jamais en pixels : le même réglage doit lire
+     pareil sur une légende de 14 px et sur un titre de 128 px. */
+  --blur-em: 0.34em;
+
+  --e-out:    cubic-bezier(0.16, 1, 0.30, 1);     /* power3.out ≈ */
+  --e-inout:  cubic-bezier(0.65, 0, 0.35, 1);
+  --e-sky:    cubic-bezier(0.33, 0, 0.25, 1);     /* le fondu du ciel */
+  --d-reveal: 800ms;      /* blur-in */
+  --d-hero:   900ms;
+  --d-micro:  260ms;
+  --blur-in: 12px;        /* le flou de départ des révélations */
+
+  --bar-h: 4.75rem;
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --d-reveal: 1ms; --d-hero: 1ms; --d-micro: 1ms; --blur-in: 0px; }
+}
+
+/* ─────────────── Rôles ───────────────
+   Le site n'a plus qu'un monde : la nuit verte. Ces rôles font le pont avec
+   les modules déjà écrits, sans les réécrire un par un. */
+:root {
+  --bg:       var(--night);
+  --bg-2:     var(--night-2);
+  --fg:       var(--cream);
+  --fg-2:     var(--cream-2);
+  --fg-3:     var(--cream-3);
+  --line:     #ffffff2e;
+  --line-2:   #ffffff17;
+
+  --go:       var(--gold);        /* l'accent ne marque plus un état : c'est l'or */
+  --go-text:  var(--gold);
+  --go-solid: var(--gold);
+  --go-press: var(--gold-dp);
+  --go-soft:  #ecc7791f;
+  --on-go:    var(--night);
+
+  --g-300: var(--gold-lt);
+  --g-400: var(--gold);
+  --paper-2: var(--night-2);
+
+  /* motion, noms hérités */
+  --e-clear:  var(--e-out);
+  --e-settle: var(--e-inout);
+  --e-lamp:   var(--e-inout);
+  --e-lift:   var(--e-out);
+  --d-clear:  520ms;
+  --d-settle: 380ms;
+  --d-lift:   900ms;
+
+  --hdr-h: var(--bar-h);
+  --maxw: 90rem;
+}

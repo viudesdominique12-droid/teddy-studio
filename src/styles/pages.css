@@ -1,0 +1,128 @@
+/* ══════════════════════════════════════════════════════════════
+   LES PAGES PROFONDES — locations, works, book, vacancy, 404.
+   Elles ne rejouent aucune forme de la home : ce sont des pages de
+   dossier, pas des actes. Elles partagent un seul gabarit d'en-tête,
+   assumé, parce qu'un classeur a des intercalaires identiques.
+   ══════════════════════════════════════════════════════════════ */
+
+.phead {
+  max-width: var(--maxw); margin-inline: auto;
+  padding: calc(var(--hdr-h) + var(--s-7)) var(--pad-x) var(--s-6);
+}
+.phead__h {
+  max-width: 22ch;
+  font-family: var(--ff-d);
+  font-size: var(--fs-d1); line-height: 0.98; letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96, 'wdth' 84, 'wght' 740;
+  text-transform: uppercase;
+}
+.phead__h em { font-variation-settings: 'opsz' 96, 'wdth' 78, 'wght' 800; }
+.phead__meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3);
+  margin-top: var(--s-5); color: var(--fg-3);
+  text-transform: uppercase; letter-spacing: var(--ls-eyebrow);
+}
+
+/* L'eyebrow de la v1 est mort : sur une page profonde, le fil d'Ariane
+   est un vrai fil d'Ariane, pas une étiquette décorative. */
+.eyebrow {
+  font-family: var(--ff-m); font-size: var(--fs-micro);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--fg-3); margin-bottom: var(--s-4);
+}
+.eyebrow::before { content: '↖ '; opacity: 0.5; }
+
+/* En-tête de section, pages profondes uniquement. */
+.sec { max-width: var(--maxw); margin-inline: auto; padding: var(--sec-y) var(--pad-x); border-top: 1px solid var(--line-2); }
+.sec__head { max-width: 46rem; margin-bottom: var(--s-6); }
+.sec__h {
+  font-family: var(--ff-d); font-size: var(--fs-d2);
+  line-height: 1.02; letter-spacing: var(--ls-d);
+  font-variation-settings: 'opsz' 72, 'wdth' var(--wd-h2), 'wght' var(--wg-h2);
+}
+.sec__lede { max-width: var(--measure); margin-top: var(--s-5); font-size: var(--fs-lede); color: var(--fg-2); }
+
+/* ── Locations (page) ── */
+.locs { max-width: var(--maxw); margin-inline: auto; padding: 0 var(--pad-x); }
+.loc__i {
+  display: grid; gap: var(--s-5) var(--s-7);
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: end;
+  padding: clamp(2rem, 4vw, 3.5rem) 0; border-top: 1px solid var(--line-2);
+}
+.loc__i:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); }
+.loc__i:nth-child(even) .loc__fig { order: 2; }
+.loc__i:nth-child(even) .loc__t { order: 1; }
+.loc__fig { margin: 0; overflow: hidden; background: var(--bg-2); }
+.loc__fig img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; transition: transform 900ms var(--e-clear); }
+.loc__i:hover .loc__fig img { transform: scale(1.028); }
+.loc__h {
+  font-family: var(--ff-d); font-size: clamp(1.8rem, 4.6vw, 3.4rem);
+  letter-spacing: var(--ls-d); text-transform: uppercase; line-height: 1.02;
+  font-variation-settings: 'opsz' 72, 'wdth' 86, 'wght' 720;
+}
+.loc__note { margin-top: var(--s-3); color: var(--fg-2); font-size: var(--fs-sm); }
+.loc__credit { margin-top: var(--s-4); color: var(--fg-3); font-size: var(--fs-micro); }
+@media (max-width: 48rem) {
+  .loc__i, .loc__i:nth-child(even) { grid-template-columns: 1fr; }
+  .loc__i:nth-child(even) .loc__fig { order: 0; }
+  .loc__i:nth-child(even) .loc__t { order: 1; }
+}
+
+.locs__cta {
+  max-width: var(--maxw); margin: var(--sec-y) auto 0;
+  padding: clamp(2.5rem, 6vw, 5rem) var(--pad-x);
+  border-top: 1px solid var(--line); text-align: center;
+}
+.locs__q {
+  font-family: var(--ff-d); font-size: var(--fs-d2);
+  letter-spacing: var(--ls-d); line-height: 1.06; text-transform: uppercase;
+  font-variation-settings: 'opsz' 72, 'wdth' 84, 'wght' 740;
+}
+.locs__a { margin: var(--s-4) auto var(--s-6); max-width: 44ch; color: var(--fg-2); }
+
+/* ── Works (page) ── */
+.film__id { min-width: 0; }
+.ident { max-width: var(--maxw); margin-inline: auto; padding: var(--sec-y) var(--pad-x); border-top: 1px solid var(--line-2); display: grid; gap: var(--s-6); }
+.ident__t { max-width: 46rem; }
+.ident__fig { margin: 0; background: var(--bg-2); }
+.ident__vid { width: 100%; aspect-ratio: 1280 / 536; object-fit: cover; }
+.ident__fig figcaption { margin-top: var(--s-3); color: var(--fg-3); }
+
+/* Les clients, en page profonde : des noms alignés, jamais un mur de logos. */
+.cli { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.cli__i {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
+  padding: var(--s-5) var(--s-4);
+  border-bottom: 1px solid var(--line-2); border-right: 1px solid var(--line-2);
+  transition: background var(--d-settle) var(--e-settle);
+}
+.cli__i:nth-child(4n) { border-right: 0; }
+.cli__n { font-family: var(--ff-d); font-size: var(--fs-sm); font-variation-settings: 'opsz' 24, 'wdth' 96, 'wght' 620; max-width: 14ch; }
+/* Les logos ont été détourés et aplatis en encre crème à la source : aucun
+   filtre à leur appliquer, seulement une présence qui monte au survol. */
+.cli__i img { width: auto; height: 2.4rem; flex: none; opacity: 0.62; transition: opacity var(--d-settle) var(--e-settle); }
+.cli__i:hover { background: var(--bg-2); }
+.cli__i:hover img { opacity: 1; }
+.cli__i--noimg::after { content: ''; width: 1.3rem; height: 1px; background: var(--line); flex: none; }
+@media (max-width: 64rem) {
+  .cli { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cli__i:nth-child(4n) { border-right: 1px solid var(--line-2); }
+  .cli__i:nth-child(2n) { border-right: 0; }
+}
+@media (max-width: 34rem) { .cli { grid-template-columns: 1fr; } .cli__i { border-right: 0; } }
+
+/* ── Vacancy ── */
+.vac__list { min-width: 0; }
+.vac__panel { min-width: 0; }
+.vac__empty-a { margin-top: var(--s-5); }
+
+/* ── Booking ── */
+.bk__rail { margin-bottom: var(--s-7); }
+.bk__form { display: block; }
+.bk__act { margin-top: var(--s-5); }
+.bk__note { margin-top: var(--s-4); }
+.rail__t { white-space: nowrap; }
+.chips--loc { max-width: 58rem; }
+
+/* ── 404 ── */
+.nf__a { margin-top: var(--s-6); }

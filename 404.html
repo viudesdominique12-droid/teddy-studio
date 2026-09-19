@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--#include "head" -->
+  <title>Not cleared — Ethiopian Film Office</title>
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body class="page page--404">
+
+<!--#include "bar" -->
+
+<main id="main">
+  <!-- La seule page du site où le vert est absent : rien n'est dégagé ici.
+       Le seul vert de l'écran est le lien de retour. -->
+  <section class="nf">
+    <p class="nf__k mono">404</p>
+    <h1 class="nf__h">Not cleared.</h1>
+    <p class="nf__p">No permit for this address. It may have moved, or it never existed.</p>
+    <p class="nf__a"><a class="btn btn--go btn--lg" href="/"><span>Back to the office</span></a></p>
+    <ul class="nf__links">
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/locations.html">Locations</a></li>
+      <li><a href="/works.html">Our Works</a></li>
+      <li><a href="/#contact">Contact</a></li>
+    </ul>
+  </section>
+</main>
+
+<!--#include "footer" -->
+
+<aside class="dock" id="dock" aria-label="Your call sheet so far">
+  <button class="dock__toggle" id="dock-toggle" type="button" aria-expanded="false" aria-controls="dock-body">
+    <span class="dock__k mono">Call sheet</span>
+    <span class="dock__n mono" id="dock-count">0</span>
+  </button>
+  <div class="dock__body" id="dock-body" hidden>
+    <ol class="dock__log mono" id="dock-log"></ol>
+    <a class="dock__go" href="/#contact"><span class="mono">Open the sheet</span></a>
+  </div>
+</aside>
+
+<div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">Drag</i></div>
+<script type="module" src="/src/js/page.js"></script>
+</body>
+</html>

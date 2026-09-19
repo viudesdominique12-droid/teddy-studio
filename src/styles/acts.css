@@ -1,0 +1,1132 @@
+/* ══════════════════════════════════════════════════════════════
+   LES HUIT ACTES.
+   Règle dure : une forme ne sert qu'UNE fois dans tout le site.
+   Aucune classe de layout n'est partagée d'un acte à l'autre —
+   c'est ce qui rend le gabarit impossible à réapparaître.
+
+   1 ouverture .......... plaque plein cadre + masthead
+   2 services ........... un tableau
+   3 about .............. une colonne étroite, posée à droite
+   4 why ................ cartons épinglés, un par écran
+   5 locations .......... la descente, piste horizontale
+   6 resources .......... une pile de caisses qu'on écarte
+   7 works .............. un générique de fin
+   8 contact ............ un document qui se déplie
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════ LE HERO ═══════════
+   Sur-titre, titre géant, emblème doré qui chevauche, texte, appel.
+   Le fond est le ciel (sky.js), fixe derrière toute la page. */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex; align-items: center;
+  /* Le bas doit dégager DEUX choses désormais : la fiche de service et la
+     bobine de montage. Sans ça, la ligne de données du hero passe dessous. */
+  padding: calc(var(--bar-h) + var(--s-6)) var(--pad-x) clamp(7.5rem, 15vh, 11rem);
+  max-width: var(--maxw); margin-inline: auto;
+  /* Le canevas de l'emblème déborde de 15 % par côté — c'est la marge qui
+     empêche de rogner les pointes du char. Ce débordement donnait 62 px de
+     défilement horizontal fantôme à la page. On clippe le seul axe X (`clip`,
+     pas `hidden` : le bleed vertical reste visible) : ce qui dépasse à droite
+     sort du viewport de toute façon. */
+  overflow-x: clip;
+}
+.hero__in { position: relative; width: 100%; }
+
+.hero__over {
+  font-size: var(--fs-sm);
+  color: var(--cream-2);
+  margin-bottom: var(--s-4);
+  max-width: 34ch;
+}
+
+.hero__h {
+  font-family: var(--ff-p);
+  line-height: 0.86;
+  letter-spacing: var(--ls-hero);
+  text-transform: uppercase;
+  position: relative; z-index: 2;
+  pointer-events: none;
+}
+/* Le titre est en FRAUNCES : `opsz 144` sort le dessin d'affiche, `WONK 1`
+   débride les formes. Les deux lignes jouent sur la même fonte mais pas sur
+   les mêmes axes — c'est ce contraste qui fait le dessin, pas deux fontes. */
+.hero__l {
+  display: block;
+  font-family: var(--ff-p);
+  font-size: clamp(2.8rem, 8.6vw, 7.4rem);
+  font-variation-settings: 'opsz' 144, 'wght' 300, 'SOFT' 0, 'WONK' 1;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+}
+/* La seconde ligne porte le poids. Elle est volontairement plus large que la
+   colonne de texte : c'est elle qui va jusque sous l'emblème. */
+.hero__l--big {
+  font-family: var(--ff-p);
+  font-size: clamp(4.6rem, 18vw, 15.5rem);
+  font-variation-settings: 'opsz' 144, 'wght' 800, 'SOFT' 12, 'WONK' 1;
+  letter-spacing: -0.05em;
+  margin-top: -0.1em;
+}
+
+/* L'emblème chevauche le titre — il passe DEVANT la ligne fine, DERRIÈRE rien. */
+/* L'emblème chevauche désormais le titre : le char passe PAR-DESSUS la fin
+   du mot. Sans ce recouvrement, ce sont deux objets posés côte à côte ; avec,
+   c'est une composition. */
+.emblem {
+  position: absolute;
+  right: 1%; top: 50%;
+  width: clamp(16rem, 38vw, 36rem);
+  aspect-ratio: 1 / 1;
+  transform: translateY(-54%);
+  z-index: 3;
+  pointer-events: none;
+}
+#emblem3d { position: relative; width: 100%; height: 100%; }
+/* Le placeholder évite un trou pendant que le WebGL se monte. */
+.emblem__ph {
+  position: absolute; inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, #ecc77926, transparent 68%);
+}
+
+.hero__lede {
+  position: relative; z-index: 2;
+  max-width: 38ch;
+  margin-top: var(--s-6);
+  font-size: var(--fs-lede);
+  color: var(--cream-2);
+}
+
+.hero__act { position: relative; z-index: 4; margin-top: var(--s-6); }
+
+.hero__meta {
+  position: relative; z-index: 2;
+  display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6);
+  margin-top: var(--s-7); padding-top: var(--s-4);
+  border-top: 1px solid var(--line-2);
+  font-size: var(--fs-micro);
+  color: var(--cream-2);
+}
+.hero__meta > div { display: flex; align-items: baseline; gap: 0.6em; }
+.hero__meta dt { color: var(--cream-3); text-transform: uppercase; letter-spacing: 0.12em; }
+.hero__meta dd { font-variant-numeric: tabular-nums; }
+.hero__open dd { display: flex; align-items: center; gap: 0.45em; color: var(--gold); }
+
+.hero__scroll {
+  position: absolute; left: 50%; bottom: var(--s-5);
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.6em;
+  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--cream-3);
+}
+.hero__scroll i {
+  display: block; width: 1px; height: 2.2rem;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero__scroll i { animation: scroll-hint 2.4s var(--e-inout) infinite; transform-origin: top; }
+}
+@keyframes scroll-hint {
+  0%, 100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.45); opacity: 0.45; }
+}
+
+@media (max-width: 62rem) {
+  /* Sur écran étroit l'emblème passe SOUS le titre, en grand — comme sur la
+     référence : il devient le sujet au lieu de se battre pour la place. */
+  .hero { padding-top: calc(var(--bar-h) + var(--s-6)); }
+  .emblem {
+    position: relative; right: auto; top: auto; transform: none;
+    width: min(74vw, 22rem); margin: var(--s-5) auto var(--s-2);
+  }
+  .hero__lede { max-width: none; margin-top: var(--s-5); }
+  .hero__scroll { display: none; }
+}
+
+/* ═══════════ ACTE 2 · LE TABLEAU DE SERVICE ═══════════
+   Ce n'était qu'un tableau : trois colonnes de texte entre deux filets. Le
+   voici en dispositif — le tableau d'un bureau de production, où UN SEUL
+   département est ouvert à la fois.
+
+   Le scroll désigne l'ouvert (`acts.js` pose `is-on`), le CSS fait le reste.
+   Un déclencheur pour huit lignes, aucune timeline, et l'animation reste en
+   CSS — donc `prefers-reduced-motion` est gratuit.
+
+   `grid-template-rows: 0fr → 1fr` est la seule façon d'animer une hauteur
+   inconnue sans mesurer quoi que ce soit en JS. */
+
+.table-act { padding: var(--sec-y) var(--pad-x); max-width: var(--maxw); margin-inline: auto; }
+.table-act__head {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-6); align-items: end; margin-bottom: var(--s-8);
+}
+.table-act__h {
+  font-family: var(--ff-d);
+  font-size: var(--fs-d1); line-height: 0.96; letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96, 'wdth' 84, 'wght' 740;
+  text-transform: uppercase;
+}
+.table-act__note { max-width: 52ch; color: var(--fg-2); font-size: var(--fs-sm); }
+@media (max-width: 54rem) { .table-act__head { grid-template-columns: 1fr; } }
+
+.board { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+
+.dep {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'n name st' '. body .';
+  align-items: baseline;
+  column-gap: var(--s-5);
+  padding: clamp(0.9rem, 1.6vh, 1.5rem) 0;
+  border-bottom: 1px solid var(--line-2);
+  position: relative;
+}
+/* Le filet d'or du département ouvert : il désigne, il ne décore pas. */
+.dep::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--gold);
+  transform: scaleY(0); transform-origin: center top;
+  transition: transform 0.5s var(--e-expressive);
+}
+.dep.is-on::before { transform: scaleY(1); }
+
+.dep__n { grid-area: n; color: var(--cream-3); font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow); }
+.dep__name {
+  grid-area: name;
+  font-family: var(--ff-d);
+  font-size: clamp(1.15rem, 2.6vw, 2.1rem);
+  line-height: 1.04; letter-spacing: -0.02em; text-transform: uppercase;
+  font-variation-settings: 'opsz' 48, 'wdth' 88, 'wght' 620;
+  color: var(--cream-2);
+  transition: color 0.4s var(--e-response),
+              font-variation-settings 0.5s var(--e-expressive);
+}
+.dep.is-on .dep__name { color: var(--cream); font-variation-settings: 'opsz' 96, 'wdth' 100, 'wght' 760; }
+
+/* Le corps : fermé à `0fr`, ouvert à `1fr`. L'enfant DOIT être en
+   `overflow: hidden`, sinon le texte dépasse de la grille repliée. */
+.dep__body {
+  grid-area: body;
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows 0.55s var(--e-expressive);
+}
+.dep.is-on .dep__body { grid-template-rows: 1fr; }
+.dep__covers {
+  overflow: hidden;
+  max-width: 54ch;
+  font-size: var(--fs-sm); color: var(--fg-2);
+  opacity: 0; transform: translateY(0.4rem);
+  /* L'opacité finit avant le mouvement — la règle du site. */
+  transition: opacity 0.25s var(--e-response) 0.08s,
+              transform 0.5s var(--e-expressive);
+}
+.dep.is-on .dep__covers { opacity: 1; transform: none; padding-top: 0.55rem; }
+
+.dep__st {
+  grid-area: st; justify-self: end; white-space: nowrap;
+  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--cream-3);
+}
+.dep--go .dep__st { color: var(--gold); }
+
+/* Le tampon : il ne glisse pas, il FRAPPE. `steps(3, end)` fait le coup —
+   trois paliers au lieu d'un fondu, c'est la différence entre un site web et
+   un tampon sur un dossier. */
+.dep__stamp {
+  display: inline-block; margin-right: 0.55em;
+  padding: 0.25em 0.5em;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  transform: rotate(-4deg) scale(1.6);
+  opacity: 0;
+  transition: opacity 0.24s steps(3, end), transform 0.24s steps(3, end);
+}
+.dep--go.is-on .dep__stamp { opacity: 1; transform: rotate(-4deg) scale(1); }
+
+@media (max-width: 40rem) {
+  .dep { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'n name' '. st' '. body'; }
+  .dep__st { justify-self: start; margin-top: 0.3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Sans mouvement, tout est ouvert : on ne cache pas du contenu derrière une
+     animation qui ne jouera pas. */
+  .dep__body { grid-template-rows: 1fr; }
+  .dep__covers { opacity: 1; transform: none; padding-top: 0.55rem; }
+  .dep__stamp { opacity: 1; transform: rotate(-4deg); }
+  .dep::before, .dep__name, .dep__covers, .dep__body, .dep__stamp { transition: none; }
+}
+
+/* ═══════════ ACTE 3 · LA NOTE ═══════════
+   Densité inversée par rapport au tableau : presque rien, et du vide qui compte. */
+
+.note {
+  max-width: var(--maxw); margin-inline: auto;
+  padding: var(--sec-y) var(--pad-x);
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  grid-template-areas: 'fig body' 'facts body';
+  align-items: start;
+  column-gap: var(--s-7); row-gap: var(--s-6);
+  border-top: 1px solid var(--line-2);
+}
+.note__fig {
+  grid-area: fig; margin: 0;
+  border-radius: 2px; overflow: hidden;
+  box-shadow: 0 0 0 1px #eae0d024, 0 30px 60px -28px #000000c4;
+}
+.note__fig img {
+  display: block; width: 100%; height: auto;
+  transition: transform var(--d-lift) var(--e-lift), filter var(--d-settle) var(--e-settle);
+}
+.note__fig:hover img { transform: scale(1.03); filter: brightness(1.05); }
+.note__body { grid-area: body; }
+.note__facts {
+  grid-area: facts; align-self: start; color: var(--fg-3);
+  display: flex; flex-direction: column; gap: 0.7em;
+  line-height: 1.6;
+}
+.note__body { max-width: 46ch; }
+.note__h {
+  font-family: var(--ff-m); font-size: var(--fs-micro);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--fg-3); margin-bottom: var(--s-5); font-weight: 400;
+}
+/* La seule prose longue du site : donc le seul endroit où l'on LIT. */
+.note__p {
+  font-size: clamp(1.18rem, 1.55vw, 1.5rem);
+  line-height: 1.52; letter-spacing: -0.008em;
+  font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 380;
+  margin-bottom: var(--s-5);
+}
+.note__p strong { font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700; font-weight: 400; }
+.note__sig {
+  display: flex; align-items: center; gap: var(--s-4);
+  margin-top: var(--s-6); padding-top: var(--s-5);
+  border-top: 1px solid var(--line-2);
+  color: var(--fg-3);
+}
+.note__mark { width: 74px; height: auto; flex: none; color: var(--fg-3); }
+
+@media (max-width: 56rem) {
+  .note { grid-template-columns: 1fr; gap: var(--s-6); }
+  .note__facts { order: 2; padding-top: var(--s-5); border-top: 1px solid var(--line-2); }
+  .note__body { order: 1; max-width: none; }
+}
+
+
+/* ═══════════ LE TÉLÉPHONE ═══════════
+   La section est épinglée : tout ce qui suit est positionné dans le viewport,
+   pas dans le flux. Le cadre de l'appareil est en CSS pur — pas d'image à
+   charger, et il reste net à n'importe quelle échelle. */
+
+.ph {
+  position: relative;
+  min-height: 100vh;
+  overflow: clip;          /* le pin laisse du vide sans ça, surtout en mobile */
+  display: grid;
+  place-items: center;
+}
+
+.ph__title {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  z-index: 1;
+  text-align: center;
+  pointer-events: none;
+}
+.ph__h {
+  font-family: var(--ff-d);
+  font-size: clamp(2.6rem, 9vw, 8rem);
+  line-height: 0.92; letter-spacing: var(--ls-hero);
+  text-transform: uppercase;
+  font-variation-settings: 'wdth' 116, 'wght' 760;
+  color: var(--cream);
+
+  /* Les deux lignes s'écartent de la hauteur de l'appareil : il se loge
+     entre elles et n'en couvre que les bords. Le mot reste lisible, la
+     superposition reste là. */
+  display: flex; flex-direction: column;
+  height: 78vh; justify-content: space-between;
+}
+
+.ph__stage {
+  position: relative; z-index: 2;
+  display: grid; place-items: center;
+  width: 100%; height: 100vh;
+}
+
+/* L'appareil : un cadre, un écran, une encoche, un reflet. */
+.ph__device {
+  position: relative;
+  width: clamp(13rem, 20vw, 17rem);
+  aspect-ratio: 9 / 19.5;
+  border-radius: clamp(1.6rem, 2.6vw, 2.4rem);
+  background: linear-gradient(150deg, #3a4a3b, #1b2a1c 42%, #46563f 78%, #202e21);
+  padding: 0.5rem;
+  box-shadow:
+    0 0 0 1px #ffffff1f,
+    0 42px 90px -30px #000000cc,
+    inset 0 0 0 1px #00000040;
+  will-change: transform;
+}
+.ph__screen {
+  position: relative;
+  width: 100%; height: 100%;
+  border-radius: 13%;          /* piloté en JS : il tombe à 0 au plein écran */
+  overflow: hidden;
+  background: var(--night-2);
+}
+.ph__vid {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: none;
+  object-fit: cover;
+  will-change: transform, width, height;
+}
+/* La piste large n'existe qu'une fois l'appareil couché ; le JS la fait monter. */
+.ph__vid[data-phone-video="wide"] { opacity: 0; }
+.ph__notch {
+  position: absolute; left: 50%; top: 0.95rem;
+  transform: translateX(-50%);
+  width: 26%; height: 0.5rem;
+  border-radius: var(--r-pill);
+  background: #0b140c;
+  z-index: 2;
+}
+.ph__glare {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, #ffffff14 0 18%, transparent 42%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Les blocs défilent dans l'axe du téléphone, un par un. */
+.ph__blocks { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.ph__block {
+  position: absolute; top: 50%; width: min(24rem, 34vw);
+  transform: translateY(-50%);
+}
+.ph__block[data-phone-block="left"] { left: var(--pad-x); text-align: left; }
+.ph__block[data-phone-block="right"] { right: var(--pad-x); text-align: right; }
+.ph__block h3 {
+  font-family: var(--ff-d);
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  line-height: 1.06; letter-spacing: var(--ls-d);
+  font-variation-settings: 'wdth' 104, 'wght' 700;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: var(--s-4);
+}
+.ph__block p { font-size: var(--fs-sm); line-height: 1.65; color: var(--cream-2); }
+
+@media (max-width: 767px) {
+  /* Sur écran étroit les blocs passent sous l'appareil, pleine largeur :
+     à 390 px, une colonne latérale de 24 rem n'existe pas.
+     767 px, pas 62 rem : la borne doit être la même que MOBILE_MAX dans
+     phone.js, sinon la mise en page et la chorégraphie se contredisent. */
+  .ph__block,
+  .ph__block[data-phone-block="left"],
+  .ph__block[data-phone-block="right"] {
+    left: var(--pad-x); right: var(--pad-x);
+    width: auto; text-align: left;
+    top: auto; bottom: clamp(2rem, 8vh, 5rem); transform: none;
+  }
+  .ph__device { width: min(54vw, 14rem); }
+  /* Les deux lignes s'écartent un peu plus : « TEDDY STUDIO » passe sur deux
+     lignes en étroit, et doit rester sous l'appareil, pas dessous ET dessus. */
+  .ph__h { font-size: clamp(2.2rem, 13vw, 4.5rem); height: 82vh; }
+}
+
+/* Sans mouvement, la section redevient une page : le titre, l'appareil,
+   puis les quatre arguments les uns sous les autres. Rien ne se superpose. */
+.ph[data-phone-static] { display: block; padding-block: var(--sec-y); }
+.ph[data-phone-static] .ph__title { position: static; inset: auto; margin-bottom: var(--s-7); }
+/* Sans appareil qui vient s'y loger, les deux lignes n'ont plus de raison de
+   s'écarter : le titre redevient un titre. */
+.ph[data-phone-static] .ph__h { height: auto; display: block; }
+/* Aucun JS ne dimensionne la vidéo ici : elle remplit l'écran elle-même,
+   et la piste large — qui n'a pas de rôle sans pivot — ne s'affiche pas. */
+.ph[data-phone-static] .ph__vid { width: 100%; height: 100%; }
+.ph[data-phone-static] .ph__vid[data-phone-video="wide"] { display: none; }
+.ph[data-phone-static] .ph__stage { height: auto; margin-bottom: var(--s-8); }
+.ph[data-phone-static] .ph__blocks {
+  position: static; inset: auto; pointer-events: auto;
+  display: grid; gap: var(--s-7);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  max-width: var(--maxw); margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+.ph[data-phone-static] .ph__block,
+.ph[data-phone-static] .ph__block[data-phone-block="left"],
+.ph[data-phone-static] .ph__block[data-phone-block="right"] {
+  position: static; inset: auto; width: auto; transform: none; text-align: left;
+}
+
+/* ═══════════ ACTE 5 · LA ZONE D'IMAGES ═══════════
+   Les valeurs viennent de la référence, relevées dans sa feuille de style :
+   cartes CARRÉES en `object-fit: scale-down` (la photo entière, pas un
+   recadrage), `16vw` de large, `1vw` d'écart — elles se frôlent — et un rail
+   qui déborde de `105vw` de chaque côté.
+
+   Le message est en ABSOLU par-dessus le ruban : il ne bouge pas pendant que
+   les images dérivent. C'est toute la composition, et c'est précisément ce
+   qui manquait. */
+
+.drop { position: relative; }
+
+.drop__stage {
+  position: relative;
+  overflow: clip;
+  height: 100svh;
+  display: flex; flex-flow: column; justify-content: center;
+}
+
+.drop__track {
+  display: flex; align-items: center;
+  gap: 1vw;
+  width: max-content;
+  /* Un plein écran de marge : aucune carte n'apparaît ni ne disparaît dans le
+     cadre, elles entrent et sortent toujours par le hors-champ. */
+  padding-inline: 105vw;
+  margin: 0; list-style: none;
+  white-space: nowrap;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Les tirages sont au format du paysage qu'ils montrent, pas dans un carré :
+   une photo 16/9 en `scale-down` dans un carré n'occupe que la moitié de sa
+   carte, et on ne reconnaît plus le lieu. Format 3/2, image pleine, et chaque
+   carte DIT son nom — l'altimètre n'en affiche qu'un à la fois. */
+.stop {
+  position: relative; flex: none;
+  width: 22vw; aspect-ratio: 3 / 2;
+  will-change: transform;
+}
+.stop img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  filter: drop-shadow(0 26px 44px rgba(0, 0, 0, 0.5));
+}
+/* Le nom vient de l'attribut : aucun markup en plus, et il ne peut pas
+   diverger de celui que lit l'altimètre. */
+.stop::after {
+  content: attr(data-name);
+  position: absolute; left: 0; right: 0; top: calc(100% + 0.7rem);
+  text-align: center;
+  font-family: var(--ff-m); font-size: var(--fs-nano);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--cream-2);
+  text-shadow: 0 1px 14px rgba(16, 27, 19, 0.9);
+  pointer-events: none;
+}
+
+/* Le message, immobile, par-dessus. */
+/* Un carton de titre sur de l'image : la lumière tombe au centre pour que le
+   texte tienne, quelle que soit la photo qui passe derrière. Un dégradé
+   radial, pas un rectangle — un rectangle se verrait. */
+.drop__center::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(58% 42% at 50% 46%,
+    rgba(16, 27, 19, 0.93) 0%,
+    rgba(16, 27, 19, 0.82) 38%,
+    rgba(16, 27, 19, 0.44) 66%,
+    rgba(16, 27, 19, 0) 100%);
+  pointer-events: none;
+}
+.drop__center {
+  position: absolute; inset: 0;
+  z-index: 2;
+  display: flex; flex-flow: column; justify-content: center; align-items: center;
+  width: 100%; padding: 0 var(--pad-x);
+  text-align: center;
+  pointer-events: none;
+}
+.drop__center > * { pointer-events: auto; }
+.drop__h {
+  font-family: var(--ff-d);
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  line-height: 1.16; letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 96, 'wdth' 90, 'wght' 320;
+  text-transform: none;
+  /* Le texte doit rester lisible quelle que soit l'image qui passe derrière. */
+  text-shadow: 0 2px 34px rgba(16, 27, 19, 0.92), 0 0 90px rgba(16, 27, 19, 0.8);
+}
+.drop__lede {
+  max-width: 44ch; margin-top: var(--s-5);
+  color: var(--fg-2); font-size: var(--fs-sm);
+  text-shadow: 0 2px 24px rgba(16, 27, 19, 0.95);
+}
+.drop__more { margin-top: var(--s-6); }
+
+/* Sur téléphone, la traversée redevient une descente : les tirages s'empilent,
+   pleine largeur, et le message reprend sa place au-dessus. */
+@media (max-width: 767px) {
+  .drop__stage { height: auto; overflow: visible; display: block; }
+  .drop__track {
+    display: block; width: auto;
+    padding: 0 var(--pad-x) var(--s-8);
+    white-space: normal;
+  }
+  .stop { width: auto; aspect-ratio: auto; margin-bottom: clamp(3rem, 10vh, 5rem); }
+  .stop img { aspect-ratio: 16 / 9; object-fit: cover; filter: none; }
+  .drop__center {
+    position: static; inset: auto;
+    padding: var(--sec-y) var(--pad-x) var(--s-7);
+    text-align: left; align-items: flex-start;
+  }
+  .drop__h, .drop__lede { text-shadow: none; }
+}
+@media (min-width: 768px) and (max-width: 1100px) {
+  .stop { width: 38vw; }
+}
+
+/* La jauge d'altitude : c'est elle qui transforme le paysage en instrument. */
+/* La jauge est l'instrument de bord : en haut, sous la barre, là où un
+   altimètre se lit — et là où la fiche du visiteur ne la recouvre pas. */
+.gauge {
+  position: absolute; left: 0; right: 0; top: 0;
+  z-index: 2; display: flex; align-items: center; gap: var(--s-4);
+  padding: calc(var(--hdr-h) + 0.6rem) var(--pad-x) 1.4rem;
+  color: #fff;
+  background: linear-gradient(to bottom, rgba(7,15,6,0.8), rgba(7,15,6,0));
+}
+/* Sur écran étroit, le mot « altitude » déborde de 21 px : le nom du lieu et
+   l'unité « m » disent déjà ce que c'est. */
+@media (max-width: 767px) {
+  .gauge { flex-wrap: wrap; }
+  .gauge__k { display: none; }
+}
+.gauge__place {
+  font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--gold);
+  white-space: nowrap;
+}
+.gauge__alt {
+  flex: none; font-variant-numeric: tabular-nums; min-width: 8ch;
+  font-size: clamp(1.1rem, 2.2vw, 1.7rem);
+  font-variation-settings: 'wdth' 112.5, 'wght' 500;
+  letter-spacing: -0.01em;
+}
+.gauge__k { flex: none; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.5); }
+.gauge__line { position: relative; flex: 1 1 auto; height: 2px; background: rgba(255,255,255,0.3); }
+.gauge__fill {
+  position: absolute; left: 0; top: 0; height: 2px; width: 0;
+  background: var(--g-300);
+  box-shadow: 0 0 12px rgba(135, 228, 114, 0.55);
+}
+/* Le niveau de la mer marqué sur la règle : le fond du pays passe dessous. */
+.gauge__sea {
+  position: absolute; top: -5px; bottom: -5px; left: 97.3%;
+  width: 1px; background: rgba(255,255,255,0.55);
+}
+/* Le repère du niveau de la mer se nomme : sans légende, un trait ne dit rien. */
+.gauge__sea::after {
+  content: 'sea level';
+  position: absolute; top: 100%; right: 0; margin-top: 0.4em;
+  font-family: var(--ff-m); font-size: 0.5625rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); white-space: nowrap;
+}
+
+@media (max-width: 48rem) {
+  .drop__track { display: block; }
+  .stop { width: auto; height: auto; min-height: 76svh; }
+  .stop__fig { position: relative; inset: auto; height: 76svh; }
+  .stop__t { bottom: var(--s-6); }
+  .gauge { position: sticky; top: 0; bottom: auto; left: 0; right: 0;
+           padding: var(--s-3) var(--pad-x); background: rgba(7,15,6,0.78);
+           backdrop-filter: blur(10px); }
+  .gauge__sea::after { display: none; }
+}
+
+.drop__more { max-width: var(--maxw); margin: var(--s-6) auto 0; padding: 0 var(--pad-x) var(--s-7); }
+
+
+/* ═══════════ ACTE 6 · LES CAISSES ═══════════
+   Une pile physique qu'on écarte. Premier moment où l'on PREND quelque chose. */
+
+.cases {
+  max-width: var(--maxw); margin-inline: auto;
+  padding: var(--sec-y) var(--pad-x);
+}
+.cases__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-6); align-items: end; margin-bottom: var(--s-7); }
+.cases__h {
+  font-family: var(--ff-d); font-size: var(--fs-d2);
+  line-height: 1.02; letter-spacing: var(--ls-d); text-transform: uppercase;
+  font-variation-settings: 'opsz' 72, 'wdth' 84, 'wght' 740;
+}
+.cases__lede { max-width: 48ch; color: var(--fg-2); font-size: var(--fs-sm); }
+@media (max-width: 54rem) { .cases__head { grid-template-columns: 1fr; } }
+
+.cases__stack { perspective: 1400px; }
+.case {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) auto;
+  gap: var(--s-5); align-items: center;
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  margin-top: -1px;
+  transform-origin: center top;
+}
+/* Le matériel est détouré et aplati à l'encre crème (voir le script de
+   préparation) : plus de plaque, plus de fond — les objets flottent sur la
+   nuit, comme le dessin du char dans la note. */
+/* Les photos sont montrées ENTIÈRES et à pleine opacité : on doit reconnaître
+   un objectif d'un autre sans avoir à zoomer. Un cadre fin les tient sur le
+   vert nuit — sans lui, un fond produit blanc lit comme un trou dans la page. */
+.case__fig {
+  margin: 0; overflow: hidden;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #eae0d024, 0 18px 34px -18px #000000a6;
+}
+.case__fig img {
+  width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
+  display: block;
+  transition: transform var(--d-lift) var(--e-lift), filter var(--d-settle) var(--e-settle);
+}
+.case:hover .case__fig img { transform: scale(1.04); filter: brightness(1.06); }
+
+.case__h {
+  font-family: var(--ff-d); font-size: var(--fs-h3);
+  font-variation-settings: 'opsz' 40, 'wdth' 92, 'wght' 700;
+  letter-spacing: -0.015em; margin-bottom: var(--s-2);
+}
+.case__t p { font-size: var(--fs-sm); color: var(--fg-2); max-width: 56ch; }
+
+.case__add {
+  align-self: center; white-space: nowrap;
+  padding: 0.7em 1em; border: 1px solid var(--line);
+  font-family: var(--ff-m); font-size: var(--fs-micro);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase; color: var(--fg-2);
+  transition: border-color var(--d-settle) var(--e-settle), color var(--d-settle) var(--e-settle),
+              background var(--d-clear) var(--e-clear);
+}
+.case__add:hover { border-color: var(--fg-3); color: var(--fg); }
+.case__add.is-in { background: var(--go-solid); border-color: var(--go-solid); color: var(--on-go); }
+.case__add.is-in span::before { content: '✓ '; }
+
+@media (max-width: 54rem) {
+  .case { grid-template-columns: minmax(0, 8rem) minmax(0, 1fr); grid-template-areas: 'fig txt' 'add add'; }
+  .case__fig { grid-area: fig; } .case__t { grid-area: txt; }
+  .case__add { grid-area: add; justify-self: start; }
+}
+@media (max-width: 34rem) {
+  .case { grid-template-columns: 1fr; grid-template-areas: 'fig' 'txt' 'add'; }
+}
+
+
+/* ═══════════ ACTE 7 · LE GÉNÉRIQUE ═══════════
+   Le seul endroit du site où le centrage est juste — un générique est centré.
+   Et le seul acte sans aucun vert. */
+
+.credits {
+  background: var(--night); color: #fff;
+  padding: clamp(5rem, 14vh, 10rem) var(--pad-x);
+  text-align: center;
+}
+.credits__roll { max-width: 50rem; margin-inline: auto; }
+.credits__k {
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase; letter-spacing: 0.22em;
+  margin-bottom: var(--s-5);
+}
+.credits__films { margin-bottom: var(--s-8); }
+.credits__films li {
+  font-family: var(--ff-d);
+  font-size: clamp(1.5rem, 3.8vw, 2.9rem);
+  line-height: 1.24; letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 72, 'wdth' 92, 'wght' 480;
+}
+.credits__alt {
+  font-family: var(--ff-m); font-style: normal;
+  font-size: var(--fs-micro); letter-spacing: var(--ls-mono);
+  color: rgba(255,255,255,0.42); margin-left: 0.6em;
+}
+.credits__clients { margin-bottom: var(--s-7); }
+.credits__clients li {
+  font-size: clamp(1rem, 1.7vw, 1.3rem); line-height: 1.7;
+  font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 400;
+  color: rgba(255,255,255,0.86);
+}
+.credits__end { color: rgba(255,255,255,0.4); letter-spacing: 0.1em; }
+.credits__more { margin-top: var(--s-6); }
+.credits__more .lnk { color: rgba(255,255,255,0.75); }
+.credits__more .lnk:hover { color: #fff; }
+
+
+/* ═══════════ ACTE 8 · LA FEUILLE DE SERVICE ═══════════
+   Le document se déplie. La fiche qui suivait le visiteur DEVIENT la page. */
+
+.call-sheet {
+  max-width: var(--maxw); margin-inline: auto;
+  padding: var(--sec-y) var(--pad-x);
+}
+.cs { border: 1px solid var(--fg-3); background: var(--bg); }
+
+.cs__top { padding: var(--s-5); border-bottom: 1px solid var(--fg-3); }
+.cs__title {
+  font-family: var(--ff-d);
+  font-size: var(--fs-d2); line-height: 1; letter-spacing: -0.03em; text-transform: uppercase;
+  font-variation-settings: 'opsz' 72, 'wdth' 80, 'wght' 800;
+}
+/* On ne promet jamais rien au nom du client. */
+.cs__draft {
+  margin-top: var(--s-2); color: var(--fg-3);
+  text-transform: uppercase; letter-spacing: 0.14em;
+}
+.cs__meta { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); margin-top: var(--s-5); }
+.cs__meta > div { display: flex; align-items: baseline; gap: 0.6em; }
+.cs__meta dt { color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.1em; }
+.cs__meta dd { color: var(--fg); font-variant-numeric: tabular-nums; }
+
+.cs__grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
+@media (max-width: 54rem) { .cs__grid { grid-template-columns: 1fr; } }
+
+.cs__lines { padding: var(--s-5); border-right: 1px solid var(--line); }
+@media (max-width: 54rem) { .cs__lines { border-right: 0; border-bottom: 1px solid var(--line); } }
+.cs__lines-k, .cs__form-k {
+  color: var(--fg-3); text-transform: uppercase; letter-spacing: var(--ls-eyebrow);
+  margin-bottom: var(--s-4);
+}
+.cs__log li {
+  position: relative; padding-left: 1.2em; margin-bottom: 0.55em;
+  font-size: var(--fs-micro); line-height: 1.6; color: var(--fg-2);
+}
+.cs__log li::before {
+  content: ''; position: absolute; left: 0; top: 0.5em;
+  width: 0.4em; height: 0.4em; border-radius: 50%; background: var(--go);
+}
+.cs__empty { color: var(--fg-3); font-size: var(--fs-micro); }
+.cs__log:not(:empty) + .cs__empty { display: none; }
+
+.cs__form { padding: var(--s-5); }
+.cs__act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); margin-top: var(--s-5); }
+
+.cs__foot {
+  display: grid; gap: var(--s-2) var(--s-6);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  padding: var(--s-5); border-top: 1px solid var(--line);
+  color: var(--fg-2); font-size: var(--fs-micro); line-height: 1.7;
+}
+.cs__foot-k { color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.1em; margin-right: 0.6em; }
+.cs__foot a:hover { color: var(--go-text); }
+
+/* Un line producer qui imprime le site, c'est la meilleure conversion du monde. */
+@media print {
+  .bar, .index, .dock, .cursor, .boot, .open, .table-act, .note,
+  .cards, .drop, .cases, .credits, .ftr, .cs__form { display: none !important; }
+  .call-sheet { padding: 0; }
+  .cs { border-color: #000; }
+  body { background: #fff; color: #000; }
+}
+
+/* ═══════════ LE MUR DE CLIENTS ═══════════
+   La preuve arrive avant l'argumentaire. Masque en dégradé haut et bas :
+   le mur n'a pas de bord, il émerge du ciel et s'y reperd. */
+
+.wall {
+  max-width: var(--maxw); margin-inline: auto;
+  padding: var(--sec-y) var(--pad-x) 0;
+}
+.wall__h {
+  font-family: var(--ff-t);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--cream-3);
+  text-align: center;
+  margin-bottom: var(--s-7);
+}
+.wall__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  /* Le masque fait tout : sans lui c'est une grille de logos, avec lui
+     c'est une constellation. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+}
+.wall__i {
+  display: grid; place-items: center;
+  min-height: 4.5rem;
+}
+.wall__i img {
+  max-width: 100%; height: auto; max-height: 3.6rem; width: auto;
+  /* Les logos ont été détourés et aplatis en encre crème à la source :
+     le mur lit comme un jeu de marques imprimées, pas comme une collection
+     de fichiers hétéroclites. */
+  opacity: 0.82;
+  transition: opacity var(--d-micro) var(--e-out);
+}
+.wall__i:hover img { opacity: 1; }
+/* Les deux clients sans logo ne laissent pas de trou : ils sont composés. */
+.wall__i--type span {
+  font-family: var(--ff-t);
+  font-size: var(--fs-sm);
+  font-variation-settings: 'wdth' 88, 'wght' 600;
+  letter-spacing: 0.02em; text-align: center; line-height: 1.25;
+  color: var(--cream-2);
+  text-transform: uppercase;
+}
+
+/* ═══════════ LA GALERIE ═══════════ */
+
+/* ── LE TITRE, DERRIÈRE ──
+   Lettres creuses, à l'échelle de l'écran. Il ne titre pas la grille : il est
+   le fond sur lequel elle passe. */
+.gal__h {
+  position: absolute; left: 0; right: 0; top: 50%;
+  transform: translateY(-50%);
+  z-index: 0; pointer-events: none;
+  text-align: center;
+  font-family: var(--ff-p);
+  font-size: clamp(3rem, 11vw, 11rem);
+  line-height: 0.9; letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 144, 'wght' 400, 'SOFT' 0, 'WONK' 1;
+  color: transparent;
+  /* Le titre est le FOND de la grille : trop pâle il disparaît derrière les
+     cartes, trop dense il se bat avec elles. Trait d'or à 1,5 px, plus un
+     remplissage très faible qui le fait exister dans les vides. */
+  -webkit-text-stroke: 1.5px #ecc779a6;
+  background: linear-gradient(#ecc7791a, #ecc7790d);
+  -webkit-background-clip: text; background-clip: text;
+}
+.gal__lede {
+  position: absolute; left: var(--pad-x); top: calc(var(--bar-h) + 0.6rem);
+  z-index: 3; pointer-events: none;
+  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--cream-3);
+}
+
+.gal {
+  position: relative;
+  /* Pleine hauteur : c'est elle qui décide du nombre de RANGÉES. Sur 558 px la
+     grille n'en tenait qu'une, et une rangée n'est pas un espace — c'est un
+     bandeau. `rows = round(hauteur / celluleH)` : il faut de la hauteur. */
+  height: 100svh;
+  overflow: clip;
+  display: grid; place-items: stretch;
+}
+
+.gal__stage {
+  position: relative; z-index: 1;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  /* les colonnes et les gouttières : lues en JS par sonde, donc n'importe
+     quelle unité CSS fonctionne ici */
+  /* `rows = round(hauteurScène / celluleH)`. Une carte portrait fait
+     `colonne × 16/9` de haut : à 19vw elle mesurait 486 px et il n'en tenait
+     qu'une seule rangée. À 15vw elle en fait 384, et deux rangées tiennent
+     dans un écran — c'est la densité de la référence. */
+  --gallery-col: clamp(9rem, 15vw, 15rem);
+  --gallery-gap-x: clamp(0.7rem, 1.3vw, 1.2rem);
+  --gallery-gap-y: clamp(0.7rem, 1.3vw, 1.2rem);
+}
+.gal__stage:active { cursor: grabbing; }
+.gal__stage:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+.gal__collection { display: flex; will-change: transform; }
+.gal__list { flex: none; }
+.gal__item { display: grid; place-items: center; padding: 0; }
+
+.gal__card {
+  position: relative;
+  width: var(--gallery-col);
+  aspect-ratio: var(--ar, 16 / 9);
+  overflow: hidden;
+  border-radius: var(--r-s);
+  background: var(--night-2);
+  box-shadow: 0 0 0 1px #eae0d030;
+}
+.gal__item[data-ratio="9/16"] .gal__card { --ar: 9 / 16; }
+.gal__card video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transform: scale(1.02);
+  transition: transform 700ms var(--e-out), filter var(--d-micro) var(--e-out);
+  filter: saturate(0.82) contrast(1.04) brightness(0.92);
+}
+.gal__card.is-playing video { transform: scale(1.06); filter: none; }
+
+.gal__hint {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2; pointer-events: none;
+  font-size: clamp(3rem, 9vw, 7rem);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px #eae0d030;
+  transition: opacity var(--d-micro) var(--e-out);
+}
+.gal__stage[data-gallery-status="dragging"] .gal__hint,
+.gal__stage[data-gallery-status="scrolling"] .gal__hint { opacity: 0; }
+/* À la souris, c'est la pastille du curseur qui porte l'invitation : le grand
+   mot ferait doublon. Au doigt, il n'y a pas de curseur — il reste. */
+@media (hover: hover) and (pointer: fine) { .gal__hint { display: none; } }
+
+@media (max-width: 48rem) {
+  /* Le téléphone garde la PLEINE hauteur, comme l'ordinateur : la galerie est
+     un espace dans lequel on se promène, pas un bandeau qu'on fait défiler.
+     Plafonnée à 28rem elle ne tenait qu'une rangée et demie — la promenade
+     redevenait un carrousel. C'est la COLONNE qui rétrécit, pas la scène :
+     4 colonnes × 3 rangées sur un écran de 390, la densité de la référence. */
+  .gal__stage { --gallery-col: clamp(7.5rem, 34vw, 9.5rem); }
+}
+
+/* ═══════════ LE SURVOL QUI ÉTEINT LES FRÈRES ═══════════
+   Quatre listes du site étaient mortes : la table des services, le mur de
+   clients, les caisses de matériel et le générique. On les regardait, elles
+   ne regardaient pas en retour.
+
+   Le geste vient de Depo Luxe : le CONTENEUR porte une variable d'opacité.
+   Au survol de la liste, elle tombe ; l'élément visé la remonte à 1. Tous les
+   frères s'éteignent d'une seule déclaration — aucun JS, aucun sélecteur en
+   `:not(:hover)`, et ça marche quel que soit le nombre d'éléments.
+
+   Le geste ne s'arme qu'à la souris : au doigt, il n'y a pas de survol, et
+   `:hover` sur tactile reste collé après le tap. */
+@media (hover: hover) and (pointer: fine) {
+  .board,
+  .wall__grid,
+  .cases__stack,
+  .credits__films,
+  .credits__clients { --sib: 1; }
+
+  .board:hover,
+  .wall__grid:hover,
+  .cases__stack:hover,
+  .credits__films:hover,
+  .credits__clients:hover { --sib: 0.26; }
+
+  .dep,
+  .wall__i,
+  .cases__stack > .case,
+  .credits__films li,
+  .credits__clients li {
+    opacity: var(--sib, 1);
+    transition: opacity 0.2s var(--e-response);
+  }
+
+  .dep:hover,
+  .wall__i:hover,
+  .cases__stack > .case:hover,
+  .credits__films li:hover,
+  .credits__clients li:hover { opacity: 1; }
+
+}
+
+/* ═══════════ LE TITRE ÉCLAIRÉ ═══════════
+   Deux calques posés sur le MÊME texte, en `background-clip: text`. Le texte
+   de base reste seul dans le flux : les calques sont des pseudo-éléments qui
+   le recopient depuis `data-lit-text`, donc ils ne peuvent pas diverger.
+
+   `--lit-x` est la position du balayage, `--lit-k` l'intensité du halo, et
+   l'opacité du balayage est pilotée À L'INVERSE du halo : l'ambiance s'efface
+   dès que la main prend le relais. */
+[data-lit] {
+  position: relative;
+  --lit-x: 160%;
+  --lit-k: 0;
+  --lit-hx: 50%;
+  --lit-hy: 50%;
+}
+[data-lit]::before,
+[data-lit]::after {
+  content: attr(data-lit-text);
+  position: absolute; inset: 0;
+  pointer-events: none;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  /* Les calques héritent de la métrique exacte de leur hôte — sinon un seul
+     réglage de fonte variable suffit à les décaler d'un demi-pixel. */
+  font: inherit; letter-spacing: inherit; text-transform: inherit;
+  font-variation-settings: inherit;
+}
+
+/* Le balayage. L'asymétrie du dégradé (montée en 8 points, descente en 22)
+   est ce qui lui donne un SENS : symétrique, il paraîtrait immobile. */
+[data-lit]::before {
+  background-image: linear-gradient(90deg,
+    #ecc77900 0%,   #ecc77900 30%,
+    #ecc7792e 42%,  #ecc779ea 50%,
+    #ecc7794d 58%,  #ecc77900 72%, #ecc77900 100%);
+  background-size: 220% 100%;
+  background-position: var(--lit-x) 0%;
+  background-repeat: no-repeat;
+  filter: url(#lit-bloom);
+  mix-blend-mode: screen;
+  opacity: calc(0.18 + (1 - var(--lit-k)) * 0.72);
+}
+
+/* Le halo du curseur : 130 px de rayon, trois arrêts, et une intensité qui
+   monte en approchant — il ne s'allume pas au survol, il s'allume avant. */
+[data-lit]::after {
+  background-image: radial-gradient(circle clamp(160px, 16vw, 300px) at
+    calc(var(--lit-hx) * 1px) calc(var(--lit-hy) * 1px),
+    rgba(255, 233, 184, calc(var(--lit-k) * 1)) 0%,
+    rgba(255, 233, 184, calc(var(--lit-k) * 0.85)) 18%,
+    rgba(255, 233, 184, calc(var(--lit-k) * 0.32)) 45%,
+    rgba(255, 233, 184, 0) 100%);
+  mix-blend-mode: screen;
+}
+
+.lit-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* Le filtre SVG coûte un calque de compositing par ligne : on ne le sert
+   qu'aux écrans qui peuvent le payer. */
+@media (max-width: 767px) {
+  [data-lit]::before { filter: none; }
+}
+
+/* ── LES AFFICHES DANS LE GÉNÉRIQUE ──
+   Une vignette de 86 px devant chaque titre : c'est assez pour reconnaître le
+   film, pas assez pour casser le rythme d'un générique. Au survol elle se
+   décolle et s'éclaire — et l'affiche entière s'ouvre au clic. */
+/* Une filmographie a une COLONNE D'AFFICHES et une colonne de titres. Centrer
+   chaque ligne indépendamment donnait un bord gauche en dents de scie et des
+   vignettes qui se chevauchaient : la grille règle les deux. */
+.credits__films {
+  /* Une seule colonne, dimensionnée sur la ligne la plus large, et centrée en
+     BLOC. `justify-items: start` aligne toutes les lignes sur son bord gauche —
+     sans lui, chaque ligne se centre pour elle-même et le bord part en dents
+     de scie. */
+  display: grid; grid-template-columns: max-content;
+  justify-content: center; justify-items: start;
+  gap: clamp(0.4rem, 1.2vh, 0.9rem);
+  text-align: left;
+}
+.credits__films li {
+  display: grid; grid-template-columns: 220px minmax(0, auto);
+  align-items: center; gap: 1.1rem;
+  min-height: 152px;
+  width: 100%;
+}
+/* Le film sans affiche garde sa place dans la colonne : son titre est un
+   `<span>` comme les autres, posé en colonne 2, et la case d'affiche reste
+   vide. Le manque se lit comme un manque, pas comme un décalage.
+   (Viser le `<li>` lui-même créait une deuxième colonne dans la LISTE.) */
+.credits__films li > span { grid-column: 2; }
+.credits__art {
+  grid-column: 1; width: 220px; height: auto;
+  border-radius: 2px;
+  opacity: 0.62; filter: saturate(0.75);
+  box-shadow: 0 0 0 1px #eae0d024;
+  transition: opacity var(--d-settle) var(--e-response),
+              filter var(--d-settle) var(--e-response),
+              transform var(--d-lift) var(--e-lift);
+}
+.credits__films li:hover .credits__art {
+  opacity: 1; filter: none; transform: scale(1.06) translateY(-2px);
+  box-shadow: 0 0 0 1px var(--gold), 0 14px 30px -12px #000000a6;
+}
+@media (max-width: 40rem) {
+  .credits__art { width: 132px; }
+  .credits__films li { grid-template-columns: 132px minmax(0, auto); gap: 0.85rem; min-height: 96px; }
+}

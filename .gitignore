@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+
+# Matière première : 53 Mo de rushes et d'images d'origine. Ce qui est SERVI
+# vit dans public/ ; git n'est pas un coffre à binaires.
+source-assets/
+
+# Captures de travail, pas des livrables.
+screens/
+shots/
+ref/
+.playwright-mcp/

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TEDDY STUDIO — Style tile / Le Feu Vert</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* le style tile est servi depuis /design/ : chemins de fonte relatifs */
+@font-face{font-family:"Bricolage Grotesque";src:url("fonts/bricolage-grotesque-var.woff2") format("woff2-variations");
+ font-weight:200 800;font-stretch:75% 100%;font-display:block}
+@font-face{font-family:"Martian Mono";src:url("fonts/martian-mono-var.woff2") format("woff2-variations");
+ font-weight:100 800;font-stretch:75% 112.5%;font-display:block}
+</style>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+     font-family:var(--font-display);font-size:var(--t-0);line-height:1.55;
+     font-optical-sizing:auto;font-variation-settings:"opsz" 18,"wght" 400,"wdth" 100;
+     -webkit-font-smoothing:antialiased}
+::selection{background:var(--mark);color:var(--on-solid)}
+
+/* ---------- grille : le rail d'état ---------- */
+.world{padding-block:var(--sp-3xl);border-top:var(--hair) solid var(--rule)}
+.wrap{max-width:var(--page-max);margin-inline:auto;padding-inline:var(--gutter);
+      display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:0 var(--col-gap)}
+.rail{position:relative}
+.rail::before{content:"";position:absolute;left:0;top:.44em;width:100%;height:var(--hair);background:var(--rule)}
+.rail[data-cleared]::before{background:var(--mark);height:var(--hair-2)}
+.field{min-width:0}
+
+/* ---------- typographie ---------- */
+.eyebrow{font-family:var(--font-data);font-size:var(--t--2);letter-spacing:.16em;
+         text-transform:uppercase;font-variation-settings:"wght" 500,"wdth" 100;
+         color:var(--ink-2);margin:0 0 var(--sp-m)}
+.hero{font-size:var(--t-hero);line-height:.84;margin:0;text-transform:uppercase;
+      font-variation-settings:"opsz" 96,"wght" 760,"wdth" 84;letter-spacing:-.035em}
+.hero em{font-style:normal;color:var(--mark)}
+.h2{font-size:var(--t-4);line-height:1.02;margin:0 0 var(--sp-s);letter-spacing:-.025em;
+    font-variation-settings:"opsz" 72,"wght" 680,"wdth" 92}
+.h3{font-size:var(--t-2);line-height:1.12;margin:0 0 var(--sp-xs);letter-spacing:-.015em;
+    font-variation-settings:"opsz" 40,"wght" 620,"wdth" 96}
+p{margin:0 0 var(--sp-s);max-width:var(--measure);color:var(--ink-2)}
+p.lead{font-size:var(--t-1);line-height:1.34;color:var(--ink);max-width:34ch;
+       font-variation-settings:"opsz" 32,"wght" 460,"wdth" 98;letter-spacing:-.012em}
+.data{font-family:var(--font-data);font-size:var(--t--1);font-variation-settings:"wght" 450,"wdth" 100;
+      font-variant-numeric:tabular-nums;letter-spacing:.01em}
+
+/* ---------- l'horloge : la seule chose verte dès la 1re seconde ---------- */
+.clock{display:inline-flex;align-items:center;gap:.6em;font-family:var(--font-data);
+       font-size:var(--t--1);font-variation-settings:"wght" 500,"wdth" 112.5;
+       font-variant-numeric:tabular-nums;color:var(--mark-micro)}
+.clock .lamp{width:.5em;height:.5em;border-radius:var(--r-pill);background:var(--mark);
+             box-shadow:var(--lamp-halo,none);animation:pulse 2.4s var(--ease-lamp) infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* ---------- échantillons ---------- */
+.row{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:0 var(--col-gap);
+     padding-block:var(--sp-s);border-bottom:var(--hair) solid var(--rule);align-items:baseline}
+.row .k{font-family:var(--font-data);font-size:var(--t--2);color:var(--ink-2);letter-spacing:.1em;
+        text-transform:uppercase;grid-column:2;margin-bottom:var(--sp-3xs)}
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:2px;margin:var(--sp-s) 0 var(--sp-l)}
+.sw{padding:var(--sp-m) var(--sp-2xs) var(--sp-2xs);font-family:var(--font-data);font-size:10px;
+    line-height:1.5;letter-spacing:.04em}
+/* services : la typo porte tout, zéro icône, zéro carte */
+.svc{list-style:none;margin:0;padding:0;border-top:var(--hair) solid var(--rule)}
+.svc li{display:flex;align-items:baseline;gap:var(--col-gap);padding-block:var(--sp-xs);
+        border-bottom:var(--hair) solid var(--rule);font-size:var(--t-3);letter-spacing:-.02em;
+        font-variation-settings:"opsz" 56,"wght" 600,"wdth" 90;transition:color var(--d-micro) var(--ease-sheet)}
+.svc li:hover{color:var(--mark-text)}
+.svc .ref{font-family:var(--font-data);font-size:var(--t--2);color:var(--ink-2);
+          font-variation-settings:"wght" 400,"wdth" 87.5;letter-spacing:.08em;flex:0 0 auto;min-width:7ch}
+.svc li[data-cleared] .ref{color:var(--mark-micro)}
+
+/* ---------- boutons & états ---------- */
+.btn{font:inherit;font-size:var(--t--1);font-variation-settings:"opsz" 16,"wght" 620,"wdth" 100;
+     letter-spacing:.02em;text-transform:uppercase;border:0;border-radius:var(--r-1);
+     padding:.85em 1.5em;background:var(--mark-solid);color:var(--on-solid);cursor:pointer;
+     transition:background var(--d-micro) var(--ease-sheet),transform var(--d-micro) var(--ease-clear)}
+.btn:hover{background:var(--mark-press)}
+.btn:active{transform:translateY(1px)}
+.btn--ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 var(--hair) var(--rule-strong)}
+.btn--ghost:hover{background:var(--mark-wash);box-shadow:inset 0 0 0 var(--hair-2) var(--mark)}
+:where(a,button,input,summary):focus-visible{outline:var(--hair-2) solid var(--mark);outline-offset:2px;
+     box-shadow:0 0 0 4px var(--paper)}
+.fld{display:block;margin-bottom:var(--sp-m);max-width:32ch}
+.fld label{display:block;font-family:var(--font-data);font-size:var(--t--2);letter-spacing:.1em;
+           text-transform:uppercase;color:var(--ink-2);margin-bottom:var(--sp-3xs)}
+.fld input{width:100%;font:inherit;font-size:var(--t-0);padding:.6em 0;background:transparent;
+           color:var(--ink);border:0;border-bottom:var(--hair-2) solid var(--rule-strong);border-radius:0;
+           transition:border-color var(--d-micro) var(--ease-sheet)}
+.fld input:focus{outline:0;border-bottom-color:var(--mark)}
+.fld[data-state="cleared"] input{border-bottom-color:var(--mark)}
+.fld[data-state="error"] input{border-bottom-color:var(--ink);border-bottom-width:3px}
+.fld .msg{font-family:var(--font-data);font-size:var(--t--2);letter-spacing:.08em;
+          text-transform:uppercase;margin-top:var(--sp-3xs)}
+.fld[data-state="cleared"] .msg{color:var(--mark-micro)}
+.fld[data-state="error"] .msg{color:var(--ink);font-variation-settings:"wght" 600}
+
+/* ---------- images : deux mondes, deux traitements ---------- */
+.plate{background:var(--paper);padding:var(--sp-xs);box-shadow:var(--shadow-plate);position:relative}
+.shot{position:relative;overflow:hidden;aspect-ratio:3/2;isolation:isolate}
+.shot img{width:100%;height:100%;object-fit:cover;display:block;
+          filter:saturate(.86) contrast(1.06) brightness(1.02)}
+.shot::before,.shot::after{content:"";position:absolute;inset:0;pointer-events:none}
+.shot::before{background:var(--img-lift);mix-blend-mode:screen;opacity:.10}
+.shot::after{background:var(--img-roll);mix-blend-mode:multiply;opacity:.08}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:var(--grain);mix-blend-mode:overlay;
+       background-image:var(--noise);background-size:160px 160px}
+[data-world="night"] .shot img{filter:saturate(.94) contrast(1.14) brightness(.96)}
+[data-world="night"] .shot::before{opacity:.16}
+[data-world="night"] .shot::after{opacity:.05}
+[data-world="night"] .plate{padding:0;box-shadow:none}
+.cap{font-family:var(--font-data);font-size:var(--t--2);letter-spacing:.1em;text-transform:uppercase;
+     color:var(--ink-2);margin-top:var(--sp-2xs);display:flex;justify-content:space-between;gap:1em}
+.cap b{font-variation-settings:"wght" 500;color:var(--mark-micro);font-weight:400}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--col-gap)}
+
+/* ---------- logotype ---------- */
+.logo{display:block;width:min(420px,100%);height:auto;color:var(--ink)}
+.logo .ts-bar{fill:var(--mark)}
+.sig{width:112px;height:auto;color:var(--ink-2);opacity:.85}
+</style>
+</head>
+<body data-world="day">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+  <feColorMatrix type="saturate" values="0"/></filter>
+</svg>
+
+<!-- ======================= MONDE 1 — LE JOUR ======================= -->
+<section class="world" data-world="day">
+ <div class="wrap">
+  <div class="rail" data-cleared></div>
+  <div class="field">
+    <p class="eyebrow">Style tile · monde 1 — le bureau de production, le jour</p>
+
+    <!-- LOGOTYPE -->
+    <svg class="logo" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 427.7 100.0" fill="none" role="img" aria-label="Teddy Studio — Ethiopian Film Office"><title>Teddy Studio — Ethiopian Film Office</title>
+  <mask id="ts-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="427.7" height="100.0"><rect x="0" y="0" width="427.7" height="100.0" fill="#fff"/><path d="M91.17 0.00L106.82 0.00L106.82 15.25Z" fill="#000"/><path d="M91.17 66.00L106.82 66.00L106.82 50.75Z" fill="#000"/><path d="M131.47 0.00L147.12 0.00L147.12 15.25Z" fill="#000"/><path d="M131.47 66.00L147.12 66.00L147.12 50.75Z" fill="#000"/><path d="M352.87 0.00L368.52 0.00L368.52 15.25Z" fill="#000"/><path d="M352.87 66.00L368.52 66.00L368.52 50.75Z" fill="#000"/></mask><path mask="url(#ts-cut)" fill="currentColor" d="M11.36 66.00V0.00H26.80V66.00ZM0.54 12.55V0.00H37.53V12.55ZM36.68 66.00V0.00H52.21V66.00ZM47.72 66.00V53.36H66.60V66.00ZM47.72 38.22V26.70H63.92V38.22ZM47.72 12.64V0.00H66.60V12.64ZM73.01 66.00V53.65H83.48Q85.75 53.65 87.41 52.05Q89.08 50.45 90.02 45.97Q90.97 41.48 90.97 33.01Q90.97 26.45 90.44 22.41Q89.92 18.37 88.88 16.17Q87.84 13.96 86.37 13.16Q84.91 12.35 83.13 12.35H73.01V0.00H82.52Q90.00 0.00 95.34 3.85Q100.67 7.70 103.55 15.10Q106.42 22.49 106.42 33.07Q106.42 41.74 104.87 47.63Q103.31 53.52 100.74 57.18Q98.16 60.84 95.18 62.76Q92.19 64.67 89.28 65.34Q86.36 66.00 84.08 66.00ZM66.28 66.00V0.00H81.71V66.00ZM113.31 66.00V53.65H123.78Q126.05 53.65 127.71 52.05Q129.38 50.45 130.32 45.97Q131.27 41.48 131.27 33.01Q131.27 26.45 130.74 22.41Q130.22 18.37 129.18 16.17Q128.14 13.96 126.67 13.16Q125.21 12.35 123.43 12.35H113.31V0.00H122.82Q130.30 0.00 135.64 3.85Q140.97 7.70 143.85 15.10Q146.72 22.49 146.72 33.07Q146.72 41.74 145.17 47.63Q143.61 53.52 141.04 57.18Q138.46 60.84 135.48 62.76Q132.49 64.67 129.58 65.34Q126.66 66.00 124.38 66.00ZM106.58 66.00V0.00H122.01V66.00ZM159.30 66.00V43.90L145.00 0.00H162.86L167.69 30.55H168.08L173.10 0.00H189.70L175.50 43.90V66.00ZM234.06 67.21Q228.31 67.21 224.17 65.51Q220.02 63.82 217.58 60.58Q215.13 57.34 214.54 52.80Q213.94 48.26 215.39 42.58L229.62 40.62Q229.06 44.46 229.22 47.98Q229.39 51.50 230.56 53.71Q231.74 55.93 234.29 55.93Q235.56 55.93 236.47 55.32Q237.38 54.72 237.86 53.51Q238.35 52.30 238.35 50.41Q238.35 46.76 236.79 44.15Q235.23 41.55 232.80 39.58Q230.37 37.62 227.81 35.94Q225.52 34.36 223.15 32.53Q220.77 30.69 218.80 28.35Q216.84 26.00 215.65 22.98Q214.46 19.96 214.46 16.01Q214.46 10.86 216.70 6.98Q218.94 3.11 223.25 0.95Q227.56 -1.21 233.62 -1.21Q240.46 -1.21 244.88 1.49Q249.30 4.19 251.21 9.24Q253.12 14.29 252.32 21.31L238.38 23.13Q238.68 20.71 238.60 18.46Q238.52 16.20 237.99 14.41Q237.45 12.62 236.35 11.58Q235.26 10.54 233.60 10.54Q232.42 10.54 231.52 11.14Q230.62 11.75 230.15 12.82Q229.68 13.88 229.68 15.39Q229.68 17.88 230.89 19.71Q232.11 21.54 234.10 22.97Q236.09 24.41 238.27 25.80Q241.23 27.67 243.99 29.79Q246.76 31.91 248.97 34.60Q251.18 37.28 252.47 40.79Q253.76 44.30 253.76 48.94Q253.76 54.20 251.75 58.36Q249.74 62.52 245.42 64.86Q241.10 67.21 234.06 67.21ZM262.66 66.00V0.00H278.10V66.00ZM251.84 12.55V0.00H288.83V12.55ZM307.60 67.21Q303.72 67.21 300.57 66.24Q297.41 65.28 295.03 63.41Q292.64 61.54 291.07 58.71Q289.49 55.89 288.68 52.17Q287.87 48.45 287.87 43.74V0.00H303.30V42.37Q303.30 46.41 303.70 48.93Q304.10 51.46 305.06 52.56Q306.03 53.67 307.60 53.67Q309.18 53.67 310.14 52.56Q311.11 51.46 311.55 48.94Q312.00 46.42 312.00 42.37V0.00H327.43V43.74Q327.43 55.98 322.11 61.59Q316.79 67.21 307.60 67.21ZM334.71 66.00V53.65H345.18Q347.45 53.65 349.11 52.05Q350.78 50.45 351.72 45.97Q352.67 41.48 352.67 33.01Q352.67 26.45 352.14 22.41Q351.62 18.37 350.58 16.17Q349.54 13.96 348.07 13.16Q346.61 12.35 344.83 12.35H334.71V0.00H344.22Q351.70 0.00 357.04 3.85Q362.37 7.70 365.25 15.10Q368.12 22.49 368.12 33.07Q368.12 41.74 366.57 47.63Q365.01 53.52 362.44 57.18Q359.86 60.84 356.88 62.76Q353.89 64.67 350.98 65.34Q348.06 66.00 345.78 66.00ZM327.98 66.00V0.00H343.41V66.00ZM368.28 66.00V0.00H384.10V66.00ZM404.75 67.21Q399.19 67.21 395.27 65.10Q391.35 63.00 388.94 58.75Q386.52 54.50 385.43 48.14Q384.34 41.79 384.34 33.30Q384.34 21.40 386.37 13.80Q388.40 6.20 392.99 2.50Q397.59 -1.21 405.06 -1.21Q410.72 -1.21 414.68 0.85Q418.65 2.90 421.16 7.06Q423.66 11.21 424.85 17.66Q426.04 24.11 426.04 32.80Q426.04 41.50 424.85 47.95Q423.66 54.40 421.09 58.66Q418.53 62.91 414.51 65.06Q410.50 67.21 404.75 67.21ZM405.06 55.35Q406.97 55.35 408.14 53.19Q409.32 51.04 409.85 46.25Q410.39 41.46 410.39 33.60Q410.39 25.34 409.85 20.30Q409.31 15.26 408.13 13.00Q406.95 10.74 405.04 10.74Q403.23 10.74 402.10 13.05Q400.98 15.35 400.48 20.38Q399.99 25.42 399.99 33.67Q399.99 39.54 400.27 43.69Q400.54 47.83 401.09 50.39Q401.64 52.94 402.66 54.14Q403.67 55.35 405.06 55.35Z"/><rect class="ts-bar" x="0" y="77.50" width="427.7" height="5.00" fill="var(--mark,#21A215)"/><path fill="currentColor" d="M1.55 98.00V88.80H7.08V90.10H2.96V92.76H6.51V93.98H2.96V96.70H6.97V98.00ZM14.13 98.00V90.13H11.43V88.80H18.24V90.13H15.54V98.00ZM22.65 98.00V88.80H24.06V92.71H27.23V88.80H28.64V98.00H27.23V94.04H24.06V98.00ZM33.46 98.00V96.67H35.75V90.13H33.46V88.80H39.45V90.13H37.16V96.67H39.45V98.00ZM47.27 98.19Q45.57 98.19 44.72 96.99Q43.87 95.79 43.87 93.40Q43.87 91.01 44.72 89.81Q45.57 88.61 47.27 88.61Q48.96 88.61 49.81 89.81Q50.66 91.01 50.66 93.40Q50.66 95.79 49.81 96.99Q48.96 98.19 47.27 98.19ZM47.27 96.87Q48.29 96.87 48.77 96.03Q49.25 95.19 49.25 93.40Q49.25 91.61 48.77 90.77Q48.29 89.93 47.27 89.93Q46.24 89.93 45.76 90.77Q45.28 91.61 45.28 93.40Q45.28 95.19 45.76 96.03Q46.24 96.87 47.27 96.87ZM55.47 98.00V88.80H58.68Q59.56 88.80 60.22 89.14Q60.88 89.47 61.24 90.08Q61.60 90.70 61.60 91.53Q61.60 92.36 61.24 92.97Q60.88 93.57 60.22 93.91Q59.56 94.24 58.68 94.24H56.88V98.00ZM56.88 92.97H58.72Q59.40 92.97 59.80 92.59Q60.19 92.21 60.19 91.55Q60.19 90.89 59.80 90.51Q59.40 90.13 58.72 90.13H56.88ZM65.89 98.00V96.67H68.18V90.13H65.89V88.80H71.88V90.13H69.59V96.67H71.88V98.00ZM76.23 98.00 78.54 88.80H80.85L83.16 98.00H81.70L79.72 89.85H79.59L77.60 98.00ZM77.67 94.95V93.62H81.71V94.95ZM87.43 98.00V88.80H89.79L92.22 97.06H92.36L92.30 94.28V88.80H93.58V98.00H91.23L88.79 89.74H88.65L88.71 92.52V98.00ZM109.87 98.00V88.80H115.40V90.13H111.28V92.91H114.83V94.14H111.28V98.00ZM119.94 98.00V96.67H122.23V90.13H119.94V88.80H125.93V90.13H123.64V96.67H125.93V98.00ZM131.72 98.00V88.80H133.13V96.67H137.02V98.00ZM141.34 98.00V88.80H143.50L144.52 94.03H144.67L145.68 88.80H147.77V98.00H146.50V92.92L146.56 89.84H146.42L145.44 94.92H143.68L142.69 89.84H142.55L142.61 92.92V98.00ZM166.18 98.19Q164.48 98.19 163.63 96.99Q162.78 95.79 162.78 93.40Q162.78 91.01 163.63 89.81Q164.48 88.61 166.18 88.61Q167.87 88.61 168.72 89.81Q169.57 91.01 169.57 93.40Q169.57 95.79 168.72 96.99Q167.87 98.19 166.18 98.19ZM166.18 96.87Q167.20 96.87 167.68 96.03Q168.16 95.19 168.16 93.40Q168.16 91.61 167.68 90.77Q167.20 89.93 166.18 89.93Q165.15 89.93 164.67 90.77Q164.19 91.61 164.19 93.40Q164.19 95.19 164.67 96.03Q165.15 96.87 166.18 96.87ZM174.73 98.00V88.80H180.26V90.13H176.14V92.91H179.69V94.14H176.14V98.00ZM185.54 98.00V88.80H191.07V90.13H186.95V92.91H190.50V94.14H186.95V98.00ZM195.61 98.00V96.67H197.90V90.13H195.61V88.80H201.60V90.13H199.31V96.67H201.60V98.00ZM209.60 98.19Q207.95 98.19 207.12 96.99Q206.28 95.80 206.28 93.40Q206.28 91.00 207.14 89.81Q208.00 88.61 209.71 88.61Q210.64 88.61 211.32 89.01Q212.00 89.40 212.38 90.16Q212.77 90.92 212.84 92.00H211.55Q211.38 90.98 210.92 90.46Q210.46 89.93 209.71 89.93Q208.68 89.93 208.18 90.77Q207.69 91.61 207.69 93.40Q207.69 95.19 208.16 96.03Q208.62 96.87 209.60 96.87Q210.32 96.87 210.76 96.38Q211.19 95.89 211.34 94.95H212.64Q212.57 95.98 212.19 96.71Q211.82 97.43 211.16 97.81Q210.51 98.19 209.60 98.19ZM217.75 98.00V88.80H223.28V90.10H219.16V92.76H222.71V93.98H219.16V96.70H223.17V98.00Z"/></svg>
+
+    <p class="eyebrow" style="margin-top:var(--sp-l)">Hero — composition d'affiche en escalier</p>
+    <h1 class="hero">Gateway<br>to<br>Africa</h1>
+    <p class="lead" style="margin-top:var(--sp-l)">Permits, locations, crew and gear across Ethiopia — handled before you land.</p>
+    <p class="clock" style="margin-top:var(--sp-m)"><span class="lamp"></span>ADDIS ABABA 21:47:03 · MON–SUN, 24/7</p>
+
+    <!-- PALETTE -->
+    <p class="eyebrow" style="margin-top:var(--sp-2xl)">Rampe feu vert — OKLCH H 142 (axe du primaire vert sRGB)</p>
+    <div class="swatches">
+      <div class="sw" style="background:var(--g-100);color:#10160F">100<br>#E4F7DE</div>
+      <div class="sw" style="background:var(--g-200);color:#10160F">200<br>#C4E9B9</div>
+      <div class="sw" style="background:var(--g-300);color:#10160F">300<br>#87E472</div>
+      <div class="sw" style="background:var(--g-400);color:#070F06">400<br>#4BD233</div>
+      <div class="sw" style="background:var(--g-500);color:#FFFFFF">500<br>#2EB822</div>
+      <div class="sw" style="background:var(--g-600);color:#FFFFFF">600<br>#21A215</div>
+      <div class="sw" style="background:var(--g-700);color:#FFFFFF">700<br>#17880C</div>
+      <div class="sw" style="background:var(--g-800);color:#FFFFFF">800<br>#136E0A</div>
+      <div class="sw" style="background:var(--g-900);color:#FFFFFF">900<br>#0A4B05</div>
+    </div>
+
+    <!-- SERVICES : la typo porte, zéro icône, zéro carte -->
+    <p class="eyebrow">Services — la typo porte, aucune icône, aucune carte</p>
+    <ul class="svc">
+      <li data-cleared><span class="ref">EFO·PRD</span> Producing</li>
+      <li data-cleared><span class="ref">EFO·PRM</span> Shooting&nbsp;Permit</li>
+      <li><span class="ref">EFO·LOC</span> Location&nbsp;Permit</li>
+      <li><span class="ref">EFO·CST</span> Casting</li>
+    </ul>
+
+    <!-- IMAGES : planches de dossier, encadrées avec marge -->
+    <p class="eyebrow" style="margin-top:var(--sp-2xl)">Images — planches de dossier, encadrées avec marge</p>
+    <div class="two">
+      <figure class="plate" style="margin:0">
+        <div class="shot"><img src="img/simien-mountains.jpg" alt=""><span class="grain" style="--noise:url(#noise)"></span></div>
+        <figcaption class="cap"><span>Simien Mountains</span><b>CLEARED</b></figcaption>
+      </figure>
+      <figure class="plate" style="margin:0">
+        <div class="shot"><img src="img/lalibela.jpg" alt=""><span class="grain" style="--noise:url(#noise)"></span></div>
+        <figcaption class="cap"><span>Lalibela</span><b>CLEARED</b></figcaption>
+      </figure>
+    </div>
+
+    <!-- ÉTATS -->
+    <p class="eyebrow" style="margin-top:var(--sp-2xl)">États</p>
+    <p style="display:flex;gap:var(--sp-xs);flex-wrap:wrap">
+      <button class="btn">Request a quote</button>
+      <button class="btn btn--ghost">Download the location book</button>
+    </p>
+    <div class="fld" data-state="cleared">
+      <label for="a">Email address</label><input id="a" value="line@production.com">
+      <p class="msg">Cleared</p>
+    </div>
+    <div class="fld" data-state="error">
+      <label for="b">Phone number</label><input id="b" value="+251">
+      <p class="msg">Not cleared — add the country code</p>
+    </div>
+  </div>
+ </div>
+</section>
+
+<!-- ======================= MONDE 2 — LA NUIT ======================= -->
+<section class="world" data-world="night" style="background:var(--paper);color:var(--ink)">
+ <div class="wrap">
+  <div class="rail" data-cleared></div>
+  <div class="field">
+    <p class="eyebrow">Style tile · monde 2 — le plateau, la nuit</p>
+    <h2 class="h2">The image is<br>the only light.</h2>
+    <p class="lead">Full bleed, edge to edge. The green is a lamp: rarer, brighter, and it throws light.</p>
+    <p class="clock" style="margin-top:var(--sp-m)"><span class="lamp"></span>ADDIS ABABA 21:47:03 · MON–SUN, 24/7</p>
+    <div class="two" style="margin-top:var(--sp-l)">
+      <figure class="plate" style="margin:0">
+        <div class="shot"><img src="img/erta-ale.jpg" alt=""><span class="grain" style="--noise:url(#noise)"></span></div>
+        <figcaption class="cap"><span>Erta Ale Lava Lake</span><b>CLEARED</b></figcaption>
+      </figure>
+      <figure class="plate" style="margin:0">
+        <div class="shot"><img src="img/winding-road.jpg" alt=""><span class="grain" style="--noise:url(#noise)"></span></div>
+        <figcaption class="cap"><span>Winding Road</span><b>CLEARED</b></figcaption>
+      </figure>
+    </div>
+    <ul class="svc" style="margin-top:var(--sp-xl)">
+      <li data-cleared><span class="ref">EFO·TRP</span> Transportation</li>
+      <li><span class="ref">EFO·ACC</span> Accommodation</li>
+    </ul>
+    <p style="display:flex;gap:var(--sp-xs);flex-wrap:wrap;margin-top:var(--sp-l)">
+      <button class="btn">Call now: +251 911 204 388</button>
+      <button class="btn btn--ghost">Our works</button>
+    </p>
+    <!-- signature footer : le mortier Sebastopol AU TRAIT -->
+    <svg class="sig" style="margin-top:var(--sp-xl)" viewBox="0 0 160 62" fill="none" stroke="currentColor"
+         stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-label="Sebastopol">
+      <circle cx="46" cy="44" r="15"/><circle cx="46" cy="44" r="3.2"/>
+      <circle cx="116" cy="44" r="15"/><circle cx="116" cy="44" r="3.2"/>
+      <path d="M31 44h100M46 29l0 30M116 29l0 30M39 34l14 20M53 34l-14 20M109 34l14 20M123 34l-14 20"/>
+      <path d="M40 30 L34 14 L96 6 L100 22 Z"/><path d="M100 22 L152 17 L152 9 L96 6"/>
+      <path d="M31 46 L18 56 L26 58 L36 50"/>
+    </svg>
+    <p class="data" style="color:var(--ink-2);margin-top:var(--sp-2xs)">Sebastopol Entertainment</p>
+  </div>
+ </div>
+</section>
+</body>
+</html>

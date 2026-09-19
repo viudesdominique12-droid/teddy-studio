@@ -1,0 +1,335 @@
+[
+  {
+    "file": "03_8c23a9.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-1.png",
+    "alt": "Service Image 1",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 13883
+  },
+  {
+    "file": "04_e35992.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-2.png",
+    "alt": "Service Image 2",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 18717
+  },
+  {
+    "file": "05_9941c9.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-3.png",
+    "alt": "Service Image 3",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 17707
+  },
+  {
+    "file": "06_62ae89.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-4.png",
+    "alt": "Service Image 4",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 14797
+  },
+  {
+    "file": "07_03084b.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-5.png",
+    "alt": "Service Image 5",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 15154
+  },
+  {
+    "file": "08_48ef6e.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-6.png",
+    "alt": "Service Image 6",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 10352
+  },
+  {
+    "file": "09_ecc2fe.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-7.png",
+    "alt": "Service Image 7",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 15108
+  },
+  {
+    "file": "10_037973.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/ico/icon-8.png",
+    "alt": "Service Image 8",
+    "extraction_source": "srcset",
+    "width": 284,
+    "height": 284,
+    "size_bytes": 17099
+  },
+  {
+    "file": "11_3dd49d.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/filmoffice.png",
+    "alt": "Ethiopian Film Office",
+    "extraction_source": "srcset",
+    "width": 1536,
+    "height": 1536,
+    "size_bytes": 192324
+  },
+  {
+    "file": "12_c78b02.jpg",
+    "source_url": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxuYXR1cmV8ZW58MHwwfHx8MTcyMTA0MjYwMXww&ixlib=rb-4.0.3&q=80",
+    "alt": "Semen Mountain",
+    "extraction_source": "srcset",
+    "width": 3506,
+    "height": 2329,
+    "size_bytes": 936191
+  },
+  {
+    "file": "13_8e23d6.jpg",
+    "source_url": "https://images.unsplash.com/photo-1572888195250-3037a59d3578?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw0fHxldGhpb3BpYSUyMGxhbGliZWxhfGVufDB8MHx8fDE3MjE2MjY2NDV8MA&ixlib=rb-4.0.3&q=80",
+    "alt": "Wolo",
+    "extraction_source": "srcset",
+    "width": 5596,
+    "height": 3607,
+    "size_bytes": 5901377
+  },
+  {
+    "file": "14_5bf083.jpg",
+    "source_url": "https://images.unsplash.com/flagged/photo-1572644973628-e9be84915d59?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxldGhpb3BpYSUyMGxhbGliZWxhfGVufDB8MHx8fDE3MjE2MjY2NDV8MA&ixlib=rb-4.0.3&q=80",
+    "alt": "Lalibela",
+    "extraction_source": "srcset",
+    "width": 8440,
+    "height": 5626,
+    "size_bytes": 7008359
+  },
+  {
+    "file": "15_b03288.jpg",
+    "source_url": "https://images.unsplash.com/photo-1503220317375-aaad61436b1b?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHx0cmF2ZWx8ZW58MHwwfHx8MTcyMTA0MjY0MXww&ixlib=rb-4.0.3&q=80",
+    "alt": "Wonchi",
+    "extraction_source": "srcset",
+    "width": 2449,
+    "height": 1633,
+    "size_bytes": 318720
+  },
+  {
+    "file": "16_1c9dbb.jpg",
+    "source_url": "https://images.unsplash.com/photo-1608634193723-1865aa4416ce?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxldGhpb3BpYSUyMGdvbmRlcnxlbnwwfDB8fHwxNzIxNjI2NzQ5fDA&ixlib=rb-4.0.3&q=80",
+    "alt": "Fasile Des",
+    "extraction_source": "srcset",
+    "width": 4231,
+    "height": 2819,
+    "size_bytes": 3098147
+  },
+  {
+    "file": "17_7ba722.jpg",
+    "source_url": "https://images.unsplash.com/photo-1532289472920-4a963e3e6df5?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMXx8ZXRoaW9waWElMjBhZGRpcyUyMGFiYWJhfGVufDB8MHx8fDE3MjE2MjY4NTd8MA&ixlib=rb-4.0.3&q=80",
+    "alt": "Afar",
+    "extraction_source": "srcset",
+    "width": 5183,
+    "height": 2599,
+    "size_bytes": 2252175
+  },
+  {
+    "file": "18_6933cb.jpg",
+    "source_url": "https://images.unsplash.com/photo-1516533075015-a3838414c3ca?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwyfHxldGhpb3BpYSUyMGhhd2Fzc2F8ZW58MHwwfHx8MTcyMTYyNjk0N3ww&ixlib=rb-4.0.3&q=80",
+    "alt": "Ertale Lava Lake",
+    "extraction_source": "srcset",
+    "width": 3888,
+    "height": 2592,
+    "size_bytes": 857100
+  },
+  {
+    "file": "19_462f06.jpg",
+    "source_url": "https://images.unsplash.com/photo-1643956885597-a9cf03bd75c7?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxNXx8ZmlsbSUyMGxvY2F0aW9uc3xlbnwwfDB8fHwxNzIxNjI3MTI4fDA&ixlib=rb-4.0.3&q=80",
+    "alt": "Home",
+    "extraction_source": "srcset",
+    "width": 5455,
+    "height": 2588,
+    "size_bytes": 2800814
+  },
+  {
+    "file": "20_56aa16.jpg",
+    "source_url": "https://images.unsplash.com/photo-1695134565911-87ea3a4ffde1?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMHx8ZmlsbSUyMGxvY2F0aW9uc3xlbnwwfDB8fHwxNzIxNjI3MTI4fDA&ixlib=rb-4.0.3&q=80",
+    "alt": "Ertale Lava Lake",
+    "extraction_source": "srcset",
+    "width": 4000,
+    "height": 2250,
+    "size_bytes": 2796833
+  },
+  {
+    "file": "21_ace898.jpg",
+    "source_url": "https://images.unsplash.com/photo-1680055531998-6505e997f952?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwzfHxtb3ZpZSUyMGxvY2F0aW9uc3xlbnwwfDB8fHwxNzIxODI2NzkzfDA&ixlib=rb-4.0.3&q=80",
+    "alt": "Home",
+    "extraction_source": "srcset",
+    "width": 4032,
+    "height": 3024,
+    "size_bytes": 1861940
+  },
+  {
+    "file": "22_9da4ea.jpg",
+    "source_url": "https://images.unsplash.com/photo-1645969889656-bda4525c0b1b?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwzfHxhZGRpcyUyMGFiYWJhfGVufDB8MHx8fDE3MjE4MjY4MzR8MA&ixlib=rb-4.0.3&q=80",
+    "alt": "Home",
+    "extraction_source": "srcset",
+    "width": 3226,
+    "height": 2304,
+    "size_bytes": 1506402
+  },
+  {
+    "file": "23_ce744f.jpg",
+    "source_url": "https://images.unsplash.com/photo-1658750761951-ca89765281bc?crop=entropy&cs=tinysrgb&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxhZGRpcyUyMGFiYWJhfGVufDB8MHx8fDE3MjE4MjY4MzR8MA&ixlib=rb-4.0.3&q=80",
+    "alt": "Addis Ababa",
+    "extraction_source": "srcset",
+    "width": 6000,
+    "height": 4000,
+    "size_bytes": 1536202
+  },
+  {
+    "file": "24_6d331c.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/clients/bgi.png",
+    "alt": "BGI Ethiopia",
+    "extraction_source": "srcset",
+    "width": 303,
+    "height": 330,
+    "size_bytes": 13636
+  },
+  {
+    "file": "25_8ad079.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/clients/pepsi.png",
+    "alt": "Pepsi",
+    "extraction_source": "srcset",
+    "width": 880,
+    "height": 900,
+    "size_bytes": 996619
+  },
+  {
+    "file": "26_062917.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/clients/world-bank.png",
+    "alt": "World Bank",
+    "extraction_source": "srcset",
+    "width": 800,
+    "height": 600,
+    "size_bytes": 197210
+  },
+  {
+    "file": "27_1d2607.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/clients/prime-office.png",
+    "alt": "Ethiopian Prime Minister Office",
+    "extraction_source": "srcset",
+    "width": 232,
+    "height": 221,
+    "size_bytes": 59041
+  },
+  {
+    "file": "28_a23997.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/clients/fdre.jfif",
+    "alt": "Ethiopia Defence Force",
+    "extraction_source": "srcset",
+    "width": 225,
+    "height": 225,
+    "size_bytes": 17226
+  },
+  {
+    "file": "29_1bf392.png",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/clients/us-embassy.png",
+    "alt": "Us Embassy Ethiopia",
+    "extraction_source": "srcset",
+    "width": 512,
+    "height": 513,
+    "size_bytes": 128584
+  },
+  {
+    "file": "30_84e38f.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/clients/wosti.jfif",
+    "alt": "Wosti Jnvis",
+    "extraction_source": "srcset",
+    "width": 225,
+    "height": 225,
+    "size_bytes": 15169
+  },
+  {
+    "file": "31_380229.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/resources/camera.jpg",
+    "alt": "Camera",
+    "extraction_source": "srcset",
+    "width": 800,
+    "height": 533,
+    "size_bytes": 46929
+  },
+  {
+    "file": "32_80991b.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/resources/lense.jpg",
+    "alt": "Lenses",
+    "extraction_source": "srcset",
+    "width": 1600,
+    "height": 840,
+    "size_bytes": 116179
+  },
+  {
+    "file": "34_b2742c.webp",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/resources/lighting.webp",
+    "alt": "Lighting Kit",
+    "extraction_source": "srcset",
+    "width": 810,
+    "height": 490,
+    "size_bytes": 49784
+  },
+  {
+    "file": "35_f3a010.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/resources/mic.jpg",
+    "alt": "Microphones",
+    "extraction_source": "srcset",
+    "width": 500,
+    "height": 500,
+    "size_bytes": 58000
+  },
+  {
+    "file": "36_955481.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/resources/green-screen.jpg",
+    "alt": "Green Screen/Chroma Key",
+    "extraction_source": "srcset",
+    "width": 768,
+    "height": 518,
+    "size_bytes": 39123
+  },
+  {
+    "file": "38_988a5e.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/projects/p-1.jpg",
+    "alt": "Sost Maezen 1",
+    "extraction_source": "srcset",
+    "width": 1280,
+    "height": 720,
+    "size_bytes": 125561
+  },
+  {
+    "file": "39_e22f5e.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/projects/p-2.jpg",
+    "alt": "Sost Maezen 2",
+    "extraction_source": "srcset",
+    "width": 640,
+    "height": 480,
+    "size_bytes": 42292
+  },
+  {
+    "file": "40_df8217.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/projects/p-4.jpg",
+    "alt": "Sele Enat Meder",
+    "extraction_source": "srcset",
+    "width": 1280,
+    "height": 720,
+    "size_bytes": 103838
+  },
+  {
+    "file": "41_0ab241.jpg",
+    "source_url": "https://ethiopianfilmoffice.com/_ipx/_/img/projects/p-5.jpg",
+    "alt": "Kezkaza Wolafen",
+    "extraction_source": "srcset",
+    "width": 1280,
+    "height": 720,
+    "size_bytes": 88762
+  }
+]

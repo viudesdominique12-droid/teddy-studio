@@ -1,0 +1,197 @@
+/* ===========================================================================
+   TEDDY STUDIO / ETHIOPIAN FILM OFFICE — TOKENS
+   Concept : « LE FEU VERT ». Le vert n'est pas une couleur, c'est un ÉTAT.
+   Il ne décore jamais. Il ne marque que ce qui est dégagé.
+   ---------------------------------------------------------------------------
+   Teinte de marque : OKLCH H = 142 — l'axe du primaire vert sRGB (#00FF00 =
+   oklch 0.866 0.295 142.5). À teinte 142 le pigment disponible est maximal :
+   +19 % de chroma qu'à H 149.6 (Tailwind green-500) à luminance égale.
+   Écarts de teinte : Tailwind green −7.6° · Spotify −6.9° · emerald −18.4° ·
+   drapeau éthiopien −4.8° · lime +11.2°. Personne n'est ici.
+   =========================================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* ---- RAMPE FEU VERT — fallback sRGB ------------------------------------ */
+  --g-100: #E4F7DE;  /* oklch(0.955 0.038 138) — wash : ligne dégagée         */
+  --g-200: #C4E9B9;  /* oklch(0.895 0.075 139) — surlignage doux             */
+  --g-300: #87E472;  /* oklch(0.835 0.175 140) — NUIT : petit texte, horloge  */
+  --g-400: #4BD233;  /* oklch(0.760 0.225 141) — NUIT : LA LAMPE             */
+  --g-500: #2EB822;  /* oklch(0.685 0.215 142) — charnière / hover           */
+  --g-600: #21A215;  /* oklch(0.620 0.200 142) — JOUR : LA MARQUE            */
+  --g-700: #17880C;  /* oklch(0.545 0.178 142) — JOUR : texte moyen          */
+  --g-800: #136E0A;  /* oklch(0.470 0.152 142) — JOUR : petit texte, aplat   */
+  --g-900: #0A4B05;  /* oklch(0.360 0.116 142) — pressé, signature footer    */
+}
+
+/* ---- Même rampe en OKLCH (navigateurs modernes) : rendu identique -------- */
+@supports (color: oklch(0.6 0.2 142)) {
+  :root {
+    --g-100: oklch(0.955 0.038 138);
+    --g-200: oklch(0.895 0.075 139);
+    --g-300: oklch(0.835 0.175 140);
+    --g-400: oklch(0.760 0.225 141);
+    --g-500: oklch(0.685 0.215 142);
+    --g-600: oklch(0.620 0.200 142);
+    --g-700: oklch(0.545 0.178 142);
+    --g-800: oklch(0.470 0.152 142);
+    --g-900: oklch(0.360 0.116 142);
+  }
+}
+
+/* ---- LE PIGMENT P3 : +15 % de chroma sur écran large gamut ---------------
+   Ce que le sRGB ne SAIT PAS faire. Sur tout Mac / iPhone / iPad depuis 2016,
+   le vert devient physiquement plus saturé — sans changer de couleur.
+   Plafonné à ×1.15 : une intensification, jamais une autre teinte.          */
+@media (color-gamut: p3) {
+  :root {
+    --g-100: oklch(0.955 0.044 138);
+    --g-200: oklch(0.895 0.086 139);
+    --g-300: oklch(0.835 0.201 140);
+    --g-400: oklch(0.760 0.259 141);
+    --g-500: oklch(0.685 0.247 142);
+    --g-600: oklch(0.620 0.230 142);
+    --g-700: oklch(0.545 0.205 142);
+    --g-800: oklch(0.470 0.175 142);
+    --g-900: oklch(0.360 0.133 142);
+  }
+}
+
+/* ===========================================================================
+   MONDE 1 — LE BUREAU DE PRODUCTION, LE JOUR   [data-world="day"]
+   Blanc pur. Images encadrées avec marge (planches de dossier).
+   Le vert est une MARQUE qui valide : il se pose SUR le blanc.
+   =========================================================================== */
+[data-world="day"] {
+  --paper:        #FFFFFF;                  /* blanc PUR, non négociable      */
+  --paper-2:      #F5F7F5;                  /* oklch(0.975 0.004 142)         */
+  --ink:          #10160F;                  /* oklch(0.190 0.016 142)         */
+  --ink-2:        #575D56;                  /* oklch(0.470 0.014 142)         */
+  --rule:         #D6DAD6;                  /* filet décoratif (1.41:1)       */
+  --rule-strong:  #828881;                  /* bordure fonctionnelle (3.63:1) */
+
+  --mark:         var(--g-600);             /* la marque qui valide           */
+  --mark-text:    var(--g-700);             /* vert porteur de texte ≥ 16px   */
+  --mark-micro:   var(--g-800);             /* vert porteur de texte < 16px   */
+  --mark-solid:   var(--g-800);             /* aplat portant du blanc         */
+  --mark-wash:    var(--g-100);             /* fond de ligne dégagée          */
+  --mark-press:   var(--g-900);             /* état pressé                    */
+  --on-solid:     #FFFFFF;
+
+  --img-lift:     #1C2A18;                  /* lift des noirs, H 142, C 0.03  */
+  --img-roll:     #FFF6E8;                  /* roll-off des hautes lumières   */
+  --grain:        0.045;
+  --shadow-plate: 0 1px 0 #D6DAD6, 0 0 0 1px #EDEFED;
+}
+
+/* ===========================================================================
+   MONDE 2 — LE PLATEAU, LA NUIT   [data-world="night"]
+   Images plein cadre bord à bord : l'image EST la source de lumière.
+   Le vert est une LAMPE : plus rare, plus lumineuse, elle éclaire autour.
+   =========================================================================== */
+[data-world="night"] {
+  --paper:        #070F06;                  /* oklch(0.155 0.022 142)         */
+  --paper-2:      #111A10;                  /* oklch(0.205 0.024 142)         */
+  --ink:          #FFFFFF;                  /* blanc PUR, non négociable      */
+  --ink-2:        #C9D0C8;                  /* oklch(0.850 0.014 142)         */
+  --rule:         #293029;                  /* filet décoratif                */
+  --rule-strong:  #636C62;                  /* bordure fonctionnelle (3.57:1) */
+
+  --mark:         var(--g-400);             /* la lampe                       */
+  --mark-text:    var(--g-400);
+  --mark-micro:   var(--g-300);             /* petit texte / horloge          */
+  --mark-solid:   var(--g-400);             /* aplat portant l'encre de nuit  */
+  --mark-wash:    #0D1A0B;                  /* oklch(0.205 0.040 142)         */
+  --mark-press:   var(--g-500);
+  --on-solid:     #070F06;
+
+  --img-lift:     #0A140A;
+  --img-roll:     #FFEFD6;
+  --grain:        0.055;
+  --shadow-plate: none;
+  /* la lampe éclaire : halo admis UNIQUEMENT autour d'un élément vert actif */
+  --lamp-halo:    0 0 0 1px color-mix(in oklab, var(--g-400) 55%, transparent),
+                  0 0 24px -6px color-mix(in oklab, var(--g-400) 60%, transparent);
+}
+
+/* ===========================================================================
+   TYPOGRAPHIE
+   Display : Bricolage Grotesque  — 3 axes : opsz 12→96, wght 200→800, wdth 75→100
+   Donnée  : Martian Mono         — 2 axes : wght 100→800, wdth 75→112.5
+   Sous-ensemble latin web, auto-hébergé. 91.3 Ko + 24.7 Ko = 116 Ko, 2 fichiers.
+   =========================================================================== */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/fonts/bricolage-grotesque-var.woff2") format("woff2-variations");
+  font-weight: 200 800;  font-stretch: 75% 100%;  font-style: normal;
+  font-display: swap;
+  size-adjust: 100%;
+}
+@font-face {
+  font-family: "Martian Mono";
+  src: url("/fonts/martian-mono-var.woff2") format("woff2-variations");
+  font-weight: 100 800;  font-stretch: 75% 112.5%; font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-data:    "Martian Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---- ÉCHELLE FLUIDE — interpolée 390px → 1440px (méthode Utopia) ------
+     Mobile  base 17px / ratio 1.200      Desktop base 19px / ratio 1.280
+     Rapport hero ÷ corps : 4.0:1 en mobile, 7.8:1 en desktop.              */
+  --t--2:     clamp(0.7500rem, 0.7268rem + 0.095vw, 0.8125rem);  /* 12 → 13   */
+  --t--1:     clamp(0.8750rem, 0.8518rem + 0.095vw, 0.9375rem);  /* 14 → 15   */
+  --t-0:      clamp(1.0625rem, 1.0161rem + 0.190vw, 1.1875rem);  /* 17 → 19   */
+  --t-1:      clamp(1.2500rem, 1.1571rem + 0.381vw, 1.5000rem);  /* 20 → 24   */
+  --t-2:      clamp(1.5000rem, 1.3375rem + 0.667vw, 1.9375rem);  /* 24 → 31   */
+  --t-3:      clamp(1.8125rem, 1.5571rem + 1.048vw, 2.5000rem);  /* 29 → 40   */
+  --t-4:      clamp(2.1250rem, 1.7071rem + 1.714vw, 3.2500rem);  /* 34 → 52   */
+  --t-5:      clamp(2.5625rem, 1.9357rem + 2.571vw, 4.2500rem);  /* 41 → 68   */
+  --t-hero-2: clamp(2.1250rem, 1.3821rem + 3.048vw, 4.1250rem);  /* 34 → 66   */
+  --t-hero:   clamp(4.2500rem, 2.3929rem + 7.619vw, 9.2500rem);  /* 68 → 148  */
+
+  /* ---- ESPACEMENT FLUIDE ------------------------------------------------ */
+  --sp-3xs: clamp(0.2500rem, 0.2268rem + 0.095vw, 0.3125rem);   /*   4 →   5 */
+  --sp-2xs: clamp(0.5000rem, 0.4768rem + 0.095vw, 0.5625rem);   /*   8 →   9 */
+  --sp-xs:  clamp(0.7500rem, 0.7036rem + 0.190vw, 0.8750rem);   /*  12 →  14 */
+  --sp-s:   clamp(1.0000rem, 0.9304rem + 0.286vw, 1.1875rem);   /*  16 →  19 */
+  --sp-m:   clamp(1.5000rem, 1.4071rem + 0.381vw, 1.7500rem);   /*  24 →  28 */
+  --sp-l:   clamp(2.0000rem, 1.8143rem + 0.762vw, 2.5000rem);   /*  32 →  40 */
+  --sp-xl:  clamp(3.0000rem, 2.7214rem + 1.143vw, 3.7500rem);   /*  48 →  60 */
+  --sp-2xl: clamp(4.5000rem, 4.0357rem + 1.905vw, 5.7500rem);   /*  72 →  92 */
+  --sp-3xl: clamp(6.5000rem, 5.6643rem + 3.429vw, 8.7500rem);   /* 104 → 140 */
+  --sp-4xl: clamp(9.0000rem, 7.7000rem + 5.333vw, 12.5000rem);  /* 144 → 200 */
+
+  /* ---- GRILLE : LE RAIL D'ÉTAT ------------------------------------------
+     12 colonnes. La colonne 1 est le RAIL : le vert n'apparaît que là
+     (sauf hero et images plein cadre). Un seul fil vert court sur tout le site.
+     Le rail survit en mobile — il ne disparaît jamais.                     */
+  --page-max:    1440px;
+  --bleed-max:   1680px;
+  --gutter:      clamp(1.25rem, 0.8036rem + 1.831vw, 3.0rem);   /* 20 → 48 px */
+  --rail:        clamp(0.75rem, 0.1786rem + 2.343vw, 3.0rem);   /* 12 → 48 px */
+  --col-gap:     clamp(1.0rem, 0.7143rem + 1.171vw, 2.125rem);  /* 16 → 34 px */
+  --measure:     66ch;                   /* longueur de ligne max du corps    */
+  --hair:        1px;
+  --hair-2:      2px;
+
+  /* ---- RAYONS : 3 valeurs, jamais uniformes -----------------------------
+     Le papier n'a pas de coins arrondis. Seuls les objets « lampes » en ont. */
+  --r-0:  0;                              /* papier, plaques, champs, filets  */
+  --r-1:  2px;                            /* boutons, puces d'état            */
+  --r-pill: 999px;                        /* SEULEMENT la puce d'horloge      */
+
+  /* ---- LANGAGE DE MOUVEMENT --------------------------------------------- */
+  --ease-clear: cubic-bezier(0.16, 1, 0.30, 1);    /* le feu passe au vert   */
+  --ease-sheet: cubic-bezier(0.33, 0, 0.12, 1);    /* le papier se pose      */
+  --ease-lamp:  cubic-bezier(0.65, 0, 0.35, 1);    /* la lumière monte       */
+  --d-clear: 520ms;
+  --d-sheet: 380ms;
+  --d-lamp:  900ms;
+  --d-micro: 160ms;
+  --stagger-line: 60ms;
+  --stagger-row:  40ms;
+}

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--#include "head" -->
+  <title>Start a production — Ethiopian Film Office</title>
+  <meta name="description" content="Tell us what you are shooting in Ethiopia. Dates, locations, services and kit — we come back with a named team and a quote.">
+  <meta name="robots" content="index,follow">
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body class="page page--book">
+
+<!--#include "bar" -->
+
+<main id="main">
+  <section class="bk" aria-labelledby="bk-h">
+
+    <header class="bk__head">
+      <p class="eyebrow">Production request</p>
+      <h1 class="sec__h" id="bk-h">Tell us what you&rsquo;re shooting.<br>We&rsquo;ll clear the way.</h1>
+      <p class="sec__lede">Five short steps. Everything here is optional except how to reach you &mdash; send what you have, even if the dates are still soft.</p>
+    </header>
+
+    <div class="bk__rail" aria-hidden="true">
+      <ol class="rail" id="rail">
+        <li class="rail__i is-on" data-step="1"><span class="rail__d"></span><span class="rail__t">Project</span></li>
+        <li class="rail__i" data-step="2"><span class="rail__d"></span><span class="rail__t">Dates</span></li>
+        <li class="rail__i" data-step="3"><span class="rail__d"></span><span class="rail__t">Locations</span></li>
+        <li class="rail__i" data-step="4"><span class="rail__d"></span><span class="rail__t">Needs</span></li>
+        <li class="rail__i" data-step="5"><span class="rail__d"></span><span class="rail__t">You</span></li>
+      </ol>
+    </div>
+
+    <form class="bk__form" id="bk-form" novalidate>
+
+      <!-- 1 ─ PROJECT ───────────────────────────────── -->
+      <fieldset class="step" data-step="1">
+        <legend class="step__h"><span class="step__k mono">Project</span> What are you making?</legend>
+        <div class="chips" role="radiogroup" aria-label="Project type">
+          <label class="chip"><input type="radio" name="project" value="Commercial"><span>Commercial</span></label>
+          <label class="chip"><input type="radio" name="project" value="Feature film"><span>Feature film</span></label>
+          <label class="chip"><input type="radio" name="project" value="Documentary"><span>Documentary</span></label>
+          <label class="chip"><input type="radio" name="project" value="Series / episodic"><span>Series / episodic</span></label>
+          <label class="chip"><input type="radio" name="project" value="Corporate / institutional"><span>Corporate</span></label>
+          <label class="chip"><input type="radio" name="project" value="Stills / photography"><span>Stills</span></label>
+        </div>
+        <p class="field field--inline">
+          <label for="bk-title">Working title <span class="field__opt">optional</span></label>
+          <input id="bk-title" name="title" type="text" autocomplete="off">
+        </p>
+      </fieldset>
+
+      <!-- 2 ─ DATES ─────────────────────────────────── -->
+      <fieldset class="step" data-step="2">
+        <legend class="step__h"><span class="step__k mono">Dates</span> When would you shoot?</legend>
+        <div class="form__row">
+          <p class="field"><label for="bk-from">First shooting day</label><input id="bk-from" name="from" type="date"></p>
+          <p class="field"><label for="bk-to">Last shooting day</label><input id="bk-to" name="to" type="date"></p>
+        </div>
+        <div class="chips chips--sm" role="radiogroup" aria-label="How firm are these dates">
+          <label class="chip"><input type="radio" name="firm" value="Locked"><span>Locked</span></label>
+          <label class="chip"><input type="radio" name="firm" value="Likely"><span>Likely</span></label>
+          <label class="chip"><input type="radio" name="firm" value="Still exploring"><span>Still exploring</span></label>
+        </div>
+        <p class="step__note" id="days-note" aria-live="polite"></p>
+      </fieldset>
+
+      <!-- 3 ─ LOCATIONS ─────────────────────────────── -->
+      <fieldset class="step" data-step="3">
+        <legend class="step__h"><span class="step__k mono">Locations</span> Anywhere in mind?</legend>
+        <p class="step__sub step__sub--say">These are the nine we work in most. Tick what interests you &mdash; or leave it blank and we&rsquo;ll propose.</p>
+        <div class="chips chips--loc">
+          <label class="chip"><input type="checkbox" name="loc" value="Simien Mountains"><span>Simien Mountains</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Wollo"><span>Wollo</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Lalibela"><span>Lalibela</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Wonchi"><span>Wonchi</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Fasilides"><span>Fasilides</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Afar"><span>Afar</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Erta Ale Lava Lake"><span>Erta Ale Lava Lake</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Addis Ababa"><span>Addis Ababa</span></label>
+          <label class="chip"><input type="checkbox" name="loc" value="Winding Road"><span>Winding Road</span></label>
+        </div>
+      </fieldset>
+
+      <!-- 4 ─ NEEDS ─────────────────────────────────── -->
+      <fieldset class="step" data-step="4">
+        <legend class="step__h"><span class="step__k mono">Needs</span> What should we handle?</legend>
+
+        <p class="step__sub">Services</p>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" name="svc" value="Producing"><span>Producing</span></label>
+          <label class="chip"><input type="checkbox" name="svc" value="Production Rental"><span>Production Rental</span></label>
+          <label class="chip"><input type="checkbox" name="svc" value="Casting"><span>Casting</span></label>
+          <label class="chip chip--permit"><input type="checkbox" name="svc" value="Shooting Permit"><span>Shooting Permit</span></label>
+          <label class="chip chip--permit"><input type="checkbox" name="svc" value="Location Permit"><span>Location Permit</span></label>
+          <label class="chip"><input type="checkbox" name="svc" value="Transportation"><span>Transportation</span></label>
+          <label class="chip"><input type="checkbox" name="svc" value="Accommodation"><span>Accommodation</span></label>
+          <label class="chip"><input type="checkbox" name="svc" value="Editing"><span>Editing</span></label>
+        </div>
+
+        <p class="step__sub">Kit</p>
+        <div class="chips chips--sm">
+          <label class="chip"><input type="checkbox" name="kit" value="Camera"><span>Camera</span></label>
+          <label class="chip"><input type="checkbox" name="kit" value="Lenses"><span>Lenses</span></label>
+          <label class="chip"><input type="checkbox" name="kit" value="Drone"><span>Drone</span></label>
+          <label class="chip"><input type="checkbox" name="kit" value="Lighting Kit"><span>Lighting Kit</span></label>
+          <label class="chip"><input type="checkbox" name="kit" value="Microphones"><span>Microphones</span></label>
+          <label class="chip"><input type="checkbox" name="kit" value="Green Screen/Chroma Key"><span>Green Screen</span></label>
+        </div>
+
+        <p class="field field--inline">
+          <label for="bk-crew">Crew travelling with you <span class="field__opt">optional</span></label>
+          <input id="bk-crew" name="crew" type="number" min="0" max="500" inputmode="numeric" placeholder="e.g. 12">
+        </p>
+      </fieldset>
+
+      <!-- 5 ─ YOU ───────────────────────────────────── -->
+      <fieldset class="step" data-step="5">
+        <legend class="step__h"><span class="step__k mono">You</span> Where do we reach you?</legend>
+        <div class="form__row">
+          <p class="field"><label for="bk-first">First Name</label><input id="bk-first" name="first_name" type="text" autocomplete="given-name" required></p>
+          <p class="field"><label for="bk-last">Last Name</label><input id="bk-last" name="last_name" type="text" autocomplete="family-name" required></p>
+        </div>
+        <div class="form__row">
+          <p class="field"><label for="bk-mail">Email Address</label><input id="bk-mail" name="email" type="email" autocomplete="email" required></p>
+          <p class="field"><label for="bk-tel">Phone Number <span class="field__opt">optional</span></label><input id="bk-tel" name="phone" type="tel" autocomplete="tel"></p>
+        </div>
+        <p class="field"><label for="bk-company">Production company <span class="field__opt">optional</span></label><input id="bk-company" name="company" type="text" autocomplete="organization"></p>
+        <p class="field"><label for="bk-msg">Anything else we should know?</label><textarea id="bk-msg" name="message" rows="4"></textarea></p>
+
+        <!-- Le détail que personne ne fait dans ce métier : le fuseau traduit -->
+        <div class="callslot">
+          <p class="callslot__h">Prefer to talk? We&rsquo;re open <span class="go">24/7</span>.</p>
+          <p class="field field--inline">
+            <label for="bk-call">A good time to call you</label>
+            <input id="bk-call" name="call" type="time">
+          </p>
+          <p class="callslot__out mono" id="call-out" aria-live="polite">
+            <span class="callslot__muted">Pick a time in your own clock &mdash; we&rsquo;ll show you what it is in Addis Ababa.</span>
+          </p>
+        </div>
+
+        <!-- Piège à robots, invisible et hors du flux clavier -->
+        <p class="hp" aria-hidden="true"><label>Do not fill this<input type="text" name="company_url" tabindex="-1" autocomplete="off"></label></p>
+      </fieldset>
+
+      <!-- SYNTHÈSE ──────────────────────────────────── -->
+      <div class="bk__end">
+        <div class="summary" id="summary" hidden>
+          <h2 class="summary__h">Your request</h2>
+          <dl class="summary__dl" id="summary-dl"></dl>
+        </div>
+        <p class="bk__act">
+          <button class="btn btn--go btn--xl" type="submit"><span>Request the green light</span></button>
+        </p>
+        <p class="bk__note" id="bk-note" role="status" aria-live="polite"></p>
+        <p class="bk__alt">Or write to us directly:
+          <a class="lnk" href="mailto:info@ethiopianfilmoffice.com"><span>info@ethiopianfilmoffice.com</span></a>
+          &middot; <a class="lnk" href="tel:+251911204388"><span>+251 911 204 388</span></a>
+        </p>
+      </div>
+    </form>
+  </section>
+</main>
+
+<!--#include "footer" -->
+
+<aside class="dock" id="dock" aria-label="Your call sheet so far">
+  <button class="dock__toggle" id="dock-toggle" type="button" aria-expanded="false" aria-controls="dock-body">
+    <span class="dock__k mono">Call sheet</span>
+    <span class="dock__n mono" id="dock-count">0</span>
+  </button>
+  <div class="dock__body" id="dock-body" hidden>
+    <ol class="dock__log mono" id="dock-log"></ol>
+    <a class="dock__go" href="/#contact"><span class="mono">Open the sheet</span></a>
+  </div>
+</aside>
+
+<div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">Drag</i></div>
+<script type="module" src="/src/js/book.js"></script>
+</body>
+</html>

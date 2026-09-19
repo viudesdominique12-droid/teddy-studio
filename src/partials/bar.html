@@ -1,0 +1,52 @@
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar" id="bar">
+  <a class="logo" href="/" aria-label="Teddy Studio — home">
+    <span class="logo__w">Teddy Studio</span>
+    <span class="logo__bar" aria-hidden="true"></span>
+  </a>
+
+  <button class="burger" id="index-open" type="button" aria-expanded="false" aria-controls="index"
+          aria-label="Open and close the index">
+    <span class="burger__b" aria-hidden="true"></span>
+    <span class="burger__b" aria-hidden="true"></span>
+    <span class="burger__b" aria-hidden="true"></span>
+  </button>
+
+  <p class="bar__clock mono">
+    <span class="go-dot" aria-hidden="true"></span>
+    <time id="clock-bar">--:--</time>
+    <span class="bar__city">Addis</span>
+  </p>
+
+  <a class="bar__tel mono" href="tel:{{phone}}" data-cursor="call">{{phoneDisplay}}</a>
+
+  <a class="bar__cta" href="/book.html" data-cursor="book"><span>Start a production</span></a>
+</header>
+
+<!-- L'INDEX : la page de sommaire du dossier. Elle informe avant de router —
+     chaque rubrique porte sa donnée réelle, alignée à droite comme un bordereau. -->
+<div class="index" id="index" hidden>
+  <div class="index__in" role="dialog" aria-modal="true" aria-label="Index">
+
+    <nav class="index__nav" aria-label="All sections">
+      <a href="/#top"><span class="index__n" data-roll><span>Home</span></span><span class="index__v mono">open</span></a>
+      <a href="/#services"><span class="index__n" data-roll><span>Services</span></span><span class="index__v mono">8 &middot; 2 permits</span></a>
+      <a href="/#about"><span class="index__n" data-roll><span>About Us</span></span><span class="index__v mono">since Tewodros Teshome</span></a>
+      <a href="/locations.html"><span class="index__n" data-roll><span>Locations</span></span><span class="index__v mono">9 &middot; +4,550 m &rarr; &minus;125 m</span></a>
+      <a href="/#works"><span class="index__n" data-roll><span>Our Clients</span></span><span class="index__v mono">7</span></a>
+      <a href="/#resources"><span class="index__n" data-roll><span>Resources</span></span><span class="index__v mono">6</span></a>
+      <a href="/works.html"><span class="index__n" data-roll><span>Our Works</span></span><span class="index__v mono">5</span></a>
+      <a href="/#contact"><span class="index__n" data-roll><span>Contact</span></span><span class="index__v mono">open now &middot; 24/7</span></a>
+      <a href="/vacancy.html"><span class="index__n" data-roll><span>Vacancy</span></span><span class="index__v mono">closed &middot; Feb 2025</span></a>
+    </nav>
+
+    <div class="index__foot">
+      <p class="index__world mono">
+        <span class="go-dot" aria-hidden="true"></span>
+        <span>Addis Ababa &middot; 24/7</span>
+      </p>
+      <a class="btn btn--go" href="/book.html"><span>Start a production</span></a>
+    </div>
+  </div>
+</div>

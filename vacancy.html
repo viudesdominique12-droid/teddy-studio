@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--#include "head" -->
+  <title>Vacancy — Ethiopian Film Office</title>
+  <meta name="description" content="Open roles at Teddy Studio / Ethiopian Film Office, Addis Ababa.">
+  <link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body class="page page--vac">
+
+<!--#include "bar" -->
+
+<main id="main">
+  <header class="phead">
+    <p class="eyebrow">Vacancy</p>
+    <h1 class="phead__h">Working here</h1>
+  </header>
+
+  <!-- ÉTAT ACTUEL : aucune offre ouverte.
+       C'est l'état réel du site source au 18/09/2026 — un état vide se DESSINE,
+       il ne se subit pas. -->
+  <section class="vac vac--empty" id="vac-empty" aria-labelledby="vac-empty-h">
+    <div class="vac__empty">
+      <p class="vac__dash mono" aria-hidden="true">—</p>
+      <h2 class="vac__empty-h" id="vac-empty-h">No Vacancies Currently Available</h2>
+      <p class="vac__empty-p">Nothing is open at this moment. Crews change fast in this business, so if you work in production, printing or marketing, send us your file anyway &mdash; we read them.</p>
+      <p class="vac__empty-a">
+        <a class="btn btn--go" href="mailto:info@ethiopianfilmoffice.com?subject=Speculative%20application"><span>Send your CV</span></a>
+      </p>
+      <p class="vac__empty-n mono">info@ethiopianfilmoffice.com &middot; Meskel Square, Addis Ababa</p>
+    </div>
+  </section>
+
+  <!-- ARCHIVE : la dernière campagne, telle qu'elle a été publiée. -->
+  <section class="vac vac--past" aria-labelledby="vac-past-h">
+    <header class="vac__past-head">
+      <h2 class="vac__past-h" id="vac-past-h">Last announcement</h2>
+      <p class="vac__dates mono">
+        <span>Published <time datetime="2025-01-28">January 28, 2025</time></span>
+        <span class="vac__sep" aria-hidden="true">·</span>
+        <span class="is-closed">Closed <time datetime="2025-02-28">February 28, 2025</time></span>
+      </p>
+    </header>
+
+    <div class="vac__grid">
+      <nav class="vac__list" aria-label="Roles in that announcement">
+        <p class="vac__list-h mono">Vacancy List</p>
+        <ul>
+          <li><button type="button" class="vac__btn is-on" data-role="film-production-head">Film and Add Production Department Head</button></li>
+          <li><button type="button" class="vac__btn" data-role="marketing-head">Marketing Department Head</button></li>
+          <li><button type="button" class="vac__btn" data-role="printing-manager">Digital Printing Production Manager</button></li>
+          <li><button type="button" class="vac__btn" data-role="printing-operators">Digital Printing Operators</button></li>
+        </ul>
+      </nav>
+
+      <div class="vac__panel" id="vac-panel">
+
+        <article class="vac__role is-on" data-role="film-production-head">
+          <h3 class="vac__role-h">Film and Add Production Department Head</h3>
+          <p>The Creative and Production Department Head will lead the creative vision and oversee all production related activities. This role involves managing a team of directors, producers, writers, and designers to deliver high-quality content that aligns with Teddy Studio&rsquo;s objectives. The successful candidate will coordinate pre-production, production, and post-production processes to ensure timely and budget-friendly completion of projects.</p>
+          <h4 class="vac__sub">Key Responsibilities</h4>
+          <ul class="vac__ul">
+            <li>Develop creative strategies and innovative content concepts.</li>
+            <li>Oversee the planning, budgeting, and execution of production schedules.</li>
+            <li>Lead and mentor a creative production team.</li>
+            <li>Ensure quality control for all productions and content deliverables.</li>
+            <li>Collaborate with other departments to meet client and project needs.</li>
+          </ul>
+          <h4 class="vac__sub">Job Requirements</h4>
+          <ul class="vac__ul">
+            <li>Bachelor&rsquo;s degree in Film Production, Media, or a related field.</li>
+            <li>Minimum of 5 years of experience in creative content production.</li>
+            <li>Strong leadership and project management skills.</li>
+            <li>Expertise in storytelling, production workflows, and industry tools.</li>
+            <li>Excellent communication and organizational abilities.</li>
+          </ul>
+        </article>
+
+        <article class="vac__role" data-role="marketing-head">
+          <h3 class="vac__role-h">Marketing Department Head</h3>
+          <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
+        </article>
+
+        <article class="vac__role" data-role="printing-manager">
+          <h3 class="vac__role-h">Digital Printing Production Manager</h3>
+          <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
+        </article>
+
+        <article class="vac__role" data-role="printing-operators">
+          <h3 class="vac__role-h">Digital Printing Operators</h3>
+          <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
+        </article>
+
+        <footer class="vac__apply">
+          <p class="vac__apply-t">Send us your cover letter and resume</p>
+          <p><a class="lnk" href="mailto:info@ethiopianfilmoffice.com"><span>info@ethiopianfilmoffice.com</span></a></p>
+        </footer>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!--#include "footer" -->
+
+<aside class="dock" id="dock" aria-label="Your call sheet so far">
+  <button class="dock__toggle" id="dock-toggle" type="button" aria-expanded="false" aria-controls="dock-body">
+    <span class="dock__k mono">Call sheet</span>
+    <span class="dock__n mono" id="dock-count">0</span>
+  </button>
+  <div class="dock__body" id="dock-body" hidden>
+    <ol class="dock__log mono" id="dock-log"></ol>
+    <a class="dock__go" href="/#contact"><span class="mono">Open the sheet</span></a>
+  </div>
+</aside>
+
+<div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">Drag</i></div>
+<script type="module" src="/src/js/page.js"></script>
+<script type="module">
+  /* Le sélecteur de poste de la page source, conservé — au clavier comme à la souris. */
+  const btns = [...document.querySelectorAll('.vac__btn')];
+  const roles = [...document.querySelectorAll('.vac__role')];
+  for (const b of btns) {
+    b.addEventListener('click', () => {
+      for (const x of btns) x.classList.toggle('is-on', x === b);
+      for (const r of roles) r.classList.toggle('is-on', r.dataset.role === b.dataset.role);
+      document.getElementById('vac-panel')?.scrollIntoView({
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'nearest'
+      });
+    });
+  }
+</script>
+</body>
+</html>
