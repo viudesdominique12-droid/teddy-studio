@@ -25,6 +25,11 @@ import { join, extname } from 'node:path';
 
 const base = process.argv[2];
 const dir = process.argv[3] || 'dist';
+/* Les réseaux sociaux n'acceptent pas une `og:image` relative : ils lisent la
+   balise hors de tout contexte de page. Quand l'origine de livraison est
+   connue, on rend ces URL absolues — ici seulement, jamais dans les sources,
+   qui ne doivent pas connaître leur hébergeur. */
+const origin = (process.argv[4] || '').replace(/\/$/, '');
 if (!base || !base.startsWith('/') || !base.endsWith('/')) {
   console.error('usage: node scripts/rebase.mjs /prefixe/ [dossier]');
   process.exit(1);
@@ -59,6 +64,10 @@ function rebaseHtml(s) {
   }
   for (const a of SET_ATTRS) {
     s = s.replace(new RegExp(`(\\s${a}=")([^"]*)"`, 'g'), (_, p, v) => `${p}${rebaseSet(v)}"`);
+  }
+  if (origin) {
+    s = s.replace(/(<meta\s+(?:property|name)="(?:og:image|og:url|twitter:image)"\s+content=")(\/[^"]*)"/g,
+                  (_, p, u) => `${p}${origin}${u}"`);
   }
   return s;
 }

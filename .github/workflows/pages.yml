@@ -35,7 +35,7 @@ jobs:
           SITE_BASE: /${{ github.event.repository.name }}/
         run: npm run build
       - name: Rebase des chemins absolus restants
-        run: node scripts/rebase.mjs "/${{ github.event.repository.name }}/" dist
+        run: node scripts/rebase.mjs "/${{ github.event.repository.name }}/" dist "https://${{ github.repository_owner }}.github.io"
       # Pages ne sert pas de fichier commençant par un souligné, et Jekyll
       # s'active par défaut : ce marqueur le désactive.
       - run: touch dist/.nojekyll
