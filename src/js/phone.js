@@ -6,10 +6,12 @@
  * jusqu'à remplir la page.
  *
  * Trois règles portent tout le reste :
- *  1. tout est construit dans un `gsap.matchMedia()` — la chorégraphie mobile
- *     et la chorégraphie bureau n'ont pas le même ORDRE, pas seulement pas la
- *     même taille ; décider une fois au chargement laisserait la mauvaise en
- *     place après une rotation d'écran ou un simple redimensionnement ;
+ *  1. tout est construit dans un `gsap.matchMedia()` — la GÉOMÉTRIE dépend de
+ *     la largeur (couché, l'appareil prend 94 % de l'écran sur téléphone contre
+ *     62 % sur ordinateur), et décider une fois au chargement laisserait la
+ *     mauvaise mesure en place après une rotation d'écran. L'ORDRE des quatre
+ *     temps, lui, est le même partout : c'est la même section, à deux tailles,
+ *     et non deux sections différentes ;
  *  2. `tl.set({}, {}, 1)` FIGE la durée de la timeline à 1 avant le moindre
  *     tween — sinon chaque ajout déplace toutes les positions fractionnaires ;
  *  3. toute géométrie est une FONCTION, relue au refresh grâce à
@@ -31,6 +33,14 @@ const BLOCKS_WINDOW = [0.10, 0.72];
 const TURN_END = 0.86;
 const FULL_START = 0.87, FULL_END = 0.995;
 const MOBILE_MAX = 767;          /* doit rester égal au @media de acts.css */
+/* Sur téléphone, la référence ne rétrécit pas la chorégraphie : elle en
+   PERMUTE les actes. Le pivot passe devant, l'appareil quitte l'image, puis
+   les arguments défilent seuls.
+   La raison est de cadrage : au plein écran l'appareil couché est agrandi
+   ~4,4×, et son écran couvre alors 517 % de la largeur du téléphone. Un plan
+   16:9 y est rogné à un cinquième de sa largeur — on ne voit plus une image,
+   on voit une bande. Sur 1440 px le même geste ne rogne presque rien.
+   Ce sont exactement leurs bornes. */
 const MOBILE_TURN = [0.28, 0.40];
 const MOBILE_OUT = [0.41, 0.49];
 const MOBILE_BLOCKS = [0.52, 0.97];
@@ -79,8 +89,9 @@ export function initPhone() {
     v.load();
   };
   const cast = () => { swap(vidUp, UP_CLIPS[bag++ % UP_CLIPS.length]); };
-  // Le plan large pèse un demi-mégaoctet : il n'est demandé qu'au pivot, et
-  // jamais sur téléphone, où il n'apparaît pas.
+  // Le plan large pèse un demi-mégaoctet : il n'est demandé qu'au pivot — le
+  // seul moment où il devient visible — et sur téléphone aussi, puisque la
+  // section s'y termine désormais de la même façon.
   let wideCued = false;
   const cueWide = () => {
     if (wideCued || !vidWide) return;
@@ -261,14 +272,19 @@ export function initPhone() {
     /* Phase C — le pivot */
     const turnStart = isMobile ? MOBILE_TURN[0] : Math.min(lastOut + 0.05, TURN_END - 0.08);
     const turnEnd = isMobile ? MOBILE_TURN[1] : TURN_END;
+    // `cueWide` sur LES DEUX formats — c'était le vrai défaut. Sans lui, la
+    // piste « large » gardait le rush de secours du markup, qui est VERTICAL :
+    // l'appareil se couchait en paysage en montrant 288 px d'image étirés sur
+    // 368. On ne voyait jamais un plan paysage dans un appareil couché.
     tl.to(turn, {
       p: 1, duration: turnEnd - turnStart, ease: 'power1.inOut',
-      onUpdate: apply, onStart: isMobile ? undefined : cueWide
+      onUpdate: apply, onStart: cueWide
     }, turnStart);
 
     if (isMobile) {
-      /* Phase C2 — l'appareil quitte l'image, et rien ne s'ouvre : un plein
-         écran sur 390 px n'ajoute rien, il coûte. */
+      /* Phase C2 — l'appareil quitte l'image, et la section se termine sur les
+         arguments. C'est là que s'arrête la référence, et pour la même raison
+         de cadrage (voir MOBILE_TURN plus haut). */
       tl.to([device, title].filter(Boolean),
         { autoAlpha: 0, duration: 0.08, ease: 'power2.inOut' }, MOBILE_OUT[0]);
     } else {

@@ -566,21 +566,21 @@
 
 /* Sur téléphone, la traversée redevient une descente : les tirages s'empilent,
    pleine largeur, et le message reprend sa place au-dessus. */
+/* ── LE RAIL SUR TÉLÉPHONE ──
+   Il garde le MÊME mécanisme que sur ordinateur : scène épinglée à pleine
+   hauteur, piste horizontale, message au centre par-dessus. Seule l'ÉCHELLE
+   change. Le démonter en pile verticale — ce que faisait ce bloc — donnait
+   neuf dalles de 641 px empilées : plus rien ne flottait, plus rien ne
+   traversait, et la section passait de 6 à 8,4 écrans de défilement.
+
+   22 vw sur 390 px ferait 86 px : une vignette illisible. 44 vw en fait 172,
+   soit deux cartes et demie dans le cadre au lieu de quatre et demie sur
+   ordinateur — le même geste, à la mesure de l'écran. */
 @media (max-width: 767px) {
-  .drop__stage { height: auto; overflow: visible; display: block; }
-  .drop__track {
-    display: block; width: auto;
-    padding: 0 var(--pad-x) var(--s-8);
-    white-space: normal;
-  }
-  .stop { width: auto; aspect-ratio: auto; margin-bottom: clamp(3rem, 10vh, 5rem); }
-  .stop img { aspect-ratio: 16 / 9; object-fit: cover; filter: none; }
-  .drop__center {
-    position: static; inset: auto;
-    padding: var(--sec-y) var(--pad-x) var(--s-7);
-    text-align: left; align-items: flex-start;
-  }
-  .drop__h, .drop__lede { text-shadow: none; }
+  .stop { width: 44vw; }
+  /* L'ombre portée est recalculée à chaque frame pendant que la piste glisse :
+     c'est le poste le plus cher de la section sur un GPU de téléphone. */
+  .stop img { filter: none; }
 }
 @media (min-width: 768px) and (max-width: 1100px) {
   .stop { width: 38vw; }
@@ -635,10 +635,11 @@
 }
 
 @media (max-width: 48rem) {
-  .drop__track { display: block; }
-  .stop { width: auto; height: auto; min-height: 76svh; }
-  .stop__fig { position: relative; inset: auto; height: 76svh; }
-  .stop__t { bottom: var(--s-6); }
+  /* `.stop__fig` et `.stop__t` n'existent plus dans le markup : une carte est
+     une image, son nom vient d'un attribut. Les règles qui les visaient — dont
+     un `min-height: 76svh` — sont parties avec eux ; elles gonflaient chaque
+     carte à 641 px autour d'une image de 197, soit 444 px de vide répétés
+     neuf fois. Il ne reste ici que l'altimètre, lui bien réel. */
   .gauge { position: sticky; top: 0; bottom: auto; left: 0; right: 0;
            padding: var(--s-3) var(--pad-x); background: rgba(7,15,6,0.78);
            backdrop-filter: blur(10px); }
@@ -718,7 +719,13 @@
   .case__add { grid-area: add; justify-self: start; }
 }
 @media (max-width: 34rem) {
-  .case { grid-template-columns: 1fr; grid-template-areas: 'fig' 'txt' 'add'; }
+  /* PAS de passage en colonne unique. Empilée, une caisse passait de 65 px à
+     ~400 px : six caisses transformaient 1,6 écran de défilement en 3,8. La
+     ligne — vignette à gauche, texte à droite — tient parfaitement sur 390 px
+     avec une vignette de 5,5 rem, et c'est la composition de l'ordinateur. */
+  .case { grid-template-columns: minmax(0, 5.5rem) minmax(0, 1fr);
+          grid-template-areas: 'fig txt' 'add add';
+          gap: var(--s-4); padding: var(--s-3); }
 }
 
 

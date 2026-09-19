@@ -5,12 +5,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { reduced } from './motion.js';
 
 if (!reduced()) {
-  const lenis = new Lenis({
-    duration: 1.05,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-    touchMultiplier: 1.6
-  });
+  /* `duration` + `easing` imposent à CHAQUE impulsion de molette un tween de
+     1,05 s : le scroll cesse de suivre la main, il rejoue une courbe. `lerp`
+     — le défaut de Lenis, et ce qu'emploie la référence — poursuit la cible en
+     continu, donc reste accroché au geste. `syncTouch` reste à faux (défaut) :
+     sur un téléphone le défilement tactile doit rester NATIF, avec l'inertie
+     du système. C'est la première raison pour laquelle un site ne « sent »
+     pas le bureau rétréci. */
+  const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, touchMultiplier: 1 });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);

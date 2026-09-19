@@ -128,8 +128,14 @@ export function actDrop() {
     addLine(`loc:${li.dataset.loc}`, alt ? `UNIT \u2014 ${name}, ${fmt(+alt)} m` : `UNIT \u2014 ${name}`);
   };
 
-  /* ---- Téléphone : la chute est verticale, et c'est la meilleure version ---- */
-  if (mobile() || reduced()) {
+  /* ---- Mouvement réduit : la chute redevient verticale ----
+     C'est la SEULE raison de renoncer au rail. Le téléphone en était exclu
+     aussi, au motif que la pile verticale y serait « la meilleure version » :
+     c'était un jugement, pas une contrainte. Il donnait neuf dalles empilées
+     là où l'ordinateur fait traverser des tirages — deux sections qui n'ont
+     plus rien de commun. Le rail tourne donc partout ; c'est la CSS qui
+     adapte la taille des cartes (44 vw au lieu de 22). */
+  if (reduced()) {
     stops.forEach((li) => {
       ScrollTrigger.create({
         trigger: li, start: 'top 60%', end: 'bottom 40%',
@@ -165,7 +171,20 @@ export function actDrop() {
     return (card.offsetHeight * Math.cos(rad) + card.offsetWidth * Math.sin(rad)) * PEAK / 2;
   };
 
+  /* Le trajet horizontal du rail, en pixels. */
   const span = () => Math.max(0, track.scrollWidth - window.innerWidth);
+
+  /* ── LA PARITÉ DU BUDGET DE DÉFILEMENT ──
+     Sur téléphone les cartes sont plus petites et l'écran plus étroit : le
+     trajet tombe mécaniquement de 5,1 à 2,4 hauteurs d'écran. La séquence est
+     alors EXPÉDIÉE — même chorégraphie, deux fois plus vite, et c'est ce qui
+     fait qu'elle ne « donne pas le même effet ».
+     On ne touche donc pas au trajet : on étire le PIN, pour que le même
+     parcours consomme le même nombre d'écrans qu'en grand.
+     (C'est le `weite() * 1.5` de la référence, recalculé pour notre géométrie.) */
+  const PARITY = 2.1;
+  const wide = () => window.matchMedia(`(min-width: ${48 * 16 + 1}px)`).matches;
+  const scrollWay = () => span() * (wide() ? 1 : PARITY);
 
   const rail = gsap.to(track, {
     x: () => -span(),
@@ -175,7 +194,7 @@ export function actDrop() {
       pin: true,
       scrub: true,
       start: 'top top',
-      end: () => `+=${span()}`,
+      end: () => `+=${scrollWay()}`,
       invalidateOnRefresh: true,
       anticipatePin: 1,
       // Dernier pin de la page : il doit être calculé APRÈS celui du téléphone,
@@ -204,7 +223,9 @@ export function actDrop() {
       y: () => {
         const vh = window.innerHeight;
         const rem = remPx();
-        const amp = (window.innerWidth < vh ? 0.38 : 0.48) * vh;
+        // Portrait puis paysage — et, sur téléphone, plus calme encore : la
+        // même amplitude relative y devient une secousse. (0,26 chez eux.)
+        const amp = (wide() ? (window.innerWidth < vh ? 0.38 : 0.48) : 0.26) * vh;
         const half = halfCard(card, tilt);
         const back = card.offsetHeight / 2;       // ce que `yPercent` reprend
 
