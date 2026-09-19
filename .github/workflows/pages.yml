@@ -1,0 +1,54 @@
+# Construit le site et le publie sur GitHub Pages.
+#
+# Pages sert un dépôt de projet sous `/<dépôt>/`. `SITE_BASE` le dit à Vite —
+# qui s'en sert notamment pour les imports dynamiques de Three.js — puis
+# `rebase.mjs` rattrape ce que Vite ne connaît pas : les attributs `data-src`
+# et `data-view`, les liens de navigation et `og:image`.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build
+        env:
+          SITE_BASE: /${{ github.event.repository.name }}/
+        run: npm run build
+      - name: Rebase des chemins absolus restants
+        run: node scripts/rebase.mjs "/${{ github.event.repository.name }}/" dist
+      # Pages ne sert pas de fichier commençant par un souligné, et Jekyll
+      # s'active par défaut : ce marqueur le désactive.
+      - run: touch dist/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
