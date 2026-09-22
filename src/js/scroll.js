@@ -13,6 +13,7 @@ if (!reduced()) {
      du système. C'est la première raison pour laquelle un site ne « sent »
      pas le bureau rétréci. */
   const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, touchMultiplier: 1 });
+  window.__lenis = lenis;
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);

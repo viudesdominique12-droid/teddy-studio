@@ -14,6 +14,8 @@
    mémoire GPU à elles quatre, pour un fond. Les étoiles font 0,45 à 1,6 px :
    à 1× elles sont à peine plus douces, et on rend 2,25 fois moins de pixels.
    Le grand écran garde 1,5× : il a le budget, et les points y sont plus nets. */
+import gsap from 'gsap';
+
 const DPR_CAP = matchMedia('(max-width: 767px)').matches ? 1 : 1.5;
 
 /* étoiles */
@@ -336,24 +338,22 @@ export function initSky() {
     catch (e) { stop(); console.error('[teddy] sky:', e); }
   }
 
+  /* Une SEULE horloge pour tout le site, celle de GSAP — c'est la première
+     discipline de la référence (vérifié chez eux : 1 rAF par image, pas deux).
+     Le test portait sur `window.gsap`, qui n'existe pas quand GSAP est importé
+     comme module : le repli maison tournait donc en permanence, et le site
+     avait deux boucles au lieu d'une. */
   function startScene() {
     if (running || !visible || reduced) return;
     running = true;
     lastTime = 0;
-    if (window.gsap && gsap.ticker) { gsap.ticker.add(tick); return; }
-    const id = ++runId;
-    (function loop() {
-      if (!running || id !== runId) return;
-      if (window.gsap && gsap.ticker) { gsap.ticker.add(tick); return; }   // GSAP arrive : on bascule
-      tick();
-      requestAnimationFrame(loop);
-    })();
+    gsap.ticker.add(tick);
   }
 
   function stop() {
     running = false;
     runId++;
-    if (window.gsap && gsap.ticker) gsap.ticker.remove(tick);
+    gsap.ticker.remove(tick);
   }
 
   function resize(force) {

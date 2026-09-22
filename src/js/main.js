@@ -1,6 +1,7 @@
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { applyPalette } from './palette.js';
+import { initBulge } from './bulge.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { initSky } from './sky.js';
@@ -58,7 +59,10 @@ function smoothScroll() {
     history.pushState(null, '', url.hash);
   });
 
-  if (import.meta.env.DEV) window.__lenis = lenis;
+  /* Exposée pour de bon, plus seulement en développement : `bulge.js` lit le
+     résidu de lissage (cible − courant) dessus, et c'est de là que vient
+     toute la sensation de vitesse. */
+  window.__lenis = lenis;
   return lenis;
 }
 
@@ -69,6 +73,53 @@ function smoothScroll() {
  * et le site est là. 900 ms plafond, sauté dès la deuxième visite —
  * un producteur pressé ne doit jamais attendre un site.
  */
+/* ───────────────────────── LE PRÉCHARGEMENT ─────────────────────────
+   L'ancien écran attendait 900 ms puis s'effaçait. Il ne préchargeait rien —
+   c'était un rideau, pas un chargement, et il n'empêchait donc aucun à-coup.
+
+   Ce qui saccade un défilement sur téléphone, ce n'est presque jamais le
+   JavaScript (mesuré ici : zéro tâche longue). C'est le DÉCODAGE : une image
+   webp de 1600 px entre dans le champ, le navigateur doit la décompresser, et
+   cette milliseconde-là tombe au milieu d'une image d'animation.
+
+   On décode donc tout ce qui sera AFFICHÉ, avant d'ouvrir la page. `decode()`
+   fait exactement ça, hors du fil principal, et rend la main quand la trame
+   est prête à être peinte.
+
+   Deux garde-fous : on ne précharge QUE ce qui est réellement rendu (pas les
+   versions pleine taille de la visionneuse, qui pèsent des mégaoctets et ne
+   servent qu'au clic), et un plafond de temps — sur une connexion lente, mieux
+   vaut une page qui s'ouvre qu'un rideau qui ne se lève jamais. */
+
+const BOOT_CAP_MS = 7000;
+
+/** Les sources RÉELLEMENT peintes : ce que le navigateur aura à décoder. */
+function bootAssets() {
+  const out = new Set();
+  for (const img of document.images) {
+    const src = img.currentSrc || img.src;
+    if (src && !src.startsWith('data:')) out.add(src);
+  }
+  // Les vignettes des vidéos : c'est l'affiche qu'on voit, pas la vidéo.
+  for (const v of document.querySelectorAll('video[poster]')) {
+    const p = v.getAttribute('poster');
+    if (p) out.add(new URL(p, location.href).href);
+  }
+  return [...out];
+}
+
+function decodeOne(src) {
+  return new Promise((done) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = src;
+    // `decode()` échoue sur certains formats/navigateurs : on ne bloque jamais.
+    const fin = () => done();
+    if (img.decode) img.decode().then(fin, fin);
+    else { img.onload = fin; img.onerror = fin; }
+  });
+}
+
 function boot() {
   const el = document.getElementById('boot');
   if (!el) return Promise.resolve();
@@ -76,6 +127,8 @@ function boot() {
   let seen = false;
   try { seen = sessionStorage.getItem('teddy-seen') === '1'; } catch { /* ignore */ }
 
+  // Déjà vu dans cette session : les images sont en cache, le décodage sera
+  // instantané. Et en mouvement réduit, on n'impose pas d'attente du tout.
   if (seen || reduced()) {
     el.remove();
     document.documentElement.classList.add('is-ready');
@@ -84,11 +137,23 @@ function boot() {
 
   document.documentElement.classList.add('is-booting');
 
+  const barre = el.querySelector('[data-boot-bar]');
+  const pct = el.querySelector('[data-boot-pct]');
+  const setProgress = (k) => {
+    if (barre) barre.style.scale = k.toFixed(3) + ' 1';
+    if (pct) pct.textContent = String(Math.round(k * 100)).padStart(3, '0');
+  };
+  setProgress(0);
+
   return new Promise((resolve) => {
+    let fini = false;
     const done = () => {
+      if (fini) return;
+      fini = true;
       try { sessionStorage.setItem('teddy-seen', '1'); } catch { /* ignore */ }
+      setProgress(1);
       gsap.to(el, {
-        autoAlpha: 0, duration: 0.38, ease: EASE.settle,
+        autoAlpha: 0, duration: 0.44, ease: EASE.settle, delay: 0.12,
         onComplete: () => {
           el.remove();
           document.documentElement.classList.remove('is-booting');
@@ -97,10 +162,26 @@ function boot() {
         }
       });
     };
-    const cap = window.setTimeout(done, 900);
-    const ready = () => { clearTimeout(cap); window.setTimeout(done, 160); };
-    if (document.readyState === 'complete') ready();
-    else window.addEventListener('load', ready, { once: true });
+
+    const cap = window.setTimeout(done, BOOT_CAP_MS);
+
+    const run = async () => {
+      const srcs = bootAssets();
+      const total = srcs.length + 1;          // +1 pour les fontes
+      let faits = 0;
+      const bump = () => { faits++; setProgress(Math.min(1, faits / total)); };
+
+      const fontes = (document.fonts?.ready || Promise.resolve()).then(bump, bump);
+      await Promise.all([fontes, ...srcs.map((s) => decodeOne(s).then(bump))]);
+
+      clearTimeout(cap);
+      done();
+    };
+
+    // On attend que le DOM soit complet pour connaître la vraie liste d'images.
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run, { once: true });
+    } else run();
   });
 }
 
@@ -221,6 +302,7 @@ async function start() {
   indexPanel();
   bar();
   initSheet();
+  initBulge();
   contactForm();
   openVideo();
   fitHeadline();

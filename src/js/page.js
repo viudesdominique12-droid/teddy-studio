@@ -2,6 +2,7 @@
 import { startClocks } from './clock.js';
 import { paintSun } from './acts.js';
 import { initSheet } from './sheet.js';
+import { initBulge } from './bulge.js';
 import { cursor, indexPanel, bar } from './motion.js';
 import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js';
 import { initWipe } from './wipe.js';
@@ -19,6 +20,7 @@ initSky();
 initViewer();   // le ciel et sa nuit sont le sol du site, pas une page
 initWipe();
 initSheet();
+initBulge();
 
 const h1 = document.querySelector('.phead__h');
 markReveals('h1.phead__h, .sec__h, .loc__h, .film__h', 'lines');

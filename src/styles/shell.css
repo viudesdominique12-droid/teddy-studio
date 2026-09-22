@@ -461,3 +461,32 @@ html.is-booting body { overflow: hidden; }
   .bar.is-paper { background: color-mix(in srgb, var(--bg) 97%, transparent); }
   .tl { background: color-mix(in oklab, var(--night-2) 97%, transparent); }
 }
+
+
+/* ── LA JAUGE DE CHARGEMENT ──
+   Une barre qui dit la vérité : elle avance au rythme des images réellement
+   décodées, pas sur une minuterie. `scale` plutôt que `width` — une largeur
+   qui change relance la mise en page à chaque image, une échelle non. */
+.boot__gauge {
+  width: min(14rem, 46vw);
+  height: 2px;
+  margin-top: var(--s-5);
+  background: var(--line-2);
+  overflow: hidden;
+}
+.boot__fill {
+  display: block; width: 100%; height: 100%;
+  background: var(--go-solid);
+  transform-origin: left center;
+  scale: 0 1;
+  transition: scale 220ms var(--e-out);
+}
+.boot__read {
+  display: flex; gap: var(--s-4); align-items: baseline;
+  margin-top: var(--s-3);
+  font-size: var(--fs-nano);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--cream-3);
+}
+.boot__read [data-boot-pct] { color: var(--go-text); font-variant-numeric: tabular-nums; }
