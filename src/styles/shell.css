@@ -490,3 +490,27 @@ html.is-booting body { overflow: hidden; }
   color: var(--cream-3);
 }
 .boot__read [data-boot-pct] { color: var(--go-text); font-variant-numeric: tabular-nums; }
+
+/* ═══════════ LE RENDU DES IMAGES QUI PLIENT ═══════════
+   Le canvas recouvre le cadre et redessine les photographies à leur place
+   exacte pendant que la feuille est ouverte. z-index 70 : au-dessus du
+   contenu, SOUS la barre (90), la bobine (90) et l'index (150) — une photo
+   qui se cambre ne doit jamais passer devant la navigation.
+
+   `pointer-events: none` sans condition : les clics doivent continuer
+   d'atteindre les `<img>` du DOM, qui sont toujours là, à leur place, et qui
+   portent la visionneuse. */
+.sheet-gl {
+  position: fixed; inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0;
+  /* Pas de transition : le canvas ne prend la main QUE lorsque son rendu
+     coïncide au pixel près avec le DOM. Un fondu rendrait le raccord
+     visible au lieu de le cacher. */
+}
+.sheet-gl.is-on { opacity: 1; }
+
+/* Pendant le rendu GL, l'écran de démarrage et l'index passent devant. */
+html.is-booting .sheet-gl,
+html.is-locked .sheet-gl { opacity: 0 !important; }

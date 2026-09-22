@@ -2,6 +2,7 @@ import Lenis from 'lenis';
 import gsap from 'gsap';
 import { applyPalette } from './palette.js';
 import { initBulge } from './bulge.js';
+import { initSheetGL } from './sheet-gl.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { initSky } from './sky.js';
@@ -303,6 +304,7 @@ async function start() {
   bar();
   initSheet();
   initBulge();
+  initSheetGL();
   contactForm();
   openVideo();
   fitHeadline();

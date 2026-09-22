@@ -92,7 +92,7 @@ const NORM_NARROW = 220;
    dessous, 110 donne 900/(900−110) = +14 % au centre — l'ordre de grandeur
    de la référence, mais obtenu par la PROJECTION et non par une mise à
    l'échelle, donc accompagné de tout ce qui va avec. */
-const DEPTH = 110;
+const DEPTH = 130;               /* DOIT rester égal au DEPTH de sheet-gl.js */
 
 /* La focale. Plus courte = perspective plus violente. 900 px est le réglage
    habituel d'une scène CSS : assez pour que la profondeur se lise, assez peu
@@ -137,6 +137,16 @@ const RAIL_GAIN = 0.12;
 const EPS = 0.0015;
 
 const clamp1 = (v) => (v < -1 ? -1 : v > 1 ? 1 : v);
+
+/* L'amplitude signée de la feuille, partagée. Le rendu WebGL des images s'y
+   accroche pour que le maillage et les blocs CSS plient ENSEMBLE — sinon on
+   verrait deux feuilles différentes se croiser. */
+let amplitude = 0;
+/* `window.__sheetPin` fige l'amplitude — pour régler et pour photographier un
+   état qui ne dure que quelques images. Sans lui, impossible de juger l'effet
+   autrement qu'en le regardant passer. */
+export const sheetAmplitude = () =>
+  (typeof window.__sheetPin === 'number' ? window.__sheetPin : amplitude);
 
 export function initBulge() {
   if (window.__teddyBulge) return;
@@ -230,6 +240,7 @@ export function initBulge() {
     const t = Math.tanh(v / norm);
     const a = t * Math.abs(t);
 
+    amplitude = Math.abs(a) < EPS ? 0 : a;
     if (Math.abs(a) < EPS) { if (!flat) settle(); return; }
     flat = false;
 
