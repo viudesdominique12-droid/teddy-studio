@@ -56,21 +56,32 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { reduced } from './motion.js';
 
-/* Le retard, en pixels, à partir duquel la feuille est grande ouverte.
-   900 sur grand écran, 500 sur téléphone : ce sont leurs valeurs, et elles
-   tiennent debout — on parcourt moins de pixels par geste sur un petit écran,
-   donc le même seuil n'y serait jamais atteint. */
-const NORM_WIDE = 900;
-const NORM_NARROW = 500;
+/* À vitesse constante, une poursuite à 0,12 se stabilise avec un retard de
+   ~7,3 fois le pas par image. Une lecture tranquille (20 px/image) donne donc
+   ~146 px de retard, un lancer franc (80 px/image) ~585. Les seuils sont
+   choisis là-dessus : la feuille frémit quand on lit, elle s'ouvre quand on
+   lance. Les 900/500 de la référence valaient pour LEUR poursuite, pas la
+   nôtre — les recopier tels quels donnait un effet qui ne démarrait jamais. */
+const NORM_WIDE = 320;
+const NORM_NARROW = 220;
 
-/* L'échelle gagnée au centre de l'écran. Chez eux le calcul donne ~+11 % au
-   pic ; au-delà, les bords des blocs se chevauchent et ça lit comme un bug. */
-const GAIN = 0.11;
+/* +11 % suffisait chez eux parce que TOUTE la page est une seule surface
+   continue : l'œil compare le centre aux bords et voit la feuille. Ici on
+   transforme des blocs séparés, avec du vide autour — il n'y a rien à quoi
+   comparer, et 11 % passent inaperçus. Il en faut davantage, et surtout il
+   faut que le mouvement ne soit pas qu'une échelle (voir BANK). */
+const GAIN = 0.17;
 
 /* Le glissement qui accompagne l'échelle. La poussée en z éloigne aussi les
    objets de l'axe de la caméra : sans lui, les blocs gonflent sur place et
    l'effet paraît collé. */
-const LIFT = 0.05;
+const LIFT = 0.07;
+
+/* L'INCLINAISON. C'est elle qui fait lire « papier » plutôt que « zoom ».
+   La référence fait rouler son ruban de 0,16 rad ; ici un bloc s'incline
+   selon son écart au centre, donc le haut et le bas de l'écran penchent en
+   sens contraires et la colonne entière semble fléchir. */
+const BANK = 1.6;                /* degrés au plein de la vélocité */
 
 /* L'inclinaison des cartes d'un rail, en degrés, au plein de la vélocité.
    Les deux moitiés tournent en sens OPPOSÉS (`Math.sign`), nul au centre :
@@ -90,17 +101,39 @@ export function initBulge() {
      recopie pas : cet effet est exactement du type qui donne la nausée. */
   if (reduced()) return;
 
-  const lenis = window.__lenis;
-  if (!lenis) return;              // pas de scroll lissé : pas de résidu à lire
-
   window.__teddyBulge = true;
+
+  /* ── NOTRE PROPRE POURSUITE ────────────────────────────────────────────
+     On lisait le résidu de Lenis. Erreur : sur téléphone `syncTouch` est à
+     faux — le défilement tactile reste NATIF, c'est voulu — donc Lenis ne
+     poursuit rien, son résidu vaut zéro, et l'effet était mort au doigt.
+     Mesuré avant correction : +2 % d'échelle au maximum. Invisible.
+
+     On tient donc notre propre poursuite de la position réelle. Elle marche
+     à l'identique à la molette, au doigt, au clavier et à la barre de
+     défilement, puisqu'elle ne lit qu'une chose : où la page est vraiment. */
+  let suivi = window.scrollY;
+  const CHASE = 0.12;              /* la poursuite : plus bas = plus de traîne */
 
   /* ── Les participants ──────────────────────────────────────────────────
      Verticaux : posés dans le flux, donc leur position se déduit d'un
      `offsetTop` mis en cache — aucune lecture de géométrie par image.
      Horizontaux : ils traversent l'écran, il faut lire leur rectangle. Ils
      sont peu nombreux et on ne lit que ceux qui sont à l'écran. */
-  const VERTICAL = '.case, .credits__films > li, .wall__i, .cases__head, .credits__clients > li';
+  /* Il en faut BEAUCOUP. Avec cinq cartes qui gonflent au milieu d'une page
+     immobile, l'œil n'a aucun point de comparaison et ne voit rien — c'est
+     l'erreur du premier jet. Chez eux, TOUT bouge ensemble : c'est la page
+     entière qui est la feuille. On prend donc chaque bloc de contenu. */
+  const VERTICAL = [
+    '.case', '.cases__head', '.cases__lede',
+    '.credits__films > li', '.credits__clients > li', '.credits__end',
+    '.wall__i', '.wall__h',
+    '.phead', '.note', '.note__fig', '.note__t',
+    '.drop__more', '.gal__h', '.gal__lede',
+    '.board', '.table-act__h', '.open',
+    '.cs__lines', '.cs__form', '.cs__foot',
+    '.ftr__brand', '.ftr__col', '.hero__lede', '.hero__meta'
+  ].join(', ');
   const HORIZONTAL = '.stop, .gal__item';
 
   let ups = [];          /* { el, mid, half } en coordonnées document */
@@ -120,14 +153,21 @@ export function initBulge() {
       if (el.closest('.pin-spacer')) continue;
       const r = el.getBoundingClientRect();
       if (!r.height) continue;
-      ups.push({ el, mid: r.top + window.scrollY + r.height / 2 });
+      /* LA MARGE LATÉRALE. Un bloc qui remplit déjà la largeur n'a nulle part
+         où grandir ni pencher : il déborde, et 29 px de défilement horizontal
+         apparaissent (mesuré). Un bloc étroit, lui, a de la place — et penché,
+         il lit comme une feuille plutôt que comme une section cassée.
+         On dose donc l'effet par la place DISPONIBLE. */
+      const vw = window.innerWidth || 1;
+      const room = Math.max(0, Math.min(1, (vw - r.width) / (vw * 0.3)));
+      ups.push({ el, mid: r.top + window.scrollY + r.height / 2, room });
     }
     sides = [...document.querySelectorAll(HORIZONTAL)];
   }
 
   /** Remet tout le monde à plat, une seule fois. */
   function settle() {
-    for (const u of ups) { u.el.style.scale = ''; u.el.style.translate = ''; }
+    for (const u of ups) { u.el.style.scale = ''; u.el.style.translate = ''; u.el.style.rotate = ''; }
     for (const el of sides) { el.style.scale = ''; el.style.rotate = ''; }
     document.documentElement.style.setProperty('--sheet', '0');
     flat = true;
@@ -135,7 +175,9 @@ export function initBulge() {
 
   function frame() {
     /* LE RÉSIDU. Toute la sensation du site vient de cette soustraction. */
-    const v = (lenis.targetScroll || 0) - (lenis.animatedScroll || 0);
+    const vise = window.scrollY;
+    suivi += (vise - suivi) * CHASE;
+    const v = vise - suivi;
     const t = Math.tanh(v / norm);
     const a = t * Math.abs(t);
 
@@ -151,10 +193,14 @@ export function initBulge() {
     for (const u of ups) {
       const d = clamp1((u.mid - y0) / halfVh);
       const k = 1 - d * d;                     // la parabole : 1 au centre, 0 aux bords
-      if (k <= 0) { if (u.el.style.scale) { u.el.style.scale = ''; u.el.style.translate = ''; } continue; }
-      u.el.style.scale = (1 + gain * k).toFixed(4);
+      if (k <= 0) { if (u.el.style.scale) { u.el.style.scale = ''; u.el.style.translate = ''; u.el.style.rotate = ''; } continue; }
+      // L'échelle garde un plancher : même un bloc pleine largeur respire un peu.
+      u.el.style.scale = (1 + gain * k * (0.45 + 0.55 * u.room)).toFixed(4);
       // Le glissement suit le SIGNE de l'écart au centre : on s'écarte de l'axe.
       u.el.style.translate = '0 ' + (d * lift * k).toFixed(2) + 'px';
+      // L'inclinaison, elle, est maximale AUX BORDS et nulle au centre — et
+      // réservée aux blocs qui ont de la place pour pencher.
+      u.el.style.rotate = (BANK * a * d * (1 - k * 0.55) * u.room).toFixed(2) + 'deg';
     }
 
     if (!sides.length) return;
