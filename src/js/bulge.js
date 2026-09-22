@@ -65,28 +65,73 @@ import { reduced } from './motion.js';
 const NORM_WIDE = 320;
 const NORM_NARROW = 220;
 
-/* +11 % suffisait chez eux parce que TOUTE la page est une seule surface
-   continue : l'œil compare le centre aux bords et voit la feuille. Ici on
-   transforme des blocs séparés, avec du vide autour — il n'y a rien à quoi
-   comparer, et 11 % passent inaperçus. Il en faut davantage, et surtout il
-   faut que le mouvement ne soit pas qu'une échelle (voir BANK). */
-const GAIN = 0.17;
+/* ── DE L'ÉCHELLE À LA PROFONDEUR ───────────────────────────────────────
+   Premier jet : chaque bloc était simplement AGRANDI au centre de l'écran.
+   Ça gonfle, ça ne PLIE pas — et le client l'a vu tout de suite : « on dirait
+   que ça plane, une cape dans les airs » chez eux, un zoom chez nous.
+
+   La différence tient à deux choses qu'une échelle ne peut pas donner :
+
+   1. UNE SEULE CAMÉRA. Chez eux tous les plans passent par la même matrice de
+      projection — leur commentaire dit que la courbure « ne peut s'accorder
+      que si tout est évalué dans le même repère ». Une échelle par élément n'a
+      aucun repère commun : c'est une pile de cartes indépendantes.
+      On pose donc `perspective()` avec un `transform-origin` calculé pour que
+      le POINT DE FUITE tombe au centre de l'écran, le même pour tous.
+
+   2. L'INCLINAISON DANS LA PROFONDEUR. Une feuille pliée n'est pas plus petite
+      sur les bords : elle y est INCLINÉE. C'est la pente locale de la parabole,
+      donc sa dérivée — et c'est elle qui fait que le haut d'un bloc fuit
+      pendant que son bas avance. Sans elle, pas de matière, juste une taille.
+
+   Ce qu'on ne peut toujours pas faire en CSS : courber un bloc SUR SA PROPRE
+   hauteur. Ses arêtes restent droites. Pour ça il faut un maillage subdivisé,
+   donc un canvas. */
+
+/* La poussée vers la caméra au centre de l'écran, en pixels. Avec PERSP ci-
+   dessous, 110 donne 900/(900−110) = +14 % au centre — l'ordre de grandeur
+   de la référence, mais obtenu par la PROJECTION et non par une mise à
+   l'échelle, donc accompagné de tout ce qui va avec. */
+const DEPTH = 110;
+
+/* La focale. Plus courte = perspective plus violente. 900 px est le réglage
+   habituel d'une scène CSS : assez pour que la profondeur se lise, assez peu
+   pour que le texte reste net. */
+const PERSP = 900;
+
+/* L'inclinaison, en proportion de la pente réelle. À 1 on suit exactement la
+   tangente de la feuille, ce qui couche les blocs des bords à plus de 14° et
+   rend le texte illisible. 0,45 garde le geste et la lecture. */
+const TILT = 0.45;
+
+/* LE ROULIS SOUS VÉLOCITÉ, en degrés.
+   L'inclinaison ci-dessus suit la pente de la parabole : elle est donc NULLE
+   au centre de l'écran, ce qui est physiquement juste — le sommet d'une
+   courbe est plat. Mais sur un téléphone il ne tient que deux ou trois blocs
+   à l'écran, tous près du centre : la courbe n'a pas la place de se lire, et
+   on ne voit qu'un bloc plus gros que l'autre.
+   La référence a le même problème et le règle pareil : `SHEET_REAR_Y/Z`
+   cabrent la traîne vers la caméra et `SHEET_BANK` fait rouler le ruban —
+   des termes qui ne dépendent QUE de la vitesse, pas de la position. Tout
+   le plan visible penche donc ensemble pendant le geste. C'est ça, le
+   « mouvement physique » : la feuille prend le vent. */
+const BANK_V = 2.4;
 
 /* Le glissement qui accompagne l'échelle. La poussée en z éloigne aussi les
    objets de l'axe de la caméra : sans lui, les blocs gonflent sur place et
    l'effet paraît collé. */
 const LIFT = 0.07;
 
-/* L'INCLINAISON. C'est elle qui fait lire « papier » plutôt que « zoom ».
-   La référence fait rouler son ruban de 0,16 rad ; ici un bloc s'incline
-   selon son écart au centre, donc le haut et le bas de l'écran penchent en
-   sens contraires et la colonne entière semble fléchir. */
-const BANK = 1.6;                /* degrés au plein de la vélocité */
-
 /* L'inclinaison des cartes d'un rail, en degrés, au plein de la vélocité.
    Les deux moitiés tournent en sens OPPOSÉS (`Math.sign`), nul au centre :
    c'est l'essorage du ruban, et c'est lui qui donne « le papier au vent ». */
 const TWIST = 2.6;
+
+/* L'échelle des cartes d'un rail. Elles, on ne peut PAS les passer en
+   perspective : GSAP possède déjà leur `transform` (elles montent, tournent et
+   grossissent au fil du rail). On reste donc sur les propriétés autonomes
+   `scale` et `rotate`, qui se multiplient avec le sien. */
+const RAIL_GAIN = 0.12;
 
 /* En dessous, la feuille est considérée à plat et on ne touche à rien. */
 const EPS = 0.0015;
@@ -160,14 +205,18 @@ export function initBulge() {
          On dose donc l'effet par la place DISPONIBLE. */
       const vw = window.innerWidth || 1;
       const room = Math.max(0, Math.min(1, (vw - r.width) / (vw * 0.3)));
-      ups.push({ el, mid: r.top + window.scrollY + r.height / 2, room });
+      ups.push({ el, mid: r.top + window.scrollY + r.height / 2, h: r.height, room });
     }
     sides = [...document.querySelectorAll(HORIZONTAL)];
   }
 
   /** Remet tout le monde à plat, une seule fois. */
   function settle() {
-    for (const u of ups) { u.el.style.scale = ''; u.el.style.translate = ''; u.el.style.rotate = ''; }
+    for (const u of ups) {
+      u.el.style.transform = '';
+      u.el.style.transformOrigin = '';
+      u.el.style.scale = ''; u.el.style.translate = ''; u.el.style.rotate = '';
+    }
     for (const el of sides) { el.style.scale = ''; el.style.rotate = ''; }
     document.documentElement.style.setProperty('--sheet', '0');
     flat = true;
@@ -187,20 +236,40 @@ export function initBulge() {
     document.documentElement.style.setProperty('--sheet', a.toFixed(3));
 
     const y0 = window.scrollY + halfVh;
-    const gain = GAIN * a;
     const lift = LIFT * a * halfVh;
+
+    /* La pente de la parabole z = A·DEPTH·(1 − t²) vaut dz/dt = −2·A·DEPTH·t.
+       Ramenée en angle : atan(pente / demi-hauteur d'écran). C'est la tangente
+       à la feuille, donc l'inclinaison que prend une carte posée dessus. */
+    const degParT = (-2 * DEPTH * a / halfVh) * (180 / Math.PI) * TILT;
 
     for (const u of ups) {
       const d = clamp1((u.mid - y0) / halfVh);
       const k = 1 - d * d;                     // la parabole : 1 au centre, 0 aux bords
-      if (k <= 0) { if (u.el.style.scale) { u.el.style.scale = ''; u.el.style.translate = ''; u.el.style.rotate = ''; } continue; }
-      // L'échelle garde un plancher : même un bloc pleine largeur respire un peu.
-      u.el.style.scale = (1 + gain * k * (0.45 + 0.55 * u.room)).toFixed(4);
-      // Le glissement suit le SIGNE de l'écart au centre : on s'écarte de l'axe.
-      u.el.style.translate = '0 ' + (d * lift * k).toFixed(2) + 'px';
-      // L'inclinaison, elle, est maximale AUX BORDS et nulle au centre — et
-      // réservée aux blocs qui ont de la place pour pencher.
-      u.el.style.rotate = (BANK * a * d * (1 - k * 0.55) * u.room).toFixed(2) + 'deg';
+      if (k <= 0) {
+        if (u.el.style.transform) { u.el.style.transform = ''; u.el.style.transformOrigin = ''; }
+        continue;
+      }
+      /* Un tween GSAP en cours possède `transform` : on ne le chasse pas. */
+      if (gsap.isTweening(u.el)) continue;
+
+      const z = DEPTH * a * k;
+      /* Deux termes : la pente locale (nulle au centre) PLUS le roulis global
+         (identique partout). Le premier dessine la courbe, le second donne le
+         vent — et c'est le second qui se voit quand l'écran est petit. */
+      const rx = degParT * d * u.room + BANK_V * a * u.room;
+      const ty = d * lift * k;
+
+      /* LE POINT DE FUITE COMMUN. `perspective()` fuit vers le
+         `transform-origin` de l'élément ; on le place donc au centre de
+         l'ÉCRAN, exprimé dans le repère de l'élément. Tous les blocs
+         partagent alors le même axe de caméra — et c'est là, exactement, que
+         la pile de cartes devient une surface. */
+      const originY = (y0 - (u.mid - u.h / 2)).toFixed(1);
+      u.el.style.transformOrigin = '50% ' + originY + 'px';
+      u.el.style.transform =
+        'perspective(' + PERSP + 'px) translate3d(0,' + ty.toFixed(2) + 'px,' +
+        z.toFixed(2) + 'px) rotateX(' + rx.toFixed(2) + 'deg)';
     }
 
     if (!sides.length) return;
@@ -213,7 +282,7 @@ export function initBulge() {
       }
       const d = clamp1((r.left + r.width / 2 - halfVw) / halfVw);
       const k = 1 - d * d;
-      el.style.scale = (1 + gain * k * 0.7).toFixed(4);
+      el.style.scale = (1 + RAIL_GAIN * a * k).toFixed(4);
       /* L'essorage : nul au centre, maximal au bord, et de sens opposé de part
          et d'autre. C'est `sign(qe)` de leur `sheetWind()`. */
       el.style.rotate = (TWIST * a * Math.sign(d) * (1 - k)).toFixed(2) + 'deg';
