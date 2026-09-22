@@ -8,6 +8,7 @@ import { initWipe } from './wipe.js';
 import { initSky } from './sky.js';
 import { initViewer } from './viewer.js';
 import './scroll.js';
+import { applyPalette } from './palette.js';
 
 startClocks();
 paintSun();
@@ -26,3 +27,5 @@ markReveals('.loc__i, .film__row, .vac__i, .phead__meta, .locs__cta > *, .works_
 markMagnets('.btn--gold, .bar__cta', 26);
 initReveals();
 initMagnets();
+
+applyPalette();

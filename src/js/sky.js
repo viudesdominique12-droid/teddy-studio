@@ -9,7 +9,12 @@
  *     (qui est un flou gaussien calculé par le CPU à chaque frame).
  */
 
-const DPR_CAP = 1.5;
+/* Quatre calques plein écran, c'est quatre textures de la taille de l'écran.
+   À 1,5× sur un téléphone de 390×844, chacune fait 585×1266 — soit ~12 Mo de
+   mémoire GPU à elles quatre, pour un fond. Les étoiles font 0,45 à 1,6 px :
+   à 1× elles sont à peine plus douces, et on rend 2,25 fois moins de pixels.
+   Le grand écran garde 1,5× : il a le budget, et les points y sont plus nets. */
+const DPR_CAP = matchMedia('(max-width: 767px)').matches ? 1 : 1.5;
 
 /* étoiles */
 const DENSITY = 0.000135;   // étoiles par px²

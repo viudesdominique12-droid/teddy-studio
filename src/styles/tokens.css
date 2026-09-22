@@ -180,3 +180,51 @@
   --hdr-h: var(--bar-h);
   --maxw: 90rem;
 }
+
+/* ═══════════════════════ LES MONDES ═══════════════════════
+   Tout le site dérive de neuf couleurs : trois fonds, trois encres, trois
+   accents. Changer de monde ne demande donc que de les réécrire — la couche
+   sémantique (`--bg`, `--fg`, `--go`…) suit toute seule, et aucun module n'a
+   à être touché.
+
+   On les essaie en ajoutant `?palette=bleu`, `violet`, `rouge` ou `mono` à
+   l'adresse. Sans paramètre, c'est le vert d'origine.
+
+   Chaque accent a été choisi pour rester lisible sur SON fond : le rapport de
+   contraste encre/fond et accent/fond est vérifié pour chacun. */
+
+[data-palette='bleu'] {
+  --night:   #12203a;   --night-2: #0a1424;   --night-3: #1b2f52;
+  --cream:   #e6eaf3;   --cream-2: #e6eaf3b8; --cream-3: #e6eaf373;
+  --gold:    #8fd0ff;   --gold-lt: #b4e2ff;   --gold-dp: #5aa8e0;
+  --shadow-border: #8fd0ff80;  --shadow-light: #8fd0ff66;
+  --go-soft: #8fd0ff1f;
+}
+
+[data-palette='violet'] {
+  --night:   #241a3c;   --night-2: #150f26;   --night-3: #33254f;
+  --cream:   #ebe4f4;   --cream-2: #ebe4f4b8; --cream-3: #ebe4f473;
+  --gold:    #c7a2ff;   --gold-lt: #ddc4ff;   --gold-dp: #9b73d8;
+  --shadow-border: #c7a2ff80;  --shadow-light: #c7a2ff66;
+  --go-soft: #c7a2ff1f;
+}
+
+[data-palette='rouge'] {
+  --night:   #2b1315;   --night-2: #1a0b0c;   --night-3: #3d1d20;
+  --cream:   #f1e4dd;   --cream-2: #f1e4ddb8; --cream-3: #f1e4dd73;
+  --gold:    #f0a05e;   --gold-lt: #ffbd85;   --gold-dp: #c87a3c;
+  --shadow-border: #f0a05e80;  --shadow-light: #f0a05e66;
+  --go-soft: #f0a05e1f;
+}
+
+/* Le monochrome garde UN accent vif — le point rouge du magnétoscope. Sans
+   lui, les appels à l'action disparaîtraient dans le gris. */
+[data-palette='mono'] {
+  --night:   #0e0e0f;   --night-2: #050506;   --night-3: #1b1b1d;
+  --cream:   #f2f2f0;   --cream-2: #f2f2f0b8; --cream-3: #f2f2f073;
+  --gold:    #ff4a3d;   --gold-lt: #ff6d61;   --gold-dp: #d1352a;
+  --shadow-border: #ff4a3d80;  --shadow-light: #ff4a3d66;
+  --go-soft: #ff4a3d1f;
+  /* Sur ce rouge-là, l'encre doit être claire : le noir du fond n'y passe pas. */
+  --on-go: #ffffff;
+}

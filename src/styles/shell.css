@@ -43,6 +43,18 @@
    donne des formes qui ne ressemblent à rien d'autre sur la page — c'est
    exactement ce qu'on demande à un logotype. */
 .logo { display: inline-block; line-height: 1; margin-right: var(--s-2); }
+/* Le logo est désormais une IMAGE — celle du client, qu'on n'a pas le droit de
+   redessiner. On la cale sur la HAUTEUR : sa largeur suit son dessin, quel que
+   soit le fichier fourni, et la barre ne bouge plus si le logo change. */
+img.logo__w {
+  display: block;
+  height: clamp(1.9rem, 2.6vw, 2.6rem);
+  width: auto;
+  /* Le canon est photographique : sans ça, il crénelle à petite taille. */
+  image-rendering: auto;
+}
+.logo--ftr img.logo__w { height: clamp(2.2rem, 3.4vw, 3.2rem); }
+
 .logo__w {
   display: block;
   font-family: var(--ff-p);
@@ -428,4 +440,24 @@ html.is-booting body { overflow: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   .tl__seg button { transition: none; }
+}
+
+/* ═══════════ LE COÛT DU VERRE SUR PETIT ÉCRAN ═══════════
+   `backdrop-filter` est la propriété la plus chère du CSS : le navigateur
+   recopie ce qu'il y a DERRIÈRE l'élément, le floute, puis compose — à chaque
+   image. Sur une barre fixe pleine largeur au-dessus d'une page qui défile,
+   c'est refait en permanence.
+
+   Sur un GPU de téléphone, trois éléments de verre simultanés (la barre, la
+   bobine, l'altimètre) suffisent à faire tomber le défilement sous les 60 Hz.
+   On les rend donc OPAQUES en dessous de 768 px : l'effet disparaît, la
+   lisibilité ne bouge pas — le fond était déjà à 88-90 % d'opacité. */
+@media (max-width: 767px) {
+  .bar.is-paper,
+  .tl {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .bar.is-paper { background: color-mix(in srgb, var(--bg) 97%, transparent); }
+  .tl { background: color-mix(in oklab, var(--night-2) 97%, transparent); }
 }

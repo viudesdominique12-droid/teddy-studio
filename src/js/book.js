@@ -11,6 +11,7 @@ import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js'
 import { initSheet } from './sheet.js';
 import { initWipe } from './wipe.js';
 import { initSky } from './sky.js';
+import { applyPalette } from './palette.js';
 
 const form = document.getElementById('bk-form');
 const rail = document.getElementById('rail');
@@ -204,3 +205,5 @@ markReveals('.sec__h', 'lines');
 markMagnets('.btn--gold, .bar__cta', 26);
 initReveals();
 initMagnets();
+
+applyPalette();

@@ -1,9 +1,9 @@
 import Lenis from 'lenis';
 import gsap from 'gsap';
+import { applyPalette } from './palette.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { initSky } from './sky.js';
-import { initEmblem } from './emblem.js';
 import { initGallery } from './gallery.js';
 import { initPhone } from './phone.js';
 import { initWipe } from './wipe.js';
@@ -144,16 +144,13 @@ function heroIntro() {
   gsap.set(items, { opacity: 0, y: '2.5rem', filter: 'blur(12px)', willChange: 'filter,transform' });
   root.classList.remove('hero-gate');
 
-  const emblem = window.__teddyEmblem
-    ? Promise.resolve()
-    : new Promise((r) => window.addEventListener('teddy:emblem-ready', r, { once: true }));
-  const cap = new Promise((r) => setTimeout(r, 4000));
+  /* Le hero n'attend plus que les FONTES. Il attendait aussi l'emblème 3D —
+     jusqu'à 4 s de sursis pendant lesquels Three.js se chargeait et compilait
+     ses shaders. L'emblème est parti avec le canon : c'est le logo réel du
+     client qui porte la marque, et lui est une image. */
   const fonts = document.fonts?.ready || Promise.resolve();
 
-  Promise.all([
-    Promise.race([emblem, cap]),
-    Promise.race([fonts, new Promise((r) => setTimeout(r, 1200))])
-  ]).then(() => {
+  Promise.race([fonts, new Promise((r) => setTimeout(r, 1200))]).then(() => {
     gsap.to(items, {
       opacity: 1, y: 0, filter: 'blur(0px)',
       duration: 0.9, stagger: 0.12, ease: 'power3.out',
@@ -215,14 +212,14 @@ function contactForm() {
 /* ───────────────────────── Démarrage ───────────────────────── */
 
 async function start() {
+  applyPalette();
   initWipe();
   initSky();
-  initEmblem();
   startClocks();
   paintSun();
   cursor();
   indexPanel();
-bar();
+  bar();
   initSheet();
   contactForm();
   openVideo();
