@@ -627,11 +627,13 @@
      un `min-height: 76svh` — sont parties avec eux ; elles gonflaient chaque
      carte à 641 px autour d'une image de 197, soit 444 px de vide répétés
      neuf fois. Il ne reste ici que l'altimètre, lui bien réel. */
-  /* Fond OPAQUE plutôt que `backdrop-filter` : l'altimètre est collé en haut
-     pendant tout le rail, donc le flou serait recalculé à chaque image du
-     défilement. Le gain visuel est nul — il n'y a que des photos derrière. */
-  .gauge { position: sticky; top: 0; bottom: auto; left: 0; right: 0;
-           padding: var(--s-3) var(--pad-x); background: rgba(7,15,6,0.95); }
+  /* PAS de `position: sticky` ici. Elle datait de l'époque où les lieux
+     étaient une pile verticale. Depuis que le rail est revenu, « collé »
+     remet l'altimètre DANS LE FLUX — donc après le message centré, donc au
+     milieu de l'écran, par-dessus le bouton « The nine, in full ».
+     La règle de base le place en `absolute` en haut de la scène épinglée :
+     c'est la bonne, et elle vaut pour les deux formats. On ne garde ici que
+     le repère du niveau de la mer, qui n'a pas la place sur 390 px. */
   .gauge__sea::after { display: none; }
 }
 
