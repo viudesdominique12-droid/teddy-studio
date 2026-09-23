@@ -1,8 +1,6 @@
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { applyPalette } from './palette.js';
-import { initBulge } from './bulge.js';
-import { initSheetGL } from './sheet-gl.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { initSky } from './sky.js';
@@ -60,9 +58,8 @@ function smoothScroll() {
     history.pushState(null, '', url.hash);
   });
 
-  /* Exposée pour de bon, plus seulement en développement : `bulge.js` lit le
-     résidu de lissage (cible − courant) dessus, et c'est de là que vient
-     toute la sensation de vitesse. */
+  /* Exposée pour le débogage : elle permet de piloter le scroll depuis la
+     console sans que la boucle de Lenis reprenne aussitôt la main. */
   window.__lenis = lenis;
   return lenis;
 }
@@ -303,8 +300,6 @@ async function start() {
   indexPanel();
   bar();
   initSheet();
-  initBulge();
-  initSheetGL();
   contactForm();
   openVideo();
   fitHeadline();

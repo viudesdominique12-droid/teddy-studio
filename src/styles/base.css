@@ -359,9 +359,3 @@ body::after {
   body::after { animation: none; }
 }
 
-
-/* Filet de sécurité pour la feuille : `body` clippait déjà, mais un élément
-   penché peut faire grandir la boîte de défilement de la RACINE. `clip` plutôt
-   que `hidden` — `hidden` sur <html> transforme la page en conteneur de
-   défilement et casse l'épinglage de ScrollTrigger. */
-html { overflow-x: clip; }
