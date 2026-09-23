@@ -10,7 +10,7 @@
  * dans une teinte sans réécrire l'adresse à chaque page.
  */
 
-const PALETTES = ['bleu', 'violet', 'rouge', 'mono'];
+const PALETTES = ['bleu', 'violet', 'rouge', 'mono', 'mono-or'];
 const KEY = 'teddy:palette';
 
 export function applyPalette() {

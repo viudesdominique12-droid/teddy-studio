@@ -217,6 +217,19 @@
   --go-soft: #f0a05e1f;
 }
 
+/* Le même noir, mais avec l'or du site au lieu du rouge. C'est la version la
+   plus proche de l'identité d'origine : on ne change que le MONDE (le vert
+   nuit devient un noir de labo), l'accent reste celui de la marque.
+   `--on-go` n'est pas redéfini : il retombe sur `--night`, et du noir sur de
+   l'or se lit parfaitement. */
+[data-palette='mono-or'] {
+  --night:   #0e0e0f;   --night-2: #050506;   --night-3: #1b1b1d;
+  --cream:   #f2f2f0;   --cream-2: #f2f2f0b8; --cream-3: #f2f2f073;
+  --gold:    #ecc779;   --gold-lt: #ffd989;   --gold-dp: #c9a44f;
+  --shadow-border: #ecc77980;  --shadow-light: #ecc77966;
+  --go-soft: #ecc7791f;
+}
+
 /* Le monochrome garde UN accent vif — le point rouge du magnétoscope. Sans
    lui, les appels à l'action disparaîtraient dans le gris. */
 [data-palette='mono'] {
