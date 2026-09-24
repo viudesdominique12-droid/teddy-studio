@@ -10,7 +10,6 @@ import { cursor, indexPanel, bar, reduced, EASE, DUR } from './motion.js';
 import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js';
 import { initSheet } from './sheet.js';
 import { initWipe } from './wipe.js';
-import { initSky } from './sky.js';
 import { applyPalette } from './palette.js';
 
 const form = document.getElementById('bk-form');
@@ -189,7 +188,6 @@ form?.addEventListener('submit', (ev) => {
 /* ─────────────── Démarrage ─────────────── */
 
 startClocks();
-initSky();   // le ciel et sa nuit sont le sol du site, pas une page
 initWipe();
 cursor();
 indexPanel();

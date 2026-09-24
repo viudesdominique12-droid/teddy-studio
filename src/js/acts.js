@@ -114,7 +114,12 @@ export function actDrop() {
   /** La jauge suit la descente : c'est elle qui fait l'instrument. */
   const setAlt = (v) => {
     if (altEl) altEl.textContent = fmt(v);
-    if (fill) fill.style.width = `${gsap.utils.clamp(0, 100, ((HIGH - v) / (HIGH - LOW)) * 100)}%`;
+    /* `scaleX` et non `width` : la largeur est une propriété de mise en page,
+       recalculée pendant tout le rail. L'échelle se compose. */
+    if (fill) {
+      const k = gsap.utils.clamp(0, 1, (HIGH - v) / (HIGH - LOW));
+      fill.style.transform = `scaleX(${k.toFixed(4)})`;
+    }
   };
   setAlt(HIGH);
 

@@ -563,7 +563,11 @@
 .stop {
   position: relative; flex: none;
   width: 22vw; aspect-ratio: 3 / 2;
-  will-change: transform;
+  /* PAS de `will-change` ici. Neuf cartes le portaient en permanence, donc
+     neuf calques GPU retenus pendant toute la session pour une section qu'on
+     traverse en quelques secondes. GSAP pose et retire lui-même la promesse
+     au début et à la fin de chaque tween — c'est son travail, et il le fait
+     au bon moment. */
 }
 .stop img {
   width: 100%; height: 100%;
@@ -674,7 +678,10 @@
 .gauge__k { flex: none; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.5); }
 .gauge__line { position: relative; flex: 1 1 auto; height: 2px; background: rgba(255,255,255,0.3); }
 .gauge__fill {
-  position: absolute; left: 0; top: 0; height: 2px; width: 0;
+  /* Pleine largeur et mise à l'échelle depuis la gauche : le JS écrit un
+     `scaleX`, qui se compose, au lieu d'une `width`, qui remet en page. */
+  position: absolute; left: 0; top: 0; height: 2px; width: 100%;
+  transform: scaleX(0); transform-origin: left center;
   background: var(--g-300);
   box-shadow: 0 0 12px rgba(135, 228, 114, 0.55);
 }

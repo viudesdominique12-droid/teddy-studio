@@ -427,7 +427,9 @@ html.is-booting body { overflow: hidden; }
   width: 1px; background: var(--cream);
   box-shadow: 0 0 10px 1px #eae0d066;
   pointer-events: none;
-  transform: translateX(-0.5px);
+  /* La position est écrite par `timeline.js` en `translate3d`, jamais en
+     `left` : c'est le seul élément du site déplacé à chaque image de scroll. */
+  transform: translate3d(-0.5px, 0, 0);
 }
 
 /* La fiche de service remonte au-dessus de la bobine. */

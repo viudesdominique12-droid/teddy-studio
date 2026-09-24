@@ -101,13 +101,34 @@ export function initTimeline() {
     });
   }
 
-  /* ── La lecture ── */
-  let last = -1;
-  function paint() {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const prog = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  /* ── La lecture ──
+     Cette fonction tourne à CHAQUE image de défilement, sur les 27 000 px de
+     la page. C'était donc l'endroit le plus cher du site, et pour trois
+     raisons cumulées :
 
-    head.style.left = (prog * 100) + '%';
+       1. elle LISAIT `scrollHeight` puis ÉCRIVAIT `left` — lire la géométrie
+          après l'avoir écrite force le navigateur à recalculer toute la mise
+          en page avant de répondre. Soixante fois par seconde ;
+       2. `left` est une propriété de MISE EN PAGE. La déplacer invalide la
+          position de tout ce qui suit. `transform` ne fait que composer ;
+       3. elle réécrivait le minutage à chaque image, même quand la chaîne
+          était identique — et changer du texte invalide aussi la mise en page.
+
+     Les trois sont corrigés : les mesures sont en cache, la tête se déplace
+     en `translate3d`, et le texte n'est écrit que lorsqu'il change. */
+  let last = -1;
+  let lastTc = '', maxScroll = 0, railW = 0;
+
+  function cache() {
+    maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    railW = head.parentElement ? head.parentElement.clientWidth : 0;
+  }
+
+  function paint() {
+    const prog = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+
+    // −0,5 px : le trait fait 1 px, on le centre sur sa position.
+    head.style.transform = `translate3d(${(prog * railW - 0.5).toFixed(1)}px,0,0)`;
 
     const frames = Math.round(prog * FPS * REEL_S);
     const f = frames % FPS;
@@ -115,8 +136,9 @@ export function initTimeline() {
     const m = Math.floor(frames / (FPS * 60));
     // SMPTE complet : heures:minutes:secondes:images. Trois champs se liraient
     // comme un hh:mm:ss ordinaire et l'effet tomberait.
-    tc.textContent = (window.innerWidth < NARROW ? '' : 'TC ')
+    const txt = (window.innerWidth < NARROW ? '' : 'TC ')
       + `00:${pad(m)}:${pad(s)}:${pad(f)}`;
+    if (txt !== lastTc) { tc.textContent = txt; lastTc = txt; }
 
     // La dernière section dont le haut a franchi le milieu de l'écran.
     const mid = window.scrollY + window.innerHeight * 0.5;
@@ -140,6 +162,7 @@ export function initTimeline() {
   };
 
   measure();
+  cache();
   paint();
   window.addEventListener('scroll', onScroll, { passive: true });
 
@@ -149,10 +172,10 @@ export function initTimeline() {
   window.addEventListener('resize', () => {
     if (window.innerWidth === lastW) return;
     lastW = window.innerWidth;
-    measure(); last = -1; paint();
+    measure(); cache(); last = -1; paint();
   });
-  window.addEventListener('load', () => { measure(); last = -1; paint(); });
-  window.setTimeout(() => { measure(); last = -1; paint(); }, 1200);
+  window.addEventListener('load', () => { measure(); cache(); last = -1; paint(); });
+  window.setTimeout(() => { measure(); cache(); last = -1; paint(); }, 1200);
 
   document.documentElement.classList.add('has-tl');
 }

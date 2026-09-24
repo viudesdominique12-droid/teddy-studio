@@ -5,7 +5,6 @@ import { initSheet } from './sheet.js';
 import { cursor, indexPanel, bar } from './motion.js';
 import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js';
 import { initWipe } from './wipe.js';
-import { initSky } from './sky.js';
 import { initViewer } from './viewer.js';
 import './scroll.js';
 import { applyPalette } from './palette.js';
@@ -15,7 +14,6 @@ paintSun();
 cursor();
 indexPanel();
 bar();
-initSky();
 initViewer();   // le ciel et sa nuit sont le sol du site, pas une page
 initWipe();
 initSheet();

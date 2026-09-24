@@ -3,7 +3,6 @@ import gsap from 'gsap';
 import { applyPalette } from './palette.js';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import { initSky } from './sky.js';
 import { initGallery } from './gallery.js';
 import { initPhone } from './phone.js';
 import { initWipe } from './wipe.js';
@@ -353,7 +352,6 @@ async function start() {
      contenu. On le pose donc ici : sans JS, il n'est jamais posé. */
   document.documentElement.classList.add('hero-gate');
   initWipe();
-  initSky();
   startClocks();
   paintSun();
   cursor();

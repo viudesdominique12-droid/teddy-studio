@@ -211,12 +211,6 @@ html.is-loading body { overflow: hidden; }
    seule fois ; seuls les deux calques de scintillement bougent, et c'est le
    compositor qui s'en charge — coût JS nul, quel que soit le nombre d'étoiles. */
 
-.sky {
-  position: fixed; inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  contain: strict;
-}
 
 /* ── LA PROFONDEUR ──
    Le fond n'est pas une couleur, c'est un CALQUE. Le même vert `#182d19`,
@@ -238,27 +232,32 @@ html.is-loading body { overflow: hidden; }
    dans son propre contexte d'empilement, et le mélange n'atteint plus la page.
    Et les couleurs viennent des JETONS : écrites en dur, elles verdissaient les
    cinq autres palettes. */
+/* ── LA PROFONDEUR ──
+   Il y avait ici DEUX calques plein écran en `mix-blend-mode`, plus quatre
+   canvas de ciel étoilé. Six surfaces de la taille de l'écran, recomposées à
+   chaque image. Sur un ordinateur ça passe ; sur un téléphone c'est la
+   mémoire GPU saturée, et c'est ce qui rendait le défilement impossible.
+
+   Il n'en reste qu'UN, et sans mode de fusion : un dégradé qui assombrit le
+   haut et pose la lueur en un seul passage. Le `mix-blend-mode` force le
+   navigateur à recomposer tout ce qui se trouve dessous ; deux couches de
+   fusion plein écran, c'était deux recompositions complètes par image.
+
+   Le ciel étoilé est parti avec eux. Un bureau de production ne vend pas la
+   nuit : il vend l'Éthiopie, et elle est dans les photographies. */
 .depth {
   position: fixed; inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: linear-gradient(180deg, var(--night) 0%, transparent 70%);
-  opacity: 0.85;
-  mix-blend-mode: multiply;
+  background:
+    radial-gradient(58% 46% at 70% 24%,
+      color-mix(in srgb, var(--night-3) 62%, transparent) 0%,
+      transparent 62%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--night-2) 72%, transparent) 0%,
+      transparent 58%);
 }
 
-/* La lueur : d'où vient la lumière. Second élément, second mode de mélange —
-   `screen` et `multiply` ne peuvent pas cohabiter sur une même couche. */
-.depth-glow {
-  position: fixed; inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: radial-gradient(58% 46% at 70% 24%,
-    color-mix(in srgb, var(--night-3) 82%, transparent) 0%,
-    color-mix(in srgb, var(--night-3) 38%, transparent) 45%,
-    transparent 100%);
-  mix-blend-mode: screen;
-}
 
 /* ══════════════ TRANSITIONS DE PAGE ══════════════
    Elles vivent entièrement dans `src/js/wipe.js` : un chevron à proue qui
@@ -281,32 +280,7 @@ html.is-loading body { overflow: hidden; }
    seule fois ; seuls les deux calques de scintillement bougent, et c'est le
    compositor qui s'en charge — coût JS nul, quel que soit le nombre d'étoiles. */
 
-.sky {
-  position: fixed; inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  contain: strict;
-}
 
-/* ── LA PROFONDEUR ──
-   Le fond était un vert PLAT. La référence pose par-dessus son ciel un calque
-   fixe en `mix-blend-mode: multiply` : le même vert, multiplié par lui-même,
-   assombrit le haut jusqu'au presque-noir et s'ouvre vers le bas.
-
-   Le calque est en z-index 0,5 — AU-DESSUS des étoiles, EN DESSOUS du
-   contenu. C'est le ciel qu'il assombrit, jamais le texte : un `multiply` sur
-   du texte crème le rendrait illisible.
-
-   Et un second, radial, décentré vers le haut-droite : la lueur d'où vient la
-   lumière. Sans elle, l'assombrissement est uniforme et donc plat lui aussi.
-
-   NOTE : `.depth` était déclaré une SECONDE fois ici, avec `::before` et
-   `::after`. La seconde déclaration ne réinitialisait que le positionnement —
-   le fond, l'opacité et le `multiply` de la première SURVIVAIENT. Le multiply
-   était donc peint deux fois, et deux lueurs radiales différentes coexistaient
-   (`.depth::after` à 64%/52% et `.depth-glow` à 58%/46%). Quatre calques là où
-   le commentaire en annonce deux. Le doublon est retiré. */
-.sky__l { position: absolute; inset: 0; display: block; }
 
 @media (prefers-reduced-motion: no-preference) {
   .sky__tw-a { animation: tw-a 4.1s var(--e-inout) -1.3s infinite alternate; }
