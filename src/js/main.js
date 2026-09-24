@@ -196,6 +196,42 @@ function boot() {
   });
 }
 
+/* ───────────────────────── LE CLAP ─────────────────────────
+   Un clap ne décore pas : il OUVRE le plan. C'est le seul geste du site qui
+   dise « on tourne », et il tombe au moment où le hero finit de se poser.
+
+   La physique tient en trois temps, et c'est le troisième qui fait tout :
+   le bras se lève lentement (on arme), il retombe VITE (`power4.in` — une
+   entrée en accélération, la seule légitime du site : on ne pose pas un clap,
+   on le laisse tomber), puis il REBONDIT d'un degré. Sans ce rebond, le bois
+   ne sonne pas — c'est le follow-through de Disney appliqué à deux planches.
+
+   Une seule fois par session : un clap qui claque à chaque visite devient un
+   tic. Et jamais en mouvement réduit. */
+function clap() {
+  const slate = document.querySelector('[data-slate]');
+  if (!slate || reduced()) return;
+  const arm = slate.querySelector('.slate__arm');
+  if (!arm) return;
+
+  let vu = false;
+  try { vu = sessionStorage.getItem('teddy-clap') === '1'; } catch { /* ignore */ }
+  if (vu) return;
+  try { sessionStorage.setItem('teddy-clap', '1'); } catch { /* ignore */ }
+
+  /* `svgOrigin` et non `transformOrigin` : sur un <g> SVG, le `transform-origin`
+     CSS se résout dans un repère que GSAP réécrit ensuite — mesuré, il retombe
+     à `0 0`, donc le bras pivotait autour du coin du dessin au lieu de sa
+     charnière. `svgOrigin` prend les coordonnées du VIEWBOX, qui sont celles
+     dans lesquelles le clap a été dessiné. */
+  gsap.timeline({ delay: 0.55 })
+    .set(arm, { rotate: 0, svgOrigin: '14 52' })
+    .to(arm, { rotate: -26, duration: 0.62, ease: 'power2.out' })      // on arme
+    .to(arm, { rotate: 0, duration: 0.16, ease: 'power4.in' })         // ça tombe
+    .to(arm, { rotate: -2.2, duration: 0.09, ease: 'power2.out' })     // le bois sonne
+    .to(arm, { rotate: 0, duration: 0.22, ease: 'power2.inOut' });
+}
+
 /* ───────────────────────── L'ouverture ───────────────────────── */
 
 function openVideo() {
@@ -246,7 +282,7 @@ function heroIntro() {
     gsap.to(items, {
       opacity: 1, y: 0, filter: 'blur(0px)',
       duration: 0.9, stagger: 0.12, ease: 'power3.out',
-      onComplete: () => gsap.set(items, { clearProps: 'filter,willChange' })
+      onComplete: () => { gsap.set(items, { clearProps: 'filter,willChange' }); clap(); }
     });
   });
 }

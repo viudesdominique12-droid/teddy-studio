@@ -78,6 +78,48 @@
    à gauche. Le titre récupère donc la largeur que le char occupait — il était
    calibré pour laisser 38 vw de côté. */
 
+/* ═══════════ LE CLAP ═══════════
+   Il occupe la moitié droite que le canon laissait vide, DERRIÈRE le titre —
+   le mot passe par-dessus l'ardoise, donc ce sont deux objets d'une même
+   composition et non deux objets posés côte à côte.
+   Il déborde volontairement du cadre à droite : un clap est tenu à bout de
+   bras devant l'objectif, on n'en voit jamais tout. */
+.slate {
+  position: absolute;
+  right: -6%; top: 50%;
+  width: clamp(18rem, 44vw, 42rem);
+  transform: translateY(-52%) rotate(-7deg);
+  z-index: 1;                 /* le titre est en 2 : il passe devant */
+  pointer-events: none;
+  opacity: 0.5;
+}
+.slate svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.slate__face  { fill: color-mix(in srgb, var(--night-2) 88%, transparent); }
+.slate__edge  { fill: none; stroke: color-mix(in srgb, var(--go) 34%, transparent); stroke-width: 1.4; }
+.slate__rule  { stroke: color-mix(in srgb, var(--go) 18%, transparent); stroke-width: 1; }
+.slate__stripe path { fill: color-mix(in srgb, var(--go) 26%, transparent); }
+
+.slate__k, .slate__v { font-family: var(--ff-m); text-transform: uppercase; }
+.slate__k { font-size: 11px; letter-spacing: 0.16em; fill: color-mix(in srgb, var(--cream) 34%, transparent); }
+.slate__v { font-size: 19px; letter-spacing: 0.02em; fill: color-mix(in srgb, var(--cream) 68%, transparent); }
+
+/* La charnière est posée par GSAP (`svgOrigin`), pas ici : sur un <g> SVG le
+   `transform-origin` CSS est réécrit par la librairie au premier tween. */
+
+/* Sous 62rem le titre occupe toute la largeur : le clap passe derrière, plus
+   grand et plus effacé, comme une texture plutôt qu'un objet. */
+@media (max-width: 62rem) {
+  .slate {
+    right: -18%; width: clamp(20rem, 82vw, 34rem);
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slate__arm { transform: none !important; }
+}
+
 .hero__lede {
   position: relative; z-index: 2;
   max-width: 38ch;
@@ -1164,4 +1206,24 @@
 @media (max-width: 40rem) {
   .credits__art { width: 132px; }
   .credits__films li { grid-template-columns: 132px minmax(0, auto); gap: 0.85rem; min-height: 96px; }
+}
+
+/* ── LA MENTION DE SPÉCIFICATION ──
+   « 12K », « Cinematic », « Professional » : ce ne sont pas des adjectifs
+   publicitaires, ce sont les caractéristiques que demande un directeur de la
+   photo avant de réserver. Elles se composent donc comme une DONNÉE — voix
+   d'instrument, majuscules, dans un cadre — et non comme du texte de titre. */
+.case__spec {
+  display: inline-block;
+  margin-left: 0.55em;
+  padding: 0.18em 0.5em;
+  border: 1px solid color-mix(in srgb, var(--go) 40%, transparent);
+  border-radius: 2px;
+  font-family: var(--ff-m);
+  font-size: var(--fs-nano);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--go-text);
+  vertical-align: middle;
+  white-space: nowrap;
 }

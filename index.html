@@ -63,6 +63,67 @@
         <span class="hero__l hero__l--big" aria-hidden="true" data-lit>Africa</span>
       </h1>
 
+      <!-- LE CLAP. Il remplace le canon en or retiré, et il répond au verdict
+           du partenaire : « looks more like an NGO than a movie website ».
+           Un site de production se reconnaît à ses OUTILS.
+           Dessiné en SVG et non en image : quelques kilo-octets, net à toute
+           taille, et surtout le BRAS peut claquer — le geste qui ouvre un plan.
+           Les champs portent de vraies valeurs, pas du remplissage. -->
+      <div class="slate" aria-hidden="true" data-slate>
+        <svg viewBox="0 0 420 356" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <clipPath id="slate-arm"><rect x="8" y="0" width="404" height="56" rx="5"/></clipPath>
+            <clipPath id="slate-body"><rect x="8" y="66" width="404" height="282" rx="7"/></clipPath>
+          </defs>
+
+          <!-- Le corps : l'ardoise -->
+          <g clip-path="url(#slate-body)">
+            <rect x="8" y="66" width="404" height="282" class="slate__face"/>
+            <g class="slate__rule">
+              <line x1="8" y1="132" x2="412" y2="132"/>
+              <line x1="8" y1="198" x2="412" y2="198"/>
+              <line x1="8" y1="264" x2="412" y2="264"/>
+              <line x1="210" y1="132" x2="210" y2="348"/>
+            </g>
+          </g>
+          <rect x="8" y="66" width="404" height="282" rx="7" class="slate__edge"/>
+
+          <!-- Les champs. De vraies valeurs : la production, la date, le format. -->
+          <g class="slate__k">
+            <text x="28" y="100">PRODUCTION</text>
+            <text x="28" y="166">ROLL</text>
+            <text x="230" y="166">SCENE</text>
+            <text x="28" y="232">DIRECTOR</text>
+            <text x="230" y="232">TAKE</text>
+            <text x="28" y="298">FORMAT</text>
+            <text x="230" y="298">FPS</text>
+          </g>
+          <g class="slate__v">
+            <text x="28" y="124">ETHIOPIAN FILM OFFICE</text>
+            <text x="28" y="190">A01</text>
+            <text x="230" y="190">01</text>
+            <text x="28" y="256">T. TESHOME</text>
+            <text x="230" y="256">1</text>
+            <text x="28" y="322">12K</text>
+            <text x="230" y="322">24</text>
+          </g>
+
+          <!-- Le bras, qui pivote sur sa charnière gauche -->
+          <g class="slate__arm">
+            <g clip-path="url(#slate-arm)">
+              <rect x="8" y="0" width="404" height="56" class="slate__face"/>
+              <g class="slate__stripe">
+                <path d="M8 0 L66 0 L30 56 L-28 56 Z"/>
+                <path d="M124 0 L182 0 L146 56 L88 56 Z"/>
+                <path d="M240 0 L298 0 L262 56 L204 56 Z"/>
+                <path d="M356 0 L414 0 L378 56 L320 56 Z"/>
+              </g>
+            </g>
+            <rect x="8" y="0" width="404" height="56" rx="5" class="slate__edge"/>
+          </g>
+        </svg>
+      </div>
+
       <p class="hero__lede" data-hero>Permits, locations, crew, kit and logistics for
         productions shooting in Ethiopia &mdash; from the Simien Mountains to the Danakil.
         One base, one permit jurisdiction.</p>
@@ -346,7 +407,7 @@
       <li class="case" data-momentum-item data-kit="Camera" data-view="/kit/photo/camera.webp" data-view-label="Camera" style="--i:0">
         <figure class="case__fig"><img src="/kit/camera-800.webp" alt="Cinema camera body on a support" width="800" height="533" loading="lazy" decoding="async"></figure>
         <div class="case__t">
-          <h3 class="case__h">Camera</h3>
+          <h3 class="case__h">Camera <span class="case__spec">12K</span></h3>
           <p>We provide advanced cameras&mdash;cinema, DSLRs, mirrorless&mdash;with high-resolution sensors, customizable settings, and cutting-edge features to meet filmmakers diverse needs.</p>
         </div>
         <button class="case__add" type="button" data-add="Camera"><span>Add to sheet</span></button>
@@ -354,7 +415,7 @@
       <li class="case" data-momentum-item data-kit="Lenses" data-view="/kit/photo/lense.webp" data-view-label="Lenses" style="--i:1">
         <figure class="case__fig"><img src="/kit/lense-800.webp" alt="A set of prime and zoom lenses" width="800" height="533" loading="lazy" decoding="async"></figure>
         <div class="case__t">
-          <h3 class="case__h">Lenses</h3>
+          <h3 class="case__h">Lenses <span class="case__spec">Cinematic</span></h3>
           <p>Expand your creative vision with our diverse lens collection. Wide-angle to telephoto, prime to zoom, achieve desired focal length, depth, and visual quality.</p>
         </div>
         <button class="case__add" type="button" data-add="Lenses"><span>Add to sheet</span></button>
@@ -370,7 +431,7 @@
       <li class="case" data-momentum-item data-kit="Lighting Kit" data-view="/kit/photo/lighting.webp" data-view-label="Lighting Kit" style="--i:3">
         <figure class="case__fig"><img src="/kit/lighting-800.webp" alt="A lighting kit with stands and modifiers" width="800" height="533" loading="lazy" decoding="async"></figure>
         <div class="case__t">
-          <h3 class="case__h">Lighting Kit</h3>
+          <h3 class="case__h">Lighting Kit <span class="case__spec">Professional</span></h3>
           <p>Shape and control lighting conditions with precision using our versatile lighting kits. Key lights, fill lights, backlight, and light modifiers included for scene illumination.</p>
         </div>
         <button class="case__add" type="button" data-add="Lighting Kit"><span>Add to sheet</span></button>
