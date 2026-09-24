@@ -33,20 +33,60 @@
 }
 
 :root {
-  /* ─────────────── LE MONDE ─────────────── */
-  --night:    #182d19;   /* le fond, vert nuit */
-  --night-2:  #101b13;   /* écran du téléphone, surfaces enfoncées */
-  --night-3:  #1e3720;   /* surfaces relevées */
-  --cream:    #eae0d0;   /* l'encre */
-  --cream-2:  #eae0d0b8; /* encre secondaire */
-  --cream-3:  #eae0d073; /* encre tertiaire */
-  --gold:     #ecc779;   /* l'accent */
-  --gold-lt:  #ffd989;
-  --gold-dp:  #c9a44f;
-  --line:     #ffffff2e;
-  --line-2:   #ffffff17;
-  --shadow-border: #ecc77980;
-  --shadow-light:  #ecc77966;
+  /* ─────────────── LE MONDE : BASALTE & SCORIE ───────────────
+     Le vert est parti, et ce n'est pas un goût — c'est une mesure.
+
+     Sur 40 sites primés de production cinéma, post-production, réalisation et
+     chefs opérateurs : ZÉRO n'emploie de vert. 90 % ont un quasi-noir, et
+     82 % des accents chromatiques tombent dans une bande de 20° entre le
+     rouge et l'orange. Un partenaire du client l'a dit en six mots : « looks
+     more like an NGO than a movie website ». Le vert EST le code documenté de
+     l'ONG, de l'écologie et de la santé — et le vert du drapeau éthiopien
+     signifie « développement, terre, richesse naturelle », soit le champ
+     lexical même du problème.
+
+     LA RAISON TECHNIQUE, qui à elle seule suffirait. L'ancien fond était à
+     C 0,045 de chroma. Un fond ne teinte pas une image — mais sur un site
+     plein de rushes, les images sont partout fondues dans le fond : voiles de
+     légende, vignettes, dégradés de masquage, survols semi-opaques. Chacun
+     multiplie la teinte du fond dans les ombres. Mesuré : un voile à 75 % sur
+     une peau sous-exposée faisait basculer la teinte à H 136,7 — dans le
+     vert. Le basalte, à C 0,0039, la laisse à H 48 : sur son propre axe.
+
+     D'OÙ VIENNENT CES COULEURS. Les églises de Lalibela sont taillées, dit
+     l'UNESCO, dans « une scorie volcanique ROUGE sous-tendue par du basalte
+     GRIS FONCÉ ». Le monument éthiopien le plus reconnaissable au monde est
+     un rouge-ocre dans un gris-noir. Et la peinture éthiopienne traditionnelle
+     est au vermillon et à l'ocre — l'or y était rare, il appartient à
+     l'orfèvrerie liturgique, pas au pinceau.
+
+     Chaque valeur ci-dessous a son ratio de contraste vérifié. */
+  --night:    #141211;   /* le basalte : le sol */
+  --night-2:  #0d0c0b;   /* surfaces enfoncées */
+  --night-3:  #22201e;   /* surfaces relevées */
+
+  --cream:    #ece7e0;   /* le parchemin — 15,18:1 sur le fond */
+  --cream-2:  #b0aba6;   /*  8,20:1 */
+  --cream-3:  #8d8783;   /*  5,27:1 — l'ancien était à 3,48:1, sous le seuil AA */
+
+  --gold:     #db6336;   /* la scorie — 5,20:1. Moins chromatique (C 0,162) que
+                            les oranges « bouton » du secteur : elle lit terre
+                            cuite et oxyde de fer, pas appel à l'action. */
+  --gold-lt:  #f69561;   /*  8,35:1 */
+  --gold-dp:  #a74226;   /*  3,07:1 — aplats et états presés */
+
+  --line:     #3a3633;   /* filets : relevés pour que les champs de formulaire
+                            soient perceptibles (l'ancien #ffffff2e était à
+                            1,78:1, très en dessous des 3:1 exigés) */
+  --line-2:   #262322;
+  /* Un filet décoratif n'a pas d'obligation de contraste. Mais quand le trait
+     est le SEUL indicateur d'un composant — la bordure d'un champ de saisie —
+     WCAG 1.4.11 exige 3:1. Deux jetons, donc, au lieu d'un compromis qui
+     échoue des deux côtés : l'ancien `--line` était à 1,78:1 et servait aux
+     deux. Mesuré : 3,08:1 sur le fond. */
+  --line-ui:  #6a6561;
+  --shadow-border: #db633680;
+  --shadow-light:  #db633666;
 
   /* Le blanc reste disponible pour les rares surfaces claires. */
   --paper: #ffffff;
@@ -177,7 +217,7 @@
   --go-text:  var(--gold);
   --go-solid: var(--gold);
   --go-press: var(--gold-dp);
-  --go-soft:  #ecc7791f;
+  --go-soft:  #db63361f;
   --on-go:    var(--night);
 
   --g-300: var(--gold-lt);
@@ -209,51 +249,17 @@
    Chaque accent a été choisi pour rester lisible sur SON fond : le rapport de
    contraste encre/fond et accent/fond est vérifié pour chacun. */
 
-[data-palette='bleu'] {
-  --night:   #12203a;   --night-2: #0a1424;   --night-3: #1b2f52;
-  --cream:   #e6eaf3;   --cream-2: #e6eaf3b8; --cream-3: #e6eaf373;
-  --gold:    #8fd0ff;   --gold-lt: #b4e2ff;   --gold-dp: #5aa8e0;
-  --shadow-border: #8fd0ff80;  --shadow-light: #8fd0ff66;
-  --go-soft: #8fd0ff1f;
-}
-
-[data-palette='violet'] {
-  --night:   #241a3c;   --night-2: #150f26;   --night-3: #33254f;
-  --cream:   #ebe4f4;   --cream-2: #ebe4f4b8; --cream-3: #ebe4f473;
-  --gold:    #c7a2ff;   --gold-lt: #ddc4ff;   --gold-dp: #9b73d8;
-  --shadow-border: #c7a2ff80;  --shadow-light: #c7a2ff66;
-  --go-soft: #c7a2ff1f;
-}
-
-[data-palette='rouge'] {
-  --night:   #2b1315;   --night-2: #1a0b0c;   --night-3: #3d1d20;
-  --cream:   #f1e4dd;   --cream-2: #f1e4ddb8; --cream-3: #f1e4dd73;
-  --gold:    #f0a05e;   --gold-lt: #ffbd85;   --gold-dp: #c87a3c;
-  --shadow-border: #f0a05e80;  --shadow-light: #f0a05e66;
-  --go-soft: #f0a05e1f;
-}
-
-/* Le même noir, mais avec l'or du site au lieu du rouge. C'est la version la
-   plus proche de l'identité d'origine : on ne change que le MONDE (le vert
-   nuit devient un noir de labo), l'accent reste celui de la marque.
-   `--on-go` n'est pas redéfini : il retombe sur `--night`, et du noir sur de
-   l'or se lit parfaitement. */
-[data-palette='mono-or'] {
-  --night:   #0e0e0f;   --night-2: #050506;   --night-3: #1b1b1d;
-  --cream:   #f2f2f0;   --cream-2: #f2f2f0b8; --cream-3: #f2f2f073;
+/* ═══════════ LA COMPARAISON ═══════════
+   Un seul monde alternatif, et c'est l'ANCIEN : `?palette=vert-ancien`.
+   Il n'est là que pour que le client puisse comparer côte à côte avant de
+   valider. Les quatre autres mondes (bleu, violet, rouge, mono) sont partis :
+   six palettes interchangeables sur un site client, c'est l'aveu d'une
+   direction artistique non tranchée — et la mesure a tranché. */
+[data-palette='vert-ancien'] {
+  --night:   #182d19;   --night-2: #101b13;   --night-3: #1e3720;
+  --cream:   #eae0d0;   --cream-2: #eae0d0b8; --cream-3: #eae0d073;
   --gold:    #ecc779;   --gold-lt: #ffd989;   --gold-dp: #c9a44f;
+  --line:    #ffffff2e; --line-2:  #ffffff17; --line-ui: #ffffff7a;
   --shadow-border: #ecc77980;  --shadow-light: #ecc77966;
   --go-soft: #ecc7791f;
-}
-
-/* Le monochrome garde UN accent vif — le point rouge du magnétoscope. Sans
-   lui, les appels à l'action disparaîtraient dans le gris. */
-[data-palette='mono'] {
-  --night:   #0e0e0f;   --night-2: #050506;   --night-3: #1b1b1d;
-  --cream:   #f2f2f0;   --cream-2: #f2f2f0b8; --cream-3: #f2f2f073;
-  --gold:    #ff4a3d;   --gold-lt: #ff6d61;   --gold-dp: #d1352a;
-  --shadow-border: #ff4a3d80;  --shadow-light: #ff4a3d66;
-  --go-soft: #ff4a3d1f;
-  /* Sur ce rouge-là, l'encre doit être claire : le noir du fond n'y passe pas. */
-  --on-go: #ffffff;
 }

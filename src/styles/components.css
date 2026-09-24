@@ -173,7 +173,7 @@ html.is-ready .loc__h, html:not(.is-loading) .loc__h { visibility: visible; }
 .field input, .field textarea, .field select {
   width: 100%; padding: 0.8em 0.9em;
   background: var(--bg-2); color: var(--fg);
-  border: 1px solid var(--line); border-radius: 0;
+  border: 1px solid var(--line-ui); border-radius: 0;
   font-size: var(--fs-body);
   transition: border-color var(--d-settle) var(--e-settle), background var(--d-settle) var(--e-settle);
 }

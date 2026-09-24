@@ -10,12 +10,12 @@
  * dans une teinte sans réécrire l'adresse à chaque page.
  */
 
-const PALETTES = ['bleu', 'violet', 'rouge', 'mono', 'mono-or'];
+const PALETTES = ['vert-ancien'];
 const KEY = 'teddy:palette';
 
 export function applyPalette() {
   let p = new URLSearchParams(location.search).get('palette');
-  if (p === 'vert' || p === 'none') {
+  if (p === 'basalte' || p === 'none') {
     try { localStorage.removeItem(KEY); } catch {}
     p = null;
   } else if (p) {
