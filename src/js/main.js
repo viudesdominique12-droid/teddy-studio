@@ -91,18 +91,31 @@ function smoothScroll() {
 
 const BOOT_CAP_MS = 7000;
 
-/** Les sources RÉELLEMENT peintes : ce que le navigateur aura à décoder. */
+/** Les sources du PREMIER ÉCRAN — et elles seules.
+ *
+ *  Première version : toutes les images du document. Sur une page de 27 000 px
+ *  ça ramassait 38 fichiers et décodait 2 856 ko AVANT de lever le rideau —
+ *  en annulant au passage le `loading="lazy"` de chacune, puisque `new Image()`
+ *  les demande toutes immédiatement. Le rideau tenait donc la page fermée le
+ *  temps de charger des photos situées vingt écrans plus bas, et le plafond de
+ *  7 s se déclenchait avant la fin.
+ *
+ *  Un préchargement ne sert à rien s'il précharge ce qu'on ne verra pas. On ne
+ *  garde que ce qui est réellement au-dessus de la ligne de flottaison, plus
+ *  le logo. Le reste retrouve son chargement différé, qui est fait pour ça. */
 function bootAssets() {
   const out = new Set();
+  const vh = window.innerHeight || 800;
+  const add = (src) => { if (src && !src.startsWith('data:')) out.add(src); };
+
   for (const img of document.images) {
-    const src = img.currentSrc || img.src;
-    if (src && !src.startsWith('data:')) out.add(src);
+    const r = img.getBoundingClientRect();
+    // Au-dessus de la ligne de flottaison, avec une marge d'un demi-écran.
+    if (r.top < vh * 1.5 && r.bottom > -vh * 0.5) add(img.currentSrc || img.src);
   }
-  // Les vignettes des vidéos : c'est l'affiche qu'on voit, pas la vidéo.
-  for (const v of document.querySelectorAll('video[poster]')) {
-    const p = v.getAttribute('poster');
-    if (p) out.add(new URL(p, location.href).href);
-  }
+  // Le logo porte la marque : il ne doit jamais apparaître en retard.
+  const logo = document.querySelector('img.logo__w');
+  if (logo) add(logo.currentSrc || logo.src);
   return [...out];
 }
 
@@ -290,8 +303,19 @@ function contactForm() {
 
 /* ───────────────────────── Démarrage ───────────────────────── */
 
+/* Le filet : même si `start()` lève, la porte se rouvre. */
+window.addEventListener('error', () => document.documentElement.classList.remove('hero-gate'));
+setTimeout(() => document.documentElement.classList.remove('hero-gate'), 8000);
+
 async function start() {
   applyPalette();
+  /* `hero-gate` cache le hero pour que l'intro puisse le révéler. Il était
+     écrit EN DUR dans `index.html`, et seul le JS le retirait : si le script
+     échouait — réseau, extension, une exception dans l'un des douze appels
+     ci-dessous — le titre, le chapô et l'appel à l'action restaient invisibles
+     POUR TOUJOURS. Une animation ne doit jamais conditionner l'existence du
+     contenu. On le pose donc ici : sans JS, il n'est jamais posé. */
+  document.documentElement.classList.add('hero-gate');
   initWipe();
   initSky();
   startClocks();

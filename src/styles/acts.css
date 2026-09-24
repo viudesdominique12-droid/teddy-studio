@@ -261,6 +261,12 @@
   grid-area: fig; margin: 0;
   border-radius: 2px; overflow: hidden;
   box-shadow: 0 0 0 1px #eae0d024, 0 30px 60px -28px #000000c4;
+  /* Le mur orange du bureau est le point le plus lumineux de toute la page :
+     sur un fond nuit il éclate et tire l'œil hors du texte qu'il accompagne.
+     On baisse la LUMINOSITÉ, pas la saturation — l'orange reste orange, il
+     cesse seulement de crier. (Le client a refusé le désaturé ailleurs ; on
+     ne le réintroduit pas ici.) */
+  filter: brightness(0.82) contrast(1.04);
 }
 .note__fig img {
   display: block; width: 100%; height: auto;
@@ -268,10 +274,31 @@
 }
 .note__fig:hover img { transform: scale(1.03); filter: brightness(1.05); }
 .note__body { grid-area: body; }
+/* Les trois faits — le fondateur, l'adresse, les horaires — étaient une
+   simple colonne de texte gris. Chacun devient sa propre fiche : ce sont
+   trois informations de nature différente, pas un paragraphe. */
 .note__facts {
-  grid-area: facts; align-self: start; color: var(--fg-3);
-  display: flex; flex-direction: column; gap: 0.7em;
-  line-height: 1.6;
+  grid-area: facts; align-self: start;
+  display: grid; gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+.note__facts p {
+  margin: 0;
+  padding: var(--s-4);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-s);
+  background: color-mix(in srgb, var(--night-3) 42%, transparent);
+  color: var(--fg-2);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  transition: border-color var(--d-micro) var(--e-out),
+              background var(--d-micro) var(--e-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .note__facts p:hover {
+    border-color: color-mix(in srgb, var(--go) 42%, transparent);
+    background: color-mix(in srgb, var(--night-3) 68%, transparent);
+  }
 }
 .note__body { max-width: 46ch; }
 .note__h {
@@ -281,8 +308,10 @@
 }
 /* La seule prose longue du site : donc le seul endroit où l'on LIT. */
 .note__p {
-  font-size: clamp(1.18rem, 1.55vw, 1.5rem);
-  line-height: 1.52; letter-spacing: -0.008em;
+  /* Remonté d'un cran : c'est la seule prose longue du site, donc le seul
+     endroit où l'on LIT vraiment. Elle mérite une taille de lecture. */
+  font-size: clamp(1.32rem, 1.85vw, 1.75rem);
+  line-height: 1.5; letter-spacing: -0.008em;
   font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 380;
   margin-bottom: var(--s-5);
 }
@@ -1120,7 +1149,9 @@
 .credits__art {
   grid-column: 1; width: 220px; height: auto;
   border-radius: 2px;
-  opacity: 0.62; filter: saturate(0.75);
+  /* NI opacité réduite NI désaturation. Le client l'a refusé deux fois :
+     « je veux les vraies couleurs, qu'on voie sans zoomer ». Le repos se
+     marque par le CADRE, pas par l'image — comme la galerie le fait déjà. */
   box-shadow: 0 0 0 1px #eae0d024;
   transition: opacity var(--d-settle) var(--e-response),
               filter var(--d-settle) var(--e-response),

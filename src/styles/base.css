@@ -233,11 +233,16 @@ html.is-loading body { overflow: hidden; }
    Ordre de peinture : le ciel d'abord, ce calque ensuite (même z-index, donc
    l'ordre du DOM tranche), le contenu par-dessus. Ce sont les ÉTOILES qu'on
    assombrit, jamais le texte. */
+/* Le `mix-blend-mode` est sur L'ÉLÉMENT, jamais sur un pseudo-élément : un
+   pseudo enfermé dans un conteneur `position: fixed` + `z-index` se retrouve
+   dans son propre contexte d'empilement, et le mélange n'atteint plus la page.
+   Et les couleurs viennent des JETONS : écrites en dur, elles verdissaient les
+   cinq autres palettes. */
 .depth {
   position: fixed; inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: linear-gradient(180deg, #182d19 0%, #182d1900 70%);
+  background-image: linear-gradient(180deg, var(--night) 0%, transparent 70%);
   opacity: 0.85;
   mix-blend-mode: multiply;
 }
@@ -249,7 +254,9 @@ html.is-loading body { overflow: hidden; }
   z-index: 0;
   pointer-events: none;
   background-image: radial-gradient(58% 46% at 70% 24%,
-    #5d9a5f38 0%, #2d52301f 45%, #182d1900 100%);
+    color-mix(in srgb, var(--night-3) 82%, transparent) 0%,
+    color-mix(in srgb, var(--night-3) 38%, transparent) 45%,
+    transparent 100%);
   mix-blend-mode: screen;
 }
 
@@ -291,24 +298,14 @@ html.is-loading body { overflow: hidden; }
    du texte crème le rendrait illisible.
 
    Et un second, radial, décentré vers le haut-droite : la lueur d'où vient la
-   lumière. Sans elle, l'assombrissement est uniforme et donc plat lui aussi. */
-.depth {
-  position: fixed; inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.depth::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: linear-gradient(180deg, var(--night) 0%, #182d1900 70%);
-  opacity: 0.85;
-  mix-blend-mode: multiply;
-}
-.depth::after {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(64% 52% at 72% 26%,
-    #3c6b3e5c 0%, #24422647 42%, #182d1900 100%);
-  mix-blend-mode: screen;
-}
+   lumière. Sans elle, l'assombrissement est uniforme et donc plat lui aussi.
+
+   NOTE : `.depth` était déclaré une SECONDE fois ici, avec `::before` et
+   `::after`. La seconde déclaration ne réinitialisait que le positionnement —
+   le fond, l'opacité et le `multiply` de la première SURVIVAIENT. Le multiply
+   était donc peint deux fois, et deux lueurs radiales différentes coexistaient
+   (`.depth::after` à 64%/52% et `.depth-glow` à 58%/46%). Quatre calques là où
+   le commentaire en annonce deux. Le doublon est retiré. */
 .sky__l { position: absolute; inset: 0; display: block; }
 
 @media (prefers-reduced-motion: no-preference) {

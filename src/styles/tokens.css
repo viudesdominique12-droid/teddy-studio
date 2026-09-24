@@ -83,6 +83,24 @@
   --ls-d: -0.018em;
   --ls-eyebrow: 0.18em;
 
+  /* ── LES SIX JETONS QUI MANQUAIENT ──
+     Ceux-ci étaient APPELÉS 25 fois et définis nulle part. En CSS, une
+     déclaration qui contient un `var()` non résolu est invalide *at computed
+     value time* : elle ne tombe pas en arrière sur une valeur par défaut, elle
+     est jetée en entier, en silence.
+     Conséquence mesurée : `font-variation-settings: 'opsz' 72, 'wdth'
+     var(--wd-h2), 'wght' 700` était rejeté sur `.film__h`, `.loc__h`,
+     `.locs__q`, `.sec__h`, `.vac__empty-h` et le H1 du 404 — TOUS les titres
+     des pages profondes rendaient donc en Archivo neutre (wdth 100, wght 400)
+     au lieu du 86/720 voulu. Et les 9 éléments `.mono` n'avaient aucune taille
+     propre : ils héritaient. Ça échouait sans un mot dans la console. */
+  --fs-mono:    0.8125rem;   /* entre --fs-sm (15px) et --fs-micro (12px) */
+  --ls-mono:    0.055em;     /* l'interlettrage d'un chiffre, pas d'un sur-titre */
+  --wd-h2:      86;          /* la largeur resserrée des titres de section */
+  --wg-h2:      720;
+  --wd-display: 78;          /* plus étroit encore pour le très grand corps */
+  --wg-display: 800;
+
   /* ─────────────── Espacement ─────────────── */
   --s-1: 0.3125rem; --s-2: 0.5625rem; --s-3: 0.875rem;
   --s-4: clamp(1rem, 0.94rem + 0.24vw, 1.1875rem);
@@ -115,9 +133,7 @@
        travel     ce qui parcourt une distance   — la plus longue détente
   */
   --e-response:   cubic-bezier(0.23, 1, 0.32, 1);
-  --e-settle-2:   cubic-bezier(0.22, 1, 0.36, 1);
   --e-expressive: cubic-bezier(0.76, 0, 0.24, 1);
-  --e-travel:     cubic-bezier(0.77, 0, 0.175, 1);
 
   /* Les constantes d'interaction : un appui doit toujours peser pareil. */
   --d-press-in:  0.10s;
