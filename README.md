@@ -7,7 +7,48 @@ Site source analysé : `ethiopianfilmoffice.com` (relevé le 18/09/2026).
 
 ---
 
-## Le concept — « LE FEU VERT »
+## Reprendre le projet (état au 27/09/2026)
+
+**En ligne** : https://viudesdominique12-droid.github.io/teddy-studio/ — c'est la branche `main`, publiée automatiquement par GitHub Pages à chaque envoi (`.github/workflows/pages.yml`, environ une minute).
+
+### Lancer, construire, publier
+```bash
+npm ci                # installe gsap, lenis, three et vite
+npm run dev           # http://localhost:5178
+npm run build         # construit dans dist/
+npm run build:pages   # construit comme GitHub Pages (sous /teddy-studio/)
+```
+Publier = envoyer sur `main` (`git push origin main`) : le site se reconstruit et se met en ligne tout seul.
+
+### Où en est le site
+La refonte est en ligne, avec **trois thèmes** que le client compare : Vert (le thème de marque), Nuit et Papier. Un sélecteur (au milieu du bord droit) ou `?palette=vert|nuit|papier` les fait changer. Quand le client aura choisi : héberger les polices du thème retenu dans `public/fonts/` (elles viennent de Google Fonts le temps de l'essai), retirer le sélecteur, en faire le thème par défaut.
+
+### Les documents, du plus récent au plus ancien
+| Fichier | Contenu |
+|---|---|
+| `REFONTE.md` | **À lire en premier.** Le journal de la refonte, vague par vague (1 à 10, 26–27/09), avec les demandes de Dominique mot pour mot, et **« Pistes pour la suite »** : tout ce qui reste à faire ou à faire valider par le client. |
+| `CREDITS.md` | Licences de chaque média, modèle 3D et police. Certains médias sont encore **à confirmer** par le client. |
+| `DECISIONS.md` | Les décisions de Dominique (périmètre, menu, fond vert…). |
+| `DESIGN_SYSTEM.md`, `CONCEPTS.md`, `AUDIT.md`, `RESEARCH.md` | Les phases précédentes (24–26/09) : audit du site de départ, recherche de références, pistes de concept, système de design. Utiles pour le *pourquoi* ; la refonte en ligne a évolué depuis. |
+| `docs/outils/` | Les scripts de vérification (captures, mesure de fluidité sur téléphone, débordements, version construite) et la préparation des modèles 3D. Ils utilisent Playwright ; adapter les chemins en tête de script. |
+| `docs/archive/` | L'ancienne page d'accueil, pour revenir en arrière si besoin. |
+
+### Où est le code
+- **Pages** : `index.html` (accueil), `locations.html`, `works.html`, `book.html`, `vacancy.html`, `404.html`. Les morceaux communs sont dans `src/partials/` (`head`, `bar`, `footer`), insérés par `plugins/html-include.js`.
+- **Styles** (`src/styles/`) : `tokens.css` (les neuf couleurs de base : tout le site en dérive), `themes.css` (Nuit et Papier), `home.css` (l'accueil), `refonte.css` (la barre, le pied de page, l'ouverture), `pages.css` et `components.css` (pages intérieures).
+- **Scripts** (`src/js/`) : `home.js` (démarrage de l'accueil), `kit3d.js` (le matériel en 3D, Three.js), `reel3d.js` (la bobine des lieux, WebGL), `services.js` (les listes qu'on déplie : services et « Why us »), `palette.js` (les thèmes), `motion.js` (la barre, l'index, le curseur), `wipe.js` (le changement de page), `page.js` / `book.js` (pages intérieures).
+- **Médias** : `public/` (photos déjà préparées, modèles 3D dans `public/kit3d/`, polices dans `public/fonts/`).
+
+### Hors de GitHub, volontairement
+Les fichiers bruts d'origine (`source-assets/`, 53 Mo de rushes et d'images du client) ne sont pas dans le dépôt, qui est **public** : ils se partagent à part (Drive). Le site n'en a pas besoin pour tourner, il sert les versions préparées de `public/`.
+
+---
+
+## Historique : le concept de départ
+
+> Ce qui suit est le concept de la première version (18–24/09). La refonte l'a fait évoluer ; `REFONTE.md` et `DECISIONS.md` disent ce qui a changé.
+
+### Le concept — « LE FEU VERT »
 
 **Le vert n'est pas une couleur de marque : c'est un ÉTAT.**
 Il ne décore jamais. Il ne marque que ce qui est **dégagé, autorisé, disponible**.
