@@ -96,7 +96,7 @@ img.logo__w {
   background: currentColor;
   transition: transform 0.52s var(--e-expressive), opacity 0.3s var(--e-response);
 }
-.burger[aria-expanded='true'] { color: var(--night); }
+.burger[aria-expanded='true'] { color: var(--basalt); }
 .burger[aria-expanded='true'] .burger__b:nth-child(1) { transform: translateY(0.625rem) rotate(45deg); }
 .burger[aria-expanded='true'] .burger__b:nth-child(2) { transform: translateX(3rem); opacity: 0; }
 .burger[aria-expanded='true'] .burger__b:nth-child(3) { transform: translateY(-0.625rem) rotate(-45deg); }
@@ -158,13 +158,13 @@ html.is-locked .bar { z-index: 160; }
    un menu ouvert ne doit pas rester encombré par la page qu'il recouvre. */
 html.is-locked .bar {
   background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
-  border-bottom-color: transparent; color: var(--night); text-shadow: none;
+  border-bottom-color: transparent; color: var(--basalt); text-shadow: none;
 }
 html.is-locked .bar__clock,
 html.is-locked .bar__tel,
 html.is-locked .bar__cta { opacity: 0; pointer-events: none; transition: opacity 0.3s var(--e-response); }
-html.is-locked .logo { color: var(--night); }
-html.is-locked .logo__bar { background: var(--night); }
+html.is-locked .logo { color: var(--basalt); }
+html.is-locked .logo__bar { background: var(--basalt); }
 .index__in {
   position: absolute; inset: 0;
   background: var(--gold);
@@ -183,7 +183,7 @@ html.is-locked .logo__bar { background: var(--night); }
   position: relative; overflow: hidden;
   display: flex; align-items: baseline; gap: 0.6em;
   padding: 0 0.075em;
-  color: var(--night);
+  color: var(--basalt);
   line-height: 1.12;
 }
 .index__n {
@@ -207,11 +207,11 @@ html.is-locked .logo__bar { background: var(--night); }
 .index__nav a:focus-visible .index__n > span { transform: translateY(-1.3em); }
 
 .index__v {
-  flex: none; color: #182d1999;
+  flex: none; color: color-mix(in srgb, var(--night) 60%, transparent);
   font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
   align-self: center;
 }
-.index__nav a:hover .index__v { color: var(--night); }
+.index__nav a:hover .index__v { color: var(--basalt); }
 
 /* L'entrée : la tuile descend d'un bloc, les liens montent l'un après l'autre.
    Piloté en CSS, donc `prefers-reduced-motion` est gratuit. */
@@ -243,15 +243,15 @@ html.is-locked .logo__bar { background: var(--night); }
 /* Sur l'or, le pied reprend l'encre nuit : le filet, la pastille et l'appel
    à l'action étaient réglés pour le vert, ils y disparaissaient. */
 .index__foot {
-  border-top-color: #182d1930;
-  color: var(--night);
+  border-top-color: color-mix(in srgb, var(--night) 19%, transparent);
+  color: var(--basalt);
 }
-.index__world { margin: 0; border-color: #182d1940; color: #182d19b5; }
-.index__world .go-dot { background: var(--night); }
+.index__world { margin: 0; border-color: color-mix(in srgb, var(--night) 25%, transparent); color: color-mix(in srgb, var(--night) 71%, transparent); }
+.index__world .go-dot { background: var(--basalt); }
 .index__foot .btn {
-  background: var(--night); border-color: var(--night); color: var(--gold);
+  background: var(--basalt); border-color: var(--basalt); color: var(--gold);
 }
-.index__foot .btn:hover { background: var(--night-3); border-color: var(--night-3); }
+.index__foot .btn:hover { background: var(--basalt-3); border-color: var(--basalt-3); }
 
 /* ─────────────── LA FICHE QUI SUIT ───────────────
    Elle s'écrit toute seule au fil de la visite, puis devient la page. */
@@ -331,8 +331,8 @@ html.is-locked .logo__bar { background: var(--night); }
 .ftr__touch p { font-size: var(--fs-sm); color: var(--fg-2); margin-bottom: var(--s-3); }
 .ftr__hours { color: var(--fg-2); }
 
-.ftr__mark { max-width: var(--maxw); margin: var(--s-8) auto var(--s-5); color: var(--line); }
-.mortar { width: clamp(120px, 16vw, 210px); height: auto; }
+/* Le dessin du mortier au-dessus du nom a été retiré le 26/09/2026 à la
+   demande de Dominique (« le logo mal fait ») : le nom géant en tient lieu. */
 
 .ftr__legal {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3);
@@ -344,19 +344,6 @@ html.is-locked .logo__bar { background: var(--night); }
 .ftr__legal strong { font-weight: 400; color: var(--fg-2); }
 .ftr__loc { font-variant-numeric: tabular-nums; }
 
-/* ─────────────── LE SEUIL ───────────────
-   Une donnée qui se résout, pas un mur : 900 ms plafond, sauté en visite répétée. */
-
-.boot {
-  position: fixed; inset: 0; z-index: 400;
-  display: grid; place-items: center;
-  background: var(--bg);
-}
-.boot__clock {
-  font-size: clamp(2rem, 7vw, 4rem);
-  font-variation-settings: 'wdth' 112.5, 'wght' 300;
-  letter-spacing: -0.02em; line-height: 1;
-}
 html.is-booting body { overflow: hidden; }
 
 /* ═══════════ LE CHEVRON (transition de page) ═══════════
@@ -465,31 +452,4 @@ html.is-booting body { overflow: hidden; }
 }
 
 
-/* ── LA JAUGE DE CHARGEMENT ──
-   Une barre qui dit la vérité : elle avance au rythme des images réellement
-   décodées, pas sur une minuterie. `scale` plutôt que `width` — une largeur
-   qui change relance la mise en page à chaque image, une échelle non. */
-.boot__gauge {
-  width: min(14rem, 46vw);
-  height: 2px;
-  margin-top: var(--s-5);
-  background: var(--line-2);
-  overflow: hidden;
-}
-.boot__fill {
-  display: block; width: 100%; height: 100%;
-  background: var(--go-solid);
-  transform-origin: left center;
-  scale: 0 1;
-  transition: scale 220ms var(--e-out);
-}
-.boot__read {
-  display: flex; gap: var(--s-4); align-items: baseline;
-  margin-top: var(--s-3);
-  font-size: var(--fs-nano);
-  letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase;
-  color: var(--cream-3);
-}
-.boot__read [data-boot-pct] { color: var(--go-text); font-variant-numeric: tabular-nums; }
 

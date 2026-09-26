@@ -356,7 +356,7 @@ html.is-ready .loc__h, html:not(.is-loading) .loc__h { visibility: visible; }
   transition: transform var(--d-reveal) var(--e-out);
 }
 .btn--gold:hover, .btn--gold:focus-visible {
-  color: var(--night);
+  color: var(--basalt);
   border-color: var(--gold-lt);
   box-shadow: 0 0 34px -6px var(--shadow-border), inset 0 0 0 #ecc77900;
 }

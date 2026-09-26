@@ -1,0 +1,184 @@
+/* ══════════════════════════════════════════════════════════════
+   LES THÈMES À COMPARER — 27/09/2026
+   Dominique : « deux autres sites, on ne change que la couleur — et les
+   polices si tu veux — pour voir lequel on aime le plus ». Même site, mêmes
+   textes, mêmes animations ; trois ambiances :
+
+   · Vert    le site tel qu'il est (aucune règle ici) ;
+   · Nuit    le thème sombre. Noir profond, blanc chaud, et l'ambre d'une
+             lampe de projecteur en accent. Les titres en Big Shoulders
+             Display (des capitales de fronton de cinéma), le texte en Geist,
+             les étiquettes en Geist Mono ;
+   · Papier  l'autre, d'après hobro.digital : du papier blanc, de grandes
+             sections noires (le matériel, les lieux, la galerie, le pied de
+             page) et un seul vert vif, rare. Les titres en Instrument Serif,
+             le texte en Instrument Sans (sa sœur), les étiquettes en DM Mono.
+
+   Tout passe par les neuf couleurs de base (`tokens.css`) et les quatre
+   familles (`--ff-*`) : les modules n'ont pas à connaître les thèmes. Les
+   sélecteurs sont `html[data-palette=…]` pour l'emporter sur les `:root` de
+   `refonte.css`, chargée avant.
+
+   Contrastes vérifiés (WCAG) :
+     Nuit    encre 17:1 · gris 9,2:1 · gris clair 5,6:1 · ambre 9,9:1 sur le noir
+     Papier  encre 18:1 · gris 7,9:1 · gris clair 5,0:1 · vert foncé 5,0:1 sur
+             le papier ; encre sur le vert vif 9,5:1
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════ NUIT ═══════════════════ */
+html[data-palette='nuit'] {
+  --night:   #0b0b0b;   --night-2: #050505;   --night-3: #1b1a18;
+  --basalt:  #0b0b0b;   --basalt-3: #1c1b19;
+  --cream:   #f1ede6;   --cream-2: #b8b2a9;   --cream-3: #908a82;
+  --gold:    #f0a93b;   --gold-lt: #f6c16c;   --gold-dp: #c27f18;
+  --line:    #ffffff26; --line-2:  #ffffff14; --line-ui: #ffffff6b;
+  --shadow-border: #f0a93b80;  --shadow-light: #f0a93b66;
+  --go-soft: #f0a93b1f;
+
+  --ff-p: 'Big Shoulders Display', 'Archivo', Impact, sans-serif;
+  --ff-d: 'Big Shoulders Display', 'Archivo', Impact, sans-serif;
+  --ff-t: 'Geist', 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --ff-m: 'Geist Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+
+/* Le titre de l'ouverture : un fronton de cinéma, en capitales. */
+html[data-palette='nuit'] .hx__h {
+  font-family: var(--ff-d);
+  font-size: clamp(3.4rem, 1rem + 8.6vw, 9.75rem);
+  font-weight: 800; font-variation-settings: 'wght' 800;
+  line-height: 0.9; letter-spacing: 0;
+  text-transform: uppercase; text-wrap: balance;
+}
+/* Des capitales déjà étroites : on desserre un peu l'approche des titres. */
+html[data-palette='nuit'] :is(.hm-h, .phead__h, .k3__h, .hm-why__h) { letter-spacing: -0.005em; }
+html[data-palette='nuit'] .index__n {
+  font-variation-settings: 'wght' 700;
+  text-transform: uppercase; letter-spacing: 0;
+}
+html[data-palette='nuit'] .ftr__wl { font-size: 13.4vw; }
+
+
+/* ═══════════════════ PAPIER ═══════════════════ */
+html[data-palette='papier'] {
+  --night:   #f6f5f1;   --night-2: #ecebe5;   --night-3: #ffffff;
+  --basalt:  #111110;   --basalt-3: #2a2927;
+  --cream:   #111110;   --cream-2: #4d4b47;   --cream-3: #6c6964;
+  --gold:    #1fd286;   --gold-lt: #0a7a46;   --gold-dp: #14a868;
+  --line:    #0000001f; --line-2:  #00000012; --line-ui: #0000005c;
+  --shadow-border: #1fd28680;  --shadow-light: #1fd28666;
+  --go-soft: #1fd2861f;
+
+  --ff-p: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --ff-d: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --ff-t: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --ff-m: 'DM Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+  /* Instrument Serif n'a qu'une graisse : pas de faux gras fabriqué. */
+  font-synthesis: none;
+}
+
+/* Les grandes sections noires, comme chez Hobro : le papier alterne avec la
+   nuit. Les rôles (`--bg`, `--fg`…) sont redéclarés ici : posés sur `:root`,
+   ils y ont été calculés avec les couleurs du papier. */
+html[data-palette='papier'] :is(#resources, #locations, #gallery, .ftr) {
+  --night:   #0e0e0d;   --night-2: #070707;   --night-3: #1c1c1a;
+  --cream:   #f2f0eb;   --cream-2: #b3afa8;   --cream-3: #8f8b84;
+  --gold-lt: #3fe3a0;
+  --line:    #ffffff26; --line-2:  #ffffff14; --line-ui: #ffffff66;
+  --bg: var(--night);     --bg-2: var(--night-2);
+  --fg: var(--cream);     --fg-2: var(--cream-2);   --fg-3: var(--cream-3);
+  --g-300: var(--gold-lt); --paper-2: var(--night-2);
+  background: var(--bg);
+  color: var(--fg);
+  color-scheme: dark;
+}
+
+/* L'ouverture : l'encre noire sur le papier, le bouton et la puce inversés. */
+html[data-palette='papier'] .hx { --ink: var(--fg); --ink-inv: var(--bg); }
+html[data-palette='papier'] .hx__h {
+  font-size: clamp(3rem, 1.2rem + 6.6vw, 7.75rem);
+  font-weight: 400; font-variation-settings: normal;
+  line-height: 1; letter-spacing: -0.015em;
+}
+/* Les titres de section en capitales italiques, fines : la serif d'affiche
+   de la référence. */
+html[data-palette='papier'] :is(.hm-h, .phead__h) {
+  font-style: italic; font-weight: 400;
+  line-height: 0.96; letter-spacing: -0.005em;
+}
+html[data-palette='papier'] .k3__h { font-size: min(5.4rem, 11cqw); letter-spacing: -0.005em; }
+html[data-palette='papier'] .k3__h--long { font-size: min(4.2rem, 8.6cqw); }
+html[data-palette='papier'] .hm-why__h { letter-spacing: 0; }
+html[data-palette='papier'] .ftr__wl { font-size: 11.4vw; }
+html[data-palette='papier'] .ftr__word { font-weight: 400; }
+
+/* La barre : l'encre noire, un verre blanc sur le contenu. Le logo (lettres
+   blanches) garde toujours sa pastille noire, sans quoi il disparaît. */
+html[data-palette='papier'] .bar {
+  --bar-ink: var(--fg);
+  --bar-inv: var(--bg);
+  --bar-glass: color-mix(in srgb, var(--night-3) 80%, transparent);
+  color: var(--fg); text-shadow: none;
+}
+html[data-palette='papier'] .bar .logo {
+  background: #111110;
+  box-shadow: 0 10px 30px -14px rgb(0 0 0 / 0.45);
+}
+
+/* L'index : la tuile verte, l'encre noire. */
+html[data-palette='papier'] .index__v { color: color-mix(in srgb, var(--basalt) 62%, transparent); }
+html[data-palette='papier'] .index__foot { border-top-color: color-mix(in srgb, var(--basalt) 20%, transparent); }
+html[data-palette='papier'] .index__world {
+  border-color: color-mix(in srgb, var(--basalt) 26%, transparent);
+  color: color-mix(in srgb, var(--basalt) 72%, transparent);
+}
+
+/* Les erreurs de formulaire : le rouge foncé, lisible sur le papier. */
+html[data-palette='papier'] .field.is-err input,
+html[data-palette='papier'] .field.is-err textarea { border-color: #b3261e; }
+html[data-palette='papier'] .field__err,
+html[data-palette='papier'] .step__note.is-warn { color: #b3261e; }
+
+
+/* ═══════════════════ LE SÉLECTEUR DE THÈME ═══════════════════
+   Le temps de la comparaison seulement (`palette.js`) : une petite colonne
+   au milieu du bord droit — en bas, elle couvrait la bande des clients. Sur
+   téléphone, les pastilles seules. À retirer une fois le thème choisi. */
+.pal {
+  position: fixed; right: 0.7rem; top: 50%; z-index: 96;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: stretch; gap: 0.15rem;
+  padding: 0.55rem 0.3rem 0.3rem; border-radius: 1.1rem;
+  background: color-mix(in srgb, var(--night-2) 80%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line), 0 12px 32px -14px rgb(0 0 0 / 0.5);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  color: var(--cream);
+  font-family: var(--ff-t); font-size: 0.75rem; font-weight: 500; line-height: 1;
+}
+.pal__k {
+  margin: 0 0 0.25rem; text-align: center;
+  font-family: var(--ff-m); font-size: 0.5625rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.pal__b {
+  display: flex; align-items: center; gap: 0.45rem;
+  padding: 0.42rem 0.65rem 0.42rem 0.42rem; border: 0; border-radius: 999px;
+  background: none; color: inherit; font: inherit; cursor: pointer;
+  transition: background-color 0.25s var(--e-out);
+}
+.pal__b:hover { background: color-mix(in srgb, var(--cream) 8%, transparent); }
+.pal__b[aria-pressed='true'] { background: color-mix(in srgb, var(--cream) 15%, transparent); }
+.pal__sw {
+  width: 0.95rem; height: 0.95rem; border-radius: 50%; flex: none;
+  background: linear-gradient(135deg, var(--a) 50%, var(--b) 50%);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cream) 30%, transparent);
+}
+html.is-locked .pal { opacity: 0; pointer-events: none; }
+@media (max-width: 48rem) {
+  .pal { right: 0.45rem; padding: 0.3rem; }
+  .pal__k { display: none; }
+  .pal__b { font-size: 0; gap: 0; padding: 0.4rem; }
+}
+@media print { .pal { display: none; } }

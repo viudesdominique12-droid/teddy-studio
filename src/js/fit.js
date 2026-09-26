@@ -53,7 +53,9 @@ export function fitHeadline(root = document) {
     /* Un titre pleine largeur est une affiche ; un titre qui mange l'écran
        est un mur. Le bloc ne dépasse jamais la part du viewport qu'on lui
        accorde — sinon la bande vidéo et les CTA passent sous la ligne de flottaison. */
-    const cap = window.innerHeight * (window.innerWidth < 768 ? 0.44 : 0.58);
+    const small = window.innerWidth < 768;
+    const part = Number(small ? host.dataset.fitCapMobile : host.dataset.fitCap) || (small ? 0.44 : 0.58);
+    const cap = window.innerHeight * part;
     const h = host.getBoundingClientRect().height;
     if (h > cap) {
       const k = cap / h;

@@ -4,3 +4,32 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script>
+  /* LES THÈMES À COMPARER (27/09/2026, `palette.js`). Le thème est posé ICI,
+     avant le premier rendu : sinon la page se montrerait un instant en vert.
+     Les polices des deux thèmes d'essai viennent de Google Fonts le temps de
+     la comparaison ; celles du thème retenu seront ensuite hébergées ici. */
+  (function () {
+    var T = window.__THEMES = {
+      'vert-ancien': { color: '#182d19' },
+      nuit: { color: '#0b0b0b', fonts: 'https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@300..900&family=Geist:wght@300..700&family=Geist+Mono:wght@300..600&display=swap' },
+      papier: { color: '#f6f5f1', fonts: 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap' }
+    };
+    var p = null;
+    try {
+      p = new URLSearchParams(location.search).get('palette');
+      if (p === 'basalte' || p === 'none' || p === 'vert') { localStorage.removeItem('teddy:palette'); p = null; }
+      else if (p) localStorage.setItem('teddy:palette', p);
+      else p = localStorage.getItem('teddy:palette');
+    } catch (e) {}
+    if (!p || !T[p]) return;
+    document.documentElement.setAttribute('data-palette', p);
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', T[p].color);
+    if (T[p].fonts) {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet'; l.href = T[p].fonts; l.setAttribute('data-theme-fonts', p);
+      document.head.appendChild(l);
+    }
+  })();
+</script>

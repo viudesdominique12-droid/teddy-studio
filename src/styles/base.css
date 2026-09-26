@@ -38,7 +38,7 @@ sup { font-size: 0.6em; vertical-align: super; line-height: 0; }
 em { font-style: normal; }
 
 /* ── Sélectionner, c'est dégager ── */
-::selection { background: var(--gold); color: var(--night); }
+::selection { background: var(--gold); color: var(--basalt); }
 
 /* ── Focus : toujours visible, jamais discret ── */
 :focus-visible {
@@ -143,7 +143,7 @@ em { font-style: normal; }
   display: grid; place-items: center;
   width: 4.75rem; height: 2rem; margin: -1rem 0 0 -2.375rem;
   border-radius: var(--r-pill);
-  background: var(--gold); color: var(--night);
+  background: var(--gold); color: var(--basalt);
   font-family: var(--ff-m); font-size: var(--fs-nano); font-style: normal;
   letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
   white-space: nowrap;

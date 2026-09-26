@@ -12,6 +12,21 @@
   <meta property="og:image" content="/og.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/home.css">
+  <!-- La photo d'ouverture : même srcset et mêmes `sizes` que l'<img>, sinon le
+       navigateur précharge un AUTRE fichier que celui qu'il affichera. -->
+  <script>
+    /* L'ouverture n'existe qu'avec JavaScript, et une fois par session. La
+       classe est posée ici, avant le premier rendu, pour que la page ne se
+       montre pas un instant dessous. Le filet : si le script principal ne
+       prend pas la main, l'ouverture s'efface d'elle-même. */
+    try {
+      if (sessionStorage.getItem('teddy-seen') !== '1' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('is-booting');
+        window.__bootSafety = setTimeout(function () { document.documentElement.classList.remove('is-booting'); }, 9000);
+      }
+    } catch (e) { /* stockage indisponible : pas d'ouverture */ }
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -36,620 +51,652 @@
   }
   </script>
 </head>
-<body>
+<body class="home">
 
-<div class="boot" id="boot" aria-hidden="true">
-  <p class="boot__clock mono" id="boot-clock">--:--:--</p>
-  <div class="boot__gauge">
-    <span class="boot__fill" data-boot-bar></span>
+<!-- L'OUVERTURE. Le plan d'une caméra de tournage se trace pendant le
+     chargement. On clique sur sa lentille (ou l'on fait défiler) : elle
+     s'ouvre, et l'on entre dans la page. Une fois par session, et
+     seulement avec JavaScript (la classe `is-booting` est posée dans <head>). -->
+<div class="boot" id="boot">
+  <svg class="boot__bp" viewBox="-260 -160 2920 1900" preserveAspectRatio="xMidYMid meet" aria-hidden="true"
+       data-portal="264 663 678 774 678 1422 264 1221" data-center="471 1020" data-rec="1740 981">
+    <defs>
+      <pattern id="bp-grid" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80"/></pattern>
+      <mask id="bp-hole" maskUnits="userSpaceOnUse" x="-9000" y="-9000" width="20000" height="20000">
+        <rect x="-9000" y="-9000" width="20000" height="20000" fill="#fff"/>
+        <polygon class="bp__portal" points="471 1020 471 1020 471 1020 471 1020" fill="#000"/>
+      </mask>
+      <clipPath id="bp-plot"><rect class="bp__plot" x="-60" y="-80" width="2520" height="1760"/></clipPath>
+    </defs>
+    <g mask="url(#bp-hole)">
+      <rect class="bp__mat" x="-9000" y="-9000" width="20000" height="20000"/>
+      <rect class="bp__grid" x="-9000" y="-9000" width="20000" height="20000" fill="url(#bp-grid)"/>
+      <rect class="bp__sheet" x="-230" y="-130" width="2860" height="1840" pathLength="1"/>
+      <path class="bp__axis" d="M-200 1107L2600 745"/>
+      <image class="bp__lines" href="/cam/blueprint-2400.webp" x="0" y="0" width="2400" height="1599" clip-path="url(#bp-plot)"/>
+      <line class="bp__head" x1="-60" y1="-80" x2="-60" y2="1680"/>
+      <g class="bp__notes"><circle cx="215" cy="700" r="9" pathLength="1"/><path d="M215 700L110 500H-170" pathLength="1"/><text x="-170" y="484" text-anchor="start">MATTE BOX</text><circle cx="1020" cy="745" r="9" pathLength="1"/><path d="M1020 745L900 470H560" pathLength="1"/><text x="560" y="454" text-anchor="start">CINE ZOOM &#183; 30&#8211;300</text><circle cx="1235" cy="262" r="9" pathLength="1"/><path d="M1235 262L1080 120H740" pathLength="1"/><text x="740" y="104" text-anchor="start">MONITOR</text><circle cx="1650" cy="430" r="9" pathLength="1"/><path d="M1650 430L1770 150H2090" pathLength="1"/><text x="2090" y="134" text-anchor="end">TOP HANDLE</text><circle cx="2143" cy="722" r="9" pathLength="1"/><path d="M2143 722L2330 520H2600" pathLength="1"/><text x="2600" y="504" text-anchor="end">BATTERY</text><circle cx="1985" cy="935" r="9" pathLength="1"/><path d="M1985 935L2240 1180H2600" pathLength="1"/><text x="2600" y="1164" text-anchor="end">CAMERA BODY</text><circle cx="960" cy="1300" r="9" pathLength="1"/><path d="M960 1300L860 1560H500" pathLength="1"/><text x="500" y="1544" text-anchor="start">RODS &#183; BASEPLATE</text></g>
+      <g class="bp__block"><rect x="1960" y="1440" width="660" height="260" pathLength="1"/><path d="M1960 1510H2620M1960 1575H2620M1960 1640H2620M2400 1640V1700" pathLength="1"/><text x="1982" y="1487" class="bp__strong">TEDDY STUDIO &#8212; ETHIOPIAN FILM OFFICE</text><text x="1982" y="1552">CAMERA A &#183; THREE-QUARTER VIEW</text><text x="1982" y="1617">FILM SERVICE &amp; PRODUCTION ACROSS ETHIOPIA</text><text x="1982" y="1682">ADDIS ABABA &#183; 24/7</text><text x="2422" y="1682">SHEET 01</text></g>
+    </g>
+  </svg>
+
+  <div class="boot__top">
+    <p class="brk">Teddy Studio &middot; Ethiopian Film Office</p>
+    <p class="brk" id="boot-clock">--:--:--</p>
   </div>
-  <p class="boot__read mono"><span>Loading reel</span><span data-boot-pct>000</span></p>
+
+  <button class="boot__go" type="button" data-boot-go>
+    <svg class="boot__ring" viewBox="0 0 240 240" aria-hidden="true">
+      <defs><path id="bp-ring" d="M120 120m-94 0a94 94 0 1 1 188 0a94 94 0 1 1-188 0"/></defs>
+      <text><textPath href="#bp-ring" textLength="586" lengthAdjust="spacing">CLICK TO ENTER &#183; CLICK TO ENTER &#183; CLICK TO ENTER &#183;</textPath></text>
+    </svg>
+    <span class="boot__rec" aria-hidden="true"></span>
+    <span class="u-sr">Enter the site</span>
+  </button>
+  <p class="boot__hint brk" aria-hidden="true">Click</p>
+  <p class="boot__read brk"><span data-boot-state>Loading reel</span> &middot; <span data-boot-pct>000</span></p>
+  <div class="boot__gauge"><span class="boot__fill" data-boot-bar></span></div>
 </div>
 
 <!--#include "bar" -->
 
 <main id="main">
 
-  <!-- ══════════ LE HERO ══════════
-       Logo, sur-titre, titre géant, emblème doré qui chevauche, texte, appel.
-       Le fond est le ciel, posé par sky.js derrière toute la page. -->
-  <section class="hero" id="top" data-scene="Gateway">
-    <div class="hero__in">
-      <p class="hero__over" data-hero>Film service &amp; production across Ethiopia</p>
-
-      <h1 class="hero__h" data-hero>
-        <span class="u-sr">Gateway to Africa</span>
-        <span class="hero__l" aria-hidden="true" data-lit>Gateway to</span>
-        <span class="hero__l hero__l--big" aria-hidden="true" data-lit>Africa</span>
-      </h1>
-
-      <!-- LE CLAP. Il remplace le canon en or retiré, et il répond au verdict
-           du partenaire : « looks more like an NGO than a movie website ».
-           Un site de production se reconnaît à ses OUTILS.
-           Dessiné en SVG et non en image : quelques kilo-octets, net à toute
-           taille, et surtout le BRAS peut claquer — le geste qui ouvre un plan.
-           Les champs portent de vraies valeurs, pas du remplissage. -->
-      <div class="slate" aria-hidden="true" data-slate>
-        <svg viewBox="0 0 420 356" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <clipPath id="slate-arm"><rect x="8" y="0" width="404" height="56" rx="5"/></clipPath>
-            <clipPath id="slate-body"><rect x="8" y="66" width="404" height="282" rx="7"/></clipPath>
-          </defs>
-
-          <!-- Le corps : l'ardoise -->
-          <g clip-path="url(#slate-body)">
-            <rect x="8" y="66" width="404" height="282" class="slate__face"/>
-            <g class="slate__rule">
-              <line x1="8" y1="132" x2="412" y2="132"/>
-              <line x1="8" y1="198" x2="412" y2="198"/>
-              <line x1="8" y1="264" x2="412" y2="264"/>
-              <line x1="210" y1="132" x2="210" y2="348"/>
-            </g>
-          </g>
-          <rect x="8" y="66" width="404" height="282" rx="7" class="slate__edge"/>
-
-          <!-- Les champs. De vraies valeurs : la production, la date, le format. -->
-          <g class="slate__k">
-            <text x="28" y="100">PRODUCTION</text>
-            <text x="28" y="166">ROLL</text>
-            <text x="230" y="166">SCENE</text>
-            <text x="28" y="232">DIRECTOR</text>
-            <text x="230" y="232">TAKE</text>
-            <text x="28" y="298">FORMAT</text>
-            <text x="230" y="298">FPS</text>
-          </g>
-          <g class="slate__v">
-            <text x="28" y="124">ETHIOPIAN FILM OFFICE</text>
-            <text x="28" y="190">A01</text>
-            <text x="230" y="190">01</text>
-            <text x="28" y="256">T. TESHOME</text>
-            <text x="230" y="256">1</text>
-            <text x="28" y="322">12K</text>
-            <text x="230" y="322">24</text>
-          </g>
-
-          <!-- Le bras, qui pivote sur sa charnière gauche -->
-          <g class="slate__arm">
-            <g clip-path="url(#slate-arm)">
-              <rect x="8" y="0" width="404" height="56" class="slate__face"/>
-              <g class="slate__stripe">
-                <path d="M8 0 L66 0 L30 56 L-28 56 Z"/>
-                <path d="M124 0 L182 0 L146 56 L88 56 Z"/>
-                <path d="M240 0 L298 0 L262 56 L204 56 Z"/>
-                <path d="M356 0 L414 0 L378 56 L320 56 Z"/>
-              </g>
-            </g>
-            <rect x="8" y="0" width="404" height="56" rx="5" class="slate__edge"/>
-          </g>
-        </svg>
-      </div>
-
-      <p class="hero__lede" data-hero>Permits, locations, crew, kit and logistics for
-        productions shooting in Ethiopia &mdash; from the Simien Mountains to the Danakil.
-        One base, one permit jurisdiction.</p>
-
-      <p class="hero__act" data-hero>
-        <a class="btn btn--gold" href="/book.html" data-magnetic-strength="26"
-           data-cursor="book"><span data-magnetic-inner>Start a production</span></a>
-      </p>
-
-      <dl class="hero__meta mono" data-hero>
-        <div><dt>Addis Ababa</dt><dd><time id="clock-open">--:--:--</time></dd></div>
-        <div><dt>Zone</dt><dd>UTC+3</dd></div>
-        <div><dt>Light</dt><dd id="sun-open">--:-- &rarr; --:--</dd></div>
-        <div class="hero__open"><dt>Desk</dt><dd><span class="go-dot"></span> open now</dd></div>
-      </dl>
-    </div>
-
-    <a class="hero__scroll mono" href="#services" aria-label="Scroll to services">
-      <span>Scroll</span><i aria-hidden="true"></i>
-    </a>
-  </section>
-
-  <!-- ══════════ LE MUR DE CLIENTS ══════════
-       Sept noms, sept plaques, masquées en dégradé haut et bas : la preuve
-       arrive avant l'argumentaire, et le ciel continue derrière. -->
-  <section class="wall" aria-labelledby="wall-h" data-scene="Clients">
-    <h2 class="wall__h" id="wall-h" data-blur-in>They have already shot with us</h2>
-    <ul class="wall__grid" data-momentum>
-      <li class="wall__i" data-momentum-item><img src="/clients/bgi.png" alt="BGI Ethiopia" width="146" height="160" loading="lazy" decoding="async"></li>
-      <li class="wall__i" data-momentum-item><img src="/clients/pepsi.png" alt="Pepsi" width="156" height="160" loading="lazy" decoding="async"></li>
-      <li class="wall__i" data-momentum-item><img src="/clients/world-bank.png" alt="World Bank" width="213" height="160" loading="lazy" decoding="async"></li>
-      <li class="wall__i" data-momentum-item><img src="/clients/prime-office.png" alt="Ethiopian Prime Minister Office" width="167" height="160" loading="lazy" decoding="async"></li>
-      <li class="wall__i wall__i--type" data-momentum-item><span>Ethiopia<br>Defence Force</span></li>
-      <li class="wall__i" data-momentum-item><img src="/clients/us-embassy.png" alt="U.S. Embassy Ethiopia" width="159" height="160" loading="lazy" decoding="async"></li>
-      <li class="wall__i wall__i--type" data-momentum-item><span>Wosti Jnvis</span></li>
-    </ul>
-  </section>
-
-  <!-- ══════════ ACTE 2 · LE TABLEAU DE SERVICE ══════════
-       Forme : le tableau d'un bureau de production. Ce n'était qu'une liste de
-       lignes de texte ; c'est maintenant un dispositif qui s'ouvre au passage.
-       Un seul département est ouvert à la fois, désigné par le scroll ; les
-       autres se referment à leur nom. Seules les deux lignes de permis portent
-       le tampon — c'est un fait du dossier, pas une décoration. -->
-  <section class="table-act" id="services" data-scene="Services" aria-labelledby="svc-h">
-    <header class="table-act__head">
-      <h2 class="table-act__h" id="svc-h">What we handle</h2>
-      <p class="table-act__note">Our film office offers a comprehensive range of services designed to support and facilitate every aspect of your production. With our industry expertise and commitment to excellence, we provide the following services</p>
-    </header>
-
-    <ol class="board" id="svc-board" aria-label="The eight services of Ethiopian Film Office and their status">
-        <li class="dep" data-dep>
-          <span class="dep__n mono" aria-hidden="true">01</span>
-          <h3 class="dep__name">Producing</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Line production, scheduling, budgets</p>
-          </div>
-          <p class="dep__st mono"><span>handled</span></p>
-        </li>
-        <li class="dep" data-dep>
-          <span class="dep__n mono" aria-hidden="true">02</span>
-          <h3 class="dep__name">Production Rental</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Camera, lenses, drone, lighting, sound, green screen</p>
-          </div>
-          <p class="dep__st mono"><span>handled</span></p>
-        </li>
-        <li class="dep" data-dep>
-          <span class="dep__n mono" aria-hidden="true">03</span>
-          <h3 class="dep__name">Casting</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Actors, extras and local crew</p>
-          </div>
-          <p class="dep__st mono"><span>handled</span></p>
-        </li>
-        <li class="dep dep--go" data-dep>
-          <span class="dep__n mono" aria-hidden="true">04</span>
-          <h3 class="dep__name">Shooting Permit</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Filed and followed with the relevant authorities</p>
-          </div>
-          <p class="dep__st mono"><span class="dep__stamp" aria-hidden="true">cleared</span><span>cleared by us</span></p>
-        </li>
-        <li class="dep dep--go" data-dep>
-          <span class="dep__n mono" aria-hidden="true">05</span>
-          <h3 class="dep__name">Location Permit</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Site by site, heritage included</p>
-          </div>
-          <p class="dep__st mono"><span class="dep__stamp" aria-hidden="true">cleared</span><span>cleared by us</span></p>
-        </li>
-        <li class="dep" data-dep>
-          <span class="dep__n mono" aria-hidden="true">06</span>
-          <h3 class="dep__name">Transportation</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Vehicles, convoys, movement of kit</p>
-          </div>
-          <p class="dep__st mono"><span>handled</span></p>
-        </li>
-        <li class="dep" data-dep>
-          <span class="dep__n mono" aria-hidden="true">07</span>
-          <h3 class="dep__name">Accommodation</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Crew housing, on and off the road</p>
-          </div>
-          <p class="dep__st mono"><span>handled</span></p>
-        </li>
-        <li class="dep" data-dep>
-          <span class="dep__n mono" aria-hidden="true">08</span>
-          <h3 class="dep__name">Editing</h3>
-          <div class="dep__body">
-            <p class="dep__covers">Post-production facilities</p>
-          </div>
-          <p class="dep__st mono"><span>handled</span></p>
-        </li>
-    </ol>
-  </section>
-
-  <!-- ══════════ ACTE 3 · LA NOTE ══════════
-       Forme : une seule colonne étroite, posée à droite. Le vide est le sujet. -->
-  <section class="note" id="about" data-scene="About" aria-labelledby="about-h">
-    <!-- Le bureau lui-même. Il occupe le vide voulu à gauche : la colonne de
-         texte n'est plus posée sur rien, elle est posée à côté du lieu dont
-         elle parle. -->
-    <figure class="note__fig" data-view="/office/desk-1536.webp" data-view-label="The office &middot; Meskel Square">
-      <img src="/office/desk-1100.webp" srcset="/office/desk-640.webp 640w, /office/desk-1100.webp 1100w"
-           sizes="(max-width: 62rem) 90vw, 38vw"
-           alt="The Ethiopian Film Office desk: a cinema camera on a tripod, two fresnel lights, clapperboards and monitors against an orange wall"
-           width="1100" height="1100" loading="lazy" decoding="async">
-    </figure>
-
-    <aside class="note__facts mono">
-      <p>Founded by Tewodros Teshome</p>
-      <p>Addis Ababa &middot; Meskel Square &middot; Finfine Building, 5th Floor</p>
-      <p>Monday &ndash; Sunday &middot; 24/7</p>
-    </aside>
-    <div class="note__body">
-      <h2 class="note__h" id="about-h">About Us</h2>
-      <p class="note__p">Ethiopian Film Office is a prominent film company founded by <strong>Tewodros Teshome</strong>, a visionary entrepreneur in the Ethiopian film industry. Established with the aim of promoting and supporting the growth of the local film sector, Ethiopian Film Office plays a vital role in facilitating film production, fostering creativity, and showcasing the rich cultural heritage of Ethiopia to a global audience.</p>
-      <p class="note__p">Under Tewodros Teshome&rsquo;s leadership, Ethiopian Film Office has become a hub for filmmakers, providing essential services such as location scouting, permitting assistance, production support, and access to local talent and resources.</p>
-      <p class="note__sig">
-        <svg class="note__mark" viewBox="0 0 240 96" aria-hidden="true">
-          <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M46 62h116l10-14H58z"/>
-            <path d="M150 48l26-22a16 16 0 0 1 22 4l6 10a16 16 0 0 1-6 21l-28 15z"/>
-            <circle cx="70" cy="76" r="15"/><circle cx="70" cy="76" r="5.5"/>
-            <circle cx="146" cy="76" r="15"/><circle cx="146" cy="76" r="5.5"/>
-            <path d="M70 61v30M55 76h30M146 61v30M131 76h30"/>
-          </g>
-        </svg>
-        <span class="mono">Sebastopol &mdash; the mark that opens the studio&rsquo;s films</span>
-      </p>
-    </div>
-  </section>
-
-  <!-- ══════════ LE TÉLÉPHONE ══════════
-       La page se bloque. Le titre recule derrière l'appareil, les arguments
-       défilent un par un dans l'axe, puis le téléphone pivote à 90° et son
-       écran s'ouvre jusqu'à remplir la page. -->
-  <section class="ph" data-phone id="why" data-scene="Why us" aria-labelledby="ph-h">
-    <!-- Le titre encadre l'appareil au lieu de passer dessous : « TEDDY
-         STUDIO » coupé en deux par un téléphone ne se lit plus. -->
-    <div class="ph__title" data-phone-title>
-      <h2 class="ph__h" id="ph-h"><span>Why</span><span>Teddy Studio</span></h2>
-    </div>
-
-    <div class="ph__stage">
-      <div class="ph__device" data-phone-device>
-        <!-- Deux pistes : la verticale tant que l'appareil est debout, la
-             large une fois couché. Elles se croisent pendant le pivot — un
-             raccord dans l'axe. Un seul fichier étiré ferait une bouillie. -->
-        <div class="ph__screen" data-phone-screen>
-          <video class="ph__vid" data-phone-video="up" muted playsinline loop preload="none"
-                 poster="/reel/r04.jpg" aria-hidden="true">
-            <source src="/reel/r04.mp4" type="video/mp4">
-          </video>
-          <video class="ph__vid" data-phone-video="wide" muted playsinline loop preload="none"
-                 poster="/reel/r03.jpg" aria-hidden="true">
-            <source src="/reel/r03.mp4" type="video/mp4">
-          </video>
+  <!-- ══════════ L'OUVERTURE DE PAGE ══════════
+       Sur le modèle choisi par Dominique (21st.dev, « responsive hero banner »,
+       27/09/2026) : un badge, un grand titre en serif centré, une phrase, deux
+       appels. Et juste dessous, dans le même écran, les clients : leurs vrais
+       logos, qui défilent. Pas de photo de fond (Dominique, 27/09 : « enlève
+       cette photo de fond ») : le vert nuit de la page. -->
+  <section class="hx" id="top" aria-labelledby="hero-h" data-bar-clear>
+    <div class="hx__in">
+      <div class="hx__c">
+        <p class="hx__badge" data-hx-in>
+          <span class="hx__chip"><time data-clock>--:--</time><span class="hx__city"> Addis</span></span>
+          <span class="hx__badge-t">Film service &amp; production across Ethiopia</span>
+        </p>
+        <h1 class="hx__h" id="hero-h" data-hx-in>Gateway <br class="hx__br">to Africa</h1>
+        <p class="hx__lede" data-hx-in>Permits, locations, crew, kit and logistics for productions shooting in Ethiopia &mdash; from the Simien Mountains to the Danakil. One base, one permit jurisdiction.</p>
+        <div class="hx__cta" data-hx-in>
+          <a class="hx__btn" href="/book.html" data-cursor="book">Start a production <svg class="hx__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+          <a class="hx__link" href="/works.html">Our works <svg class="hx__ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5v17L20 12z"/></svg></a>
         </div>
-        <span class="ph__notch" aria-hidden="true"></span>
-        <span class="ph__glare" aria-hidden="true"></span>
       </div>
     </div>
 
-    <div class="ph__blocks">
-      <article class="ph__block" data-phone-block="left">
-        <h3>Extensive Local Knowledge</h3>
-        <p>Our team possesses in-depth knowledge of our region&rsquo;s diverse locations,
-          culture, and resources. We understand the unique requirements of filming in our
-          area and can offer valuable insights and assistance to ensure a successful production.</p>
-      </article>
-      <article class="ph__block" data-phone-block="right">
-        <h3>Streamlined Permitting Process</h3>
-        <p>Navigating the permitting process can be complex and time-consuming. We have
-          established strong relationships with local authorities and organizations, allowing
-          us to streamline the permitting process for you. We handle the paperwork, communicate
-          with the relevant authorities, and ensure all necessary permissions are obtained efficiently.</p>
-      </article>
-      <article class="ph__block" data-phone-block="left">
-        <h3>Access to Local Talent and Crew</h3>
-        <p>We have an extensive network of skilled professionals in the local film industry.
-          From talented actors and crew members to experienced technicians and production teams,
-          we can connect you with the right people to bring your vision to life.</p>
-      </article>
-      <article class="ph__block" data-phone-block="right">
-        <h3>Production Support Services</h3>
-        <p>We offer comprehensive production support services to meet your specific needs.
-          From equipment rentals to location scouting, from production logistics to
-          post-production facilities, we provide a range of services that ensure a smooth
-          and efficient production process.</p>
-      </article>
+    <!-- LES CLIENTS : une bande terre cuite, pleine largeur, en bas de l'écran
+         (Dominique, 27/09 : « plus grande, avec une couleur de fond qui les fait
+         ressortir »). Les logos d'origine passent à l'encre. La bande est écrite
+         deux fois (la seconde muette) : elle défile d'une longueur et reboucle
+         sans couture. En mouvement réduit, elle se fige et la copie disparaît. -->
+    <div class="hx__cli" id="clients" aria-labelledby="cli-h" data-hx-in>
+      <h2 class="hx__k" id="cli-h">Our Clients</h2>
+      <div class="hx-mq">
+        <ul class="hx-mq__row" aria-label="Our clients">
+          <li class="hx-mq__i"><img src="/clients/bgi.png" alt="BGI Ethiopia" width="195" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/pepsi.png" alt="Pepsi" width="196" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/world-bank.png" alt="World Bank" width="404" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/prime-office.png" alt="Ethiopian Prime Minister Office" width="208" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><span class="hx-mq__t">Ethiopia<br>Defence Force</span></li>
+          <li class="hx-mq__i"><img src="/clients/us-embassy.png" alt="U.S. Embassy Ethiopia" width="200" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><span class="hx-mq__t">Wosti Jnvis</span></li>
+        </ul>
+        <ul class="hx-mq__row" aria-hidden="true">
+          <li class="hx-mq__i"><img src="/clients/bgi.png" alt="" width="195" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/pepsi.png" alt="" width="196" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/world-bank.png" alt="" width="404" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/prime-office.png" alt="" width="208" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><span class="hx-mq__t">Ethiopia<br>Defence Force</span></li>
+          <li class="hx-mq__i"><img src="/clients/us-embassy.png" alt="" width="200" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><span class="hx-mq__t">Wosti Jnvis</span></li>
+        </ul>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════ ACTE 5 · LA ZONE D'IMAGES ══════════
-       Un ruban d'images dérive derrière un message qui, lui, ne bouge pas.
-       Les cartes sont carrées et montrent la photo ENTIÈRE (`scale-down`) :
-       ce ne sont pas des tuiles recadrées, ce sont des tirages qui flottent.
-       Elles se frôlent — l'écart est d'un centième de largeur d'écran — et le
-       rail déborde d'un plein écran de chaque côté pour qu'aucune n'apparaisse
-       ni ne disparaisse dans le cadre.
-       Les noms ne sont plus sous les cartes : c'est l'altimètre qui les dit,
-       et un producteur lit l'altitude et le lieu au même endroit. -->
-  <section class="drop" id="locations" data-scene="Locations" aria-labelledby="loc-h">
-    <div class="drop__stage" id="drop-stage">
-      <ol class="drop__track" id="drop-track" data-view-group>
-        <li class="stop" data-loc="simien-mountains" data-alt="4550" data-name="Simien Mountains" data-view="/loc/simien-mountains-1920.webp" data-view-label="Simien Mountains">
-          <img src="/loc/simien-mountains-w1600.webp" srcset="/loc/simien-mountains-w1600.webp 1600w, /loc/simien-mountains-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="The ridge approaching Ras Dashen in the Simien Mountains, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+  <!-- ══════════ LES SERVICES ══════════
+       Une liste qu'on déplie (demande de Dominique, 26/09/2026) : ni photo,
+       ni numéro. Un appui sur un service l'ouvre et montre son explication ;
+       un seul reste ouvert à la fois (`services.js`). Sans JavaScript, tout
+       est ouvert. -->
+  <section class="hm-sec" id="services" aria-labelledby="svc-h">
+    <div class="hm-wrap hm-split sv" data-sv-root>
+      <header class="hm-split__head">
+        <p class="hm-k"><span class="go-dot" aria-hidden="true"></span>Services</p>
+        <h2 class="hm-h" id="svc-h">What we handle</h2>
+        <p class="hm-lede">Our film office offers a comprehensive range of services designed to support and facilitate every aspect of your production. With our industry expertise and commitment to excellence, we provide the following services</p>
+      </header>
+      <ul class="sv__list" aria-label="The eight services of Ethiopian Film Office">
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-0" aria-expanded="false" aria-controls="sv-a-0">
+              <span class="sv__name">Producing</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-0" role="region" aria-labelledby="sv-q-0">
+              <div class="sv__a-in">
+                <p class="sv__covers">Line production, scheduling, budgets</p>
+                <p class="sv__text">We offer comprehensive production support services to meet your specific needs: from production logistics to post-production facilities, a range of services that ensure a smooth and efficient production process.</p>
+              </div>
+            </div>
+          </li>
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-1" aria-expanded="false" aria-controls="sv-a-1">
+              <span class="sv__name">Production Rental</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-1" role="region" aria-labelledby="sv-q-1">
+              <div class="sv__a-in">
+                <p class="sv__covers">Camera, lenses, drone, lighting, sound, green screen</p>
+                <p class="sv__text">Cinema cameras, DSLRs and mirrorless bodies, a diverse lens collection, drones, professional lighting kits, pro-grade microphones and a green screen setup. The kit travels with you.</p>
+              </div>
+            </div>
+          </li>
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-2" aria-expanded="false" aria-controls="sv-a-2">
+              <span class="sv__name">Casting</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-2" role="region" aria-labelledby="sv-q-2">
+              <div class="sv__a-in">
+                <p class="sv__covers">Actors, extras and local crew</p>
+                <p class="sv__text">We have an extensive network of skilled professionals in the local film industry. From talented actors and crew members to experienced technicians and production teams, we can connect you with the right people to bring your vision to life.</p>
+              </div>
+            </div>
+          </li>
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-3" aria-expanded="false" aria-controls="sv-a-3">
+              <span class="sv__name">Shooting Permit</span><span class="hm-tag hm-tag--go sv__tag">Cleared by us</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-3" role="region" aria-labelledby="sv-q-3">
+              <div class="sv__a-in">
+                <p class="sv__covers">Filed and followed with the relevant authorities</p>
+                <p class="sv__text">Navigating the permitting process can be complex and time-consuming. We have established strong relationships with local authorities and organizations: we handle the paperwork, communicate with the relevant authorities, and ensure all necessary permissions are obtained efficiently.</p>
+              </div>
+            </div>
+          </li>
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-4" aria-expanded="false" aria-controls="sv-a-4">
+              <span class="sv__name">Location Permit</span><span class="hm-tag hm-tag--go sv__tag">Cleared by us</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-4" role="region" aria-labelledby="sv-q-4">
+              <div class="sv__a-in">
+                <p class="sv__covers">Site by site, heritage included</p>
+                <p class="sv__text">We take pride in facilitating filming in a diverse range of stunning locations throughout Ethiopia, from the Simien Mountains to the Danakil. Location permits are handled in-house, site by site.</p>
+              </div>
+            </div>
+          </li>
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-5" aria-expanded="false" aria-controls="sv-a-5">
+              <span class="sv__name">Transportation</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-5" role="region" aria-labelledby="sv-q-5">
+              <div class="sv__a-in">
+                <p class="sv__covers">Vehicles, convoys, movement of kit</p>
+                <p class="sv__text">Vehicles for cast and crew, convoys and the movement of kit, from the Simien Mountains to the Danakil.</p>
+              </div>
+            </div>
+          </li>
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-6" aria-expanded="false" aria-controls="sv-a-6">
+              <span class="sv__name">Accommodation</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-6" role="region" aria-labelledby="sv-q-6">
+              <div class="sv__a-in">
+                <p class="sv__covers">Crew housing, on and off the road</p>
+                <p class="sv__text">Crew housing wherever the shoot takes you: in Addis Ababa, near the locations, and on the road between them.</p>
+              </div>
+            </div>
+          </li>
+          <li class="sv__i">
+            <button class="sv__q" type="button" id="sv-q-7" aria-expanded="false" aria-controls="sv-a-7">
+              <span class="sv__name">Editing</span><span class="sv__plus" aria-hidden="true"></span>
+            </button>
+            <div class="sv__a" id="sv-a-7" role="region" aria-labelledby="sv-q-7">
+              <div class="sv__a-in">
+                <p class="sv__covers">Post-production facilities</p>
+                <p class="sv__text">Post-production facilities for editing your footage. From production logistics to post-production, one office handles the whole process.</p>
+              </div>
+            </div>
+          </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ LE MATÉRIEL ══════════
+       Juste après les services : la location de matériel en est un.
+       PLAN PAR PLAN (demande de Dominique, 26/09/2026) : la scène s'épingle
+       et les six outils y passent l'un après l'autre, en alternant les
+       côtés. La caméra, les objectifs et le drone en 3D ; l'éclairage, les
+       micros et le fond vert avec leur photo (`kit3d.js`). En mouvement
+       réduit ou sans JavaScript, la liste des six outils, dessous. -->
+  <section class="hm-sec hm-kit3" id="resources" aria-labelledby="res-h">
+    <div class="hm-wrap">
+      <header class="hm-head hm-head--split">
+        <div>
+          <p class="hm-k"><span class="go-dot" aria-hidden="true"></span>Resources</p>
+          <h2 class="hm-h" id="res-h">The kit travels with you</h2>
+        </div>
+        <div class="hm-head__side">
+          <p class="hm-lede">We are committed to providing filmmakers with a comprehensive range of resources to support their productions.</p>
+        </div>
+      </header>
+    </div>
+
+    <div class="k3" data-kit3d>
+      <div class="k3__stage">
+        <canvas class="k3__gl" aria-hidden="true"></canvas>
+
+        <!-- 01 — la caméra, en 3D (repli : sa photo) -->
+        <article class="k3__plan" data-k3-plan data-side="left" data-model="/kit3d/camera.glb" data-fix="0 -90 0" data-fit="1.22">
+          <figure class="k3__photo" style="--ar: 800 / 533" data-view="/kit/photo/camera.webp" data-view-label="Camera"><img src="/kit/camera-800.webp" alt="Cinema camera body on a support" width="800" height="533" loading="lazy" decoding="async"></figure>
+          <p class="k3__load" aria-hidden="true">Loading &middot; <span data-k3-pct>000</span></p>
+          <div class="k3__text">
+            <p class="k3__n">01 <span>/ 06</span></p>
+            <h3 class="k3__h">Camera</h3>
+            <p class="k3__tag"><span class="hm-tag">12K</span></p>
+            <p class="k3__p">We provide advanced cameras&mdash;cinema, DSLRs, mirrorless&mdash;with high-resolution sensors, customizable settings, and cutting-edge features to meet filmmakers diverse needs.</p>
+          </div>
+          <p class="k3__credit">3D model: RED Weapon Dragon 8K by Christopher Holloway &middot; CC BY 4.0 &middot; Sketchfab</p>
+        </article>
+
+        <!-- 02 — les objectifs, en 3D -->
+        <article class="k3__plan" data-k3-plan data-side="right" data-model="/kit3d/lens.glb" data-fix="-90 0 90" data-fit="0.8" data-turn="16 -42">
+          <figure class="k3__photo" style="--ar: 800 / 420" data-view="/kit/photo/lense.webp" data-view-label="Lenses"><img src="/kit/lense-800.webp" alt="A set of prime and zoom lenses" width="800" height="420" loading="lazy" decoding="async"></figure>
+          <p class="k3__load" aria-hidden="true">Loading &middot; <span data-k3-pct>000</span></p>
+          <div class="k3__text">
+            <p class="k3__n">02 <span>/ 06</span></p>
+            <h3 class="k3__h">Lenses</h3>
+            <p class="k3__tag"><span class="hm-tag">Cinematic</span></p>
+            <p class="k3__p">Expand your creative vision with our diverse lens collection. Wide-angle to telephoto, prime to zoom, achieve desired focal length, depth, and visual quality.</p>
+          </div>
+          <p class="k3__credit">3D model: Sony FE 20mm f/1.8 G by Lassi Kaukonen &middot; CC BY 4.0 &middot; Sketchfab</p>
+        </article>
+
+        <!-- 03 — le drone, en 3D -->
+        <article class="k3__plan" data-k3-plan data-side="left" data-model="/kit3d/drone.glb" data-fix="0 90 0" data-fit="1.55" data-shadow-gap="-0.04" data-shadow="0.6">
+          <figure class="k3__photo" style="--ar: 800 / 450" data-view="/kit/photo/drone.webp" data-view-label="Drone"><img src="/kit/drone-800.webp" alt="A camera drone with gimbal" width="800" height="450" loading="lazy" decoding="async"></figure>
+          <p class="k3__load" aria-hidden="true">Loading &middot; <span data-k3-pct>000</span></p>
+          <div class="k3__text">
+            <p class="k3__n">03 <span>/ 06</span></p>
+            <h3 class="k3__h">Drone</h3>
+            <p class="k3__p">Ensure precision with our versatile drones. Advanced features, stable flight, smooth gimbal control for steady aerial shots and dynamic filming possibilities</p>
+          </div>
+          <p class="k3__credit">3D model: DJI Inspire 3 by polyman Studio &middot; CC BY 4.0 &middot; Sketchfab</p>
+        </article>
+
+        <!-- 04 à 06 — la photo de l'outil (décision de Dominique) -->
+        <article class="k3__plan" data-k3-plan data-side="right">
+          <figure class="k3__photo" style="--ar: 800 / 484" data-view="/kit/photo/lighting.webp" data-view-label="Lighting Kit"><img src="/kit/lighting-800.webp" alt="A lighting kit with stands and modifiers" width="800" height="484" loading="lazy" decoding="async"></figure>
+          <div class="k3__text">
+            <p class="k3__n">04 <span>/ 06</span></p>
+            <h3 class="k3__h">Lighting Kit</h3>
+            <p class="k3__tag"><span class="hm-tag">Professional</span></p>
+            <p class="k3__p">Shape and control lighting conditions with precision using our versatile lighting kits. Key lights, fill lights, backlight, and light modifiers included for scene illumination.</p>
+          </div>
+        </article>
+
+        <article class="k3__plan" data-k3-plan data-side="left">
+          <figure class="k3__photo" style="--ar: 1 / 1" data-view="/kit/mic-800.webp" data-view-label="Microphones"><img src="/kit/mic-800.webp" alt="A shotgun microphone in a blimp with windshield" width="800" height="800" loading="lazy" decoding="async"></figure>
+          <div class="k3__text">
+            <p class="k3__n">05 <span>/ 06</span></p>
+            <h3 class="k3__h">Microphones</h3>
+            <p class="k3__p">Achieve pristine audio with our pro-grade microphones. Capture focused directional sound with shotgun mics, individual subjects with lavaliers, and clear dialogue with boom mics.</p>
+          </div>
+        </article>
+
+        <article class="k3__plan" data-k3-plan data-side="right">
+          <figure class="k3__photo" style="--ar: 800 / 540" data-view="/kit/green-screen-800.webp" data-view-label="Green Screen"><img src="/kit/green-screen-800.webp" alt="A lit green screen cyclorama" width="800" height="540" loading="lazy" decoding="async"></figure>
+          <div class="k3__text">
+            <p class="k3__n">06 <span>/ 06</span></p>
+            <h3 class="k3__h k3__h--long">Green Screen/<wbr>Chroma Key</h3>
+            <p class="k3__p">Explore limitless visual potential with our green screen setup. Replace the green background with any image or video, enabling diverse visual effects and compositing techniques in post-production.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="hm-wrap">
+      <ul class="hm-list hm-kit3__rest" data-view-group>
+          <li class="hm-kit">
+            <div class="hm-kit__t">
+              <h3 class="hm-kit__h">Camera <span class="hm-tag">12K</span></h3>
+              <p>We provide advanced cameras&mdash;cinema, DSLRs, mirrorless&mdash;with high-resolution sensors, customizable settings, and cutting-edge features to meet filmmakers diverse needs.</p>
+            </div>
+            <figure class="hm-kit__fig" data-view="/kit/photo/camera.webp" data-view-label="Camera"><img src="/kit/camera-400.webp" srcset="/kit/camera-400.webp 400w, /kit/camera-800.webp 800w" sizes="10rem" alt="Cinema camera body on a support" width="400" height="266" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="hm-kit">
+            <div class="hm-kit__t">
+              <h3 class="hm-kit__h">Lenses <span class="hm-tag">Cinematic</span></h3>
+              <p>Expand your creative vision with our diverse lens collection. Wide-angle to telephoto, prime to zoom, achieve desired focal length, depth, and visual quality.</p>
+            </div>
+            <figure class="hm-kit__fig" data-view="/kit/photo/lense.webp" data-view-label="Lenses"><img src="/kit/lense-400.webp" srcset="/kit/lense-400.webp 400w, /kit/lense-800.webp 800w" sizes="10rem" alt="A set of prime and zoom lenses" width="400" height="210" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="hm-kit">
+            <div class="hm-kit__t">
+              <h3 class="hm-kit__h">Drone</h3>
+              <p>Ensure precision with our versatile drones. Advanced features, stable flight, smooth gimbal control for steady aerial shots and dynamic filming possibilities</p>
+            </div>
+            <figure class="hm-kit__fig" data-view="/kit/photo/drone.webp" data-view-label="Drone"><img src="/kit/drone-400.webp" srcset="/kit/drone-400.webp 400w, /kit/drone-800.webp 800w" sizes="10rem" alt="A camera drone with gimbal" width="400" height="225" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="hm-kit">
+            <div class="hm-kit__t">
+              <h3 class="hm-kit__h">Lighting Kit <span class="hm-tag">Professional</span></h3>
+              <p>Shape and control lighting conditions with precision using our versatile lighting kits. Key lights, fill lights, backlight, and light modifiers included for scene illumination.</p>
+            </div>
+            <figure class="hm-kit__fig" data-view="/kit/photo/lighting.webp" data-view-label="Lighting Kit"><img src="/kit/lighting-400.webp" srcset="/kit/lighting-400.webp 400w, /kit/lighting-800.webp 800w" sizes="10rem" alt="A lighting kit with stands and modifiers" width="400" height="242" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="hm-kit">
+            <div class="hm-kit__t">
+              <h3 class="hm-kit__h">Microphones</h3>
+              <p>Achieve pristine audio with our pro-grade microphones. Capture focused directional sound with shotgun mics, individual subjects with lavaliers, and clear dialogue with boom mics.</p>
+            </div>
+            <figure class="hm-kit__fig" data-view="/kit/photo/mic.webp" data-view-label="Microphones"><img src="/kit/mic-400.webp" srcset="/kit/mic-400.webp 400w, /kit/mic-800.webp 800w" sizes="10rem" alt="A shotgun microphone in a blimp with windshield" width="400" height="400" loading="lazy" decoding="async"></figure>
+          </li>
+          <li class="hm-kit">
+            <div class="hm-kit__t">
+              <h3 class="hm-kit__h">Green Screen/Chroma Key</h3>
+              <p>Explore limitless visual potential with our green screen setup. Replace the green background with any image or video, enabling diverse visual effects and compositing techniques in post-production.</p>
+            </div>
+            <figure class="hm-kit__fig" data-view="/kit/photo/green-screen.webp" data-view-label="Green Screen"><img src="/kit/green-screen-400.webp" srcset="/kit/green-screen-400.webp 400w, /kit/green-screen-800.webp 800w" sizes="10rem" alt="A lit green screen cyclorama" width="400" height="270" loading="lazy" decoding="async"></figure>
+          </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ À PROPOS ══════════
+       Le premier paragraphe tient lieu de titre ; la photo du bureau à côté,
+       posée sans cadre ni effet. -->
+  <section class="hm-sec" id="about" aria-labelledby="about-h">
+    <div class="hm-wrap">
+      <h2 class="hm-k" id="about-h"><span class="go-dot" aria-hidden="true"></span>About Us</h2>
+      <div class="hm-about">
+        <figure class="hm-about__fig" data-view="/office/desk-1536.webp" data-view-label="The office &middot; Meskel Square">
+          <img src="/office/desk-1100.webp" srcset="/office/desk-640.webp 640w, /office/desk-1100.webp 1100w"
+               sizes="(max-width: 64rem) 92vw, 36vw"
+               alt="The Ethiopian Film Office desk: a cinema camera on a tripod, two fresnel lights, clapperboards and monitors against an orange wall"
+               width="1100" height="1100" loading="lazy" decoding="async">
+        </figure>
+        <div class="hm-about__side">
+          <p class="hm-about__stmt">Ethiopian Film Office is a prominent film company founded by Tewodros Teshome, a visionary entrepreneur in the Ethiopian film industry. Established with the aim of promoting and supporting the growth of the local film sector, Ethiopian Film Office plays a vital role in facilitating film production, fostering creativity, and showcasing the rich cultural heritage of Ethiopia to a global audience.</p>
+          <p class="hm-about__p">Under Tewodros Teshome&rsquo;s leadership, Ethiopian Film Office has become a hub for filmmakers, providing essential services such as location scouting, permitting assistance, production support, and access to local talent and resources.</p>
+          <dl class="hm-facts">
+            <div><dt>Founded by</dt><dd>Tewodros Teshome</dd></div>
+            <div><dt>Office</dt><dd>Addis Ababa &middot; Meskel Square &middot; Finfine Building, 5<sup>th</sup> Floor</dd></div>
+            <div><dt>Open</dt><dd>Monday &ndash; Sunday &middot; <span class="go">24/7</span></dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ POURQUOI TEDDY STUDIO ══════════ -->
+  <section class="hm-sec" id="why" aria-labelledby="why-h">
+    <div class="hm-wrap">
+      <header class="hm-head">
+        <p class="hm-k"><span class="go-dot" aria-hidden="true"></span>Why us</p>
+        <h2 class="hm-h" id="why-h">Why Teddy Studio</h2>
+      </header>
+      <div class="hm-why">
+        <article class="hm-why__i">
+          <span class="hm-why__n" aria-hidden="true">01</span>
+          <h3 class="hm-why__h">Extensive Local Knowledge</h3>
+          <p>Our team possesses in-depth knowledge of our region&rsquo;s diverse locations,
+            culture, and resources. We understand the unique requirements of filming in our
+            area and can offer valuable insights and assistance to ensure a successful production.</p>
+        </article>
+        <article class="hm-why__i">
+          <span class="hm-why__n" aria-hidden="true">02</span>
+          <h3 class="hm-why__h">Streamlined Permitting Process</h3>
+          <p>Navigating the permitting process can be complex and time-consuming. We have
+            established strong relationships with local authorities and organizations, allowing
+            us to streamline the permitting process for you. We handle the paperwork, communicate
+            with the relevant authorities, and ensure all necessary permissions are obtained efficiently.</p>
+        </article>
+        <article class="hm-why__i">
+          <span class="hm-why__n" aria-hidden="true">03</span>
+          <h3 class="hm-why__h">Access to Local Talent and Crew</h3>
+          <p>We have an extensive network of skilled professionals in the local film industry.
+            From talented actors and crew members to experienced technicians and production teams,
+            we can connect you with the right people to bring your vision to life.</p>
+        </article>
+        <article class="hm-why__i">
+          <span class="hm-why__n" aria-hidden="true">04</span>
+          <h3 class="hm-why__h">Production Support Services</h3>
+          <p>We offer comprehensive production support services to meet your specific needs.
+            From equipment rentals to location scouting, from production logistics to
+            post-production facilities, we provide a range of services that ensure a smooth
+            and efficient production process.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ LES LIEUX ══════════
+       Les neuf, du plus haut au plus bas : c'est l'écart de 4 675 m que le
+       titre annonce. Chaque vignette mène à sa fiche sur la page Locations. -->
+  <section class="hm-sec" id="locations" aria-labelledby="loc-h">
+    <div class="hm-wrap">
+      <header class="hm-head hm-head--split">
+        <div>
+          <p class="hm-k"><span class="go-dot" aria-hidden="true"></span>Locations</p>
+          <h2 class="hm-h hm-h--wide" id="loc-h"><span class="hm-br">One base.</span> <span class="hm-br">4,675 metres of range.</span> <span class="hm-br">One permit jurisdiction.</span></h2>
+        </div>
+        <div class="hm-head__side">
+          <p class="hm-lede">We take pride in facilitating filming in a diverse range of stunning locations throughout Ethiopia.</p>
+          <a class="lnk" href="/locations.html"><span>The nine, in full</span></a>
+        </div>
+      </header>
+      <!-- LA BOBINE (référence : jesperlandberg.com) : les neuf lieux sur un
+           tambour que le défilement fait tourner ; un appui ouvre la fiche
+           (`reel3d.js`). Sans WebGL ou en mouvement réduit, la grille dessous. -->
+    </div>
+    <div class="reel" data-reel>
+      <div class="reel__stage">
+        <canvas class="reel__gl" aria-hidden="true"></canvas>
+        <div class="reel__access"></div>
+        <p class="reel__count" data-reel-count aria-hidden="true">01 / 09</p>
+        <p class="reel__hint" aria-hidden="true">Click a location</p>
+      </div>
+    </div>
+    <div class="hm-wrap">
+      <ol class="hm-locs">
+        <li class="hm-loc" data-credit="CC BY-SA 3.0" data-note="Discover the beauty of the natural world" data-region="Amhara"><a href="/locations.html#simien-mountains">
+          <span class="hm-loc__fig"><img src="/loc/simien-mountains-640.webp" srcset="/loc/simien-mountains-640.webp 640w, /loc/simien-mountains-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="The ridge approaching Ras Dashen in the Simien Mountains, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Simien Mountains</span><span class="hm-loc__alt">4,550 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>A national park and UNESCO World Heritage Site in northern Ethiopia: sheer escarpments, jagged peaks and high plateaus where gelada monkeys and the rare Walia ibex live. Ras Dashen, the country&rsquo;s highest summit, rises here.</p>
         </li>
-        <li class="stop" data-loc="wonchi" data-alt="3450" data-name="Wonchi" data-view="/loc/wonchi-1920.webp" data-view-label="Wonchi">
-          <img src="/loc/wonchi-w1600.webp" srcset="/loc/wonchi-w1600.webp 1600w, /loc/wonchi-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="The crater lake of Wonchi seen from the rim, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY-SA 4.0" data-region="Oromia"><a href="/locations.html#wonchi">
+          <span class="hm-loc__fig"><img src="/loc/wonchi-640.webp" srcset="/loc/wonchi-640.webp 640w, /loc/wonchi-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="The crater lake of Wonchi seen from the rim, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Wonchi</span><span class="hm-loc__alt">3,450 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>A volcanic crater lake west of Addis Ababa, ringed by steep green walls and terraced farmland. Small islands dot the water, one of them home to an old monastery, and hot springs rise in the valley below.</p>
         </li>
-        <li class="stop" data-loc="lalibela" data-alt="2630" data-name="Lalibela" data-view="/loc/lalibela-1920.webp" data-view-label="Lalibela">
-          <img src="/loc/lalibela-w1600.webp" srcset="/loc/lalibela-w1600.webp 1600w, /loc/lalibela-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="The rock-hewn church of Bete Giyorgis seen from above, Lalibela, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY-SA 3.0" data-region="Amhara"><a href="/locations.html#lalibela">
+          <span class="hm-loc__fig"><img src="/loc/lalibela-640.webp" srcset="/loc/lalibela-640.webp 640w, /loc/lalibela-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="The rock-hewn church of Bete Giyorgis seen from above, Lalibela, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Lalibela</span><span class="hm-loc__alt">2,630 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>A highland town famous for its eleven medieval churches carved out of the living rock, a UNESCO World Heritage Site that is still a place of pilgrimage. Bete Giyorgis, cut in the shape of a cross, is the best known.</p>
         </li>
-        <li class="stop" data-loc="addis-ababa" data-alt="2355" data-name="Addis Ababa" data-view="/loc/addis-ababa-1920.webp" data-view-label="Addis Ababa">
-          <img src="/loc/addis-ababa-w1600.webp" srcset="/loc/addis-ababa-w1600.webp 1600w, /loc/addis-ababa-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="The skyline of Addis Ababa, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY-SA 3.0" data-note="Where the office is &mdash; Meskel Square, open 24/7" data-region="Addis Ababa"><a href="/locations.html#addis-ababa">
+          <span class="hm-loc__fig"><img src="/loc/addis-ababa-640.webp" srcset="/loc/addis-ababa-640.webp 640w, /loc/addis-ababa-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="The skyline of Addis Ababa, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Addis Ababa</span><span class="hm-loc__alt">2,355 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>Ethiopia&rsquo;s capital, one of the highest in the world and the seat of the African Union: avenues, markets and hillside neighbourhoods in constant change. It is also our base, on Meskel Square.</p>
         </li>
-        <li class="stop" data-loc="wollo" data-alt="2030" data-name="Wollo" data-view="/loc/wollo-1920.webp" data-view-label="Wollo">
-          <img src="/loc/wollo-w1600.webp" srcset="/loc/wollo-w1600.webp 1600w, /loc/wollo-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="A papyrus tankwa boat on the shore of Lake Hayq, Wollo, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY-SA 3.0" data-region="Amhara"><a href="/locations.html#wollo">
+          <span class="hm-loc__fig"><img src="/loc/wollo-640.webp" srcset="/loc/wollo-640.webp 640w, /loc/wollo-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="A papyrus tankwa boat on the shore of Lake Hayq, Wollo, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Wollo</span><span class="hm-loc__alt">2,030 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>A highland region of north-central Ethiopia. On the shore of Lake Hayq, papyrus tankwa boats wait by the reeds, and the old monastery of Hayq Estifanos stands on its peninsula.</p>
         </li>
-        <li class="stop" data-loc="fasilides" data-alt="1994" data-name="Fasilides" data-view="/loc/fasilides-1920.webp" data-view-label="Fasilides">
-          <img src="/loc/fasilides-w1600.webp" srcset="/loc/fasilides-w1600.webp 1600w, /loc/fasilides-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="A crenellated tower of the Fasilides castle at Fasil Ghebbi, Gondar, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY-SA 3.0" data-region="Amhara &middot; Gondar"><a href="/locations.html#fasilides">
+          <span class="hm-loc__fig"><img src="/loc/fasilides-640.webp" srcset="/loc/fasilides-640.webp 640w, /loc/fasilides-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="A crenellated tower of the Fasilides castle at Fasil Ghebbi, Gondar, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Fasilides</span><span class="hm-loc__alt">1,994 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>Fasil Ghebbi, the royal enclosure of Gondar and a UNESCO World Heritage Site: castles, palaces and baths built from the 17th century, when Gondar was the capital of the Ethiopian empire. Emperor Fasilides founded it.</p>
         </li>
-        <li class="stop" data-loc="winding-road" data-name="Winding Road" data-view="/loc/winding-road-1920.webp" data-view-label="Winding Road">
-          <img src="/loc/winding-road-w1600.webp" srcset="/loc/winding-road-w1600.webp 1600w, /loc/winding-road-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="Giant lobelias beside a highland trail in the Simien range, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY-SA 3.0" data-region="Amhara &middot; Simien range"><a href="/locations.html#winding-road">
+          <span class="hm-loc__fig"><img src="/loc/winding-road-640.webp" srcset="/loc/winding-road-640.webp 640w, /loc/winding-road-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="Giant lobelias beside a highland trail in the Simien range, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Winding Road</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>Mountain roads and highland trails across the Simien range, lined with giant lobelias: switchbacks, open horizons and fast-changing light.</p>
         </li>
-        <li class="stop" data-loc="erta-ale" data-alt="613" data-name="Erta Ale Lava Lake" data-view="/loc/erta-ale-1920.webp" data-view-label="Erta Ale Lava Lake">
-          <img src="/loc/erta-ale-w1600.webp" sizes="(max-width: 767px) 92vw, 30vw" alt="The permanent lava lake inside the Erta Ale volcano, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY 2.5" data-region="Afar"><a href="/locations.html#erta-ale">
+          <span class="hm-loc__fig"><img src="/loc/erta-ale-640.webp" srcset="/loc/erta-ale-640.webp 640w, /loc/erta-ale-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="The permanent lava lake inside the Erta Ale volcano, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Erta Ale Lava Lake</span><span class="hm-loc__alt">613 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>A shield volcano in the Danakil Depression whose summit crater holds a lava lake, one of the very few that have stayed active for decades. Visits are usually made at night, from a base camp in the desert.</p>
         </li>
-        <li class="stop" data-loc="afar" data-alt="-125" data-name="Afar" data-view="/loc/afar-1920.webp" data-view-label="Afar">
-          <img src="/loc/afar-w1600.webp" srcset="/loc/afar-w1600.webp 1600w, /loc/afar-w2400.webp 2400w" sizes="(max-width: 767px) 92vw, 30vw" alt="A salt caravan crossing the Danakil salt plain in the Afar region, Ethiopia" width="1600" height="900" loading="lazy" decoding="async">
+        <li class="hm-loc" data-credit="CC BY-SA 4.0" data-region="Afar"><a href="/locations.html#afar">
+          <span class="hm-loc__fig"><img src="/loc/afar-640.webp" srcset="/loc/afar-640.webp 640w, /loc/afar-1200.webp 1200w" sizes="(max-width: 48rem) 92vw, 30vw" alt="A salt caravan crossing the Danakil salt plain in the Afar region, Ethiopia" width="640" height="426" loading="lazy" decoding="async"></span>
+          <span class="hm-loc__t"><span class="hm-loc__h">Afar</span><span class="hm-loc__alt">&minus;125 m</span></span>
+        </a>
+          <p class="hm-loc__about" hidden>The Danakil Depression, one of the lowest and hottest places on Earth, more than 100 metres below sea level. Camel caravans still carry blocks of salt cut from the flats, and the coloured springs of Dallol lie nearby.</p>
         </li>
       </ol>
-
-      <div class="drop__center">
-        <h2 class="drop__h" id="loc-h">One base.<br>4,675 metres of range.<br>One permit jurisdiction.</h2>
-        <p class="drop__lede">We take pride in facilitating filming in a diverse range of stunning locations throughout Ethiopia.</p>
-        <p class="drop__more"><a class="btn btn--gold" href="/locations.html" data-magnetic-strength="22"><span data-magnetic-inner>The nine, in full</span></a></p>
-      </div>
-
-      <div class="gauge" aria-hidden="true">
-        <span class="gauge__place mono" id="gauge-place">Simien Mountains</span>
-        <span class="gauge__alt mono"><span id="gauge-alt">4,550</span> m</span>
-        <span class="gauge__line"><span class="gauge__fill" id="gauge-fill"></span><span class="gauge__sea"></span></span>
-        <span class="gauge__k mono">altitude</span>
-      </div>
+      <p class="hm-note">Photos: Wikimedia Commons &middot; CC BY-SA / CC BY &middot; credits on the <a href="/locations.html">Locations</a> page</p>
     </div>
-  </section>
-
-  <!-- ══════════ ACTE 6 · LES CAISSES ══════════
-       Forme : une pile de flight cases qu'on écarte. Premier moment où l'on PREND. -->
-  <section class="cases" id="resources" data-scene="Resources" aria-labelledby="res-h">
-    <div class="cases__head">
-      <h2 class="cases__h" id="res-h">The kit travels with you</h2>
-      <p class="cases__lede">We are committed to providing filmmakers with a comprehensive range of resources to support their productions.</p>
-    </div>
-    <ul class="cases__stack" id="cases-stack" data-momentum data-view-group>
-      <li class="case" data-momentum-item data-kit="Camera" data-view="/kit/photo/camera.webp" data-view-label="Camera" style="--i:0">
-        <figure class="case__fig"><img src="/kit/camera-800.webp" alt="Cinema camera body on a support" width="800" height="533" loading="lazy" decoding="async"></figure>
-        <div class="case__t">
-          <h3 class="case__h">Camera <span class="case__spec">12K</span></h3>
-          <p>We provide advanced cameras&mdash;cinema, DSLRs, mirrorless&mdash;with high-resolution sensors, customizable settings, and cutting-edge features to meet filmmakers diverse needs.</p>
-        </div>
-        <button class="case__add" type="button" data-add="Camera"><span>Add to sheet</span></button>
-      </li>
-      <li class="case" data-momentum-item data-kit="Lenses" data-view="/kit/photo/lense.webp" data-view-label="Lenses" style="--i:1">
-        <figure class="case__fig"><img src="/kit/lense-800.webp" alt="A set of prime and zoom lenses" width="800" height="533" loading="lazy" decoding="async"></figure>
-        <div class="case__t">
-          <h3 class="case__h">Lenses <span class="case__spec">Cinematic</span></h3>
-          <p>Expand your creative vision with our diverse lens collection. Wide-angle to telephoto, prime to zoom, achieve desired focal length, depth, and visual quality.</p>
-        </div>
-        <button class="case__add" type="button" data-add="Lenses"><span>Add to sheet</span></button>
-      </li>
-      <li class="case" data-momentum-item data-kit="Drone" data-view="/kit/photo/drone.webp" data-view-label="Drone" style="--i:2">
-        <figure class="case__fig"><img src="/kit/drone-800.webp" alt="A camera drone with gimbal" width="800" height="533" loading="lazy" decoding="async"></figure>
-        <div class="case__t">
-          <h3 class="case__h">Drone</h3>
-          <p>Ensure precision with our versatile drones. Advanced features, stable flight, smooth gimbal control for steady aerial shots and dynamic filming possibilities</p>
-        </div>
-        <button class="case__add" type="button" data-add="Drone"><span>Add to sheet</span></button>
-      </li>
-      <li class="case" data-momentum-item data-kit="Lighting Kit" data-view="/kit/photo/lighting.webp" data-view-label="Lighting Kit" style="--i:3">
-        <figure class="case__fig"><img src="/kit/lighting-800.webp" alt="A lighting kit with stands and modifiers" width="800" height="533" loading="lazy" decoding="async"></figure>
-        <div class="case__t">
-          <h3 class="case__h">Lighting Kit <span class="case__spec">Professional</span></h3>
-          <p>Shape and control lighting conditions with precision using our versatile lighting kits. Key lights, fill lights, backlight, and light modifiers included for scene illumination.</p>
-        </div>
-        <button class="case__add" type="button" data-add="Lighting Kit"><span>Add to sheet</span></button>
-      </li>
-      <li class="case" data-momentum-item data-kit="Microphones" data-view="/kit/photo/mic.webp" data-view-label="Microphones" style="--i:4">
-        <figure class="case__fig"><img src="/kit/mic-800.webp" alt="A shotgun microphone in a blimp with windshield" width="800" height="533" loading="lazy" decoding="async"></figure>
-        <div class="case__t">
-          <h3 class="case__h">Microphones</h3>
-          <p>Achieve pristine audio with our pro-grade microphones. Capture focused directional sound with shotgun mics, individual subjects with lavaliers, and clear dialogue with boom mics.</p>
-        </div>
-        <button class="case__add" type="button" data-add="Microphones"><span>Add to sheet</span></button>
-      </li>
-      <li class="case" data-momentum-item data-kit="Green Screen" data-view="/kit/photo/green-screen.webp" data-view-label="Green Screen" style="--i:5">
-        <figure class="case__fig"><img src="/kit/green-screen-800.webp" alt="A lit green screen cyclorama" width="800" height="533" loading="lazy" decoding="async"></figure>
-        <div class="case__t">
-          <h3 class="case__h">Green Screen/Chroma Key</h3>
-          <p>Explore limitless visual potential with our green screen setup. Replace the green background with any image or video, enabling diverse visual effects and compositing techniques in post-production.</p>
-        </div>
-        <button class="case__add" type="button" data-add="Green Screen"><span>Add to sheet</span></button>
-      </li>
-    </ul>
   </section>
 
   <!-- ══════════ LA GALERIE ══════════
-       Une bande de cartes qu'on tire à l'infini. Deux tuiles identiques et un
-       modulo sur la position : le wrap est invisible. -->
-  <section class="gal" aria-labelledby="gal-h" data-scene="Gallery">
-    <!-- Le titre est POSÉ DERRIÈRE la grille, en lettres creuses géantes : les
-         images passent par-dessus. C'est la composition de la référence, et
-         c'est ce qui fait que la zone devient un espace où l'on se promène au
-         lieu d'un bandeau qu'on fait défiler. -->
-    <h2 class="gal__h" id="gal-h">Shot in Ethiopia</h2>
-    <p class="gal__lede mono">Frames from the films of Teddy Studio</p>
+       La grille qu'on attrape à la souris (gardée : décision de Dominique),
+       en pleine hauteur, bord à bord. Par-dessus, la caméra : on descend,
+       l'objectif s'ouvre sur les vidéos et l'on entre dedans (`refonte.js`). -->
+  <section class="hm-sec hm-sec--gal" id="gallery" aria-labelledby="gal-h">
+    <div class="hm-wrap">
+      <header class="hm-head hm-head--split">
+        <div>
+          <p class="hm-k"><span class="go-dot" aria-hidden="true"></span>Gallery</p>
+          <h2 class="hm-h" id="gal-h">Shot in Ethiopia</h2>
+        </div>
+        <div class="hm-head__side">
+          <p class="hm-lede">Frames from the films of Teddy Studio</p>
+          <p class="hm-drag" aria-hidden="true">Drag <span>&larr; &rarr;</span></p>
+        </div>
+      </header>
+    </div>
 
-    <div class="gal__stage" data-gallery data-gallery-status="loading" data-cursor="drag">
-      <div class="gal__collection" data-gallery-collection>
-        <div data-gallery-list>
-        <div class="gal__item" data-gallery-item data-ratio="16/9">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r01.jpg"
-                   data-src="/reel/r01.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="9/16">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r02.jpg"
-                   data-src="/reel/r02.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="16/9">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r03.jpg"
-                   data-src="/reel/r03.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="9/16">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r04.jpg"
-                   data-src="/reel/r04.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="16/9">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r05.jpg"
-                   data-src="/reel/r05.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="9/16">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r06.jpg"
-                   data-src="/reel/r06.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="16/9">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r07.jpg"
-                   data-src="/reel/r07.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="9/16">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r08.jpg"
-                   data-src="/reel/r08.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="16/9">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r09.jpg"
-                   data-src="/reel/r09.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="9/16">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r10.jpg"
-                   data-src="/reel/r10.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="16/9">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r11.jpg"
-                   data-src="/reel/r11.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        <div class="gal__item" data-gallery-item data-ratio="9/16">
-          <div class="gal__card" data-gallery-card>
-            <video muted playsinline loop preload="none" poster="/reel/r12.jpg"
-                   data-src="/reel/r12.mp4" aria-hidden="true"></video>
-          </div>
-        </div>
-        </div>
+    <div class="hm-band">
+      <!-- LA CAMÉRA. Une vraie caméra de tournage (Sony, zoom Fujinon 50-135),
+           d'abord en dessin tiré de la photo elle-même, puis en photo : elle se
+           révèle depuis l'objectif, la lentille s'ouvre sur la galerie, et l'on
+           entre dedans. Photo : Vanilla Bear Films / Unsplash. -->
+      <div class="cam" aria-hidden="true" data-cam data-lens="1638 848 196 228">
+        <svg class="cam__svg" viewBox="0 98 2400 1500" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <mask id="cam-lens" maskUnits="userSpaceOnUse" x="-8000" y="-8000" width="18400" height="17600">
+              <rect x="-8000" y="-8000" width="18400" height="17600" fill="#fff"/>
+              <ellipse class="cam__iris" cx="1638" cy="848" rx="0" ry="0" transform="rotate(-4 1638 848)" fill="#000"/>
+            </mask>
+            <mask id="cam-photo" maskUnits="userSpaceOnUse" x="-8000" y="-8000" width="18400" height="17600">
+              <rect x="-8000" y="-8000" width="18400" height="17600" fill="#000"/>
+              <circle class="cam__reveal" cx="1638" cy="848" r="0" fill="#fff"/>
+            </mask>
+            <mask id="cam-draw" maskUnits="userSpaceOnUse" x="-8000" y="-8000" width="18400" height="17600">
+              <rect x="-8000" y="-8000" width="18400" height="17600" fill="#fff"/>
+              <circle class="cam__reveal" cx="1638" cy="848" r="0" fill="#000"/>
+            </mask>
+          </defs>
+          <g mask="url(#cam-lens)">
+            <rect class="cam__mat" x="-8000" y="-8000" width="18400" height="17600"/>
+            <image class="cam__photo" x="0" y="0" width="2400" height="1600" preserveAspectRatio="none"
+                   data-href="/cam/camera-2400.webp" data-href-small="/cam/camera-1400.webp" mask="url(#cam-photo)"/>
+            <image class="cam__draw" x="0" y="0" width="2400" height="1600" preserveAspectRatio="none"
+                   data-href="/cam/camera-lines-2400.webp" data-href-small="/cam/camera-lines-1400.webp" mask="url(#cam-draw)"/>
+          </g>
+        </svg>
+        <p class="cam__cta"><span class="vf"><span class="cam__btn brk">Scroll to view</span></span></p>
       </div>
-      <p class="gal__hint mono" aria-hidden="true"><span>Drag</span></p>
+      <div class="gal__stage" data-gallery data-gallery-status="loading" data-cursor="drag">
+        <div class="gal__collection" data-gallery-collection>
+          <div data-gallery-list>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r01.jpg" data-src="/reel/r01.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r02.jpg" data-src="/reel/r02.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r03.jpg" data-src="/reel/r03.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r04.jpg" data-src="/reel/r04.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r05.jpg" data-src="/reel/r05.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r06.jpg" data-src="/reel/r06.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r07.jpg" data-src="/reel/r07.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r08.jpg" data-src="/reel/r08.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r09.jpg" data-src="/reel/r09.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r10.jpg" data-src="/reel/r10.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r11.jpg" data-src="/reel/r11.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r12.jpg" data-src="/reel/r12.mp4" aria-hidden="true"></video></div></div>
+          </div>
+        </div>
+        <p class="gal__hint mono" aria-hidden="true"><span>Drag</span></p>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════ ACTE 7 · LE GÉNÉRIQUE ══════════
-       Forme : un générique de fin. Le seul endroit du site où le centrage est juste,
-       et le seul sans aucun vert. Le texte règle le problème des visuels basse définition. -->
-  <section class="credits" id="works" data-scene="Works" aria-labelledby="works-h">
-    <div class="credits__roll" id="credits-roll">
-      <p class="credits__k mono" id="works-h">We&rsquo;ve Worked On</p>
-      <!-- Les affiches existent : elles etaient sur la page profonde, pas ici.
-           Chaque titre porte la sienne ; on appuie, elle s'ouvre en grand.
-           Fikir Siferd n'en a pas dans les archives du site d'origine - on ne
-           lui en invente pas une. -->
-      <!-- L'association affiche ↔ film est celle du site d'origine, relevée
-           dans son propre HTML : p.jfif = Fiker Siferd, p-1 = Sost Maezen 1,
-           p-2 = Sost Maezen 2, p-4 = Sele Enat Meder, p-5 = Kezkaza Wolafen.
-           (p-3 n'existe pas chez eux non plus.) L'affiche de Fiker Siferd
-           n'était pas dans l'extraction — récupérée depuis le site vivant. -->
-      <ol class="credits__films" data-view-group>
-        <li data-view="/works/p-0-full.webp" data-view-label="Fikir Siferd">
-          <img class="credits__art" src="/works/p-0-280.webp" srcset="/works/p-0-280.webp 280w"
-               sizes="(max-width: 40rem) 132px, 220px" alt="Artwork for the film Fikir Siferd"
-               width="300" height="168" loading="lazy" decoding="async">
-          <span>Fikir Siferd</span>
+  <!-- ══════════ LES FILMS ══════════
+       Les cinq affiches côte à côte ; un appui ouvre l'affiche en grand. -->
+  <section class="hm-sec" id="works" aria-labelledby="works-h">
+    <div class="hm-wrap">
+      <header class="hm-head hm-head--split">
+        <div>
+          <p class="hm-k"><span class="go-dot" aria-hidden="true"></span>Our Works</p>
+          <h2 class="hm-h" id="works-h">We&rsquo;ve worked on</h2>
+        </div>
+        <div class="hm-head__side">
+          <a class="lnk" href="/works.html"><span>The full record</span></a>
+        </div>
+      </header>
+      <ol class="hm-films" data-view-group>
+        <li class="hm-film">
+          <figure class="hm-film__fig" data-view="/works/p-0-full.webp" data-view-label="Fikir Siferd"><img src="/works/p-0-280.webp" alt="Artwork for the film Fikir Siferd" width="280" height="157" loading="lazy" decoding="async"></figure>
+          <h3 class="hm-film__h">Fikir Siferd</h3>
         </li>
-        <li data-view="/works/p-1-full.webp" data-view-label="Sost Maezen &middot; Triangle">
-          <img class="credits__art" src="/works/p-1-280.webp" srcset="/works/p-1-280.webp 280w, /works/p-1-560.webp 560w"
-               sizes="(max-width: 40rem) 132px, 220px" alt="Artwork for the film Triangle (Sost Maezen)"
-               width="560" height="420" loading="lazy" decoding="async">
-          <span>Sost Maezen <i class="credits__alt">Triangle</i></span>
+        <li class="hm-film">
+          <figure class="hm-film__fig" data-view="/works/p-1-full.webp" data-view-label="Sost Maezen 1 &middot; Triangle"><img src="/works/p-1-560.webp" srcset="/works/p-1-280.webp 280w, /works/p-1-560.webp 560w" sizes="(max-width: 48rem) 46vw, 18vw" alt="Artwork for the film Triangle (Sost Maezen 1)" width="560" height="420" loading="lazy" decoding="async"></figure>
+          <h3 class="hm-film__h">Sost Maezen 1</h3>
+          <p class="hm-film__alt">Triangle</p>
         </li>
-        <li data-view="/works/p-2-full.webp" data-view-label="Sost Maezen 2 &middot; Triangle II">
-          <img class="credits__art" src="/works/p-2-280.webp" srcset="/works/p-2-280.webp 280w, /works/p-2-560.webp 560w"
-               sizes="(max-width: 40rem) 132px, 220px" alt="Artwork for the film Triangle II (Sost Maezen 2)"
-               width="560" height="420" loading="lazy" decoding="async">
-          <span>Sost Maezen 2 <i class="credits__alt">Triangle II</i></span>
+        <li class="hm-film">
+          <figure class="hm-film__fig" data-view="/works/p-2-full.webp" data-view-label="Sost Maezen 2 &middot; Triangle II"><img src="/works/p-2-560.webp" srcset="/works/p-2-280.webp 280w, /works/p-2-560.webp 560w" sizes="(max-width: 48rem) 46vw, 18vw" alt="Artwork for the film Triangle II (Sost Maezen 2)" width="560" height="420" loading="lazy" decoding="async"></figure>
+          <h3 class="hm-film__h">Sost Maezen 2</h3>
+          <p class="hm-film__alt">Triangle II</p>
         </li>
-        <li data-view="/works/p-4-full.webp" data-view-label="Sele Enat Meder">
-          <img class="credits__art" src="/works/p-4-280.webp" srcset="/works/p-4-280.webp 280w, /works/p-4-560.webp 560w"
-               sizes="(max-width: 40rem) 132px, 220px" alt="Artwork for the film Sele Enat Meder"
-               width="560" height="420" loading="lazy" decoding="async">
-          <span>Sele Enat Meder</span>
+        <li class="hm-film">
+          <figure class="hm-film__fig" data-view="/works/p-4-full.webp" data-view-label="Sele Enat Meder"><img src="/works/p-4-560.webp" srcset="/works/p-4-280.webp 280w, /works/p-4-560.webp 560w" sizes="(max-width: 48rem) 46vw, 18vw" alt="Artwork for the film Sele Enat Meder" width="560" height="420" loading="lazy" decoding="async"></figure>
+          <h3 class="hm-film__h">Sele Enat Meder</h3>
         </li>
-        <li data-view="/works/p-5-full.webp" data-view-label="Kezkaza Welafen">
-          <img class="credits__art" src="/works/p-5-280.webp" srcset="/works/p-5-280.webp 280w, /works/p-5-560.webp 560w"
-               sizes="(max-width: 40rem) 132px, 220px" alt="Artwork for the film Kezkaza Welafen"
-               width="560" height="420" loading="lazy" decoding="async">
-          <span>Kezkaza Welafen</span>
+        <li class="hm-film">
+          <figure class="hm-film__fig" data-view="/works/p-5-full.webp" data-view-label="Kezkaza Welafen"><img src="/works/p-5-560.webp" srcset="/works/p-5-280.webp 280w, /works/p-5-560.webp 560w" sizes="(max-width: 48rem) 46vw, 18vw" alt="Artwork for the film Kezkaza Welafen" width="560" height="420" loading="lazy" decoding="async"></figure>
+          <h3 class="hm-film__h">Kezkaza Welafen</h3>
         </li>
       </ol>
-      <p class="credits__k mono">Produced for</p>
-      <ol class="credits__clients">
-        <li>BGI Ethiopia</li><li>Pepsi</li><li>World Bank</li>
-        <li>Ethiopian Prime Minister Office</li><li>Ethiopia Defence Force</li>
-        <li>U.S. Embassy Ethiopia</li><li>Wosti Jnvis</li>
-      </ol>
-      <p class="credits__end mono">A film office in Addis Ababa &middot; founded by Tewodros Teshome</p>
-      <p class="credits__more"><a class="lnk" href="/works.html"><span>The full record</span></a></p>
     </div>
   </section>
 
-  <!-- ══════════ ACTE 8 · LA FEUILLE DE SERVICE ══════════
-       Forme : le document se déplie. La fiche qui suivait le visiteur DEVIENT la page. -->
-  <section class="call-sheet" id="contact" data-scene="Contact" aria-labelledby="con-h">
-    <div class="cs" id="cs-full">
-      <header class="cs__top">
-        <h2 class="cs__title" id="con-h">Call Sheet</h2>
-        <p class="cs__draft mono">Draft request &mdash; not a booking confirmation</p>
-        <dl class="cs__meta mono">
-          <div><dt>Date</dt><dd id="cs-date">&mdash;</dd></div>
-          <div><dt>Unit base</dt><dd>Addis Ababa</dd></div>
-          <div><dt>Local time</dt><dd><time id="clock-cs">--:--</time></dd></div>
-          <div><dt>Light</dt><dd id="sun-cs">--:-- &rarr; --:--</dd></div>
+  <!-- ══════════ LE CONTACT ══════════ -->
+  <section class="hm-sec" id="contact" aria-labelledby="con-h">
+    <div class="hm-wrap hm-split">
+      <header class="hm-split__head">
+        <p class="hm-k"><span class="go-dot" aria-hidden="true"></span>Contact</p>
+        <h2 class="hm-h" id="con-h">Get in touch</h2>
+        <dl class="hm-facts hm-facts--contact">
+          <div><dt>Office</dt><dd>Addis Ababa / Ethiopia, In front of Meskel Square, Finfine Building, 5<sup>th</sup> Floor</dd></div>
+          <div><dt>Call</dt><dd><a href="tel:{{phone}}">{{phoneDisplay}}</a></dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:{{email}}">{{email}}</a></dd></div>
+          <div><dt>Open</dt><dd>Monday &ndash; Sunday &middot; <span class="go">24/7</span></dd></div>
         </dl>
       </header>
 
-      <div class="cs__grid">
-        <div class="cs__lines">
-          <p class="cs__lines-k mono">Collected as you went</p>
-          <ol class="cs__log mono" id="cs-log" aria-live="polite"></ol>
-          <p class="cs__empty mono" id="cs-empty">Nothing yet. Walk the site &mdash; this fills itself.</p>
+      <form class="hm-form" id="contact-form" novalidate>
+        <div class="form__row">
+          <p class="field"><label for="f-first">First Name</label><input id="f-first" name="first_name" type="text" autocomplete="given-name" required></p>
+          <p class="field"><label for="f-last">Last Name</label><input id="f-last" name="last_name" type="text" autocomplete="family-name" required></p>
         </div>
-
-        <form class="cs__form" id="contact-form" novalidate>
-          <p class="cs__form-k mono">The only blanks left</p>
-          <div class="form__row">
-            <p class="field"><label for="f-first">First Name</label><input id="f-first" name="first_name" type="text" autocomplete="given-name" required></p>
-            <p class="field"><label for="f-last">Last Name</label><input id="f-last" name="last_name" type="text" autocomplete="family-name" required></p>
-          </div>
+        <div class="form__row">
           <p class="field"><label for="f-mail">Email Address</label><input id="f-mail" name="email" type="email" autocomplete="email" required></p>
           <p class="field"><label for="f-tel">Phone Number</label><input id="f-tel" name="phone" type="tel" autocomplete="tel"></p>
-          <p class="field"><label for="f-msg">Your Message</label><textarea id="f-msg" name="message" rows="4" required></textarea></p>
-          <p class="cs__act">
-            <button class="btn btn--go btn--lg" type="submit"><span>Send Message</span></button>
-            <a class="lnk cs__long" href="/book.html"><span>Or brief us in full</span></a>
-          </p>
-          <p class="form__note" id="form-note" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-
-      <footer class="cs__foot mono">
-        <p><span class="cs__foot-k">Office</span> Addis Ababa / Ethiopia, In front of Meskel Square, Finfine Building, 5<sup>th</sup> Floor</p>
-        <p><span class="cs__foot-k">Call</span> <a href="tel:+251911204388">+251 911 204 388</a></p>
-        <p><span class="cs__foot-k">Email</span> <a href="mailto:info@ethiopianfilmoffice.com">info@ethiopianfilmoffice.com</a></p>
-        <p><span class="cs__foot-k">Open</span> Monday &ndash; Sunday &middot; <span class="go">24/7</span></p>
-      </footer>
+        </div>
+        <p class="field"><label for="f-msg">Your Message</label><textarea id="f-msg" name="message" rows="5" required></textarea></p>
+        <p class="hm-form__act">
+          <button class="btn btn--go btn--lg" type="submit"><span>Send Message</span></button>
+          <a class="lnk" href="/book.html"><span>Or brief us in full</span></a>
+        </p>
+        <p class="form__note" id="form-note" role="status" aria-live="polite"></p>
+      </form>
     </div>
   </section>
 
@@ -657,19 +704,44 @@
 
 <!--#include "footer" -->
 
-<!-- La fiche qui suit le visiteur et s'écrit toute seule -->
-<aside class="dock" id="dock" aria-label="Your call sheet so far">
-  <button class="dock__toggle" id="dock-toggle" type="button" aria-expanded="false" aria-controls="dock-body">
-    <span class="dock__k mono">Call sheet</span>
-    <span class="dock__n mono" id="dock-count">0</span>
-  </button>
-  <div class="dock__body" id="dock-body" hidden>
-    <ol class="dock__log mono" id="dock-log"></ol>
-    <a class="dock__go" href="#contact"><span class="mono">Open the sheet</span></a>
+<!-- La fiche d'un lieu : la photo en haut, le texte dessous (`reel3d.js`). -->
+<div class="reel-view" id="reel-view" role="dialog" aria-modal="true" aria-labelledby="rv-h" hidden>
+  <div class="reel-view__in">
+    <div class="reel-view__bar">
+      <p class="reel-view__k"><span class="go-dot" aria-hidden="true"></span><span class="reel-view__kl">Locations &middot;</span> <span data-rv-n>01 / 09</span></p>
+      <p class="reel-view__nav">
+        <button type="button" class="reel-view__btn" data-rv-prev aria-label="Previous location">&larr;</button>
+        <button type="button" class="reel-view__btn" data-rv-next aria-label="Next location">&rarr;</button>
+        <button type="button" class="reel-view__close">Close <span aria-hidden="true">&times;</span></button>
+      </p>
+    </div>
+    <figure class="reel-view__fig"><img class="reel-view__img" src="" alt=""></figure>
+    <div class="reel-view__body">
+      <div class="reel-view__title">
+        <h3 class="reel-view__h" id="rv-h" data-rv-h></h3>
+        <p class="reel-view__region" data-rv-region></p>
+      </div>
+      <div class="reel-view__text">
+        <p class="reel-view__about" data-rv-about></p>
+        <p class="reel-view__desc"><span class="reel-view__lab">On the photo</span> <span data-rv-desc></span></p>
+        <p class="reel-view__note" data-rv-note hidden></p>
+      </div>
+      <div class="reel-view__side">
+        <dl class="hm-facts reel-view__facts">
+          <div><dt>Altitude</dt><dd data-rv-alt></dd></div>
+          <div><dt>Permits</dt><dd>Handled in-house</dd></div>
+        </dl>
+        <p class="reel-view__act">
+          <a class="btn btn--go" href="/book.html"><span>Start a production</span></a>
+          <a class="lnk" data-rv-more href="/locations.html"><span>The nine, in full</span></a>
+        </p>
+        <p class="reel-view__credit" data-rv-credit></p>
+      </div>
+    </div>
   </div>
-</aside>
+</div>
 
 <div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">Drag</i></div>
-<script type="module" src="/src/js/main.js"></script>
+<script type="module" src="/src/js/home.js"></script>
 </body>
 </html>

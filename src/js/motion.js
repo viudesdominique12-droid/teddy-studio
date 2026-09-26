@@ -144,8 +144,19 @@ export function indexPanel() {
 
 export function bar() {
   const el = document.getElementById('bar');
-  const open = document.querySelector('.open');
+  // `[data-bar-clear]` : l'ouverture de l'accueil (27/09/2026).
+  const open = document.querySelector('.open, [data-bar-clear]');
   if (!el) return;
+
+  // La pilule marque la page en cours. Les ancres de l'accueil (#services,
+  // #contact) ne sont pas des pages : seul « Home » (#top) y compte.
+  const here = location.pathname.replace(/index\.html$/, '');
+  for (const a of el.querySelectorAll('.bar__pill a:not(.bar__pill-cta)')) {
+    const u = new URL(a.href, location.href);
+    if (u.pathname.replace(/index\.html$/, '') === here && (!u.hash || u.hash === '#top')) {
+      a.setAttribute('aria-current', 'page');
+    }
+  }
 
   // Sur la plaque d'ouverture : blanc sur l'image. Ailleurs : papier.
   if (open) {
@@ -158,10 +169,13 @@ export function bar() {
   }
 
   let prev = window.scrollY;
+  // La page défilée : le logo flottant prend son verre (refonte.css).
+  el.classList.toggle('is-scrolled', prev > 8);
   window.addEventListener('scroll', () => {
     const y = window.scrollY;
     if (y > 420 && y - prev > 6) el.classList.add('is-away');
     else if (prev - y > 6 || y < 120) el.classList.remove('is-away');
+    el.classList.toggle('is-scrolled', y > 8);
     prev = y;
   }, { passive: true });
 }

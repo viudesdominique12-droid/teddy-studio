@@ -33,47 +33,38 @@
 }
 
 :root {
-  /* ─────────────── LE MONDE : BASALTE & SCORIE ───────────────
-     Le vert est parti, et ce n'est pas un goût — c'est une mesure.
+  /* ─────────────── LE MONDE : VERT NUIT & SCORIE ───────────────
+     Le fond revient au vert nuit d'origine le 26/09/2026, sur décision de
+     Dominique (DECISIONS.md). Tout le reste du monde basalte est gardé tel
+     quel : la terre cuite reste l'accent, les encres ne bougent pas.
 
-     Sur 40 sites primés de production cinéma, post-production, réalisation et
-     chefs opérateurs : ZÉRO n'emploie de vert. 90 % ont un quasi-noir, et
-     82 % des accents chromatiques tombent dans une bande de 20° entre le
-     rouge et l'orange. Un partenaire du client l'a dit en six mots : « looks
-     more like an NGO than a movie website ». Le vert EST le code documenté de
-     l'ONG, de l'écologie et de la santé — et le vert du drapeau éthiopien
-     signifie « développement, terre, richesse naturelle », soit le champ
-     lexical même du problème.
+     Le basalte ne quitte pas le site : il reste l'encre posée SUR la terre
+     cuite — menu, boutons pleins, sélection. Le vert nuit n'y ferait que
+     4,10:1, contre 5,20:1.
 
-     LA RAISON TECHNIQUE, qui à elle seule suffirait. L'ancien fond était à
-     C 0,045 de chroma. Un fond ne teinte pas une image — mais sur un site
-     plein de rushes, les images sont partout fondues dans le fond : voiles de
-     légende, vignettes, dégradés de masquage, survols semi-opaques. Chacun
-     multiplie la teinte du fond dans les ombres. Mesuré : un voile à 75 % sur
-     une peau sous-exposée faisait basculer la teinte à H 136,7 — dans le
-     vert. Le basalte, à C 0,0039, la laisse à H 48 : sur son propre axe.
+     L'argumentaire qui avait fait partir le vert (les 40 sites primés, la
+     lecture « ONG », la teinte des voiles qui bascule dans le vert, Lalibela)
+     est dans le commit dc17198.
 
-     D'OÙ VIENNENT CES COULEURS. Les églises de Lalibela sont taillées, dit
-     l'UNESCO, dans « une scorie volcanique ROUGE sous-tendue par du basalte
-     GRIS FONCÉ ». Le monument éthiopien le plus reconnaissable au monde est
-     un rouge-ocre dans un gris-noir. Et la peinture éthiopienne traditionnelle
-     est au vermillon et à l'ocre — l'or y était rare, il appartient à
-     l'orfèvrerie liturgique, pas au pinceau.
+     Ratios de contraste recalculés sur le vert nuit. */
+  --night:    #182d19;   /* le vert nuit : le sol */
+  --night-2:  #101b13;   /* surfaces enfoncées */
+  --night-3:  #1e3720;   /* surfaces relevées */
 
-     Chaque valeur ci-dessous a son ratio de contraste vérifié. */
-  --night:    #141211;   /* le basalte : le sol */
-  --night-2:  #0d0c0b;   /* surfaces enfoncées */
-  --night-3:  #22201e;   /* surfaces relevées */
+  --basalt:   #141211;   /* l'encre sur la terre cuite — 5,20:1 */
+  --basalt-3: #22201e;   /* la même, relevée (survol) */
 
-  --cream:    #ece7e0;   /* le parchemin — 15,18:1 sur le fond */
-  --cream-2:  #b0aba6;   /*  8,20:1 */
-  --cream-3:  #8d8783;   /*  5,27:1 — l'ancien était à 3,48:1, sous le seuil AA */
+  --cream:    #ece7e0;   /* le parchemin — 11,95:1 sur le fond */
+  --cream-2:  #b0aba6;   /*  6,46:1 */
+  --cream-3:  #8d8783;   /*  4,15:1 — sous le seuil AA de 4,5:1 (5,27:1 sur le basalte) */
 
-  --gold:     #db6336;   /* la scorie — 5,20:1. Moins chromatique (C 0,162) que
-                            les oranges « bouton » du secteur : elle lit terre
-                            cuite et oxyde de fer, pas appel à l'action. */
-  --gold-lt:  #f69561;   /*  8,35:1 */
-  --gold-dp:  #a74226;   /*  3,07:1 — aplats et états presés */
+  --gold:     #db6336;   /* la scorie — 4,10:1 : assez pour les grands textes et
+                            les composants (3:1), pas pour le texte courant.
+                            Moins chromatique (C 0,162) que les oranges
+                            « bouton » du secteur : elle lit terre cuite et
+                            oxyde de fer, pas appel à l'action. */
+  --gold-lt:  #f69561;   /*  6,57:1 */
+  --gold-dp:  #a74226;   /*  2,42:1 — aplats et états presés */
 
   --line:     #3a3633;   /* filets : relevés pour que les champs de formulaire
                             soient perceptibles (l'ancien #ffffff2e était à
@@ -83,7 +74,7 @@
      est le SEUL indicateur d'un composant — la bordure d'un champ de saisie —
      WCAG 1.4.11 exige 3:1. Deux jetons, donc, au lieu d'un compromis qui
      échoue des deux côtés : l'ancien `--line` était à 1,78:1 et servait aux
-     deux. Mesuré : 3,08:1 sur le fond. */
+     deux. Mesuré : 3,08:1 sur le basalte, 2,55:1 sur le vert nuit. */
   --line-ui:  #6a6561;
   --shadow-border: #db633680;
   --shadow-light:  #db633666;
@@ -218,7 +209,7 @@
   --go-solid: var(--gold);
   --go-press: var(--gold-dp);
   --go-soft:  #db63361f;
-  --on-go:    var(--night);
+  --on-go:    var(--basalt);
 
   --g-300: var(--gold-lt);
   --g-400: var(--gold);

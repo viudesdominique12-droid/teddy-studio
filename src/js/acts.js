@@ -202,9 +202,8 @@ export function actDrop() {
       end: () => `+=${scrollWay()}`,
       invalidateOnRefresh: true,
       anticipatePin: 1,
-      // Dernier pin de la page : il doit être calculé APRÈS celui du téléphone,
-      // sinon tous les déclencheurs suivants tombent trop tôt.
-      refreshPriority: -1,
+      // Calculé dans l'ordre de création, donc AVANT tout ce qui le suit dans
+      // la page : les déclencheurs placés après lui tiennent compte de sa longueur.
       onUpdate: (self) => {
         const p = self.progress * (stops.length - 1);
         const i = Math.min(stops.length - 2, Math.floor(p));

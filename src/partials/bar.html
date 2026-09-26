@@ -21,15 +21,20 @@
     <span class="burger__b" aria-hidden="true"></span>
   </button>
 
-  <p class="bar__clock mono">
-    <span class="go-dot" aria-hidden="true"></span>
-    <time id="clock-bar">--:--</time>
-    <span class="bar__city">Addis</span>
-  </p>
-
-  <a class="bar__tel mono" href="tel:{{phone}}" data-cursor="call">{{phoneDisplay}}</a>
-
-  <a class="bar__cta" href="/book.html" data-cursor="book"><span>Start a production</span></a>
+  <!-- La pilule (modèle 21st.dev choisi par Dominique, 27/09), sur toutes
+       les pages : cinq liens et l'appel en blanc. Le lien de la page en cours
+       reçoit `aria-current` au chargement (`bar()` dans motion.js).
+       L'horloge, le téléphone et l'ancien bouton terre cuite ont quitté la
+       barre : l'heure est dans le badge de l'accueil, le téléphone au contact
+       et au pied de page. -->
+  <nav class="bar__pill" aria-label="Main">
+    <a href="/#top">Home</a>
+    <a href="/#services">Services</a>
+    <a href="/locations.html">Locations</a>
+    <a href="/works.html">Our Works</a>
+    <a href="/#contact">Contact</a>
+    <a class="bar__pill-cta" href="/book.html" data-cursor="book">Start a production<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+  </nav>
 </header>
 
 <!-- L'INDEX : la page de sommaire du dossier. Elle informe avant de router —
@@ -42,7 +47,7 @@
       <a href="/#services"><span class="index__n" data-roll><span>Services</span></span><span class="index__v mono">8 &middot; 2 permits</span></a>
       <a href="/#about"><span class="index__n" data-roll><span>About Us</span></span><span class="index__v mono">since Tewodros Teshome</span></a>
       <a href="/locations.html"><span class="index__n" data-roll><span>Locations</span></span><span class="index__v mono">9 &middot; +4,550 m &rarr; &minus;125 m</span></a>
-      <a href="/#works"><span class="index__n" data-roll><span>Our Clients</span></span><span class="index__v mono">7</span></a>
+      <a href="/#clients"><span class="index__n" data-roll><span>Our Clients</span></span><span class="index__v mono">7</span></a>
       <a href="/#resources"><span class="index__n" data-roll><span>Resources</span></span><span class="index__v mono">6</span></a>
       <a href="/works.html"><span class="index__n" data-roll><span>Our Works</span></span><span class="index__v mono">5</span></a>
       <a href="/#contact"><span class="index__n" data-roll><span>Contact</span></span><span class="index__v mono">open now &middot; 24/7</span></a>

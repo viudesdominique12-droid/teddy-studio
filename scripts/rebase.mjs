@@ -36,9 +36,12 @@ if (!base || !base.startsWith('/') || !base.endsWith('/')) {
 }
 
 /* Les dossiers d'assets réellement servis : sert de garde-fou au rebasage JS. */
-const ASSET_DIRS = ['assets', 'reel', 'loc', 'kit', 'works', 'clients', 'office',
+const ASSET_DIRS = ['assets', 'reel', 'loc', 'kit', 'kit3d', 'cam', 'works', 'clients', 'office',
                     'media', 'fonts', 'emblem', 'film'];
-const URL_ATTRS = ['src', 'href', 'poster', 'content', 'data-src', 'data-view'];
+/* `data-href` et `data-href-small` : les images de la caméra devant la
+   galerie ; `data-model` : les modèles 3D du matériel. */
+const URL_ATTRS = ['src', 'href', 'poster', 'content', 'data-src', 'data-view',
+                   'data-href', 'data-href-small', 'data-model'];
 const SET_ATTRS = ['srcset', 'imagesrcset'];
 
 /** Préfixe une URL racine-absolue, en refusant les cas qui n'en sont pas. */

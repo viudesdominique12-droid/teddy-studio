@@ -1,0 +1,744 @@
+/* ══════════════════════════════════════════════════════════════
+   L'ACCUEIL, VERSION SOBRE — 26/09/2026
+   Dominique : « trop surchargé ». L'accueil parle désormais comme les
+   quatre pages intérieures : une étiquette, un titre en capitales, des
+   filets, des photos posées telles quelles, la terre cuite rare.
+   Tout est préfixé `hm-` : refonte.css reste chargée pour la barre, le
+   pied de page et l'ouverture, et ne touche jamais à ces blocs.
+   ══════════════════════════════════════════════════════════════ */
+
+.home {
+  --hm-y: clamp(4.5rem, 2.9rem + 5.4vw, 8rem);
+  --hm-gap: clamp(2rem, 1rem + 3.4vw, 5rem);
+}
+
+.hm-wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad-x); }
+
+/* ─────────────── Les trois voix ───────────────
+   L'étiquette (mono, capitales espacées), le titre (Archivo serrée, comme
+   `.phead__h` des pages intérieures), le chapô (le corps, en gris). */
+.hm-k {
+  display: flex; align-items: center; gap: 0.8em;
+  margin: 0 0 var(--s-5);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-size: var(--fs-nano); line-height: 1.4;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.hm-k .go-dot { width: 0.55em; height: 0.55em; }
+
+.hm-h {
+  max-width: 14ch;
+  font-family: var(--ff-d);
+  font-size: var(--fs-d1);
+  line-height: 0.98; letter-spacing: -0.03em;
+  font-variation-settings: 'wdth' 84, 'wght' 740;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+.hm-h--wide { max-width: none; }
+/* Une phrase par ligne, quand la place le permet. */
+.hm-br { display: block; }
+@media (max-width: 40rem) { .hm-br { display: inline; } }
+
+.hm-lede { max-width: 34rem; font-size: var(--fs-lede); line-height: 1.55; color: var(--cream-2); }
+
+.hm-tag {
+  display: inline-flex; align-items: center; gap: 0.55em;
+  padding: 0.35em 0.7em;
+  border: 1px solid var(--line);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-size: var(--fs-nano); line-height: 1.2; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cream-2); white-space: nowrap;
+}
+/* Le seul état du site : ce que le bureau obtient lui-même. */
+.hm-tag--go { border: 0; padding: 0; color: var(--gold-lt); }
+.hm-tag--go::before {
+  content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: var(--gold); flex: none;
+}
+
+.hm-note {
+  margin-top: var(--s-6);
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.hm-note a { color: var(--cream-2); text-decoration: underline; text-underline-offset: 0.25em; text-decoration-thickness: 1px; }
+.hm-note a:hover { color: var(--gold-lt); }
+
+
+/* ─────────────── Les sections ───────────────
+   Un filet en tête de chaque section, comme sur les pages intérieures : il
+   s'arrête à la largeur du contenu. */
+.hm-sec { position: relative; padding-block: var(--hm-y); }
+.hm-sec::before {
+  content: ''; position: absolute; top: 0; left: 50%;
+  width: min(100%, var(--maxw)); height: 1px;
+  translate: -50% 0;
+  background: var(--line-2);
+}
+
+.hm-head { margin-bottom: var(--s-8); }
+.hm-head--split {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+  align-items: end; gap: var(--s-6) var(--hm-gap);
+}
+.hm-head__side { display: grid; gap: var(--s-5); justify-items: start; }
+
+/* Deux colonnes : le titre reste à l'écran pendant que la liste défile. */
+.hm-split {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-7) var(--hm-gap); align-items: start;
+}
+.hm-split__head { position: sticky; top: calc(var(--bar-h) + var(--s-6)); }
+.hm-split__head .hm-lede { margin-top: var(--s-6); }
+
+@media (max-width: 64rem) {
+  .hm-head--split { grid-template-columns: 1fr; }
+  .hm-split { grid-template-columns: 1fr; }
+  .hm-split__head { position: static; }
+}
+
+
+/* ═══════════════════ L'OUVERTURE DE PAGE ═══════════════════
+   Le modèle choisi par Dominique (21st.dev, « responsive hero banner »,
+   27/09/2026), repris dans sa disposition : au centre un badge, le titre en
+   serif, une phrase, deux appels ; en bas du même écran, les clients qui
+   défilent. Sans photo de fond (« enlève cette photo de fond ») : le vert
+   nuit de la page. La serif est Fraunces, déjà celle de l'index : aucune
+   police de plus à charger. */
+.hx {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column;
+  min-height: 100svh;
+  /* L'encre de l'ouverture et son inverse (la puce, le bouton) : blanc sur
+     les thèmes sombres, redéfinis par le thème Papier (`themes.css`). */
+  --ink: #fff;
+  --ink-inv: var(--basalt);
+  color: var(--ink);
+}
+
+.hx__in {
+  flex: 1;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: calc(var(--bar-h) + clamp(1.5rem, 0.5rem + 5vh, 4.5rem)) var(--pad-x) clamp(3rem, 2rem + 4vh, 5.5rem);
+}
+.hx__c { width: 100%; max-width: 50rem; text-align: center; }
+
+/* Le badge : une puce blanche (l'heure d'Addis, en direct) et une ligne. */
+.hx__badge {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  max-width: 100%;
+  margin: 0 0 1.5rem;
+  padding: 0.5rem 0.95rem 0.5rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 15%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  color: color-mix(in srgb, var(--ink) 90%, transparent);
+}
+.hx__chip {
+  flex: none;
+  padding: 0.125rem 0.5rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 90%, transparent); color: var(--ink-inv);
+  font-size: 0.75rem; line-height: 1rem; font-variant-numeric: tabular-nums;
+}
+
+.hx__h {
+  font-family: var(--ff-p);
+  font-size: clamp(2.5rem, 1.1rem + 5.6vw, 6.5rem);
+  font-weight: 400;
+  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  line-height: 1.1; letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.hx__br { display: none; }
+
+.hx__lede {
+  max-width: 42rem; margin: 1.5rem auto 0;
+  font-size: clamp(1rem, 0.94rem + 0.25vw, 1.125rem); line-height: 1.6;
+  color: color-mix(in srgb, var(--ink) 80%, transparent);
+}
+
+.hx__cta {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 1rem; margin-top: 2.5rem;
+}
+.hx__btn, .hx__link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.25rem; border-radius: 999px;
+  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  transition: background-color 0.3s var(--e-out), color 0.3s var(--e-out);
+}
+.hx__btn {
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 15%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: var(--ink);
+}
+.hx__btn:hover { background: color-mix(in srgb, var(--ink) 16%, transparent); }
+.hx__link { color: color-mix(in srgb, var(--ink) 90%, transparent); }
+.hx__link:hover { color: var(--ink); }
+.hx__ico {
+  width: 1rem; height: 1rem; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  transition: transform 0.35s var(--e-out);
+}
+.hx__btn:hover .hx__ico { transform: translateX(3px); }
+
+/* ── Les clients : la bande terre cuite ──
+   Dominique (27/09) : « plus grande, avec une couleur de fond qui les fait
+   ressortir ». Pleine largeur, posée en bas du premier écran : l'étiquette à
+   gauche, les logos qui défilent à droite. La terre cuite et l'encre basalte,
+   c'est le couple fort du site (l'index, les boutons pleins) — et la chaleur
+   de l'arc orangé de la référence. Les logos, crème à la source, passent à
+   l'encre par `brightness(0)` : leurs nuances sont dans la transparence,
+   elles restent. */
+.hx__cli {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: stretch;
+  background: var(--gold); color: var(--basalt);
+}
+.hx__k {
+  display: flex; align-items: center; gap: 0.75em;
+  padding: 0 clamp(1.25rem, 0.4rem + 2.2vw, 2.75rem) 0 var(--pad-x);
+  border-right: 1px solid color-mix(in srgb, var(--basalt) 26%, transparent);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-size: var(--fs-nano); line-height: 1.3; letter-spacing: 0.14em;
+  text-transform: uppercase; white-space: nowrap;
+  color: var(--basalt);
+}
+.hx__k::before {
+  content: ''; flex: none; width: 0.55em; height: 0.55em; border-radius: 50%;
+  background: currentColor;
+}
+/* La bande est écrite deux fois : chaque copie fait au moins la largeur de
+   la bande, et les deux reculent d'une longueur avant de reboucler. */
+.hx-mq {
+  --mq-gap: clamp(3rem, 1.6rem + 3.8vw, 6.5rem);
+  display: flex; overflow: hidden;
+  padding-block: clamp(1.2rem, 0.7rem + 1.3vw, 2.1rem);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.hx-mq__row {
+  flex: none; min-width: 100%;
+  display: flex; align-items: center; justify-content: space-around; gap: var(--mq-gap);
+  padding-right: var(--mq-gap);
+  animation: hx-mq 44s linear infinite;
+}
+.hx-mq:hover .hx-mq__row { animation-play-state: paused; }
+@keyframes hx-mq { to { transform: translateX(-100%); } }
+.hx-mq__i { flex: none; display: flex; align-items: center; opacity: 0.9; transition: opacity 0.3s var(--e-out); }
+.hx-mq__i:hover { opacity: 1; }
+.hx-mq__i img {
+  display: block; width: auto;
+  height: clamp(3.4rem, 2.5rem + 2.4vw, 5.4rem);
+  filter: brightness(0);
+}
+.hx-mq__t {
+  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.8rem + 0.7vw, 1.5rem); line-height: 1.02;
+  font-variation-settings: 'wdth' 86, 'wght' 700;
+  letter-spacing: 0.005em; text-transform: uppercase;
+  color: var(--basalt); white-space: nowrap;
+}
+
+/* Le premier écran attend le script (ou l'ouverture) pour entrer : sans JS
+   la classe n'est jamais posée, et tout est là. */
+html.hm-gate .hx [data-hx-in] { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-mq { -webkit-mask-image: none; mask-image: none; padding-inline: var(--pad-x); }
+  .hx-mq__row { flex: 1 1 auto; min-width: 0; animation: none; flex-wrap: wrap; justify-content: center; row-gap: 1.25rem; padding-right: 0; }
+  .hx-mq__row[aria-hidden] { display: none; }
+}
+@media (max-width: 40rem) {
+  .hx__badge { gap: 0.55rem; font-size: 0.8125rem; }
+  /* Sur téléphone, la puce ne garde que l'heure : le badge tient sur une ligne. */
+  .hx__city { display: none; }
+  .hx__cta { flex-direction: column; gap: 0.75rem; }
+  /* La bande : l'étiquette passe au-dessus des logos. */
+  .hx__cli { grid-template-columns: 1fr; }
+  .hx__k { justify-content: center; padding: 0.85rem var(--pad-x) 0; border-right: 0; }
+}
+
+
+/* ═══════════════════ LES LISTES ═══════════════════
+   Services et matériel : des lignes entre deux filets, rien d'autre. */
+.hm-list { border-top: 1px solid var(--line); }
+
+.hm-kit {
+  display: grid; grid-template-columns: minmax(0, 1fr) clamp(7rem, 4rem + 7vw, 10.5rem);
+  gap: var(--s-4) var(--s-6); align-items: start;
+  padding: var(--s-5) 0;
+  border-bottom: 1px solid var(--line-2);
+}
+.hm-kit__h {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem;
+  margin-bottom: var(--s-3);
+  font-family: var(--ff-d);
+  font-size: clamp(1.3rem, 0.95rem + 0.95vw, 1.85rem);
+  line-height: 1.04; letter-spacing: -0.02em;
+  font-variation-settings: 'wdth' 86, 'wght' 700;
+  text-transform: uppercase;
+}
+.hm-kit__t p { max-width: 46ch; font-size: var(--fs-sm); color: var(--cream-2); }
+.hm-kit__fig { margin: 0; aspect-ratio: 3 / 2; overflow: hidden; background: var(--night-2); cursor: zoom-in; }
+.hm-kit__fig img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--e-out); }
+@media (hover: hover) and (pointer: fine) { .hm-kit__fig:hover img { transform: scale(1.05); } }
+
+
+/* ═══════════════════ LE MATÉRIEL, PLAN PAR PLAN ═══════════════════
+   Une scène plein écran, épinglée ; six plans y passent l'un après l'autre.
+   Chaque plan occupe toute la scène : l'objet d'un côté (le modèle 3D, dans
+   le canevas commun, ou la photo), sa fiche de l'autre. Sans JS ou en
+   mouvement réduit, la scène n'existe pas et la liste des six outils reste
+   (`kit3d.js` pose `.k3-on` sur la section). */
+.k3 { display: none; }
+.k3-on .k3 { display: block; }
+.k3-on .hm-kit3__rest { display: none; }
+
+.k3__stage { --gx: 32; position: relative; height: 100svh; overflow: hidden; }
+/* La lueur derrière l'objet : le vert relevé, en ellipse, du côté où il se
+   pose. Elle glisse d'un côté à l'autre avec les plans. */
+.k3__stage::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 34% 44% at calc(var(--gx) * 1%) 50%,
+    color-mix(in srgb, var(--night-3) 95%, transparent) 0%,
+    color-mix(in srgb, var(--night-3) 40%, transparent) 45%,
+    transparent 72%);
+}
+.k3__gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.k3__plan { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+/* La fiche, en face de l'objet. */
+.k3__text {
+  position: absolute; top: 50%; right: var(--pad-x);
+  width: min(34rem, 38vw); translate: 0 -50%;
+  container-type: inline-size;
+}
+.k3__plan[data-side='right'] .k3__text { right: auto; left: var(--pad-x); }
+.k3__n {
+  margin-bottom: var(--s-5);
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.14em; color: var(--gold-lt);
+}
+.k3__n span { color: var(--cream-3); }
+/* Taillé sur la largeur de SA colonne (`cqw`), pas sur celle de l'écran :
+   MICROPHONES, le mot le plus long, y tient à toutes les tailles — même sur
+   un grand écran dézoomé, où il débordait (26/09). */
+.k3__h {
+  font-family: var(--ff-d);
+  font-size: min(6rem, 13cqw);
+  line-height: 0.9; letter-spacing: -0.035em;
+  font-variation-settings: 'wdth' 84, 'wght' 760;
+  text-transform: uppercase; color: var(--cream);
+}
+.k3__h--long { font-size: min(4.6rem, 10cqw); }
+.k3__tag { margin-top: var(--s-5); }
+.k3__p { max-width: 34ch; margin-top: var(--s-5); font-size: var(--fs-lede); line-height: 1.55; color: var(--cream-2); }
+
+/* La photo, du côté de l'objet : elle se découvre depuis son bord
+   (`clip-path`, en JS). Sur un plan 3D, c'est le repli si le modèle ne vient pas. */
+.k3__photo {
+  position: absolute; top: 50%; left: 32%; translate: -50% -50%;
+  width: min(40vw, calc(62svh * var(--ar, 1.5))); aspect-ratio: var(--ar, 1.5);
+  margin: 0; overflow: hidden; background: var(--night-2);
+  box-shadow: 0 40px 80px -40px rgb(0 0 0 / 0.6);
+  pointer-events: auto; cursor: zoom-in;
+}
+.k3__plan[data-side='right'] .k3__photo { left: 68%; }
+.k3__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.k3__plan[data-mode='3d'] .k3__photo { display: none; }
+
+.k3__load {
+  position: absolute; left: 32%; top: 50%; translate: -50% -50%;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.k3__plan[data-side='right'] .k3__load { left: 68%; }
+.k3__load [data-k3-pct] { color: var(--gold-lt); font-variant-numeric: tabular-nums; }
+.k3__plan.is-ready .k3__load, .k3__plan[data-mode='photo'] .k3__load { display: none; }
+
+/* Le crédit du modèle (licence CC BY), sous l'objet, avec son plan. */
+.k3__credit {
+  position: absolute; left: var(--pad-x); bottom: var(--s-5);
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.k3__plan[data-side='right'] .k3__credit { left: auto; right: var(--pad-x); text-align: right; }
+.k3__plan[data-mode='photo'] .k3__credit { display: none; }
+
+/* La liste, sous la scène : seulement sans la séquence. */
+.hm-kit3__rest { max-width: 52rem; margin-left: auto; margin-top: var(--s-8); }
+.hm-kit3 .hm-head { margin-bottom: var(--s-6); }
+
+@media (max-width: 48rem) {
+  /* Sur téléphone : l'objet en haut, la fiche dessous, pour tous les plans. */
+  .k3__stage::before { background: radial-gradient(ellipse 70% 34% at 50% 31%,
+    color-mix(in srgb, var(--night-3) 95%, transparent) 0%, transparent 72%); }
+  .k3__gl { height: 60%; }
+  .k3__text, .k3__plan[data-side='right'] .k3__text {
+    top: auto; bottom: calc(var(--s-7) + 2.4rem); left: var(--pad-x); right: var(--pad-x);
+    width: auto; translate: none;
+  }
+  .k3__n { margin-bottom: var(--s-3); }
+  .k3__h { font-size: min(3.6rem, 13cqw); }
+  .k3__h--long { font-size: min(3rem, 10cqw); }
+  .k3__tag { margin-top: var(--s-3); }
+  .k3__p { margin-top: var(--s-3); font-size: var(--fs-sm); }
+  .k3__photo, .k3__plan[data-side='right'] .k3__photo {
+    left: 50%; top: 30%; width: min(86vw, calc(40svh * var(--ar, 1.5)));
+  }
+  .k3__load, .k3__plan[data-side='right'] .k3__load { left: 50%; top: 30%; }
+  .k3__credit, .k3__plan[data-side='right'] .k3__credit {
+    left: var(--pad-x); right: var(--pad-x); bottom: var(--s-4); text-align: left; line-height: 1.5;
+  }
+}
+
+
+/* ═══════════════════ LES SERVICES ═══════════════════
+   Une liste qu'on déplie : le nom, « Cleared by us » sur les permis, un
+   « + » qui devient « − ». Ouvert, le service est cerclé d'un filet crème
+   et montre son explication (`services.js`). Sans JS, tout est ouvert. */
+.sv__list { display: grid; gap: 0.35rem; }
+.sv__i {
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  transition: box-shadow 0.35s var(--e-out), background 0.35s var(--e-out);
+}
+@media (hover: hover) { .sv__i:hover { background: color-mix(in srgb, var(--cream) 3%, transparent); } }
+.sv__i.is-open {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 78%, transparent);
+  background: color-mix(in srgb, var(--night-3) 70%, transparent);
+}
+.sv__q {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--s-4);
+  width: 100%; padding: 1rem 1.2rem; text-align: left; cursor: pointer;
+  border-radius: 14px;
+}
+.sv__q:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.sv__name {
+  font-family: var(--ff-d); font-size: clamp(1.2rem, 0.9rem + 0.8vw, 1.6rem); line-height: 1.1;
+  letter-spacing: -0.015em; text-transform: uppercase;
+  font-variation-settings: 'wdth' 86, 'wght' 680;
+  color: var(--cream-2); transition: color 0.35s var(--e-out);
+}
+.sv__i.is-open .sv__name, .sv__q:hover .sv__name { color: var(--cream); }
+/* Le « + » : deux traits ; ouvert, le trait vertical se couche. */
+.sv__plus { position: relative; width: 1rem; height: 1rem; flex: none; }
+.sv__plus::before, .sv__plus::after {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  width: 100%; height: 1.5px; translate: -50% -50%;
+  background: var(--cream-2); transition: rotate 0.45s var(--e-out), background 0.35s var(--e-out);
+}
+.sv__plus::after { rotate: 90deg; }
+.sv__i.is-open .sv__plus::after { rotate: 0deg; }
+.sv__i.is-open .sv__plus::before, .sv__i.is-open .sv__plus::after { background: var(--gold-lt); }
+
+/* L'explication se déplie sous le nom. */
+.sv__a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--e-out); }
+.sv__a-in { overflow: hidden; padding-inline: 1.2rem; }
+.sv__i.is-open .sv__a { grid-template-rows: 1fr; }
+.sv__i.is-open .sv__a-in { padding-bottom: 1.2rem; }
+.sv__covers {
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-lt);
+}
+.sv__text { max-width: 58ch; margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.6; color: var(--cream-2); }
+/* Sans JavaScript, tout est lisible. */
+.sv:not(.is-js) .sv__a { grid-template-rows: 1fr; }
+.sv:not(.is-js) .sv__a-in { padding-bottom: 1.2rem; }
+.sv:not(.is-js) .sv__plus { display: none; }
+/* Le repli du chargement se fait d'un coup (`services.js`) : animé, il
+   raccourcissait la page après que les scènes épinglées s'étaient mesurées. */
+.sv.is-still .sv__a { transition: none; }
+
+@media (max-width: 34rem) {
+  .sv__q { grid-template-columns: minmax(0, 1fr) auto; padding: 0.9rem 1rem; }
+  .sv__tag { grid-column: 1; grid-row: 2; justify-self: start; }
+  .sv__plus { grid-column: 2; grid-row: 1; }
+  .sv__a-in { padding-inline: 1rem; }
+}
+
+
+/* ═══════════════════ À PROPOS ═══════════════════ */
+.hm-about {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-7) var(--hm-gap); align-items: start;
+  margin-top: var(--s-3);
+}
+.hm-about__fig { margin: 0; aspect-ratio: 4 / 5; overflow: hidden; background: var(--night-2); cursor: zoom-in; }
+.hm-about__fig img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--e-out); }
+@media (hover: hover) and (pointer: fine) { .hm-about__fig:hover img { transform: scale(1.03); } }
+.hm-about__side { display: grid; gap: var(--s-6); align-content: start; }
+.hm-about__stmt {
+  font-family: var(--ff-d);
+  font-size: clamp(1.4rem, 0.85rem + 1.55vw, 2.3rem);
+  line-height: 1.22; letter-spacing: -0.016em;
+  font-variation-settings: 'wdth' 90, 'wght' 470;
+  color: var(--cream);
+}
+.hm-about__p { max-width: var(--measure); color: var(--cream-2); }
+
+.hm-facts { border-top: 1px solid var(--line-2); }
+.hm-facts > div {
+  display: grid; grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr);
+  gap: var(--s-4); padding: var(--s-4) 0;
+  border-bottom: 1px solid var(--line-2);
+}
+.hm-facts dt {
+  padding-top: 0.25em;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.hm-facts dd { margin: 0; font-size: var(--fs-sm); color: var(--cream); }
+.hm-facts a { transition: color 0.3s var(--e-out); }
+.hm-facts a:hover { color: var(--gold-lt); }
+
+@media (max-width: 64rem) {
+  .hm-about { grid-template-columns: 1fr; }
+  .hm-about__fig { max-width: 30rem; aspect-ratio: 1; }
+}
+
+
+/* ═══════════════════ POURQUOI ═══════════════════ */
+.hm-why { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-7) var(--s-6); }
+/* Au survol (à la souris) : un filet terre cuite se trace sur le filet de
+   tête, le numéro et le titre se soulèvent, le texte s'éclaire, et les
+   trois autres arguments s'estompent. */
+.hm-why__i {
+  position: relative; padding-top: var(--s-5); border-top: 1px solid var(--line);
+  transition: opacity 0.45s var(--e-out);
+}
+.hm-why__i::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 2px;
+  background: var(--gold);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.7s var(--e-out);
+}
+.hm-why__n {
+  display: block; margin-bottom: var(--s-5);
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.06em; color: var(--gold-lt);
+}
+.hm-why__h {
+  margin-bottom: var(--s-4);
+  font-family: var(--ff-d);
+  font-size: clamp(1.2rem, 0.95rem + 0.6vw, 1.55rem);
+  line-height: 1.06; letter-spacing: -0.015em;
+  font-variation-settings: 'wdth' 86, 'wght' 700;
+  text-transform: uppercase;
+}
+.hm-why__i p { font-size: var(--fs-sm); line-height: 1.62; color: var(--cream-2); transition: color 0.45s var(--e-out); }
+.hm-why__n, .hm-why__h { transition: transform 0.6s var(--e-out), color 0.45s var(--e-out); }
+@media (hover: hover) and (pointer: fine) {
+  .hm-why:has(.hm-why__i:hover) .hm-why__i:not(:hover) { opacity: 0.42; }
+  .hm-why__i:hover::before { transform: scaleX(1); }
+  .hm-why__i:hover .hm-why__n { transform: translateY(-0.35rem); }
+  .hm-why__i:hover .hm-why__h { transform: translateY(-0.25rem); color: var(--cream); }
+  .hm-why__i:hover p { color: var(--cream); }
+}
+@media (max-width: 64rem) { .hm-why { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 36rem) { .hm-why { grid-template-columns: 1fr; } }
+
+
+/* ═══════════════════ LES LIEUX ═══════════════════ */
+.hm-locs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-7) var(--s-5); }
+.hm-loc a { display: block; }
+.hm-loc__fig { display: block; overflow: hidden; aspect-ratio: 3 / 2; background: var(--night-2); }
+.hm-loc__fig img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--e-out); }
+.hm-loc__t {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4);
+  margin-top: var(--s-3); padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--line-2);
+}
+.hm-loc__h {
+  font-family: var(--ff-d);
+  font-size: clamp(1rem, 0.85rem + 0.45vw, 1.3rem);
+  line-height: 1.1; letter-spacing: -0.01em;
+  font-variation-settings: 'wdth' 86, 'wght' 680;
+  text-transform: uppercase;
+  transition: color 0.35s var(--e-out);
+}
+.hm-loc__alt {
+  flex: none;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.06em; color: var(--cream-3);
+  font-variant-numeric: tabular-nums;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hm-loc a:hover .hm-loc__fig img { transform: scale(1.04); }
+  .hm-loc a:hover .hm-loc__h { color: var(--gold-lt); }
+}
+@media (max-width: 64rem) { .hm-locs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); } }
+@media (max-width: 30rem) {
+  .hm-loc__t { flex-direction: column; gap: 0.25rem; }
+}
+
+
+/* ═══════════════════ LA BOBINE DES LIEUX ═══════════════════
+   Référence : jesperlandberg.com. Une scène plein écran, épinglée : le
+   tambour des neuf lieux tourne au défilement (`reel3d.js`). Sans WebGL ou
+   en mouvement réduit, la scène n'existe pas et la grille reste. */
+.reel { display: none; }
+.reel-on .reel { display: block; }
+.reel-on .hm-locs { display: none; }
+.reel-on .hm-note { margin-top: var(--s-5); }
+
+.reel__stage { position: relative; height: 100svh; overflow: hidden; }
+.reel__gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.reel__count, .reel__hint {
+  position: absolute; bottom: var(--s-6); margin: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-2); pointer-events: none;
+}
+.reel__count { left: var(--pad-x); }
+.reel__hint { right: var(--pad-x); color: var(--cream-3); }
+@media (hover: none) { .reel__hint { display: none; } }
+
+/* Le curseur, sur une vue : la pastille dit « View ». */
+.cursor[data-state='view'] .cursor__t { opacity: 1; }
+.cursor[data-state='view'] .cursor__d,
+.cursor[data-state='view'] .cursor__r { opacity: 0; }
+
+/* ── La fiche d'un lieu : la photo en haut, le texte dessous ──
+   Tout tient dans un écran : la barre, la photo qui prend la place qui
+   reste, et le texte en trois colonnes dessous. Sur téléphone, la fiche
+   défile. */
+.reel-view {
+  position: fixed; inset: 0; z-index: 320;
+  overflow-y: auto; overscroll-behavior: contain;
+  background: var(--night);
+}
+.reel-view[hidden] { display: none; }
+.reel-view__in {
+  max-width: var(--maxw); height: 100svh; margin-inline: auto;
+  padding: var(--s-4) var(--pad-x) var(--s-5);
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--s-4);
+}
+.reel-view__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); }
+.reel-view__k {
+  display: flex; align-items: center; gap: 0.8em; margin: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-2);
+}
+.reel-view__nav { display: flex; align-items: center; gap: var(--s-3); margin: 0; }
+.reel-view__btn, .reel-view__close {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6em;
+  height: 2.6rem; min-width: 2.6rem; padding: 0 0.9rem;
+  border: 1px solid var(--line); color: var(--cream);
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  transition: border-color 0.3s var(--e-out), background 0.3s var(--e-out);
+}
+.reel-view__btn:hover, .reel-view__close:hover { border-color: var(--cream-2); background: var(--night-3); }
+.reel-view__fig { margin: 0; min-height: 0; overflow: hidden; background: var(--night-2); transform-origin: 50% 50%; }
+.reel-view__img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.reel-view__body {
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3.4fr);
+  gap: var(--s-4) var(--s-7); align-items: start;
+  padding-top: var(--s-2);
+}
+.reel-view__h {
+  font-family: var(--ff-d);
+  font-size: clamp(2.2rem, 0.9rem + 3.1vw, 4.4rem);
+  line-height: 0.92; letter-spacing: -0.035em;
+  font-variation-settings: 'wdth' 84, 'wght' 760;
+  text-transform: uppercase; color: var(--cream);
+}
+.reel-view__region {
+  margin-top: var(--s-3);
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-lt);
+}
+.reel-view__about { font-size: var(--fs-body); line-height: 1.55; color: var(--cream); }
+.reel-view__desc, .reel-view__note { margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.5; color: var(--cream-2); }
+.reel-view__lab {
+  margin-right: 0.5em;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+}
+.reel-view__facts > div { grid-template-columns: minmax(0, 6rem) minmax(0, 1fr); padding: var(--s-3) 0; }
+.reel-view__act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-5); margin: var(--s-4) 0 0; }
+.reel-view__credit {
+  margin-top: var(--s-3);
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase; color: var(--cream-3);
+}
+
+/* Écran d'ordinateur bas : la photo cède un peu de place au texte. */
+@media (min-width: 64.01rem) and (max-height: 46rem) {
+  .reel-view__h { font-size: clamp(2rem, 0.6rem + 2.6vw, 3.4rem); }
+  .reel-view__about { font-size: var(--fs-sm); }
+}
+@media (max-width: 64rem) {
+  .reel-view__in { height: auto; min-height: 100svh; grid-template-rows: auto auto auto; }
+  .reel-view__fig { aspect-ratio: 16 / 10; }
+  .reel-view__body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .reel-view__title { grid-column: 1 / -1; }
+}
+@media (max-width: 48rem) {
+  .reel-view__fig { aspect-ratio: 4 / 3; }
+  .reel-view__body { grid-template-columns: 1fr; }
+  .reel-view__close { padding: 0 0.7rem; }
+  .reel-view__kl { display: none; }
+  .reel-view__k { white-space: nowrap; }
+}
+
+
+/* ═══════════════════ LA GALERIE ═══════════════════
+   Gardée telle quelle (décision de Dominique) : la même grille, les mêmes
+   cartes, sur toute la hauteur de l'écran et bord à bord. La caméra
+   (`.cam`, dans refonte.css) la recouvre ; la bande est épinglée le temps
+   qu'on entre dans l'objectif, et elle rogne le zoom. */
+.hm-sec--gal .hm-head { margin-bottom: var(--s-7); }
+.hm-drag {
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.hm-drag span { margin-left: 0.6em; letter-spacing: 0.3em; }
+
+.hm-band { position: relative; overflow: clip; }
+.hm-band .gal__stage { height: 100svh; }
+
+
+/* ═══════════════════ LES FILMS ═══════════════════ */
+.hm-films { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-6) var(--s-5); }
+.hm-film__fig { margin: 0 0 var(--s-4); aspect-ratio: 4 / 3; overflow: hidden; background: var(--night-2); cursor: zoom-in; }
+.hm-film__fig img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--e-out); }
+@media (hover: hover) and (pointer: fine) { .hm-film__fig:hover img { transform: scale(1.04); } }
+.hm-film__h {
+  font-family: var(--ff-d);
+  font-size: clamp(1.05rem, 0.9rem + 0.4vw, 1.35rem);
+  line-height: 1.06; letter-spacing: -0.01em;
+  font-variation-settings: 'wdth' 86, 'wght' 700;
+  text-transform: uppercase;
+}
+.hm-film__alt {
+  margin-top: 0.4rem;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+@media (max-width: 64rem) { .hm-films { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 40rem) { .hm-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); } }
+
+
+/* ═══════════════════ LE CONTACT ═══════════════════ */
+.hm-facts--contact { margin-top: var(--s-7); }
+.hm-form__act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-6); margin-top: var(--s-5); }
+
+
+/* ═══════════════════ LE PIED ═══════════════════
+   Plus de fiche ni d'échelle fixées en bas de l'écran : le pied de page
+   n'a plus à leur laisser la place. */
+.home .ftr { padding-bottom: var(--s-5); }

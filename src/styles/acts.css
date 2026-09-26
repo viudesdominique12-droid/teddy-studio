@@ -15,165 +15,6 @@
    ══════════════════════════════════════════════════════════════ */
 
 
-/* ═══════════ LE HERO ═══════════
-   Sur-titre, titre géant, emblème doré qui chevauche, texte, appel.
-   Le fond est le ciel (sky.js), fixe derrière toute la page. */
-
-.hero {
-  position: relative;
-  min-height: 100svh;
-  display: flex; align-items: center;
-  /* Le bas doit dégager DEUX choses désormais : la fiche de service et la
-     bobine de montage. Sans ça, la ligne de données du hero passe dessous. */
-  padding: calc(var(--bar-h) + var(--s-6)) var(--pad-x) clamp(7.5rem, 15vh, 11rem);
-  max-width: var(--maxw); margin-inline: auto;
-  /* Le canevas de l'emblème déborde de 15 % par côté — c'est la marge qui
-     empêche de rogner les pointes du char. Ce débordement donnait 62 px de
-     défilement horizontal fantôme à la page. On clippe le seul axe X (`clip`,
-     pas `hidden` : le bleed vertical reste visible) : ce qui dépasse à droite
-     sort du viewport de toute façon. */
-  overflow-x: clip;
-}
-.hero__in { position: relative; width: 100%; }
-
-.hero__over {
-  font-size: var(--fs-sm);
-  color: var(--cream-2);
-  margin-bottom: var(--s-4);
-  max-width: 34ch;
-}
-
-.hero__h {
-  font-family: var(--ff-p);
-  line-height: 0.86;
-  letter-spacing: var(--ls-hero);
-  text-transform: uppercase;
-  position: relative; z-index: 2;
-  pointer-events: none;
-}
-/* Le titre est en FRAUNCES : `opsz 144` sort le dessin d'affiche, `WONK 1`
-   débride les formes. Les deux lignes jouent sur la même fonte mais pas sur
-   les mêmes axes — c'est ce contraste qui fait le dessin, pas deux fontes. */
-.hero__l {
-  display: block;
-  font-family: var(--ff-p);
-  font-size: clamp(2.8rem, 8.6vw, 7.4rem);
-  font-variation-settings: 'opsz' 144, 'wght' 300, 'SOFT' 0, 'WONK' 1;
-  letter-spacing: -0.03em;
-  color: var(--cream);
-}
-/* La seconde ligne porte le poids. Elle est volontairement plus large que la
-   colonne de texte : c'est elle qui va jusque sous l'emblème. */
-.hero__l--big {
-  font-family: var(--ff-p);
-  /* 18 vw laissait la place au char sur la droite. Sans lui, le mot doit
-     porter le cadre tout seul : 23 vw le fait courir d'un bord à l'autre. */
-  font-size: clamp(4.6rem, 23vw, 20rem);
-  font-variation-settings: 'opsz' 144, 'wght' 800, 'SOFT' 12, 'WONK' 1;
-  letter-spacing: -0.05em;
-  margin-top: -0.1em;
-}
-
-/* L'emblème 3D a été retiré : la marque, c'est le logo réel du client, en haut
-   à gauche. Le titre récupère donc la largeur que le char occupait — il était
-   calibré pour laisser 38 vw de côté. */
-
-/* ═══════════ LE CLAP ═══════════
-   Il occupe la moitié droite que le canon laissait vide, DERRIÈRE le titre —
-   le mot passe par-dessus l'ardoise, donc ce sont deux objets d'une même
-   composition et non deux objets posés côte à côte.
-   Il déborde volontairement du cadre à droite : un clap est tenu à bout de
-   bras devant l'objectif, on n'en voit jamais tout. */
-.slate {
-  position: absolute;
-  right: -6%; top: 50%;
-  width: clamp(18rem, 44vw, 42rem);
-  transform: translateY(-52%) rotate(-7deg);
-  z-index: 1;                 /* le titre est en 2 : il passe devant */
-  pointer-events: none;
-  opacity: 0.5;
-}
-.slate svg { display: block; width: 100%; height: auto; overflow: visible; }
-
-.slate__face  { fill: color-mix(in srgb, var(--night-2) 88%, transparent); }
-.slate__edge  { fill: none; stroke: color-mix(in srgb, var(--go) 34%, transparent); stroke-width: 1.4; }
-.slate__rule  { stroke: color-mix(in srgb, var(--go) 18%, transparent); stroke-width: 1; }
-.slate__stripe path { fill: color-mix(in srgb, var(--go) 26%, transparent); }
-
-.slate__k, .slate__v { font-family: var(--ff-m); text-transform: uppercase; }
-.slate__k { font-size: 11px; letter-spacing: 0.16em; fill: color-mix(in srgb, var(--cream) 34%, transparent); }
-.slate__v { font-size: 19px; letter-spacing: 0.02em; fill: color-mix(in srgb, var(--cream) 68%, transparent); }
-
-/* La charnière est posée par GSAP (`svgOrigin`), pas ici : sur un <g> SVG le
-   `transform-origin` CSS est réécrit par la librairie au premier tween. */
-
-/* Sous 62rem le titre occupe toute la largeur : le clap passe derrière, plus
-   grand et plus effacé, comme une texture plutôt qu'un objet. */
-@media (max-width: 62rem) {
-  .slate {
-    right: -18%; width: clamp(20rem, 82vw, 34rem);
-    opacity: 0.3;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .slate__arm { transform: none !important; }
-}
-
-.hero__lede {
-  position: relative; z-index: 2;
-  max-width: 38ch;
-  margin-top: var(--s-6);
-  font-size: var(--fs-lede);
-  color: var(--cream-2);
-}
-
-.hero__act { position: relative; z-index: 4; margin-top: var(--s-6); }
-
-.hero__meta {
-  position: relative; z-index: 2;
-  display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6);
-  margin-top: var(--s-7); padding-top: var(--s-4);
-  border-top: 1px solid var(--line-2);
-  font-size: var(--fs-micro);
-  color: var(--cream-2);
-}
-.hero__meta > div { display: flex; align-items: baseline; gap: 0.6em; }
-.hero__meta dt { color: var(--cream-3); text-transform: uppercase; letter-spacing: 0.12em; }
-.hero__meta dd { font-variant-numeric: tabular-nums; }
-.hero__open dd { display: flex; align-items: center; gap: 0.45em; color: var(--gold); }
-
-.hero__scroll {
-  position: absolute; left: 50%; bottom: var(--s-5);
-  transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 0.6em;
-  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase; color: var(--cream-3);
-}
-.hero__scroll i {
-  display: block; width: 1px; height: 2.2rem;
-  background: linear-gradient(to bottom, var(--gold), transparent);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .hero__scroll i { animation: scroll-hint 2.4s var(--e-inout) infinite; transform-origin: top; }
-}
-@keyframes scroll-hint {
-  0%, 100% { transform: scaleY(1); opacity: 1; }
-  50% { transform: scaleY(0.45); opacity: 0.45; }
-}
-
-@media (max-width: 62rem) {
-  /* Sur écran étroit l'emblème passe SOUS le titre, en grand — comme sur la
-     référence : il devient le sujet au lieu de se battre pour la place. */
-  .hero { padding-top: calc(var(--bar-h) + var(--s-6)); }
-  .emblem {
-    position: relative; right: auto; top: auto; transform: none;
-    width: min(74vw, 22rem); margin: var(--s-5) auto var(--s-2);
-  }
-  .hero__lede { max-width: none; margin-top: var(--s-5); }
-  .hero__scroll { display: none; }
-}
-
 /* ═══════════ ACTE 2 · LE TABLEAU DE SERVICE ═══════════
    Ce n'était qu'un tableau : trois colonnes de texte entre deux filets. Le
    voici en dispositif — le tableau d'un bureau de production, où UN SEUL
@@ -373,156 +214,38 @@
 }
 
 
-/* ═══════════ LE TÉLÉPHONE ═══════════
-   La section est épinglée : tout ce qui suit est positionné dans le viewport,
-   pas dans le flux. Le cadre de l'appareil est en CSS pur — pas d'image à
-   charger, et il reste net à n'importe quelle échelle. */
+/* ═══════════ POURQUOI TEDDY STUDIO ═══════════
+   Le téléphone épinglé est parti le 26/09/2026 (DECISIONS.md) : il prenait
+   4,7 écrans de défilement pour quatre paragraphes. Restent le titre, au
+   même dessin que celui des services, et les quatre arguments côte à côte. */
 
-.ph {
-  position: relative;
-  min-height: 100vh;
-  overflow: clip;          /* le pin laisse du vide sans ça, surtout en mobile */
-  display: grid;
-  place-items: center;
-}
-
-.ph__title {
-  position: absolute; inset: 0;
-  display: grid; place-items: center;
-  z-index: 1;
-  text-align: center;
-  pointer-events: none;
-}
-.ph__h {
+.why { padding: var(--sec-y) var(--pad-x); max-width: var(--maxw); margin-inline: auto; }
+.why__h {
   font-family: var(--ff-d);
-  font-size: clamp(2.6rem, 9vw, 8rem);
-  line-height: 0.92; letter-spacing: var(--ls-hero);
+  font-size: var(--fs-d1); line-height: 0.96; letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96, 'wdth' 84, 'wght' 740;
   text-transform: uppercase;
-  font-variation-settings: 'wdth' 116, 'wght' 760;
-  color: var(--cream);
-
-  /* Les deux lignes s'écartent de la hauteur de l'appareil : il se loge
-     entre elles et n'en couvre que les bords. Le mot reste lisible, la
-     superposition reste là. */
-  display: flex; flex-direction: column;
-  height: 78vh; justify-content: space-between;
+  margin-bottom: var(--s-8);
 }
-
-.ph__stage {
-  position: relative; z-index: 2;
-  display: grid; place-items: center;
-  width: 100%; height: 100vh;
+.why__grid {
+  display: grid; gap: var(--s-7) var(--s-6);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
-
-/* L'appareil : un cadre, un écran, une encoche, un reflet. */
-.ph__device {
-  position: relative;
-  width: clamp(13rem, 20vw, 17rem);
-  aspect-ratio: 9 / 19.5;
-  border-radius: clamp(1.6rem, 2.6vw, 2.4rem);
-  background: linear-gradient(150deg, #3a4a3b, #1b2a1c 42%, #46563f 78%, #202e21);
-  padding: 0.5rem;
-  box-shadow:
-    0 0 0 1px #ffffff1f,
-    0 42px 90px -30px #000000cc,
-    inset 0 0 0 1px #00000040;
-  will-change: transform;
-}
-.ph__screen {
-  position: relative;
-  width: 100%; height: 100%;
-  border-radius: 13%;          /* piloté en JS : il tombe à 0 au plein écran */
-  overflow: hidden;
-  background: var(--night-2);
-}
-.ph__vid {
-  position: absolute; left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  max-width: none;
-  object-fit: cover;
-  /* `width`/`height` ne se composent pas — les promettre au navigateur ne lui
-     donne rien et retient un calque de plus. Seule la transformation compte. */
-  will-change: transform;
-}
-/* La piste large n'existe qu'une fois l'appareil couché ; le JS la fait monter. */
-.ph__vid[data-phone-video="wide"] { opacity: 0; }
-.ph__notch {
-  position: absolute; left: 50%; top: 0.95rem;
-  transform: translateX(-50%);
-  width: 26%; height: 0.5rem;
-  border-radius: var(--r-pill);
-  background: #0b140c;
-  z-index: 2;
-}
-.ph__glare {
-  position: absolute; inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(115deg, #ffffff14 0 18%, transparent 42%);
-  pointer-events: none;
-  z-index: 3;
-}
-
-/* Les blocs défilent dans l'axe du téléphone, un par un. */
-.ph__blocks { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-.ph__block {
-  position: absolute; top: 50%; width: min(24rem, 34vw);
-  transform: translateY(-50%);
-}
-.ph__block[data-phone-block="left"] { left: var(--pad-x); text-align: left; }
-.ph__block[data-phone-block="right"] { right: var(--pad-x); text-align: right; }
-.ph__block h3 {
+.why__item { padding-top: var(--s-5); border-top: 1px solid var(--line); }
+.why__item h3 {
   font-family: var(--ff-d);
-  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  font-size: clamp(1.25rem, 1.7vw, 1.6rem);
   line-height: 1.06; letter-spacing: var(--ls-d);
   font-variation-settings: 'wdth' 104, 'wght' 700;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: var(--s-4);
 }
-.ph__block p { font-size: var(--fs-sm); line-height: 1.65; color: var(--cream-2); }
+.why__item p { font-size: var(--fs-sm); line-height: 1.65; color: var(--cream-2); }
 
-@media (max-width: 767px) {
-  /* Sur écran étroit les blocs passent sous l'appareil, pleine largeur :
-     à 390 px, une colonne latérale de 24 rem n'existe pas.
-     767 px, pas 62 rem : la borne doit être la même que MOBILE_MAX dans
-     phone.js, sinon la mise en page et la chorégraphie se contredisent. */
-  .ph__block,
-  .ph__block[data-phone-block="left"],
-  .ph__block[data-phone-block="right"] {
-    left: var(--pad-x); right: var(--pad-x);
-    width: auto; text-align: left;
-    top: auto; bottom: clamp(2rem, 8vh, 5rem); transform: none;
-  }
-  .ph__device { width: min(54vw, 14rem); }
-  /* Les deux lignes s'écartent un peu plus : « TEDDY STUDIO » passe sur deux
-     lignes en étroit, et doit rester sous l'appareil, pas dessous ET dessus. */
-  .ph__h { font-size: clamp(2.2rem, 13vw, 4.5rem); height: 82vh; }
-}
-
-/* Sans mouvement, la section redevient une page : le titre, l'appareil,
-   puis les quatre arguments les uns sous les autres. Rien ne se superpose. */
-.ph[data-phone-static] { display: block; padding-block: var(--sec-y); }
-.ph[data-phone-static] .ph__title { position: static; inset: auto; margin-bottom: var(--s-7); }
-/* Sans appareil qui vient s'y loger, les deux lignes n'ont plus de raison de
-   s'écarter : le titre redevient un titre. */
-.ph[data-phone-static] .ph__h { height: auto; display: block; }
-/* Aucun JS ne dimensionne la vidéo ici : elle remplit l'écran elle-même,
-   et la piste large — qui n'a pas de rôle sans pivot — ne s'affiche pas. */
-.ph[data-phone-static] .ph__vid { width: 100%; height: 100%; }
-.ph[data-phone-static] .ph__vid[data-phone-video="wide"] { display: none; }
-.ph[data-phone-static] .ph__stage { height: auto; margin-bottom: var(--s-8); }
-.ph[data-phone-static] .ph__blocks {
-  position: static; inset: auto; pointer-events: auto;
-  display: grid; gap: var(--s-7);
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-  max-width: var(--maxw); margin-inline: auto;
-  padding-inline: var(--pad-x);
-}
-.ph[data-phone-static] .ph__block,
-.ph[data-phone-static] .ph__block[data-phone-block="left"],
-.ph[data-phone-static] .ph__block[data-phone-block="right"] {
-  position: static; inset: auto; width: auto; transform: none; text-align: left;
-}
+/* Quatre, puis deux, puis une : jamais trois et un orphelin. */
+@media (max-width: 68rem) { .why__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 40rem) { .why__grid { grid-template-columns: 1fr; } }
 
 /* ═══════════ ACTE 5 · LA ZONE D'IMAGES ═══════════
    Les valeurs viennent de la référence, relevées dans sa feuille de style :
