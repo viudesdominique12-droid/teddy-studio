@@ -33,6 +33,11 @@ import { reduced } from './motion.js';
 gsap.registerPlugin(ScrollTrigger);
 
 const MOBILE = matchMedia('(max-width: 48rem)');
+/* Sur un écran tactile (27/09, « les transitions ne sont pas fluides sur
+   mobile ») : la scène est dessinée à 1,25 fois l'écran au lieu de 2, sans le
+   souffle au repos, et n'est redessinée que quand quelque chose bouge. Mesuré :
+   c'est elle qui saccadait, pas le reste de la page. */
+const LITE = matchMedia('(pointer: coarse)').matches;
 const RAD = Math.PI / 180;
 const HOME = 0.36;   // le centre d'un objet posé, en demi-largeurs d'écran depuis le milieu
 const AWAY = 1.9;    // hors champ, même mesure
@@ -286,6 +291,7 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
   // Les lumières glissent vers leur place au lieu d'y sauter : un amorti
   // réglé en secondes, indépendant de la cadence d'affichage.
   let lastT = 0;
+  let lastSig = '';
   let lampS = null;
   let kickX = null;
   let kickI = 0;
@@ -310,8 +316,8 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       if (!on) continue;
       const fit = Math.min(vw * (mobile ? 0.8 : 0.46), vh * (mobile ? 0.66 : 0.6)) * p.fit;
       // Le souffle : l'objet flotte à peine, pour qu'il vive quand on ne défile pas.
-      const floatY = Math.sin(sec * 0.9 + p.phase) * 0.012 * fit;
-      const floatR = Math.sin(sec * 0.7 + p.phase) * 0.6;
+      const floatY = LITE ? 0 : Math.sin(sec * 0.9 + p.phase) * 0.012 * fit;
+      const floatR = LITE ? 0 : Math.sin(sec * 0.7 + p.phase) * 0.6;
       h.position.set(p.tr.x * vw / 2, -0.02 * vh + floatY, 0);
       h.scale.setScalar(fit * p.tr.scale * (0.86 + 0.14 * p.grow));
       // À droite, l'objet est le miroir de celui de gauche : il regarde sa fiche.
@@ -339,6 +345,14 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       kickI += (15 * settled * settled - kickI) * damp(6);
       kick.intensity = kickI;
     }
+    if (LITE) {
+      // Rien n'a bougé depuis la dernière image : la puce graphique se repose.
+      const sig = plans.map((p) => (p.holder?.visible
+        ? [p.tr.x, p.tr.spin, p.tr.scale, p.pose.yaw, p.pose.pitch, p.grow].map((v) => v.toFixed(4)).join(',')
+        : '-')).join('|') + `#${(lampS ?? 0).toFixed(4)}#${kickI.toFixed(3)}#${canvas.width}x${canvas.height}`;
+      if (sig === lastSig) return;
+      lastSig = sig;
+    }
     renderer.render(scene, cam);
   };
 
@@ -361,7 +375,7 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       ]);
 
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LITE ? 1.25 : 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.NeutralToneMapping;
       renderer.toneMappingExposure = 1.2;
@@ -398,6 +412,7 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
         const t = tone();
         kick.color.set(t.accent);
         fill.groundColor.set(t.ground);
+        lastSig = '';   // redessiner, même au repos
       });
 
       three = { THREE, renderer, scene, cam, key, kick };

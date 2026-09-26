@@ -176,6 +176,11 @@ html[data-palette='papier'] .step__note.is-warn { color: #b3261e; }
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--cream) 30%, transparent);
 }
 html.is-locked .pal { opacity: 0; pointer-events: none; }
+/* Sur écran tactile : un fond dense plutôt qu'un flou recalculé en continu. */
+@media (pointer: coarse) {
+  .pal { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--night-2) 94%, transparent); }
+  html[data-palette='papier'] .bar { --bar-glass: color-mix(in srgb, var(--night-3) 94%, transparent); }
+}
 @media (max-width: 48rem) {
   .pal { right: 0.45rem; padding: 0.3rem; }
   .pal__k { display: none; }

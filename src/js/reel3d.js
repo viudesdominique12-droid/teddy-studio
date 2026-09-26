@@ -24,6 +24,11 @@ import { reduced } from './motion.js';
 gsap.registerPlugin(ScrollTrigger);
 
 const MOBILE = matchMedia('(max-width: 48rem)');
+/* Sur un écran tactile (27/09) : le tambour est dessiné à 1,25 fois l'écran au
+   lieu de 2, ne respire plus au repos, et n'est redessiné que quand il tourne,
+   ondule ou réagit au doigt. Mesuré : c'est lui, avec le matériel, qui
+   saccadait sur téléphone. */
+const LITE = matchMedia('(pointer: coarse)').matches;
 const GAP = 0.018;         // l'espace entre deux vues, en fraction de leur part du tour (fin, comme la référence)
 const STEP_SCREENS = 0.22; // la course de défilement d'un lieu au suivant (0,45 avant l'accélération)
 
@@ -234,6 +239,7 @@ export function initReel(root = document.querySelector('[data-reel]')) {
 
   let three = null;
   let visible = false;
+  let lastSig = '';
   let started = false;
 
   const size = () => {
@@ -261,7 +267,7 @@ export function initReel(root = document.querySelector('[data-reel]')) {
     state.rot += (state.target - state.rot) * 0.085;
     const vel = Math.abs(state.rot - prev);
     // Au repos, la bande respire à peine ; lancée, elle ondule franchement.
-    const want = three.geo.h * (0.018 + Math.min(0.1, vel * 3.2));
+    const want = three.geo.h * ((LITE ? 0 : 0.018) + Math.min(0.1, vel * 3.2));
     state.amp += (want - state.amp) * 0.08;
     drum.rotation.y = state.rot;
     for (const c of cards) {
@@ -271,6 +277,12 @@ export function initReel(root = document.querySelector('[data-reel]')) {
       u.uAmp.value = state.amp;
       u.uBulge.value = three.geo.w * 0.12;
       u.uHover.value += ((state.hover === c.userData.i ? 1 : 0) - u.uHover.value) * 0.15;
+    }
+    if (LITE) {
+      // Au repos, rien ne change : on ne redessine pas.
+      const sig = `${state.rot.toFixed(5)}#${state.amp.toFixed(5)}#${cards.map((c) => c.material.uniforms.uHover.value.toFixed(3)).join(',')}#${cards.length}#${canvas.width}x${canvas.height}`;
+      if (sig === lastSig) return;
+      lastSig = sig;
     }
     renderer.render(scene, cam);
 
@@ -295,7 +307,7 @@ export function initReel(root = document.querySelector('[data-reel]')) {
       await fontsOf(th);
 
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LITE ? 1.25 : 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       const scene = new THREE.Scene();
       scene.fog = new THREE.Fog(th.bg, 14, 44);
@@ -360,6 +372,7 @@ export function initReel(root = document.querySelector('[data-reel]')) {
           mesh.material.uniforms.map.value = paintCard(THREE, mesh.userData.img, mesh.userData.place, N, aniso, th);
           old.dispose();
         }
+        lastSig = '';   // redessiner, même au repos
       });
     } catch (err) {
       console.warn('[reel]', err);

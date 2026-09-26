@@ -46,6 +46,13 @@ const MAGNET_BACK = 'elastic.out(1, 0.3)';
 
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* Sur un écran tactile, pas de flou (27/09) : animé, il fait recalculer chaque
+   bloc à chaque image par la puce graphique, et c'est ce qui saccadait sur un
+   téléphone. La montée et le fondu restent. */
+const LITE = matchMedia('(pointer: coarse)').matches;
+const BLUR_FROM = LITE ? {} : { filter: `blur(${BLUR})` };
+const BLUR_TO = LITE ? {} : { filter: 'blur(0em)' };
+
 /** Le pas entre deux lignes, plafonné : vingt lignes ne doivent pas durer 2,4 s. */
 const step = (n) => (n > 1 ? Math.min(STAGGER_MAX, STAGGER_TOTAL / (n - 1)) : 0);
 
@@ -79,6 +86,20 @@ export function markMagnets(sel, strength = 20) {
 }
 
 
+/* Les titres découpés en lignes. Un autre thème (la comparaison, `palette.js`)
+   change les polices sans changer la largeur : les lignes gardaient alors les
+   coupures de l'ancienne police, et un paragraphe se hachait. On redécoupe ;
+   ce qui n'était pas encore révélé s'affiche d'emblée. */
+const splits = [];
+window.addEventListener('palette:change', () => {
+  for (const sp of splits) {
+    sp.revert();
+    sp.split();
+    gsap.set(sp.lines, { autoAlpha: 1, y: 0, clearProps: 'filter' });
+  }
+  ScrollTrigger.refresh();
+});
+
 export function initReveals(root = document) {
   const heads = [...root.querySelectorAll('[data-blur-in]')];
   const blocks = [...root.querySelectorAll('[data-element-blur]')];
@@ -99,7 +120,9 @@ export function initReveals(root = document) {
     let targets = [el];
     if (el.hasAttribute('data-blur-in')) {
       try {
-        targets = new SplitText(el, { type: 'lines', linesClass: 'rv-line', autoSplit: true }).lines;
+        const sp = new SplitText(el, { type: 'lines', linesClass: 'rv-line', autoSplit: true });
+        splits.push(sp);
+        targets = sp.lines;
       } catch { targets = [el]; }
     }
     if (!targets.length) targets = [el];
@@ -119,8 +142,8 @@ export function initReveals(root = document) {
     // façon fiable quand deux tweens de durées différentes tournent ensemble.
     const tween = gsap.timeline({ paused: true, onComplete: free })
       .fromTo(targets,
-        { y: RISE, filter: `blur(${BLUR})` },
-        { y: 0, filter: 'blur(0em)', duration: DUR, ease: EASE, stagger: st,
+        { y: RISE, ...BLUR_FROM },
+        { y: 0, ...BLUR_TO, duration: DUR, ease: EASE, stagger: st,
           immediateRender: false }, 0)
       .fromTo(targets,
         { autoAlpha: 0 },
@@ -129,7 +152,7 @@ export function initReveals(root = document) {
 
     // L'état de départ, écrit explicitement : sans ça, un déclencheur manqué
     // laisse l'élément invisible pour de bon.
-    gsap.set(targets, { autoAlpha: 0, y: RISE, filter: `blur(${BLUR})` });
+    gsap.set(targets, { autoAlpha: 0, y: RISE, ...BLUR_FROM });
 
     ScrollTrigger.create({
       trigger: el, start: START, refreshPriority: -2,

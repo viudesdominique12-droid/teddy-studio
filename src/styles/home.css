@@ -508,12 +508,16 @@ html.hm-gate .hx [data-hx-in] { opacity: 0; }
 
 
 /* ═══════════════════ POURQUOI ═══════════════════ */
-.hm-why { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-7) var(--s-6); }
+.hm-why {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-7) var(--s-6); align-items: start;
+}
 /* Au survol (à la souris) : un filet terre cuite se trace sur le filet de
    tête, le numéro et le titre se soulèvent, le texte s'éclaire, et les
-   trois autres arguments s'estompent. */
+   trois autres arguments s'estompent. Le filet reste tracé sur l'argument
+   ouvert. */
 .hm-why__i {
-  position: relative; padding-top: var(--s-5); border-top: 1px solid var(--line);
+  position: relative; border-top: 1px solid var(--line);
   transition: opacity 0.45s var(--e-out);
 }
 .hm-why__i::before {
@@ -522,20 +526,54 @@ html.hm-gate .hx [data-hx-in] { opacity: 0; }
   transform: scaleX(0); transform-origin: 0 50%;
   transition: transform 0.7s var(--e-out);
 }
+.hm-why__i.is-open::before { transform: scaleX(1); }
+
+/* La tête de l'argument est un bouton : un appui l'ouvre et ferme les autres. */
+.hm-why__t { margin: 0; font: inherit; }
+.hm-why__q {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'n plus' 'h h';
+  align-items: center; row-gap: var(--s-5);
+  width: 100%; padding: var(--s-5) 0 var(--s-4);
+  background: none; border: 0; color: inherit; font: inherit; text-align: left;
+  cursor: pointer;
+}
+.hm-why__q:focus-visible { outline: 2px solid var(--gold-lt); outline-offset: 4px; }
 .hm-why__n {
-  display: block; margin-bottom: var(--s-5);
+  grid-area: n;
   font-family: var(--ff-m); font-stretch: 87.5%;
   font-size: var(--fs-nano); letter-spacing: 0.06em; color: var(--gold-lt);
 }
 .hm-why__h {
-  margin-bottom: var(--s-4);
+  grid-area: h;
   font-family: var(--ff-d);
   font-size: clamp(1.2rem, 0.95rem + 0.6vw, 1.55rem);
   line-height: 1.06; letter-spacing: -0.015em;
   font-variation-settings: 'wdth' 86, 'wght' 700;
   text-transform: uppercase;
 }
-.hm-why__i p { font-size: var(--fs-sm); line-height: 1.62; color: var(--cream-2); transition: color 0.45s var(--e-out); }
+.hm-why__plus { grid-area: plus; position: relative; width: 1rem; height: 1rem; }
+.hm-why__plus::before, .hm-why__plus::after {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  width: 100%; height: 1.5px; translate: -50% -50%;
+  background: var(--cream-2); transition: rotate 0.45s var(--e-out), background 0.35s var(--e-out);
+}
+.hm-why__plus::after { rotate: 90deg; }
+.hm-why__i.is-open .hm-why__plus::after { rotate: 0deg; }
+.hm-why__i.is-open .hm-why__plus::before,
+.hm-why__i.is-open .hm-why__plus::after { background: var(--gold-lt); }
+.hm-why__i.is-open .hm-why__h { color: var(--cream); }
+
+/* L'explication se déplie sous le titre. */
+.hm-why__a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s var(--e-out); }
+.hm-why__a-in { overflow: hidden; }
+.hm-why__i.is-open .hm-why__a { grid-template-rows: 1fr; }
+.hm-why__i p { padding-bottom: var(--s-4); font-size: var(--fs-sm); line-height: 1.62; color: var(--cream-2); transition: color 0.45s var(--e-out); }
+/* Sans JavaScript, tout est lisible ; au chargement, le repli se fait d'un coup. */
+.hm-why:not(.is-js) .hm-why__a { grid-template-rows: 1fr; }
+.hm-why:not(.is-js) .hm-why__plus { display: none; }
+.hm-why.is-still .hm-why__a { transition: none; }
+
 .hm-why__n, .hm-why__h { transition: transform 0.6s var(--e-out), color 0.45s var(--e-out); }
 @media (hover: hover) and (pointer: fine) {
   .hm-why:has(.hm-why__i:hover) .hm-why__i:not(:hover) { opacity: 0.42; }
@@ -545,7 +583,15 @@ html.hm-gate .hx [data-hx-in] { opacity: 0; }
   .hm-why__i:hover p { color: var(--cream); }
 }
 @media (max-width: 64rem) { .hm-why { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 36rem) { .hm-why { grid-template-columns: 1fr; } }
+/* Sur téléphone : une ligne par argument, le numéro, le titre et le « + ». */
+@media (max-width: 36rem) {
+  .hm-why { grid-template-columns: 1fr; row-gap: 0; }
+  .hm-why__q {
+    grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: 'n h plus';
+    column-gap: var(--s-4); row-gap: 0; padding: var(--s-4) 0;
+  }
+  .hm-why__i p { padding-left: calc(var(--s-4) + 1.4em); }
+}
 
 
 /* ═══════════════════ LES LIEUX ═══════════════════ */

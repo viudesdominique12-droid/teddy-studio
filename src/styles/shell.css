@@ -347,18 +347,21 @@ html.is-locked .logo__bar { background: var(--basalt); }
 html.is-booting body { overflow: hidden; }
 
 /* ═══════════ LE CHEVRON (transition de page) ═══════════
-   La forme est entièrement pilotée en JS (`wipe.js`) : ici on ne pose que la
-   surface et les deux encres. z-index 350 : sous le seuil d'ouverture (400),
-   au-dessus de tout le reste. */
+   Deux panneaux de 175 vw, découpés une fois pour toutes : un rectangle de
+   150 vw et une proue qui dépasse de 25 vw à mi-hauteur. `wipe.js` ne fait
+   que les faire glisser (`translate`). z-index 350 : sous le seuil
+   d'ouverture (400), au-dessus de tout le reste. */
 .wipe {
   position: fixed; inset: 0; z-index: 350;
-  pointer-events: none;
+  pointer-events: none; overflow: hidden;
 }
 .wipe[hidden] { display: none; }
 .wipe__gold, .wipe__ink {
-  position: absolute; inset: 0;
+  position: absolute; top: 0; bottom: 0; left: 0;
+  width: 175vw;
   display: block;
-  will-change: clip-path;
+  clip-path: polygon(0% 0%, 85.7143% 0%, 100% 50%, 85.7143% 100%, 0% 100%);
+  will-change: transform;
 }
 /* L'or est dessous : l'encre le recouvre partout sauf sur la proue, où il
    reste un liseré. C'est la lumière qui ouvre le plan. */

@@ -45,17 +45,17 @@ let ink = null, gold = null, root = null;
 
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/** La forme, à un instant de la course. */
-function shape(s) {
-  const p = -PROW + (100 + 2 * PROW) * s;
-  const r = p - PROW;
-  const l = p - (100 + 3 * PROW);
-  return `polygon(${l}% 0%, ${r}% 0%, ${p}% 50%, ${r}% 100%, ${l}% 100%)`;
-}
+/* La forme ne change jamais : c'est le panneau qui GLISSE (27/09). Chaque
+   panneau fait 175 vw de large et porte une fois pour toutes sa découpe (le
+   rectangle et la proue, `shell.css`) ; on ne déplace que son bord gauche,
+   L = P − 175 = −200 + 150·s. Un `translate` se fait sur la carte graphique
+   sans rien repeindre, là où l'ancienne version redessinait deux formes plein
+   écran à chaque image — ce qui saccadait sur téléphone. */
+const left = (s) => -PROW - (100 + 3 * PROW) + (100 + 2 * PROW) * s;
 
 function paint(s) {
-  if (ink) ink.style.clipPath = shape(s);
-  if (gold) gold.style.clipPath = shape(Math.min(2, s + GOLD_LEAD));
+  if (ink) ink.style.transform = `translate3d(${left(s)}vw, 0, 0)`;
+  if (gold) gold.style.transform = `translate3d(${left(Math.min(2, s + GOLD_LEAD))}vw, 0, 0)`;
 }
 
 function build() {

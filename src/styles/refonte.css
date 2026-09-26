@@ -400,6 +400,17 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
   -webkit-backdrop-filter: blur(14px) saturate(1.15); backdrop-filter: blur(14px) saturate(1.15);
 }
 
+/* Sur un écran tactile (27/09) : pas de flou d'arrière-plan sur ce qui reste
+   fixé à l'écran. Recalculé à chaque image du défilement, il coûte cher à un
+   téléphone ; un verre plus dense le remplace, à l'œil presque pareil. */
+@media (pointer: coarse) {
+  .bar { --bar-glass: color-mix(in srgb, var(--night-2) 90%, transparent); }
+  .bar .logo, .burger, .bar__pill { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .bar.is-paper .bar__pill, .bar.is-paper .burger, .bar.is-scrolled .logo {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+  }
+}
+
 /* L'index ouvert (la tuile terre cuite) : la pilule s'efface, le rond passe à l'encre. */
 html.is-locked .bar__pill { opacity: 0; pointer-events: none; transition: opacity 0.3s var(--e-out); }
 html.is-locked .bar .burger {

@@ -296,6 +296,35 @@ Plutôt que trois copies du site, c'est **le même site en trois thèmes**. Les 
   - héberger ses polices dans `public/fonts/` (Google Fonts n'est là que pour la comparaison) ;
   - retirer le sélecteur et, si ce n'est pas le Vert, faire du thème choisi le thème par défaut.
 
+## Mise en ligne — 27/09/2026
+
+À la demande de Dominique (« le client choisira, on déploie ; je teste sur mobile et on finalise »), la refonte est en ligne avec ses trois thèmes, sur https://viudesdominique12-droid.github.io/teddy-studio/ (commit `8521448`, publication GitHub Pages réussie).
+- Vérifié avant l'envoi, sur la version construite, puis à nouveau en ligne (`docs/outils/prodcheck.mjs`) : les 5 pages dans les 3 thèmes, sur ordinateur et sur téléphone. Aucun fichier manquant, aucune erreur. Les modèles 3D, la bobine des lieux et les polices se chargent.
+- Les textes nouveaux (les neuf lieux ; Transportation, Accommodation, Editing) sont partis tels quels, sans validation du client.
+- Pour la prochaine mise en ligne : enregistrer sur la branche `refonte`, puis `git push origin HEAD:main`.
+
+## Vague 10 — « Why us » qu'on déplie, et la fluidité sur téléphone (27/09/2026)
+
+Ce qu'a dit Dominique après son essai sur téléphone : « les transitions ne sont pas fluides sur mobile » ; « Why us : comme des carrousels fermés, on appuie sur un pour l'ouvrir, et les autres sont fermés quand un est ouvert ».
+
+- **Why us** : les quatre arguments sont fermés au départ, avec leur numéro, leur titre et un « + ». Un appui en ouvre un et ferme les autres.
+  - Sur ordinateur, les quatre colonnes restent, et le texte se déplie sous le titre ouvert. Le filet terre cuite reste tracé sur l'argument ouvert, et le survol est gardé.
+  - Sur téléphone, c'est une ligne par argument.
+  - Le code est le même que pour les services, mis en commun : `initAccordion` dans `services.js`.
+- **La fluidité, mesurée d'abord** (`docs/outils/mobperf.mjs`, rendu sans puce graphique). Seules les deux scènes 3D saccadaient :
+  - le matériel : 42 ms par image, des pointes à 192 ms ;
+  - les lieux : 21 ms par image, 11 % d'images en retard.
+  Tout le reste de la page tenait sous 10 ms.
+- **Sur écran tactile seulement** (l'ordinateur ne change pas) :
+  - les deux scènes sont dessinées à 1,25 fois l'écran au lieu de 2 ;
+  - elles ne sont redessinées que quand quelque chose bouge (plus de souffle ni de respiration au repos) ;
+  - les révélations montent sans flou ;
+  - les éléments fixés à l'écran (le logo, le rond de l'index, le sélecteur de thème) prennent un verre dense au lieu d'un flou recalculé à chaque image.
+  Résultat, sans puce graphique : les lieux passent à 11 ms et 0 % de retard, le matériel à 29 ms avec des pointes à 125 ms. Avec le processeur ralenti ×4, plus aucune section ne dépasse 10 ms au 95e centile, sauf « About » (24 ms).
+- **Le changement de page** : le chevron glisse désormais d'un bloc (`translate`, sur la carte graphique) au lieu de redessiner deux formes plein écran à chaque image. L'aspect est identique.
+- **Changer de thème** redécoupe maintenant les lignes des titres : un paragraphe gardait sinon les coupures de l'ancienne police.
+- **Vérifié** : sur la version construite, les 5 pages dans les 3 thèmes, sur ordinateur et sur téléphone, sans fichier manquant ni erreur ; aucun débordement ; les épinglages restent à leur place.
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).

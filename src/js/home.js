@@ -27,7 +27,7 @@ import { initGallery } from './gallery.js';
 import { bootReel, cameraEntry } from './refonte.js';
 import { kit3dAvailable, initKit3d } from './kit3d.js';
 import { initReel } from './reel3d.js';
-import { initServices } from './services.js';
+import { initServices, initWhy } from './services.js';
 import { applyPalette } from './palette.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -74,7 +74,10 @@ function heroIn() {
    l'écran au chargement est pris dans le premier appel, sans rattrapage. */
 const inDocOrder = (a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
 
-function cascade(sel, { blur = true, step = 0.08 } = {}) {
+// Sur un écran tactile, les cascades montent sans flou (voir `reveal.js`).
+const LITE = matchMedia('(pointer: coarse)').matches;
+
+function cascade(sel, { blur = !LITE, step = 0.08 } = {}) {
   const els = gsap.utils.toArray(sel);
   if (!els.length || reduced()) return;
   const from = blur ? { autoAlpha: 0, y: 16, filter: 'blur(0.34em)' } : { autoAlpha: 0, y: 24 };
@@ -151,6 +154,7 @@ async function start() {
   initViewer();
   contactForm();
   initServices();
+  initWhy();
   // Le modèle 3D du matériel est-il là ? On le demande pendant l'ouverture.
   const kit3d = kit3dAvailable();
 
