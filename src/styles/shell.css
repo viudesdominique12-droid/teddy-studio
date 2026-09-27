@@ -367,6 +367,12 @@ html.is-booting body { overflow: hidden; }
    reste un liseré. C'est la lumière qui ouvre le plan. */
 .wipe__gold { background: var(--gold); }
 .wipe__ink  { background: var(--night-2); }
+/* Le volet fermé, avant que le JavaScript ne le pose (`head.html`) : l'encre
+   sur tout l'écran, exactement ce que montre le volet à mi-course. */
+html.is-wiping::before {
+  content: ''; position: fixed; inset: 0; z-index: 350;
+  background: var(--night-2); pointer-events: none;
+}
 
 @media (prefers-reduced-motion: reduce) { .wipe { display: none; } }
 

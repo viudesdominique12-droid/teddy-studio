@@ -385,6 +385,51 @@ Ce qui a été fait :
   - **La scène ne se libère pas trop tôt.** Tant que le dernier outil n'est pas passé, un geste qui atteint le bout de la séquence y est retenu, puis le défilement reprend. Cela vaut vers le bas seulement, et sur ordinateur. Si l'on quitte la séquence autrement (clavier, barre, téléphone), l'outil demandé s'affiche directement, comme avant : jamais un outil qui apparaît pendant que l'écran défile.
   - **Vérifié** à 250, 400, 700, 1 100 et 2 000 px/s, et avec des gestes de pavé tactile : les six outils sont vus à chaque fois, tous avec la scène immobile (`show`, `advance` et la retenue dans `kit3d.js`).
 
+## Vague 13 — le changement de page sans « rafraîchissement » (27/09/2026)
+
+Ce qu'a dit Dominique : « quand je change de page, de Home à Locations, il y a la transition latérale, puis l'écran refresh, puis ça montre la nouvelle page, comme si le site se réinitialisait à chaque fois ».
+
+- **La cause, filmée** (une image toutes les 40 ms, dans Chrome et dans le moteur de Safari) :
+  1. le chevron couvre la page ;
+  2. la page suivante apparaissait un instant, nue (environ 80 ms, parfois avec la police de secours) ;
+  3. elle se couvrait de nouveau ;
+  4. puis le chevron la découvrait.
+
+  Le volet n'était posé qu'une fois le JavaScript chargé, alors que le navigateur affichait la page avant.
+- **Le remède.** La page naît couverte. Un petit script de `head.html` pose `is-wiping` avant le premier affichage : c'est le volet fermé en CSS, l'encre `--night-2` sur tout l'écran (`shell.css`). `wipe.js` le remplace par le vrai volet, au même endroit, puis découvre la page comme avant. De plus, dès le clic, la page suivante commence à se télécharger pendant que le volet couvre.
+- **Les filets.**
+  - Sans JavaScript, ou en mouvement réduit, rien n'est couvert.
+  - Si le script ne vient pas, la page se découvre au bout de 4 s.
+  - Au retour arrière (bfcache), la page se redécouvre comme avant.
+- **Vérifié** :
+  - Plus aucun flash, dans Chrome comme dans Safari, en développement et sur la version construite.
+  - L'écran reste couvert d'un seul tenant (environ 0,6 s) entre la fermeture et l'ouverture du volet.
+  - `prodcheck.mjs` : les 5 pages, les 3 thèmes, ordinateur et téléphone, aucun problème.
+
+## Vague 14 — le matériel au doigt, et le flyer (27/09/2026)
+
+Ce qu'a dit Dominique : « sur téléphone, après le drone, quand je swipe, il descend directement sans faire défiler le reste des objets ; quand je remonte, l'objet est directement le 6 ; je n'ai pas ce problème sur ordinateur ». Puis : « un flyer avec la même direction artistique que le site, avec un QR code qui mène au site ».
+
+- **La cause.** Sur téléphone, le doigt lance le défilement du système avec son élan, qu'aucun script n'arrête proprement. Un geste traversait donc la fin de la séquence d'un coup. La retenue de l'ordinateur (vague 12) passe par la molette et ne voit pas le doigt.
+- **Écarté : l'accroche CSS.** L'accroche au défilement (`scroll-snap` avec `scroll-snap-stop: always`) a été essayée. Même en mode `mandatory`, un geste vigoureux sautait encore un outil dans Chrome, et le comportement de l'iPhone ne peut pas être vérifié ici. Elle a été retirée.
+- **Retenu : la scène tient le doigt.** Tant que la scène est épinglée (elle couvre l'écran), elle a `touch-action: none`.
+  - Un geste vers le haut amène l'outil suivant, un geste vers le bas le précédent, dans un glissé doux de 0,7 s. La vie du plan suit, comme au doigt.
+  - Après le dernier outil, le geste suivant fait sortir de la séquence ; avant le premier, il fait remonter.
+  - Un élan lancé au-dessus de la scène qui la traverserait est arrêté au bout de la séquence, le temps que les derniers outils passent.
+  - Les gestes sur la scène sont marqués `lenisStopPropagation` : sinon Lenis, y lisant le doigt qui reprend la main, annulait aussitôt le glissé.
+  - Arrivé au milieu de la séquence (un saut, un rechargement), la scène montre l'outil du moment, et non plus la caméra.
+- **Vérifié** au doigt, en émulation de téléphone :
+  - Drone → Éclairage → Micros → Fond vert → sortie, puis en remontant Micros → Éclairage → Drone → Objectifs → Caméra : un outil par geste.
+  - Deux élans vigoureux depuis la section du dessus : la page reste dans la séquence, les outils passent dans l'ordre.
+  - Sur ordinateur, rien ne change : les outils changent aux mêmes positions qu'avant.
+  - Le code est dans `kit3d.js` (le bloc « Sur écran tactile ») et `home.css` (`.k3__stage.is-held`).
+- **Le flyer** (`docs/flyer/`, avec son mode d'emploi) : un A5 recto-verso dans la direction artistique du site.
+  - Le recto reprend le plan technique de l'ouverture, « Gateway to Africa », l'appel en terre cuite, un QR code « Scan to enter » et la bande des clients.
+  - Le verso présente les huit services (« Cleared by us » sur les permis), les neuf lieux et leurs altitudes, le contact et le grand « TEDDY STUDIO ».
+  - Tous les textes sont ceux du site. Les polices sont les instances fixes de celles du site, incorporées proprement.
+  - Deux PDF : 148 × 210 mm, et la version imprimeur de 154 × 216 mm avec 3 mm de fond perdu, TrimBox et BleedBox.
+  - Le QR code est lu par Vision d'Apple, et mène à l'adresse GitHub Pages. À régénérer quand le site aura son domaine.
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).

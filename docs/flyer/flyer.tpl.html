@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Teddy Studio — flyer A5</title>
+<style>
+/* Les polices du site, en instances fixes aux réglages du site (fontTools) :
+   le PDF les incorpore en polices TrueType nommées, propres pour l'imprimeur. */
+@font-face { font-family: 'Archivo Titre';   src: url('{{FONTS}}/archivo-84-740.ttf'); font-weight: 100 900; }
+@font-face { font-family: 'Archivo Service'; src: url('{{FONTS}}/archivo-84-600.ttf'); font-weight: 100 900; }
+@font-face { font-family: 'Archivo Bande';   src: url('{{FONTS}}/archivo-84-700.ttf'); font-weight: 100 900; }
+@font-face { font-family: 'Archivo Geant';   src: url('{{FONTS}}/archivo-62-800.ttf'); font-weight: 100 900; }
+@font-face { font-family: 'Fraunces Affiche'; src: url('{{FONTS}}/fraunces-144-380.ttf'); font-weight: 100 900; }
+@font-face { font-family: 'Instrument'; src: url('{{FONTS}}/instrument-400.ttf'); font-weight: 400; }
+@font-face { font-family: 'Instrument'; src: url('{{FONTS}}/instrument-500.ttf'); font-weight: 500; }
+@font-face { font-family: 'Instrument'; src: url('{{FONTS}}/instrument-600.ttf'); font-weight: 600; }
+@font-face { font-family: 'Martian'; src: url('{{FONTS}}/martian-400.ttf'); font-weight: 400; }
+@font-face { font-family: 'Martian'; src: url('{{FONTS}}/martian-500.ttf'); font-weight: 500; }
+@font-face { font-family: 'Martian'; src: url('{{FONTS}}/martian-700.ttf'); font-weight: 700; }
+
+/* Les couleurs du site (tokens.css, thème Vert). */
+:root {
+  --night: #182d19; --night-2: #101b13; --night-3: #1e3720;
+  --cream: #ece7e0; --cream-2: #b0aba6; --cream-3: #8d8783;
+  --gold: #db6336; --gold-lt: #f69561; --basalt: #141211;
+  --b: {{B}};                      /* le fond perdu */
+  --pw: {{PW}}; --ph: {{PH}};
+  --m: 9mm;                        /* la marge de sécurité, depuis la coupe */
+}
+@page { size: {{PW}} {{PH}}; margin: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #000; }
+body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.page {
+  position: relative; overflow: hidden;
+  width: var(--pw); height: var(--ph);
+  background: var(--night); color: var(--cream);
+  font-family: 'Instrument', sans-serif;
+  page-break-after: always; break-after: page;
+}
+.page:last-child { page-break-after: auto; break-after: auto; }
+/* Tout se place depuis la coupe (le format fini), pas depuis le fond perdu. */
+.trim { position: absolute; inset: var(--b); }
+
+/* La profondeur du site (base.css `.depth`) : la lueur en haut à droite, le haut plus sombre. */
+.depth {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(58% 46% at 70% 24%, color-mix(in srgb, var(--night-3) 62%, transparent) 0%, transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--night-2) 72%, transparent) 0%, transparent 58%);
+}
+/* La grille millimétrée du plan technique, sur toute la feuille. */
+.grid { position: absolute; inset: 0; width: 100%; height: 100%; }
+.grid path { fill: none; stroke: color-mix(in srgb, var(--cream) 6%, transparent); stroke-width: 0.5; }
+
+/* Les étiquettes du site : mono, capitales espacées, un point terre cuite. */
+.k {
+  display: flex; align-items: center; gap: 2.2mm;
+  font-family: 'Martian', monospace; font-weight: 400;
+  font-size: 6.2pt; line-height: 1.4; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.k::before { content: ''; flex: none; width: 1.5mm; height: 1.5mm; border-radius: 50%; background: var(--gold); }
+.k--plain::before { display: none; }
+.h {
+  font-family: 'Archivo Titre', sans-serif; font-weight: 400;
+  text-transform: uppercase; line-height: 0.98; letter-spacing: -0.03em; color: var(--cream);
+}
+
+/* ─────────────── RECTO ─────────────── */
+.top { position: absolute; left: var(--m); right: var(--m); top: 8mm; display: flex; align-items: center; justify-content: space-between; }
+.top img { height: 10.5mm; width: auto; display: block; }
+.top .brk { font-family: 'Martian', monospace; font-size: 6pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-2); }
+.rec { display: inline-block; width: 1.6mm; height: 1.6mm; border-radius: 50%; background: var(--gold); margin-right: 1.6mm; vertical-align: 0.1mm; }
+
+.bp { position: absolute; left: 6mm; width: 136mm; top: 20.5mm; height: 88.5mm; overflow: visible; }
+.bp .sheet { fill: none; stroke: color-mix(in srgb, var(--cream) 26%, transparent); stroke-width: 2; }
+.bp .axis { fill: none; stroke: color-mix(in srgb, var(--cream) 24%, transparent); stroke-width: 1.4; stroke-dasharray: 26 8 4 8; }
+.bp .notes circle, .bp .notes path { fill: none; stroke: color-mix(in srgb, var(--cream) 72%, transparent); stroke-width: 2.4; }
+.bp text { font-family: 'Martian', monospace; letter-spacing: 0.12em; fill: var(--cream-2); }
+.bp .notes text { font-size: 44px; }
+.bp .block rect, .bp .block path { fill: none; stroke: color-mix(in srgb, var(--cream) 42%, transparent); stroke-width: 2.2; }
+.bp .block text { font-size: 27px; }
+.bp .block .strong { fill: var(--cream); font-weight: 700; }
+
+.hero { position: absolute; left: var(--m); right: var(--m); top: 110mm; text-align: center; }
+.badge {
+  display: inline-flex; align-items: center; gap: 2.4mm;
+  padding: 1.3mm 3.2mm 1.3mm 1.4mm; border-radius: 99mm;
+  background: color-mix(in srgb, var(--cream) 10%, transparent);
+  box-shadow: inset 0 0 0 0.25mm color-mix(in srgb, var(--cream) 15%, transparent);
+  font-size: 7pt; color: color-mix(in srgb, var(--cream) 90%, transparent);
+}
+.chip { padding: 0.6mm 1.9mm; border-radius: 99mm; background: var(--cream); color: var(--night-2); font-weight: 600; font-size: 6.5pt; }
+.hero h1 {
+  margin-top: 4.5mm;
+  font-family: 'Fraunces Affiche', serif; font-weight: 400;
+  font-size: 33pt; line-height: 1.05; letter-spacing: -0.025em; color: var(--cream);
+}
+.lede { margin: 3.5mm auto 0; max-width: 112mm; font-size: 8.6pt; line-height: 1.5; color: color-mix(in srgb, var(--cream) 78%, transparent); }
+
+.act { position: absolute; left: var(--m); right: var(--m); top: 152mm; display: flex; align-items: flex-end; justify-content: space-between; gap: 6mm; }
+.btn {
+  display: inline-flex; align-items: center; gap: 2mm;
+  padding: 2.5mm 4.6mm; border-radius: 99mm;
+  background: var(--gold); color: var(--basalt);
+  font-size: 8.6pt; font-weight: 500;
+}
+.btn svg { width: 3.4mm; height: 3.4mm; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.contact { margin-top: 4.5mm; display: grid; gap: 1.1mm; }
+.contact p { font-family: 'Martian', monospace; font-size: 6.4pt; letter-spacing: 0.08em; color: var(--cream-2); }
+.contact p strong { color: var(--cream); font-weight: 500; }
+
+.qrbox { position: relative; flex: none; width: 31mm; text-align: center; }
+.qrtile { width: 31mm; height: 31mm; padding: 3.2mm; border-radius: 1.6mm; background: var(--cream); }
+.qr { display: block; width: 100%; height: 100%; fill: var(--basalt); }
+/* Les équerres de viseur, comme autour des boutons du site. */
+.vf { position: absolute; inset: -1.8mm -1.8mm auto -1.8mm; height: calc(31mm + 3.6mm); pointer-events: none; }
+.vf i { position: absolute; width: 3.4mm; height: 3.4mm; border: 0 solid color-mix(in srgb, var(--cream) 70%, transparent); }
+.vf i:nth-child(1) { left: 0; top: 0; border-left-width: 0.3mm; border-top-width: 0.3mm; }
+.vf i:nth-child(2) { right: 0; top: 0; border-right-width: 0.3mm; border-top-width: 0.3mm; }
+.vf i:nth-child(3) { left: 0; bottom: 0; border-left-width: 0.3mm; border-bottom-width: 0.3mm; }
+.vf i:nth-child(4) { right: 0; bottom: 0; border-right-width: 0.3mm; border-bottom-width: 0.3mm; }
+.qrcap { margin-top: 3.4mm; font-family: 'Martian', monospace; font-size: 6pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream); }
+
+/* La bande terre cuite des clients, en bas du premier écran du site. */
+.band {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: calc(19mm + var(--b));
+  padding-bottom: var(--b);
+  background: var(--gold); color: var(--basalt);
+  display: grid; grid-template-columns: auto 1fr; align-items: stretch;
+}
+.band__k {
+  display: flex; align-items: center; gap: 2mm;
+  padding: 0 4.5mm 0 calc(var(--b) + var(--m));
+  border-right: 0.25mm solid color-mix(in srgb, var(--basalt) 26%, transparent);
+  font-family: 'Martian', monospace; font-size: 5.6pt; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.band__k::before { content: ''; width: 1.4mm; height: 1.4mm; border-radius: 50%; background: currentColor; }
+.band__logos { display: flex; align-items: center; justify-content: space-around; gap: 3mm; padding: 0 calc(var(--b) + var(--m)) 0 4mm; }
+.band__logos img { height: 9mm; width: auto; filter: brightness(0); opacity: 0.92; }
+.band__logos img.wide { height: 7.2mm; }
+.band__logos span { font-family: 'Archivo Bande', sans-serif; font-weight: 400; text-transform: uppercase; font-size: 6.4pt; line-height: 1.05; letter-spacing: -0.01em; }
+
+/* ─────────────── VERSO ─────────────── */
+.v-head { position: absolute; left: var(--m); right: var(--m); top: 10mm; }
+.v-head .h { margin-top: 2.6mm; font-size: 25pt; }
+.svc { position: absolute; left: var(--m); right: var(--m); top: 31mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, auto); grid-auto-flow: column; column-gap: 6mm; }
+.svc li {
+  list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 2mm;
+  padding: 2.35mm 0; border-top: 0.25mm solid color-mix(in srgb, var(--cream) 16%, transparent);
+  font-family: 'Archivo Service', sans-serif; font-weight: 400;
+  font-size: 9.6pt; letter-spacing: -0.01em; text-transform: uppercase; color: var(--cream);
+}
+.svc li:nth-child(4), .svc li:nth-child(8) { border-bottom: 0.25mm solid color-mix(in srgb, var(--cream) 16%, transparent); }
+.tag { font-family: 'Martian', monospace; font-weight: 400; font-size: 5pt; letter-spacing: 0.12em; color: var(--gold-lt); white-space: nowrap; }
+
+.loc { position: absolute; left: var(--m); right: var(--m); top: 78mm; }
+.loc .h { margin-top: 2.6mm; font-size: 14.5pt; max-width: 118mm; }
+.loc__lede { margin-top: 2.4mm; font-size: 7.8pt; line-height: 1.5; color: color-mix(in srgb, var(--cream) 78%, transparent); max-width: 110mm; }
+.places { margin-top: 3.6mm; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, auto); grid-auto-flow: column; column-gap: 6mm; row-gap: 0; }
+.places li {
+  list-style: none; display: flex; align-items: baseline; gap: 1.6mm;
+  padding: 1.25mm 0; border-top: 0.2mm solid color-mix(in srgb, var(--cream) 10%, transparent);
+  font-family: 'Martian', monospace; font-size: 6.2pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream);
+}
+.places li i { flex: 1; border-bottom: 0.2mm dotted color-mix(in srgb, var(--cream) 28%, transparent); transform: translateY(-0.6mm); }
+.places li b { font-weight: 400; color: var(--cream-2); }
+.places li:nth-child(5), .places li:nth-child(9) { border-bottom: 0.2mm solid color-mix(in srgb, var(--cream) 10%, transparent); }
+
+.con { position: absolute; left: var(--m); right: var(--m); top: 142mm; display: flex; justify-content: space-between; gap: 6mm; }
+.con .h { margin-top: 2.6mm; font-size: 20pt; }
+.con__lines { margin-top: 3.4mm; display: grid; gap: 1.5mm; }
+.con__lines p { font-size: 8pt; color: var(--cream); }
+.con__lines p span { display: inline-block; min-width: 17mm; font-family: 'Martian', monospace; font-size: 5.6pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3); }
+.con .qrbox { width: 25mm; margin-top: 1mm; }
+.con .qrtile { width: 25mm; height: 25mm; padding: 2.6mm; }
+.con .vf { height: calc(25mm + 3.6mm); }
+.url { margin-top: 3mm; font-family: 'Martian', monospace; font-size: 4.8pt; line-height: 1.5; letter-spacing: 0.04em; color: var(--cream-2); white-space: nowrap; }
+
+.giant {
+  position: absolute; left: 0; right: 0; bottom: calc(var(--b) - 5.2mm);
+  text-align: center; white-space: nowrap;
+  font-family: 'Archivo Geant', sans-serif; font-weight: 400;
+  font-size: 74pt; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--cream) 9%, transparent);
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ RECTO ══════════ -->
+<section class="page">
+  <div class="depth"></div>
+  <svg class="grid" aria-hidden="true"><defs><pattern id="g" width="15.3" height="15.3" patternUnits="userSpaceOnUse"><path d="M15.3 0H0V15.3"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>
+  <div class="trim">
+    <header class="top">
+      <img src="{{ROOT}}/public/brand/teddy-studio-logo.webp" alt="Teddy Studio">
+      <span class="brk"><span class="rec"></span>[ Ethiopian Film Office ]</span>
+    </header>
+
+    <!-- Le plan technique de l'ouverture du site : la même caméra, les mêmes repères. -->
+    <svg class="bp" viewBox="-260 -160 2920 1900" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <rect class="sheet" x="-230" y="-130" width="2860" height="1840"/>
+      <path class="axis" d="M-200 1107L2600 745"/>
+      <image href="{{ROOT}}/public/cam/blueprint-2400.webp" x="0" y="0" width="2400" height="1599"/>
+      <g class="notes">
+        <circle cx="215" cy="700" r="11"/><path d="M215 700L110 500H-170"/><text x="-170" y="476" text-anchor="start">MATTE BOX</text>
+        <circle cx="1020" cy="745" r="11"/><path d="M1020 745L900 470H560"/><text x="560" y="446" text-anchor="start">CINE ZOOM · 30–300</text>
+        <circle cx="1235" cy="262" r="11"/><path d="M1235 262L1080 120H740"/><text x="740" y="96" text-anchor="start">MONITOR</text>
+        <circle cx="1650" cy="430" r="11"/><path d="M1650 430L1770 150H2090"/><text x="2090" y="126" text-anchor="end">TOP HANDLE</text>
+        <circle cx="2143" cy="722" r="11"/><path d="M2143 722L2330 520H2600"/><text x="2600" y="496" text-anchor="end">BATTERY</text>
+        <circle cx="1985" cy="935" r="11"/><path d="M1985 935L2240 1180H2600"/><text x="2600" y="1156" text-anchor="end">CAMERA BODY</text>
+        <circle cx="960" cy="1300" r="11"/><path d="M960 1300L860 1560H500"/><text x="500" y="1536" text-anchor="start">RODS · BASEPLATE</text>
+      </g>
+      <g class="block">
+        <rect x="1720" y="1400" width="900" height="300"/>
+        <path d="M1720 1475H2620M1720 1550H2620M1720 1625H2620M2380 1625V1700"/>
+        <text x="1745" y="1450" class="strong">TEDDY STUDIO — ETHIOPIAN FILM OFFICE</text>
+        <text x="1745" y="1525">CAMERA A · THREE-QUARTER VIEW</text>
+        <text x="1745" y="1600">FILM SERVICE &amp; PRODUCTION ACROSS ETHIOPIA</text>
+        <text x="1745" y="1675">ADDIS ABABA · 24/7</text>
+        <text x="2402" y="1675">SHEET 01</text>
+      </g>
+    </svg>
+
+    <div class="hero">
+      <p class="badge"><span class="chip">24/7</span>Film service &amp; production across Ethiopia</p>
+      <h1>Gateway to Africa</h1>
+      <p class="lede">Permits, locations, crew, kit and logistics for productions shooting in Ethiopia — from the Simien Mountains to the Danakil. One base, one permit jurisdiction.</p>
+    </div>
+
+    <div class="act">
+      <div>
+        <span class="btn">Start a production <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+        <div class="contact">
+          <p><strong>+251 911 204 388</strong></p>
+          <p>info@ethiopianfilmoffice.com</p>
+          <p>Meskel Square · Finfine Building, 5th Floor</p>
+          <p>Addis Ababa · Monday – Sunday · 24/7</p>
+        </div>
+      </div>
+      <figure class="qrbox">
+        <div class="vf"><i></i><i></i><i></i><i></i></div>
+        <div class="qrtile">{{QR}}</div>
+        <figcaption class="qrcap">[ Scan to enter ]</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="band">
+    <span class="band__k">Our Clients</span>
+    <div class="band__logos">
+      <img src="{{ROOT}}/public/clients/bgi.png" alt="BGI">
+      <img src="{{ROOT}}/public/clients/pepsi.png" alt="Pepsi">
+      <img class="wide" src="{{ROOT}}/public/clients/world-bank.png" alt="The World Bank">
+      <img src="{{ROOT}}/public/clients/prime-office.png" alt="Prime Minister Office">
+      <img src="{{ROOT}}/public/clients/us-embassy.png" alt="U.S. Embassy">
+      <span>Ethiopia<br>Defence Force</span>
+      <span>Wosti<br>Jnvis</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ VERSO ══════════ -->
+<section class="page">
+  <div class="depth"></div>
+  <div class="trim">
+    <div class="v-head">
+      <p class="k">Services</p>
+      <h2 class="h">What we handle</h2>
+    </div>
+    <ul class="svc">
+      <li>Producing</li>
+      <li>Production Rental</li>
+      <li>Casting</li>
+      <li>Shooting Permit <span class="tag">Cleared by us</span></li>
+      <li>Location Permit <span class="tag">Cleared by us</span></li>
+      <li>Transportation</li>
+      <li>Accommodation</li>
+      <li>Editing</li>
+    </ul>
+
+    <div class="loc">
+      <p class="k">Locations</p>
+      <h2 class="h">One base. 4,675 metres of range.<br>One permit jurisdiction.</h2>
+      <p class="loc__lede">We take pride in facilitating filming in a diverse range of stunning locations throughout Ethiopia.</p>
+      <ul class="places">
+        <li>Simien Mountains<i></i><b>4,550 m</b></li>
+        <li>Wonchi<i></i><b>3,450 m</b></li>
+        <li>Lalibela<i></i><b>2,630 m</b></li>
+        <li>Addis Ababa<i></i><b>2,355 m</b></li>
+        <li>Wollo<i></i><b>2,030 m</b></li>
+        <li>Fasilides<i></i><b>1,994 m</b></li>
+        <li>Winding Road<i></i><b>—</b></li>
+        <li>Erta Ale Lava Lake<i></i><b>613 m</b></li>
+        <li>Afar<i></i><b>−125 m</b></li>
+      </ul>
+    </div>
+
+    <div class="con">
+      <div>
+        <p class="k">Contact</p>
+        <h2 class="h">Get in touch</h2>
+        <div class="con__lines">
+          <p><span>Phone</span>+251 911 204 388</p>
+          <p><span>Email</span>info@ethiopianfilmoffice.com</p>
+          <p><span>Office</span>Meskel Square · Finfine Building, 5th Floor, Addis Ababa</p>
+          <p><span>Hours</span>Monday – Sunday · 24/7</p>
+          <p><span>Web</span>{{URL1}}{{URL2}}</p>
+        </div>
+      </div>
+      <figure class="qrbox">
+        <div class="vf"><i></i><i></i><i></i><i></i></div>
+        <div class="qrtile">{{QR}}</div>
+        <figcaption class="qrcap">[ Scan to enter ]</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="giant" aria-hidden="true">Teddy Studio</p>
+</section>
+
+</body>
+</html>

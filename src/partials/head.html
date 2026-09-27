@@ -33,3 +33,18 @@
     }
   })();
 </script>
+<script>
+  /* LE VOLET, DÈS LE PREMIER AFFICHAGE (27/09/2026). Chaque page s'ouvre par
+     le chevron qui la découvre (`wipe.js`), mais il ne se posait qu'une fois
+     le JavaScript chargé : la page apparaissait d'abord un instant, nue, puis
+     se couvrait, puis se découvrait — « comme si le site se réinitialisait ».
+     La page naît donc couverte (`is-wiping`, le volet fermé en CSS) ; le vrai
+     volet prend le relais au même endroit. Sans JavaScript, rien n'est
+     couvert ; si le script ne vient pas, le filet découvre la page. */
+  (function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var h = document.documentElement;
+    h.classList.add('is-wiping');
+    setTimeout(function () { h.classList.remove('is-wiping'); }, 4000);
+  })();
+</script>

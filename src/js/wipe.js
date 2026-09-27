@@ -77,6 +77,9 @@ function reveal() {
   const t = { s: 1 };
   paint(1);
   root.hidden = false;
+  // Le vrai volet prend le relais de la couverture posée avant le premier
+  // affichage (`head.html`) : même encre, même place, aucun saut.
+  document.documentElement.classList.remove('is-wiping');
   gsap.to(t, { s: 2, duration: REVEAL, ease: 'power3.inOut',
     onUpdate: () => paint(t.s),
     onComplete: () => { root.hidden = true; } });
@@ -85,6 +88,9 @@ function reveal() {
 /** Le panneau entre par la gauche, puis on navigue. */
 function cover(href) {
   if (!root) { location.href = href; return; }
+  // Pendant que le volet couvre (0,65 s), la page suivante se télécharge
+  // déjà : la navigation, ensuite, part du cache au lieu du réseau.
+  try { fetch(href, { credentials: 'same-origin' }).catch(() => {}); } catch { /* sans préchargement */ }
   const t = { s: 0 };
   paint(0);
   root.hidden = false;
@@ -102,7 +108,10 @@ function samePage(url) {
 export function initWipe() {
   if (window.__teddyWipe) return;
   window.__teddyWipe = true;
-  if (reduced()) return;         // pas de volet : la navigation reste franche
+  if (reduced()) {               // pas de volet : la navigation reste franche
+    document.documentElement.classList.remove('is-wiping');
+    return;
+  }
 
   build();
   reveal();

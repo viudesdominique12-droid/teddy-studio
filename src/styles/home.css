@@ -299,6 +299,9 @@ html.hm-gate .hx [data-hx-in] { opacity: 0; }
 .k3 { display: none; }
 .k3-on .k3 { display: block; }
 .k3-on .hm-kit3__rest { display: none; }
+/* Sur écran tactile, la scène épinglée tient le doigt (kit3d.js) : un geste
+   passe d'un outil à l'autre au lieu de faire défiler la page. */
+.k3__stage.is-held { touch-action: none; }
 
 .k3__stage { --gx: 32; position: relative; height: 100svh; overflow: hidden; }
 /* La lueur derrière l'objet : le vert relevé, en ellipse, du côté où il se

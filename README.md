@@ -26,11 +26,12 @@ La refonte est en ligne, avec **trois thèmes** que le client compare : Vert (le
 ### Les documents, du plus récent au plus ancien
 | Fichier | Contenu |
 |---|---|
-| `REFONTE.md` | **À lire en premier.** Le journal de la refonte, vague par vague (1 à 12, 26–27/09 ; la 11 est la fluidité, mesurée dans Safari), avec les demandes de Dominique mot pour mot, et **« Pistes pour la suite »** : tout ce qui reste à faire ou à faire valider par le client. |
+| `REFONTE.md` | **À lire en premier.** Le journal de la refonte, vague par vague (1 à 14, 26–27/09 ; la 11 est la fluidité, mesurée dans Safari), avec les demandes de Dominique mot pour mot, et **« Pistes pour la suite »** : tout ce qui reste à faire ou à faire valider par le client. |
 | `CREDITS.md` | Licences de chaque média, modèle 3D et police. Certains médias sont encore **à confirmer** par le client. |
 | `DECISIONS.md` | Les décisions de Dominique (périmètre, menu, fond vert…). |
 | `DESIGN_SYSTEM.md`, `CONCEPTS.md`, `AUDIT.md`, `RESEARCH.md` | Les phases précédentes (24–26/09) : audit du site de départ, recherche de références, pistes de concept, système de design. Utiles pour le *pourquoi* ; la refonte en ligne a évolué depuis. |
 | `docs/outils/` | Les scripts de vérification (captures, mesure de fluidité sur téléphone et en A/B contre une version de référence — `abperf.mjs`, aussi dans le moteur de Safari —, débordements, version construite) et la préparation des modèles 3D. Ils utilisent Playwright ; adapter les chemins en tête de script. |
+| `docs/flyer/` | Le flyer A5 recto-verso (même direction artistique, QR code vers le site) et de quoi le régénérer. |
 | `docs/archive/` | L'ancienne page d'accueil, pour revenir en arrière si besoin. |
 
 ### Où est le code

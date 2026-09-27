@@ -293,7 +293,10 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
   new IntersectionObserver(([e], io) => {
     const passed = !e.isIntersecting && e.boundingClientRect.top < 0;
     if (!e.isIntersecting && !passed) return;
-    show(passed ? planAt((st ? st.progress : 1) * total) : 0, passed);
+    // Arrivé au milieu de la séquence (un saut, un rechargement) : l'outil du
+    // moment, pas la caméra — sinon la file repasserait par tous les outils.
+    const inside = st && st.isActive;
+    show(passed || inside ? planAt((st ? st.progress : 1) * total) : 0, passed);
     io.disconnect();
   }, { rootMargin: '0px 0px -30% 0px' }).observe(stage);
 
@@ -334,6 +337,71 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       data.deltaY = room;
       return true;
     };
+  }
+
+  /* Sur écran tactile (27/09, Dominique : « sur téléphone, après le drone,
+     quand je swipe, ça descend directement sans faire défiler le reste des
+     objets »). Le doigt lance le défilement du système, avec son élan, que
+     rien n'arrête : un geste traversait la fin de la séquence d'un coup.
+     Tant que la scène est épinglée (elle couvre l'écran), elle tient donc le
+     doigt : un geste vers le haut amène l'outil suivant, vers le bas le
+     précédent, dans un glissé doux (la vie du plan suit, comme au doigt).
+     Après le dernier outil, le geste suivant fait sortir de la séquence ;
+     avant le premier, il fait remonter. Et un élan lancé avant la scène qui
+     la traverserait est arrêté au bout de la séquence, le temps que les
+     derniers outils passent — comme la retenue de l'ordinateur. */
+  if (lenis && LITE) {
+    const last = plans.length - 1;
+    const centre = (i) => st.start + ((plans[i].t0 + plans[i].dur / 2) / total) * (st.end - st.start);
+    const nearest = (y) => {
+      let k = 0;
+      for (let j = 1; j < plans.length; j++) if (Math.abs(centre(j) - y) < Math.abs(centre(k) - y)) k = j;
+      return k;
+    };
+    const done = () => active === last && want === last && performance.now() - since >= SEEN;
+    let touching = false;
+    let prevY = window.scrollY;
+    const hold = () => {
+      const y = window.scrollY;
+      // Un élan (plus de doigt sur l'écran) qui sort par le bas avant le dernier
+      // outil : arrêté au bout de la séquence. Un défilement programmé l'arrête net.
+      if (!touching && lenis.isScrolling !== 'smooth' && prevY <= st.end && y > st.end && !done()) {
+        window.scrollTo(0, st.end);
+        prevY = st.end;
+      } else prevY = y;
+      stage.classList.toggle('is-held', window.scrollY >= st.start - 1 && window.scrollY <= st.end + 1);
+    };
+    window.addEventListener('scroll', hold, { passive: true });
+    window.addEventListener('touchstart', () => { touching = true; }, { passive: true, capture: true });
+    const lift = () => { touching = false; };
+    window.addEventListener('touchend', lift, { passive: true, capture: true });
+    window.addEventListener('touchcancel', lift, { passive: true, capture: true });
+
+    let x0 = 0;
+    let y0 = 0;
+    // Lenis ne doit pas voir ces gestes : il y lirait le doigt qui reprend le
+    // défilement du système, et arrêterait aussitôt le glissé vers l'outil.
+    const mine = (e) => {
+      const held = stage.classList.contains('is-held');
+      if (held) e.lenisStopPropagation = true;
+      return held;
+    };
+    stage.addEventListener('touchstart', (e) => {
+      mine(e);
+      x0 = e.touches[0].clientX;
+      y0 = e.touches[0].clientY;
+    }, { passive: true });
+    stage.addEventListener('touchmove', mine, { passive: true });
+    stage.addEventListener('touchend', (e) => {
+      if (!mine(e)) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      const dy = y0 - e.changedTouches[0].clientY;   // > 0 : le doigt monte
+      if (Math.abs(dy) < 30 || Math.abs(dx) > Math.abs(dy)) return;   // un appui, un geste de côté
+      const j = nearest(window.scrollY) + (dy > 0 ? 1 : -1);
+      const leave = window.innerHeight * 0.35;
+      const to = j < 0 ? st.start - leave : j > last ? st.end + leave : centre(j);
+      lenis.scrollTo(to, { duration: 0.7, force: true });
+    }, { passive: true });
   }
 
   /* ── Le rendu ── */
