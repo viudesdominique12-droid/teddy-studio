@@ -361,30 +361,32 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
   fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
 }
 
-/* L'index : un rond de verre, à droite. */
+/* L'index : un rond plein, à droite — terre cuite et encre basalte, le
+   couple fort du site (Dominique, 27/09 : « orange, comme le orange qu'il y a
+   sur le site »). Dans les autres thèmes, l'accent du thème. */
 .burger {
   order: 9; margin-left: 0.5rem;
   width: 2.75rem; height: 2.75rem; gap: 0.3rem;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--bar-ink) 10%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bar-ink) 15%, transparent);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  color: color-mix(in srgb, var(--bar-ink) 92%, transparent);
+  background: var(--gold);
+  color: var(--basalt);
   transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
 }
+.burger:hover { background: var(--gold-lt); }
 .burger__b { width: 1.1rem; height: 1.5px; }
 .burger[aria-expanded='true'] .burger__b:nth-child(1) { transform: translateY(calc(0.3rem + 1.5px)) rotate(45deg); }
 .burger[aria-expanded='true'] .burger__b:nth-child(3) { transform: translateY(calc(-0.3rem - 1.5px)) rotate(-45deg); }
 @media (max-width: 47.99rem) { .burger { margin-left: auto; } }
 
 /* Sur le contenu (hors de l'ouverture de l'accueil) : un verre plus sombre et
-   une ombre portée — la pilule flotte, elle ne se fond pas dans la page. */
-.bar.is-paper .bar__pill,
-.bar.is-paper .burger {
+   une ombre portée — la pilule flotte, elle ne se fond pas dans la page. Le
+   rond garde sa terre cuite, avec la même ombre. */
+.bar.is-paper .bar__pill {
   background: var(--bar-glass);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bar-ink) 12%, transparent), 0 10px 30px -12px rgb(0 0 0 / 0.55);
   -webkit-backdrop-filter: blur(14px) saturate(1.15); backdrop-filter: blur(14px) saturate(1.15);
 }
+.bar.is-paper .burger { box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.55); }
 /* Le logo, lui, ne prend son verre qu'une fois la page défilée : en haut,
    rien n'est derrière lui. Le verre déborde autour de lui (marges négatives) :
    le logo ne bouge pas d'un pixel quand il apparaît. */

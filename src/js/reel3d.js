@@ -19,7 +19,7 @@
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { reduced } from './motion.js';
+import { reduced, breathe } from './motion.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,14 +84,16 @@ function readPlaces(section) {
   });
 }
 
+/* L'image est décodée hors du fil de la page (`decode`) avant d'être peinte :
+   sinon `drawImage` la décode sur place, en plein défilement. */
 function loadImage(src) {
-  return new Promise((resolve, reject) => {
-    const im = new Image();
-    im.decoding = 'async';
-    im.onload = () => resolve(im);
-    im.onerror = reject;
-    im.src = src;
-  });
+  const im = new Image();
+  im.decoding = 'async';
+  im.src = src;
+  return im.decode().then(() => im, () => new Promise((resolve, reject) => {
+    if (im.complete && im.naturalWidth) resolve(im);
+    else { im.onload = () => resolve(im); im.onerror = reject; }
+  }));
 }
 
 /* La vue d'un lieu, peinte une fois : la photo aux coins arrondis, un voile
@@ -299,6 +301,7 @@ export function initReel(root = document.querySelector('[data-reel]')) {
     started = true;
     try {
       const THREE = await import('three');
+      await breathe();
       let th = themeOf(stage);
       const fontsOf = (t) => Promise.all([
         document.fonts?.load(`500 40px ${t.text}`),
@@ -309,6 +312,7 @@ export function initReel(root = document.querySelector('[data-reel]')) {
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LITE ? 1.25 : 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
+      await breathe();
       const scene = new THREE.Scene();
       scene.fog = new THREE.Fog(th.bg, 14, 44);
 
@@ -342,10 +346,15 @@ export function initReel(root = document.querySelector('[data-reel]')) {
 
       const aniso = renderer.capabilities.getMaxAnisotropy();
       // Les vues arrivent dans l'ordre : celle qu'on voit d'abord est prête la première.
+      // Une vue par image : peinte, envoyée tout de suite à la carte
+      // graphique (hors champ), puis on respire. Sinon les neuf textures
+      // partaient d'un coup à la première image à l'écran : un arrêt de
+      // 180 à 320 ms à l'arrivée sur les lieux, mesuré.
       for (const p of places) {
         try {
           const img = await loadImage(p.tex);
           const tex = paintCard(THREE, img, p, N, aniso, th);
+          renderer.initTexture(tex);
           const g = new THREE.CylinderGeometry(R, R, h, 72, 1, true, p.i * step - arc / 2, arc);
           const mesh = new THREE.Mesh(g, cardMaterial(THREE, tex));
           mesh.userData.i = p.i;
@@ -356,6 +365,18 @@ export function initReel(root = document.querySelector('[data-reel]')) {
         } catch (err) {
           console.warn('[reel]', p.tex, err);
         }
+        await breathe();
+      }
+      // Les shaders et les états de dessin, préparés d'avance aussi. Le dessin
+      // de chauffe passe par une découpe (scissor) vide : aucun pixel touché.
+      await renderer.compileAsync(scene, cam);
+      await breathe();
+      if (!visible) {
+        renderer.setScissorTest(true);
+        renderer.setScissor(0, 0, 0, 0);
+        renderer.render(scene, cam);
+        renderer.setScissorTest(false);
+        lastSig = '';   // le canevas est à redessiner à la prochaine image visible
       }
 
       // Un autre thème : la brume, la grille et les vues se repeignent.

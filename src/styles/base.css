@@ -307,14 +307,22 @@ html.hero-gate [data-hero] { opacity: 0; }
    Le secret est dans `steps(2, end)` : un grain qui GLISSE est un dégradé
    animé ; un grain qui SAUTE est de la pellicule. C'est la seule différence
    entre les deux, et c'est toute la différence. */
+/* Le calque est taillé JUSTE (27/09) : il faisait 180 % × 180 % de l'écran
+   pour un saut de 4 %, soit trois écrans et quart de grain que la carte
+   graphique recomposait, fusion comprise, à chaque image — dans Safari, la
+   quasi-totalité des images en retard du site (mesuré : 33 sur un parcours
+   complet, 3 une fois le calque retaillé). Le grain est le même au pixel
+   près : ses tuiles partent toujours de −40 % de l'écran (reporté sur
+   `background-position`), et le saut est toujours de 2,4 % × 1,8 % de
+   l'ancien calque, soit 4,32 vw × 3,24 vh. */
 body::after {
   content: '';
-  position: fixed; inset: -40%;
-  width: 180%; height: 180%;
+  position: fixed; top: 0; left: 0;
+  width: 106vw; height: 105vh;     /* l'écran, plus le saut */
   z-index: 210;                    /* au-dessus du contenu, sous le curseur (300) */
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-position: 0 0, 197px 113px;
+  background-position: -40vw -40vh, calc(197px - 40vw) calc(113px - 40vh);
   background-size: 9rem, 9rem;
   mix-blend-mode: soft-light;
   opacity: 0.055;
@@ -323,7 +331,7 @@ body::after {
 }
 @keyframes grain {
   0%   { transform: translate3d(0, 0, 0); }
-  50%  { transform: translate3d(-2.4%, -1.8%, 0); }
+  50%  { transform: translate3d(-4.32vw, -3.24vh, 0); }
   100% { transform: translate3d(0, 0, 0); }
 }
 @media (prefers-reduced-motion: reduce) {

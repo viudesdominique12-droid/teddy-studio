@@ -62,13 +62,16 @@
        data-portal="264 663 678 774 678 1422 264 1221" data-center="471 1020" data-rec="1740 981">
     <defs>
       <pattern id="bp-grid" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80"/></pattern>
-      <mask id="bp-hole" maskUnits="userSpaceOnUse" x="-9000" y="-9000" width="20000" height="20000">
-        <rect x="-9000" y="-9000" width="20000" height="20000" fill="#fff"/>
-        <polygon class="bp__portal" points="471 1020 471 1020 471 1020 471 1020" fill="#000"/>
-      </mask>
+      <!-- Le trou du pare-soleil : une découpe (le grand rectangle, percé du
+           quadrilatère en pair-impair), pas un masque. Même géométrie, mais
+           Safari calculait le masque sur le processeur à chaque image, même
+           fermé : 130 ms par image pendant le tracé, contre 33. -->
+      <clipPath id="bp-hole" clipPathUnits="userSpaceOnUse">
+        <path class="bp__portal" clip-rule="evenodd" d="M-9000 -9000L11000 -9000L11000 11000L-9000 11000Z M471 1020L471 1020L471 1020L471 1020Z"/>
+      </clipPath>
       <clipPath id="bp-plot"><rect class="bp__plot" x="-60" y="-80" width="2520" height="1760"/></clipPath>
     </defs>
-    <g mask="url(#bp-hole)">
+    <g clip-path="url(#bp-hole)">
       <rect class="bp__mat" x="-9000" y="-9000" width="20000" height="20000"/>
       <rect class="bp__grid" x="-9000" y="-9000" width="20000" height="20000" fill="url(#bp-grid)"/>
       <rect class="bp__sheet" x="-230" y="-130" width="2860" height="1840" pathLength="1"/>
@@ -603,26 +606,28 @@
            entre dedans. Photo : Vanilla Bear Films / Unsplash. -->
       <div class="cam" aria-hidden="true" data-cam data-lens="1638 848 196 228">
         <svg class="cam__svg" viewBox="0 98 2400 1500" preserveAspectRatio="xMidYMid slice">
+          <!-- Des découpes, pas des masques : même géométrie, mais Safari
+               calculait les trois masques sur le processeur à chaque image
+               (600 ms par image pendant la plongée). Les trous sont des
+               chemins en pair-impair : le grand rectangle, puis le cercle ou
+               l'ellipse (en deux arcs, inclinée de −4°). -->
           <defs>
-            <mask id="cam-lens" maskUnits="userSpaceOnUse" x="-8000" y="-8000" width="18400" height="17600">
-              <rect x="-8000" y="-8000" width="18400" height="17600" fill="#fff"/>
-              <ellipse class="cam__iris" cx="1638" cy="848" rx="0" ry="0" transform="rotate(-4 1638 848)" fill="#000"/>
-            </mask>
-            <mask id="cam-photo" maskUnits="userSpaceOnUse" x="-8000" y="-8000" width="18400" height="17600">
-              <rect x="-8000" y="-8000" width="18400" height="17600" fill="#000"/>
-              <circle class="cam__reveal" cx="1638" cy="848" r="0" fill="#fff"/>
-            </mask>
-            <mask id="cam-draw" maskUnits="userSpaceOnUse" x="-8000" y="-8000" width="18400" height="17600">
-              <rect x="-8000" y="-8000" width="18400" height="17600" fill="#fff"/>
-              <circle class="cam__reveal" cx="1638" cy="848" r="0" fill="#000"/>
-            </mask>
+            <clipPath id="cam-lens" clipPathUnits="userSpaceOnUse">
+              <path class="cam__iris" clip-rule="evenodd" d="M-8000 -8000L10400 -8000L10400 9600L-8000 9600Z M1638 848A0 0 -4 1 0 1638 848A0 0 -4 1 0 1638 848Z"/>
+            </clipPath>
+            <clipPath id="cam-photo" clipPathUnits="userSpaceOnUse">
+              <circle class="cam__reveal" cx="1638" cy="848" r="0"/>
+            </clipPath>
+            <clipPath id="cam-draw" clipPathUnits="userSpaceOnUse">
+              <path class="cam__unreveal" clip-rule="evenodd" d="M-8000 -8000L10400 -8000L10400 9600L-8000 9600Z M1638 848A0 0 0 1 0 1638 848A0 0 0 1 0 1638 848Z"/>
+            </clipPath>
           </defs>
-          <g mask="url(#cam-lens)">
+          <g clip-path="url(#cam-lens)">
             <rect class="cam__mat" x="-8000" y="-8000" width="18400" height="17600"/>
             <image class="cam__photo" x="0" y="0" width="2400" height="1600" preserveAspectRatio="none"
-                   data-href="/cam/camera-2400.webp" data-href-small="/cam/camera-1400.webp" mask="url(#cam-photo)"/>
+                   data-href="/cam/camera-2400.webp" data-href-small="/cam/camera-1400.webp" clip-path="url(#cam-photo)"/>
             <image class="cam__draw" x="0" y="0" width="2400" height="1600" preserveAspectRatio="none"
-                   data-href="/cam/camera-lines-2400.webp" data-href-small="/cam/camera-lines-1400.webp" mask="url(#cam-draw)"/>
+                   data-href="/cam/camera-lines-2400.webp" data-href-small="/cam/camera-lines-1400.webp" clip-path="url(#cam-draw)"/>
           </g>
         </svg>
         <p class="cam__cta"><span class="vf"><span class="cam__btn brk">Scroll to view</span></span></p>

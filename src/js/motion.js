@@ -24,6 +24,15 @@ export const DUR = { clear: 0.52, lift: 0.9, settle: 0.34 };
 export const reduced = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* Rendre la main au navigateur le temps d'une image, entre deux gros travaux
+   (préparer une section, charger un modèle 3D) : une animation en cours garde
+   ses images au lieu d'attendre la fin de tout le lot. Onglet caché : pas
+   d'image à attendre, on continue au plus vite. */
+export const breathe = () => new Promise((done) => {
+  if (document.hidden) setTimeout(done, 0);
+  else requestAnimationFrame(() => setTimeout(done, 0));
+});
+
 /* Les révélations vivent désormais dans `reveal.js` : un seul geste, le
    blur-in, piloté par attribut. Ce module ne garde que ce qui lui est propre —
    le curseur, l'index, la barre. */

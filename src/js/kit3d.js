@@ -28,7 +28,7 @@
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { reduced } from './motion.js';
+import { reduced, breathe } from './motion.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -239,12 +239,49 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
     }
     return i;
   };
-  const show = (i, instant = false) => {
-    if (i === active) return;
+  /* Aucun outil n'est sauté (27/09, Dominique : « le 4, on le voit à peine,
+     il ne s'affiche pas, il est sauté »). Au pas normal, rien ne change : le
+     défilement choisit l'outil à l'écran, au même endroit qu'avant. Mais un
+     geste rapide traversait la course d'un outil (0,5 écran pour une photo)
+     plus vite qu'il ne peut apparaître (~1,2 s) : le suivant le chassait
+     avant même qu'il se montre. Désormais chaque outil reste au moins SEEN
+     à l'écran, puis le suivant prend sa place, dans l'ordre, jusqu'à
+     rejoindre celui que demande le défilement. Les gestes d'entrée, de sortie
+     et la vie du plan sont inchangés. Tout cela, scène épinglée seulement :
+     si elle s'en va (on a quitté la séquence), l'outil demandé vient d'emblée,
+     comme avant — jamais un outil qui apparaît pendant que l'écran défile. */
+  const SEEN = 1300;   // ms : le temps qu'un outil apparaisse en entier
+  let want = -1;       // l'outil que demande le défilement
+  let since = 0;       // l'instant où l'outil à l'écran est entré
+  let wait = 0;        // le passage suivant, en attente
+  const pass = (i, k) => {
     const swap = active >= 0;
     if (swap) leave(plans[active]);
     active = i;
-    enter(plans[i], instant ? 0 : 1, swap);
+    since = performance.now();
+    enter(plans[i], k, swap);
+  };
+  const advance = () => {
+    wait = 0;
+    if (want === active) return;
+    // Par la position, bornes comprises : retenue au bout exact de la séquence,
+    // la scène est encore là, immobile, même si ScrollTrigger la dit libérée.
+    const y = st ? st.scroll() : -1;
+    const pinned = Boolean(st) && y >= st.start - 1 && y <= st.end + 1;
+    const left = since + SEEN - performance.now();
+    if (active >= 0 && pinned && left > 0) { wait = setTimeout(advance, left); return; }
+    pass(active < 0 || !pinned ? want : active + Math.sign(want - active), 1);
+    if (active !== want) wait = setTimeout(advance, SEEN);
+  };
+  const show = (i, instant = false) => {
+    if (instant) {
+      clearTimeout(wait); wait = 0; want = i;
+      if (i !== active) pass(i, 0);
+      return;
+    }
+    if (i === want) return;
+    want = i;
+    if (!wait) advance();
   };
   if (import.meta.env.DEV) window.__k3 = { plans, show, get active() { return active; } };
 
@@ -270,6 +307,34 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
     invalidateOnRefresh: true,
     onUpdate: (self) => show(planAt(self.progress * total))
   });
+
+  /* La scène ne se libère pas tant qu'un outil reste à montrer (27/09,
+     Dominique : « pour le 4, 5 et 6, l'écran descend avec le défilement alors
+     que seul l'objet est censé apparaître »). Un geste de molette ou de pavé
+     tactile qui atteint le bout de la séquence y est retenu le temps que les
+     derniers outils passent, puis le défilement reprend. Au pas normal, rien
+     n'est retenu : chaque outil est déjà passé. En remontant, rien n'est
+     retenu non plus. Sur ordinateur ; le clavier, la barre de défilement et
+     les liens gardent leur course. */
+  const lenis = window.__lenis;
+  if (lenis && !LITE) {
+    const last = plans.length - 1;
+    const previous = lenis.options.virtualScroll;
+    lenis.options.virtualScroll = (data) => {
+      if (previous && previous(data) === false) return false;
+      const e = data.event;
+      if (!e.type.includes('wheel') || e.ctrlKey || lenis.isStopped || data.deltaY <= 0) return true;
+      const from = lenis.targetScroll;
+      if (from > st.end + 1 || from + data.deltaY <= st.end) return true;
+      if (active === last && want === last && performance.now() - since >= SEEN) return true;
+      const room = st.end - from;
+      // Lenis n'empêche le défilement natif que pour ce qu'il traite : un
+      // geste entièrement retenu doit l'être ici.
+      if (room < 0.5) { if (e.cancelable) e.preventDefault(); return false; }
+      data.deltaY = room;
+      return true;
+    };
+  }
 
   /* ── Le rendu ── */
   let three = null;
@@ -356,6 +421,38 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
     renderer.render(scene, cam);
   };
 
+  /* Payer d'avance la première apparition d'un objet. Sans ça, sa première
+     image à l'écran compile ses shaders, envoie ses textures et sa géométrie
+     à la carte graphique et prépare ses états de dessin (Metal, sur Mac) —
+     en pleine entrée du plan : des arrêts de 150 à 700 ms, mesurés. On le
+     fait ici, hors champ et par petits morceaux. Le dessin de chauffe passe
+     par une découpe (scissor) vide : il ne touche aucun pixel. */
+  const warm = async (obj) => {
+    const { renderer, scene, cam } = three;
+    const maps = new Set();
+    obj.traverse((o) => {
+      for (const m of [].concat(o.material || [])) {
+        for (const v of Object.values(m)) if (v && v.isTexture) maps.add(v);
+      }
+    });
+    for (const tex of maps) { renderer.initTexture(tex); await breathe(); }
+    await renderer.compileAsync(obj, cam, scene);
+    await breathe();
+    if (visible) return;   // à l'écran, le rendu normal s'en charge
+    const was = [obj.visible, obj.position.clone(), obj.scale.clone()];
+    obj.visible = true;
+    obj.position.set(0, 0, 0);
+    obj.scale.setScalar(1);
+    renderer.setScissorTest(true);
+    renderer.setScissor(0, 0, 0, 0);
+    renderer.render(scene, cam);
+    renderer.setScissorTest(false);
+    [obj.visible] = was;
+    obj.position.copy(was[1]);
+    obj.scale.copy(was[2]);
+    lastSig = '';   // le canevas est à redessiner à la prochaine image visible
+  };
+
   const start = async () => {
     if (started) return;
     started = true;
@@ -367,23 +464,32 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
     };
 
     try {
+      // Chaque gros morceau du chargement est suivi d'une respiration
+      // (`breathe`) : la page garde ses images pendant qu'il se fait.
       const THREE = await import('three');
+      await breathe();
       const [{ GLTFLoader }, { RoomEnvironment }, { MeshoptDecoder }] = await Promise.all([
         import('three/addons/loaders/GLTFLoader.js'),
         import('three/addons/environments/RoomEnvironment.js'),
         import('three/addons/libs/meshopt_decoder.module.js')
       ]);
+      // Les modèles se décompressent dans deux Web Workers, hors du fil de
+      // la page : le même décodeur, le même résultat.
+      try { MeshoptDecoder.useWorkers?.(2); } catch { /* décodage sur place */ }
+      await breathe();
 
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LITE ? 1.25 : 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.NeutralToneMapping;
       renderer.toneMappingExposure = 1.2;
+      await breathe();
 
       const scene = new THREE.Scene();
       const pmrem = new THREE.PMREMGenerator(renderer);
       scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
       scene.environmentIntensity = 1.1;
+      await breathe();
 
       // Une longue focale, un regard à peine plongeant (6°) : celui d'un
       // photographe de produit. L'ombre se lit comme une ombre, jamais comme
@@ -426,8 +532,11 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
             if (!p.pct || !e.total) return;
             p.pct.textContent = String(Math.round((e.loaded / e.total) * 100)).padStart(3, '0');
           });
-          p.holder = stageModel(THREE, gltf.scene, p);
-          scene.add(p.holder);
+          await breathe();
+          const holder = stageModel(THREE, gltf.scene, p);
+          scene.add(holder);
+          await warm(holder);
+          p.holder = holder;
           p.el.classList.add('is-ready');
           gsap.to(p, { grow: 1, duration: 0.9, ease: 'expo.out' });
         } catch (err) {

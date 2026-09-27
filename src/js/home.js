@@ -19,7 +19,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './scroll.js';
 import { startClocks } from './clock.js';
-import { cursor, indexPanel, bar, reduced } from './motion.js';
+import { cursor, indexPanel, bar, reduced, breathe } from './motion.js';
 import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js';
 import { initWipe } from './wipe.js';
 import { initViewer } from './viewer.js';
@@ -56,15 +56,17 @@ window.addEventListener('index:close', () => window.__lenis?.start());
    départ sont écrits AVANT de lever le gate. */
 function heroIn() {
   const hero = document.querySelector('.hx');
-  if (!hero || reduced()) { ungate(); return; }
+  if (!hero || reduced()) { ungate(); return Promise.resolve(); }
 
   const items = hero.querySelectorAll('[data-hx-in]');
   gsap.set(items, { autoAlpha: 0, y: 20 });
   ungate();
-  gsap.to(items, {
+  // La promesse tient jusqu'à la fin de l'entrée : la page attend ce moment
+  // pour préparer ses sections plus bas (`start`).
+  return gsap.to(items, {
     autoAlpha: 1, y: 0, duration: 1, ease: 'power1.out', stagger: 0.1, delay: 0.1,
     clearProps: 'transform,opacity,visibility'
-  });
+  }).then(() => {});
 }
 
 /* ───────────────────────── Les cascades ─────────────────────────
@@ -157,34 +159,94 @@ async function start() {
   initWhy();
   // Le modèle 3D du matériel est-il là ? On le demande pendant l'ouverture.
   const kit3d = kit3dAvailable();
+  const page = preparer(kit3d);
 
-  await bootReel();
+  /* Le reste de la page se prépare une seule fois, quand ça ne se voit pas :
+     pendant que l'ouverture attend le clic (la page est cachée derrière). */
+  await bootReel({ idle: page.start });
 
-  heroIn();
-  // Les épinglages sont créés dans l'ordre de la page : le matériel (juste
-  // après les services), puis la caméra devant la galerie, puis tout le reste.
-  if (await kit3d) initKit3d();
-  initReel();
-  initGallery();
-  cameraEntry(document.querySelector('.hm-band'));
-
-  // Les titres sortent ligne à ligne, les blocs d'un seul tenant : le geste
-  // des pages intérieures. Les listes et les grilles, en cascade.
-  markReveals('.hm-h, .hm-about__stmt', 'lines');
-  markReveals('.hm-sec .hm-k, .hm-split__head .hm-lede, .hm-head__side, '
-            + '.hm-about__fig, .hm-about__p, .hm-facts, .hm-note, .hm-form');
+  const entrance = heroIn();
   markMagnets('.bar__cta', 26);
-  initReveals();
   initMagnets();
 
-  cascade('.sv__i', { step: 0.05 });
-  cascade('.hm-kit');
-  cascade('.hm-why__i', { step: 0.1 });
-  cascade('.hm-loc');
-  cascade('.hm-film');
+  if (page.started) return;
+  // La page s'ouvre déjà défilée, ou sur une ancre : tout doit être en place
+  // sur-le-champ, comme avant.
+  if (window.scrollY > 0 || location.hash) { page.rush(); return; }
+  /* Tout en haut : après le volet et l'entrée du premier écran (1,5 s), qui
+     gardent ainsi toutes leurs images — ou dès que le visiteur agit. Faire
+     défiler lance la préparation par tranches ; un clic ou une touche la
+     termine d'un coup, avant que le clic ne soit traité : une ancre plus bas
+     (Contact, Locations) doit viser la bonne hauteur, épinglages compris. */
+  const soft = ['wheel', 'touchstart', 'scroll'];
+  const hard = ['pointerdown', 'keydown'];
+  const go = () => {
+    soft.forEach((t) => window.removeEventListener(t, go, true));
+    page.start();
+  };
+  const now = () => {
+    hard.forEach((t) => window.removeEventListener(t, now, true));
+    go();
+    page.rush();
+  };
+  soft.forEach((t) => window.addEventListener(t, go, { capture: true, passive: true }));
+  hard.forEach((t) => window.addEventListener(t, now, { capture: true, passive: true }));
+  entrance.then(go);
+  setTimeout(go, 3000);   // le filet, si l'entrée était interrompue
+}
 
-  ScrollTrigger.refresh();
-  watchHeight();
+/* Les sections plus bas, dans l'ordre de la page. Aucune n'est à l'écran à ce
+   moment-là : le premier écran fait toute la hauteur de la fenêtre.
+   - `start` : par tranches, UNE PAR IMAGE ; le navigateur dessine entre deux.
+     D'un seul bloc, ce travail figeait l'écran 100 à 300 ms, en plein dans une
+     animation (la fin de la plongée dans la caméra, le volet d'arrivée,
+     l'entrée du premier écran).
+   - `rush` : ce qui reste, d'un coup, quand tout doit être en place aussitôt. */
+function preparer(kit3d) {
+  const steps = [
+    // Les épinglages sont créés dans l'ordre de la page : le matériel (juste
+    // après les services), puis la caméra devant la galerie, puis tout le reste.
+    () => { if (kit3d) initKit3d(); },
+    () => initReel(),
+    () => initGallery(),
+    () => cameraEntry(document.querySelector('.hm-band')),
+    // Les titres sortent ligne à ligne, les blocs d'un seul tenant : le geste
+    // des pages intérieures. Les listes et les grilles, en cascade.
+    () => {
+      markReveals('.hm-h, .hm-about__stmt', 'lines');
+      markReveals('.hm-sec .hm-k, .hm-split__head .hm-lede, .hm-head__side, '
+                + '.hm-about__fig, .hm-about__p, .hm-facts, .hm-note, .hm-form');
+      initReveals();
+    },
+    () => {
+      cascade('.sv__i', { step: 0.05 });
+      cascade('.hm-kit');
+      cascade('.hm-why__i', { step: 0.1 });
+      cascade('.hm-loc');
+      cascade('.hm-film');
+    },
+    () => {
+      ScrollTrigger.refresh();
+      // Le défilement doux garde la hauteur de la page en mémoire : les
+      // épinglages viennent de l'allonger. Sans cette mesure, un clic sur une
+      // ancre lancé dans la foulée (`rush`) s'arrêtait à l'ancienne limite.
+      window.__lenis?.resize();
+      watchHeight();
+    }
+  ];
+  let i = 0;
+  let chain = null;
+  const next = () => steps[i++]();
+  return {
+    get started() { return chain !== null || i > 0; },
+    start: () => (chain ||= (async () => {
+      while (i < steps.length) {
+        await breathe();
+        if (i < steps.length) next();
+      }
+    })()),
+    rush: () => { while (i < steps.length) next(); }
+  };
 }
 
 /* La page change de hauteur sans que la fenêtre bouge : un service qu'on

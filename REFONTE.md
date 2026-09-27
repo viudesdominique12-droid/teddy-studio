@@ -325,6 +325,66 @@ Ce qu'a dit Dominique après son essai sur téléphone : « les transitions ne s
 - **Changer de thème** redécoupe maintenant les lignes des titres : un paragraphe gardait sinon les coupures de l'ancienne police.
 - **Vérifié** : sur la version construite, les 5 pages dans les 3 thèmes, sur ordinateur et sur téléphone, sans fichier manquant ni erreur ; aucun débordement ; les épinglages restent à leur place.
 
+## Vague 11 — la fluidité, sans rien changer à l'image (27/09/2026)
+
+Ce qu'a dit Dominique : « le site lag beaucoup, il faut l'optimiser sans rien changer ; certaines transitions n'ont même pas le temps d'avoir lieu ».
+
+- **Les conditions réelles.** Dominique regarde le site dans Safari, sur un MacBook Pro M5, sur batterie et en économie d'énergie. Dans ce mode, Safari plafonne les animations à 30 images/s (60 sur secteur). Chrome, lui, restait presque fluide. La mesure s'est donc faite aussi dans le moteur de Safari (WebKit, via Playwright), toujours contre la version d'origine servie à côté.
+- **Les causes, mesurées dans Safari** :
+  - **L'ouverture** : 7 images/s pendant le tracé, 5 pendant la plongée. Le masque SVG de 20 000 unités était recalculé sur le processeur à chaque image, même fermé.
+  - **La caméra de la galerie** : ses trois masques SVG donnaient des images de 600 ms pendant le zoom.
+  - **La 3D** : 150 à 700 ms d'arrêt à la première apparition de chaque modèle (shaders, textures, états de dessin Metal), et 130 à 370 ms à l'arrivée sur la bobine.
+  - **Le démarrage de l'accueil** : 275 à 460 ms d'un seul bloc (processeur ralenti ×4), en pleine fin de plongée ou pendant le volet d'arrivée.
+  - **Le grain** : un calque de 180 % × 180 % de l'écran, recomposé à chaque image. C'est lui qui causait presque toutes les images en retard restantes.
+  - Le flou des révélations et les verres dépolis ont été mesurés à part : ils ne coûtent rien et n'ont pas été touchés.
+- **Les remèdes**, avec la même image :
+  - **Masques → découpes** : chemins de découpe en pair-impair, de même géométrie. Mêmes animations, même courbe (`index.html`, `refonte.js`).
+  - **La 3D préparée d'avance, hors champ** : les textures sont envoyées à la carte graphique et les shaders compilés (`compileAsync`). Un dessin de chauffe passe à travers une découpe vide, sans toucher aucun pixel. Les modèles se décompressent dans deux Web Workers, et les photos des lieux sont décodées hors du fil de la page (`kit3d.js`, `reel3d.js`).
+  - **Le démarrage par tranches**, une par image (`breathe`, `motion.js`) :
+    - avec l'ouverture, la page se prépare pendant qu'elle attend le clic ;
+    - sans ouverture, après le volet et l'entrée du premier écran, ou dès que le visiteur fait défiler ;
+    - un clic ou une touche termine tout d'un coup : une ancre (Contact, Locations) vise ainsi la bonne hauteur (`home.js`).
+  - **Le grain retaillé au plus juste** : 106 vw × 105 vh. Les tuiles partent toujours de −40 % de l'écran et le saut est le même (`base.css`).
+- **Résultats**, sur les versions construites comme pour GitHub Pages :
+
+  | Moment | Avant | Après |
+  |---|---|---|
+  | Ouverture dans Safari, tracé | 8 images | 36 images |
+  | Ouverture dans Safari, plongée | 8 images, jusqu'à 465 ms | 66 images, aucune en retard |
+  | Accueil dans Safari, pire image | 889 ms | 48 ms |
+  | Accueil dans Safari, images en retard | 20 | 2 |
+  | Accueil dans Chrome, pire image | 133 ms | 17 ms, plus aucune en retard |
+  | Safari au format téléphone, pire image | 907 ms | 44 ms |
+  | Arrivée sur l'accueil depuis Locations | 1 061 ms | 79 ms |
+
+- **Vérifié** :
+  - **L'image ne change pas.** Captures comparées au pixel près à l'original : l'ouverture, la caméra, le grain aux deux positions de son saut, la bobine figée au même instant. Une seule différence : dans Safari, le bord du trou reste net à la fin du zoom, comme dans Chrome. Safari calculait le masque en basse résolution et ce bord était flou.
+  - **Les ancres.** Un clic sur Contact dans la première seconde arrive au même pixel qu'avant, et `/#locations` aussi.
+  - **La construction.** `prodcheck.mjs` : les 5 pages, les 3 thèmes, sur ordinateur et sur téléphone, sans aucun problème.
+- **Pour mesurer à nouveau** : `docs/outils/abperf.mjs`.
+- **À savoir.** En économie d'énergie, Safari bride tout le JavaScript à 30 images/s, y compris le défilement doux (Lenis). Le défilement natif du Mac n'est pas bridé. Piste, à décider avec Dominique : passer au défilement natif quand le navigateur bride la cadence.
+
+## Vague 12 — trois retouches (27/09/2026)
+
+Ce qu'a dit Dominique :
+- « après la première page et la transition, on n'apparaît pas tout en haut mais à What we handle » ;
+- le rond de l'index et « Start a production » : « orange, comme le orange qu'il y a sur le site » ;
+- « le scroll saute trop vite certains kit travel, comme le 4 » ;
+- puis : « l'effet sur le défilement, le mouvement des objets, doit rester exactement identique », et « pour le 4, 5 et 6, l'écran descend avec le défilement alors que seul l'objet est censé apparaître ».
+
+Ce qui a été fait :
+- **L'arrivée en haut.** Quand on entrait d'un geste de pavé tactile, la lancée du geste faisait encore défiler la page après la plongée. On arrivait sur les services, et même à 1 941 px dans Safari. Ce défaut existait déjà avant la vague 11. Désormais, le défilement ne reprend que quand le geste s'est tu : 200 ms sans molette, 2 s au plus (`bootReel`, `refonte.js`).
+- **Les deux boutons en terre cuite.** Le rond de l'index, sur les cinq pages, et « Start a production » de l'accueil sont désormais en terre cuite pleine avec l'encre basalte (contraste 5,2:1) : le couple de la bande des clients.
+  - Au survol, ils passent à `--gold-lt`.
+  - Dans les autres thèmes, ils prennent l'accent du thème : ambre pour Nuit, vert vif pour Papier.
+  - Leur verre dépoli est retiré, puisqu'il ne sert à rien sur un aplat. L'index ouvert ne change pas (`refonte.css`, `home.css`).
+- **Le matériel : aucun outil n'est plus sauté, et rien d'autre ne change.**
+  - **La mesure.** À 400 px/s, l'éclairage et les micros n'apparaissaient jamais. À 700 px/s, seuls la caméra et le fond vert apparaissaient. L'arrivée d'un outil dure environ 1,2 s, alors qu'une photo n'a que 0,5 écran de course.
+  - **Un essai retiré.** J'ai essayé « un outil par geste » (défilement guidé), puis je l'ai retiré : le défilement et le mouvement des objets doivent rester identiques.
+  - **Chaque outil a son temps.** Il reste au moins 1,3 s à l'écran, puis le suivant prend sa place, dans l'ordre, avec les mêmes gestes d'entrée et de sortie. Au pas normal (250 px/s), les outils changent aux mêmes pixels qu'avant.
+  - **La scène ne se libère pas trop tôt.** Tant que le dernier outil n'est pas passé, un geste qui atteint le bout de la séquence y est retenu, puis le défilement reprend. Cela vaut vers le bas seulement, et sur ordinateur. Si l'on quitte la séquence autrement (clavier, barre, téléphone), l'outil demandé s'affiche directement, comme avant : jamais un outil qui apparaît pendant que l'écran défile.
+  - **Vérifié** à 250, 400, 700, 1 100 et 2 000 px/s, et avec des gestes de pavé tactile : les six outils sont vus à chaque fois, tous avec la scène immobile (`show`, `advance` et la retenue dans `kit3d.js`).
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).

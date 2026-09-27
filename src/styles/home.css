@@ -172,13 +172,14 @@
   font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
   transition: background-color 0.3s var(--e-out), color 0.3s var(--e-out);
 }
+/* L'appel principal, plein : terre cuite et encre basalte, comme la bande des
+   clients (Dominique, 27/09 : « orange, comme le orange qu'il y a sur le
+   site »). Dans les autres thèmes, l'accent du thème. */
 .hx__btn {
-  background: color-mix(in srgb, var(--ink) 10%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 15%, transparent);
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  color: var(--ink);
+  background: var(--gold);
+  color: var(--basalt);
 }
-.hx__btn:hover { background: color-mix(in srgb, var(--ink) 16%, transparent); }
+.hx__btn:hover { background: var(--gold-lt); }
 .hx__link { color: color-mix(in srgb, var(--ink) 90%, transparent); }
 .hx__link:hover { color: var(--ink); }
 .hx__ico {

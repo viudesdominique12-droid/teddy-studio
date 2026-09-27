@@ -44,7 +44,9 @@ function decodeOne(src) {
   });
 }
 
-export function bootReel() {
+/* `idle` : appelé une fois le plan tracé et le premier écran chargé, quand
+   l'ouverture ne fait plus qu'attendre le clic (jamais si l'on entre avant). */
+export function bootReel({ idle } = {}) {
   const el = document.getElementById('boot');
   const root = document.documentElement;
   clearTimeout(window.__bootSafety);
@@ -77,6 +79,10 @@ export function bootReel() {
   const [CX, CY] = nums(svg.dataset.center);
   const [RX, RY] = nums(svg.dataset.rec);               // le vrai bouton REC de la caméra
   const corners = [0, 2, 4, 6].map((i) => [Q[i], Q[i + 1]]);
+  /* Le trou est une découpe en pair-impair (index.html) : le grand rectangle,
+     puis le quadrilatère. Ses quatre coins partent du centre, comme ceux de
+     l'ancien polygone de masque. */
+  const hole = (pts) => `M-9000 -9000L11000 -9000L11000 11000L-9000 11000Z M${pts.map(([x, y]) => `${x} ${y}`).join('L')}Z`;
   const m = { rx: 0, ry: 0, cx: 0, cy: 0, s: 1 };
 
   /* Le plan est posé en « meet » ; sur écran étroit on recadre sur la caméra
@@ -125,7 +131,7 @@ export function bootReel() {
   gsap.set(inks, { strokeDasharray: 1, strokeDashoffset: 1 });
   gsap.set(labels, { autoAlpha: 0 });
   gsap.set(plot, { attr: { width: 0 } });
-  gsap.timeline()
+  const trace = gsap.timeline()
     .to(head, { opacity: 1, duration: 0.2 }, 0.15)
     .to(plot, { attr: { width: 2520 }, duration: 1.8, ease: 'power1.inOut' }, 0.15)
     .to(head, { attr: { x1: 2460, x2: 2460 }, duration: 1.8, ease: 'power1.inOut' }, 0.15)
@@ -149,6 +155,21 @@ export function bootReel() {
     let entered = false;
     const intents = ['wheel', 'touchmove', 'keydown'];
 
+    /* Le geste qui fait entrer — la molette, le pavé tactile — continue sur
+       sa lancée une à deux secondes (l'inertie du système). Relancé dès la
+       fin de la plongée, le défilement la prenait, et l'on n'arrivait pas en
+       haut de la page mais plus bas, sur les services (ou plus loin). On
+       attend donc que le geste se taise, 2 s au plus. */
+    let lastWheel = 0;
+    const note = () => { lastWheel = performance.now(); };
+    window.addEventListener('wheel', note, { passive: true });
+    const whenStill = (done, until = performance.now() + 2000) => {
+      if (performance.now() - lastWheel > 200 || performance.now() > until) {
+        window.removeEventListener('wheel', note);
+        done();
+      } else setTimeout(() => whenStill(done, until), 50);
+    };
+
     const enter = () => {
       if (entered) return;
       entered = true;
@@ -161,7 +182,7 @@ export function bootReel() {
         .to(go, { scale: 0.86, duration: 0.12, ease: 'power2.out' })                       // on appuie sur REC
         .to(go, { autoAlpha: 0, scale: 1.3, duration: 0.4, ease: 'power2.in' })
         .to(chrome, { autoAlpha: 0, duration: 0.4 }, '<')
-        .to(portal, { attr: { points: Q.join(' ') }, duration: 0.55, ease: 'power3.out' }, '-=0.2')  // le pare-soleil s'ouvre
+        .to(portal, { attr: { d: hole(corners) }, duration: 0.55, ease: 'power3.out' }, '-=0.2')  // le pare-soleil s'ouvre
         .to(svg, {
           x: () => m.W / 2 - m.cx,
           y: () => m.H / 2 - m.cy,
@@ -174,7 +195,7 @@ export function bootReel() {
           el.remove();
           root.classList.remove('is-booting');
           root.classList.add('is-ready');
-          window.__lenis?.start();
+          whenStill(() => window.__lenis?.start());
         });
     };
 
@@ -210,9 +231,14 @@ export function bootReel() {
         onComplete: () => { if (state) state.textContent = 'Ready'; }
       });
     };
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', run, { once: true });
-    } else run();
+    const loaded = document.readyState === 'loading'
+      ? new Promise((done) => document.addEventListener('DOMContentLoaded', () => done(run()), { once: true }))
+      : run();
+    /* Le plan tracé, le premier écran chargé : l'ouverture ne fait plus
+       qu'attendre. La page, cachée derrière, peut se préparer maintenant —
+       et non plus pendant la plongée, où ce travail volait les images du
+       geste (des à-coups de 100 à 200 ms, mesurés, à la fin du zoom). */
+    if (idle) Promise.all([trace.then(() => {}), loaded]).then(() => { if (!entered) idle(); });
   });
 }
 
@@ -524,10 +550,23 @@ export function cameraEntry(gal = document.querySelector('.gal')) {
   if (reduced()) { cam.remove(); return; }
 
   const svg = cam.querySelector('.cam__svg');
-  const reveals = cam.querySelectorAll('.cam__reveal');
+  const reveal = cam.querySelector('.cam__reveal');
+  const unreveal = cam.querySelector('.cam__unreveal');
   const iris = cam.querySelector('.cam__iris');
   const cta = cam.querySelector('.cam__cta');
   const [LX, LY, RX, RY] = cam.dataset.lens.split(' ').map(Number);
+  /* Les trous des découpes (index.html) : le grand rectangle, puis un cercle
+     ou l'ellipse inclinée de −4°, chacun en deux arcs. Tous leurs nombres
+     varient en proportion du rayon : le tween d'attribut interpole donc
+     exactement la forme qu'aurait l'ellipse ou le cercle à chaque instant. */
+  const OUTER = 'M-8000 -8000L10400 -8000L10400 9600L-8000 9600Z';
+  const ring = (r) => `${OUTER} M${LX + r} ${LY}A${r} ${r} 0 1 0 ${LX - r} ${LY}A${r} ${r} 0 1 0 ${LX + r} ${LY}Z`;
+  const TILT = -4;
+  const oval = (rx, ry) => {
+    const dx = rx * Math.cos((TILT * Math.PI) / 180);
+    const dy = rx * Math.sin((TILT * Math.PI) / 180);
+    return `${OUTER} M${LX + dx} ${LY + dy}A${rx} ${ry} ${TILT} 1 0 ${LX - dx} ${LY - dy}A${rx} ${ry} ${TILT} 1 0 ${LX + dx} ${LY + dy}Z`;
+  };
   const IW = 2400;
   const IH = 1600;
   const FOCUS_X = 1560;   // écran étroit : on cadre un peu à gauche de la lentille, pour garder la bague
@@ -572,9 +611,10 @@ export function cameraEntry(gal = document.querySelector('.gal')) {
       onRefreshInit: measure
     }
   })
-    .to(reveals, { attr: { r: 2000 }, duration: 0.3, ease: 'power1.inOut' }, 0)
+    .to(reveal, { attr: { r: 2000 }, duration: 0.3, ease: 'power1.inOut' }, 0)
+    .to(unreveal, { attr: { d: ring(2000) }, duration: 0.3, ease: 'power1.inOut' }, 0)
     .to(cta, { autoAlpha: 0, scale: 0.92, duration: 0.1 }, 0.12)
-    .to(iris, { attr: { rx: RX, ry: RY }, duration: 0.14, ease: 'power2.out' }, 0.3)
+    .to(iris, { attr: { d: oval(RX, RY) }, duration: 0.14, ease: 'power2.out' }, 0.3)
     .fromTo(svg,
       { x: 0, y: 0, scale: 1, transformOrigin: origin },
       { x: () => m.dx, y: () => m.dy, scale: () => m.s, transformOrigin: origin, duration: 0.56, ease: 'power3.in' },
