@@ -430,6 +430,32 @@ Ce qu'a dit Dominique : « sur téléphone, après le drone, quand je swipe, il 
   - Deux PDF : 148 × 210 mm, et la version imprimeur de 154 × 216 mm avec 3 mm de fond perdu, TrimBox et BleedBox.
   - Le QR code est lu par Vision d'Apple, et mène à l'adresse GitHub Pages. À régénérer quand le site aura son domaine.
 
+## Vague 15 — le matériel au doigt, sur iPhone (27/09/2026)
+
+Ce qu'a dit Dominique, sur son téléphone, avec la vague 14 en ligne : « toujours la même chose : quand je scroll après l'objet 3, l'écran défile vers le bas et n'attend pas les objets 4, 5 et 6 ».
+
+Trois causes, dont deux propres à l'iPhone, que l'émulation de Chrome ne montrait pas :
+
+- **Le geste comptait depuis la position de la page.** Il ne comptait pas depuis l'outil à l'écran. Or un élan peut porter la page au bout de la séquence alors que le drone est encore à l'écran, les outils suivants attendant leur tour. Le geste suivant demandait « l'outil d'après le bout », c'est-à-dire la sortie. **Corrigé :** un geste compte toujours depuis l'outil à l'écran (ou celui que le doigt vient de demander). Il amène l'éclairage après le drone, quoi que fasse la page. On ne sort par le bas qu'une fois le dernier outil vu.
+- **Sur iPhone, un saut de la page ne coupe pas l'élan.** Le code de WebKit (`_scrollToContentScrollPosition`) le montre : un `scrollTo` instantané déplace la page, mais l'élan du doigt repart du nouveau point. Seul un défilement **animé** l'interrompt. La retenue de la vague 14 ramenait donc la page au bout de la séquence, puis l'élan l'emportait quand même. **Corrigé :** un élan qui descend dans la scène est freiné par un défilement animé, sur l'outil à l'écran. Chrome l'interrompt de la même façon.
+- **Le doigt n'était tenu que par `touch-action`.** **Corrigé :** tant que la scène est épinglée, un écouteur `touchmove` non passif appelle `preventDefault`, ce que tous les iPhone respectent. Il est posé sur la fenêtre, donc il tient aussi la bande du bas de l'écran que la scène (`100svh`) ne couvre pas quand la barre de Safari est repliée. Hors de la scène, il est retiré : le défilement du téléphone démarre sans attendre la page.
+
+Ce qui ne change pas :
+
+- Un appui sur une photo ouvre toujours la visionneuse.
+- Un lien ou le menu traversent la séquence sans être freinés.
+- La position rendue au retour sur la page n'est pas prise pour un élan.
+- Sur ordinateur, rien ne change : le bloc ne concerne que les écrans tactiles.
+
+**Vérifié** en émulation de téléphone, et à nouveau sans la règle `touch-action` pour prouver que `preventDefault` suffit seul :
+
+- Deux élans vigoureux depuis le dessus : la page reste dans la séquence, puis un geste par outil, dans l'ordre, jusqu'au fond vert, puis la sortie.
+- Page portée au bout avec le drone à l'écran : le geste suivant amène les micros après l'éclairage, sans sortir.
+- Trois gestes rapides : Objectifs → Drone → Éclairage, chacun montré en entier.
+- Sur ordinateur : les outils changent aux mêmes positions (551 / 1154 / 1759 / 2188 / 2617 px).
+
+Le test sur un vrai iPhone reste à faire par Dominique : il n'y a ni Xcode ni simulateur sur ce Mac.
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).

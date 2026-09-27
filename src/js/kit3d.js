@@ -341,67 +341,109 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
 
   /* Sur écran tactile (27/09, Dominique : « sur téléphone, après le drone,
      quand je swipe, ça descend directement sans faire défiler le reste des
-     objets »). Le doigt lance le défilement du système, avec son élan, que
-     rien n'arrête : un geste traversait la fin de la séquence d'un coup.
-     Tant que la scène est épinglée (elle couvre l'écran), elle tient donc le
-     doigt : un geste vers le haut amène l'outil suivant, vers le bas le
-     précédent, dans un glissé doux (la vie du plan suit, comme au doigt).
-     Après le dernier outil, le geste suivant fait sortir de la séquence ;
-     avant le premier, il fait remonter. Et un élan lancé avant la scène qui
-     la traverserait est arrêté au bout de la séquence, le temps que les
-     derniers outils passent — comme la retenue de l'ordinateur. */
+     objets », puis, sur son iPhone : « après l'objet 3, l'écran défile vers
+     le bas et n'attend pas les objets 4, 5 et 6 »). Le doigt lance le
+     défilement du système, avec son élan : un geste traversait la séquence
+     d'un coup. Désormais, tant que la scène est épinglée (elle couvre
+     l'écran), elle tient le doigt : un geste vers le haut amène l'outil
+     suivant, vers le bas le précédent, dans un glissé doux (la vie du plan
+     suit, comme au doigt). Un geste compte depuis l'outil À L'ÉCRAN, jamais
+     depuis la position de la page : la page peut être en avance sur les
+     outils (un élan l'a portée loin), et le geste suivant la faisait alors
+     sortir avant le 4, le 5 et le 6. On ne sort par le bas qu'une fois le
+     dernier outil vu ; avant le premier, un geste fait remonter.
+     Un élan venu d'au-dessus est arrêté en entrant dans la scène, sur
+     l'outil à l'écran. Sur iPhone, un saut de la page (scrollTo) ne coupe
+     PAS l'élan du système : il repart du nouveau point (WebKit ne
+     l'interrompt que pour un défilement animé, `_scrollToContentScrollPosition`).
+     D'où le défilement animé du frein. Et le doigt est tenu par un
+     `preventDefault` sur `touchmove`, que tous les iPhone respectent,
+     en plus de `touch-action`. */
   if (lenis && LITE) {
     const last = plans.length - 1;
+    const html = document.documentElement;
     const centre = (i) => st.start + ((plans[i].t0 + plans[i].dur / 2) / total) * (st.end - st.start);
-    const nearest = (y) => {
-      let k = 0;
-      for (let j = 1; j < plans.length; j++) if (Math.abs(centre(j) - y) < Math.abs(centre(k) - y)) k = j;
-      return k;
-    };
+    const inside = (y) => y >= st.start - 1 && y <= st.end + 1;
     const done = () => active === last && want === last && performance.now() - since >= SEEN;
+    let goal = -1;       // l'outil que le doigt a demandé (la file peut être en retard)
+    let ours = 0;        // jusqu'à cet instant, la page bouge de notre fait (glissé, frein)
     let touching = false;
-    let prevY = window.scrollY;
-    const hold = () => {
-      const y = window.scrollY;
-      // Un élan (plus de doigt sur l'écran) qui sort par le bas avant le dernier
-      // outil : arrêté au bout de la séquence. Un défilement programmé l'arrête net.
-      if (!touching && lenis.isScrolling !== 'smooth' && prevY <= st.end && y > st.end && !done()) {
-        window.scrollTo(0, st.end);
-        prevY = st.end;
-      } else prevY = y;
-      stage.classList.toggle('is-held', window.scrollY >= st.start - 1 && window.scrollY <= st.end + 1);
-    };
-    window.addEventListener('scroll', hold, { passive: true });
-    window.addEventListener('touchstart', () => { touching = true; }, { passive: true, capture: true });
-    const lift = () => { touching = false; };
-    window.addEventListener('touchend', lift, { passive: true, capture: true });
-    window.addEventListener('touchcancel', lift, { passive: true, capture: true });
-
+    let grab = false;    // le geste en cours appartient à la scène
     let x0 = 0;
     let y0 = 0;
+    let prevY = window.scrollY;
+
+    const glide = (to, ms) => {
+      ours = performance.now() + ms + 300;   // + la dernière image du glissé
+      lenis.scrollTo(to, { duration: ms / 1000, force: true });
+    };
+    const brake = (to) => {
+      ours = performance.now() + 900;
+      goal = -1;
+      window.scrollTo({ top: to, behavior: 'smooth' });
+    };
+    const step = (dir) => {
+      const j = (goal >= 0 ? goal : Math.max(active, 0)) + dir;
+      if (j > last && !done()) return;   // le dernier outil entre encore
+      const leave = window.innerHeight * 0.35;
+      goal = j < 0 || j > last ? -1 : j;
+      glide(j < 0 ? st.start - leave : j > last ? st.end + leave : centre(j), 700);
+    };
+
     // Lenis ne doit pas voir ces gestes : il y lirait le doigt qui reprend le
     // défilement du système, et arrêterait aussitôt le glissé vers l'outil.
-    const mine = (e) => {
-      const held = stage.classList.contains('is-held');
-      if (held) e.lenisStopPropagation = true;
-      return held;
+    // Tout se passe à la capture, avant lui.
+    const opt = { passive: true, capture: true };
+    const move = (e) => {
+      if (!grab) return;
+      e.lenisStopPropagation = true;
+      if (e.cancelable) e.preventDefault();
     };
-    stage.addEventListener('touchstart', (e) => {
-      mine(e);
+    let moveOn = false;
+    const hold = () => {
+      const y = window.scrollY;
+      // Un élan (plus de doigt sur l'écran) qui descend dans la scène, ou en
+      // sort par le bas avant le dernier outil : arrêté sur l'outil à l'écran.
+      // Pas un défilement programmé (un lien, le menu), ni un saut de plus
+      // d'un demi-écran (la position rendue au retour sur la page) : ce n'est
+      // pas un élan.
+      const coast = !touching && lenis.isScrolling !== 'smooth' && performance.now() > ours
+        && y > prevY && y - prevY < window.innerHeight / 2;
+      if (coast && y >= st.start - 1 && prevY <= st.end + 1 && !done()) brake(centre(Math.max(active, 0)));
+      if (!inside(y)) goal = -1;
+      prevY = y;
+      const held = inside(y);
+      stage.classList.toggle('is-held', held);
+      // Le doigt n'est retenu (écouteur non passif) que scène épinglée : ailleurs,
+      // le défilement du téléphone démarre sans attendre la page.
+      if (held !== moveOn) {
+        moveOn = held;
+        if (held) window.addEventListener('touchmove', move, { passive: false, capture: true });
+        else window.removeEventListener('touchmove', move, { capture: true });
+      }
+    };
+    window.addEventListener('scroll', hold, { passive: true });
+    hold();
+
+    window.addEventListener('touchstart', (e) => {
+      touching = true;
+      grab = e.touches.length === 1 && inside(window.scrollY) && !html.classList.contains('is-locked');
+      if (!grab) { goal = -1; return; }
+      e.lenisStopPropagation = true;
       x0 = e.touches[0].clientX;
       y0 = e.touches[0].clientY;
-    }, { passive: true });
-    stage.addEventListener('touchmove', mine, { passive: true });
-    stage.addEventListener('touchend', (e) => {
-      if (!mine(e)) return;
+    }, opt);
+    window.addEventListener('touchend', (e) => {
+      touching = e.touches.length > 0;
+      if (!grab) return;
+      e.lenisStopPropagation = true;
+      grab = false;
       const dx = e.changedTouches[0].clientX - x0;
       const dy = y0 - e.changedTouches[0].clientY;   // > 0 : le doigt monte
       if (Math.abs(dy) < 30 || Math.abs(dx) > Math.abs(dy)) return;   // un appui, un geste de côté
-      const j = nearest(window.scrollY) + (dy > 0 ? 1 : -1);
-      const leave = window.innerHeight * 0.35;
-      const to = j < 0 ? st.start - leave : j > last ? st.end + leave : centre(j);
-      lenis.scrollTo(to, { duration: 0.7, force: true });
-    }, { passive: true });
+      step(dy > 0 ? 1 : -1);
+    }, opt);
+    window.addEventListener('touchcancel', () => { touching = false; grab = false; }, opt);
   }
 
   /* ── Le rendu ── */
