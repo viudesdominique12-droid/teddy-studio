@@ -29,8 +29,7 @@ html.is-booting body { overflow: hidden; }
 .why__item h3 {
   font-family: var(--ff-d);
   font-size: clamp(1.25rem, 1.7vw, 1.6rem);
-  line-height: 1.06; letter-spacing: var(--ls-d);
-  font-variation-settings: 'wdth' 104, 'wght' 700;
+  line-height: 1.06; letter-spacing: -0.01em;
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: var(--s-4);
@@ -126,7 +125,7 @@ html.is-booting body { overflow: hidden; }
    généré ; la seconde déclaration lui donne un texte alternatif vide, pour
    que les lecteurs d'écran ne lisent pas « crochet ». */
 .brk {
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: 0.6875rem; letter-spacing: 0.08em; line-height: 1.5;
   text-transform: uppercase;
 }
@@ -182,7 +181,7 @@ html.is-booting .boot { display: block; }
   fill: none; stroke: color-mix(in srgb, var(--cream) 42%, transparent); stroke-width: 1.8;
 }
 .bp__block text { font-size: 17px; }
-.bp__block .bp__strong { fill: var(--cream); font-weight: 700; }
+.bp__block .bp__strong { fill: var(--cream); }
 @media (max-width: 48rem) { .bp__notes, .bp__block, .bp__sheet { display: none; } }
 
 .boot__top {
@@ -191,6 +190,8 @@ html.is-booting .boot { display: block; }
   color: var(--cream-2);
 }
 .boot__top p { margin: 0; }
+/* L'heure du plan : des chiffres, dans leur voix (crochets compris). */
+#boot-clock { font-family: var(--ff-n); letter-spacing: 0.034em; font-variant-numeric: tabular-nums lining-nums; }
 
 /* La lentille est le bouton : l'anneau « Click to enter » tourne dans le
    verre, le point REC au centre. */
@@ -233,7 +234,10 @@ html.is-booting .boot { display: block; }
   position: absolute; left: 50%; bottom: calc(var(--hud-in) + 0.9rem);
   translate: -50% 0; margin: 0; white-space: nowrap; color: var(--cream-2);
 }
-.boot__read [data-boot-pct] { font-variant-numeric: tabular-nums; color: var(--gold-lt); }
+.boot__read [data-boot-pct] {
+  font-family: var(--ff-n); letter-spacing: 0.034em; font-variant-numeric: tabular-nums lining-nums;
+  color: var(--gold-lt);
+}
 .boot__gauge { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--line-2); }
 .boot__fill { display: block; height: 100%; background: var(--gold); transform-origin: left center; scale: 0 1; }
 /* L'anneau dit déjà « Click to enter » : l'étiquette ferait doublon sur le plan. */
@@ -257,7 +261,6 @@ html.is-booting .boot { display: block; }
 
 .hero__h {
   font-family: var(--ff-d);
-  font-variation-settings: 'wdth' 62, 'wght' 800; font-weight: 800;
   line-height: 0.8; letter-spacing: -0.012em;
   text-transform: uppercase;
   color: var(--cream);
@@ -346,7 +349,6 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
   display: flex; align-items: center; justify-content: center;
   white-space: nowrap;
   font-family: var(--ff-d);
-  font-variation-settings: 'wdth' 62, 'wght' 800; font-weight: 800;
   font-size: clamp(4.6rem, 14vw, 13rem); line-height: 1; text-transform: uppercase;
   transform-style: preserve-3d;
 }
@@ -395,7 +397,7 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
   position: absolute; left: 50%; bottom: calc(100% + 18px);
   translate: -50% 5px; opacity: 0; pointer-events: none;
   white-space: nowrap;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--cream);
   transition: opacity 0.3s var(--e-expo), translate 0.5s var(--e-expo);
@@ -424,28 +426,34 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
 .hm-wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad-x); }
 
 /* ─────────────── Les trois voix ───────────────
-   L'étiquette (mono, capitales espacées), le titre (Archivo serrée, comme
-   `.phead__h` des pages intérieures), le chapô (le corps, en gris). */
+   L'étiquette (Plex Sans semi-étroite, capitales espacées), le titre
+   (Archivo Black en capitales, comme `.phead__h` des pages intérieures),
+   le chapô (le corps, en gris). */
 .hm-k {
   display: flex; align-items: center; gap: 0.8em;
   margin: 0 0 var(--s-5);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); line-height: 1.4;
   letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .hm-k .go-dot { width: 0.55em; height: 0.55em; }
 
+/* En Archivo Black (18/10/2026), les titres sont ~11 % plus larges, et le
+   `ch` de 8 % seulement : à 14ch, « THE KIT TRAVELS » passait sur deux
+   lignes. À 14,6ch, chaque titre garde ses coupures d'avant, à l'ordinateur
+   comme au téléphone (« SEVEN / DIVISIONS. » reste sur trois). */
 .hm-h {
-  max-width: 14ch;
+  max-width: 14.6ch;
   font-family: var(--ff-d);
   font-size: var(--fs-d1);
-  line-height: 0.98; letter-spacing: -0.03em;
-  font-variation-settings: 'wdth' 84, 'wght' 740;
+  line-height: 0.98; letter-spacing: var(--ls-d);
   text-transform: uppercase;
   color: var(--cream);
 }
-.hm-h--wide { max-width: none; }
+/* Le titre des lieux, trois phrases : un cran plus petit que les autres,
+   sans quoi « ONE PERMIT JURISDICTION. » dépasse sa colonne et se coupe. */
+.hm-h--wide { max-width: none; font-size: calc(var(--fs-d1) * 0.86); }
 /* Une phrase par ligne, quand la place le permet. */
 .hm-br { display: block; }
 @media (max-width: 40rem) { .hm-br { display: inline; } }
@@ -456,7 +464,7 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
   display: inline-flex; align-items: center; gap: 0.55em;
   padding: 0.35em 0.7em;
   border: 1px solid var(--line);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); line-height: 1.2; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--cream-2); white-space: nowrap;
 }
@@ -469,7 +477,7 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
 
 .hm-note {
   margin-top: var(--s-6);
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--cream-3);
 }
@@ -512,11 +520,11 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
 
 /* ═══════════════════ L'OUVERTURE DE PAGE ═══════════════════
    Le modèle choisi par Dominique (21st.dev, « responsive hero banner »,
-   27/09/2026), repris dans sa disposition : au centre un badge, le titre en
-   serif, une phrase, deux appels ; en bas du même écran, les clients qui
+   27/09/2026), repris dans sa disposition : au centre un badge, le grand
+   titre, une phrase, deux appels ; en bas du même écran, les clients qui
    défilent. Sans photo de fond (« enlève cette photo de fond ») : le vert
-   nuit de la page. La serif est Fraunces, déjà celle de l'index : aucune
-   police de plus à charger. */
+   nuit de la page. Le titre est l'affiche du site, l'Archivo Black (en
+   Fraunces jusqu'au 18/10/2026) : aucune police de plus à charger. */
 .hx {
   position: relative; isolation: isolate; overflow: hidden;
   display: flex; flex-direction: column;
@@ -545,7 +553,7 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
   background: color-mix(in srgb, var(--ink) 10%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 15%, transparent);
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  font-family: var(--ff-t); font-size: 0.875rem; line-height: 1.25rem;
   color: color-mix(in srgb, var(--ink) 90%, transparent);
 }
 /* Les sept divisions défilent dans le badge, une à une (`home.js`). */
@@ -565,25 +573,30 @@ html.js .hx__roll > span + span { visibility: visible; opacity: 0; }
   flex: none;
   padding: 0.125rem 0.5rem; border-radius: 999px;
   background: color-mix(in srgb, var(--ink) 90%, transparent); color: var(--ink-inv);
-  font-size: 0.75rem; line-height: 1rem; font-variant-numeric: tabular-nums;
+  font-size: 0.75rem; line-height: 1rem;
 }
+/* L'heure d'Addis, en direct : une horloge, dans la voix des chiffres. */
+.hx__chip time { font-family: var(--ff-n); font-weight: 600; letter-spacing: 0.02em; font-variant-numeric: tabular-nums lining-nums; }
 
+/* L'Archivo Black est 46 % plus large que la Fraunces d'avant : le titre
+   passe un cran plus petit (85 px contre 98 à 1440 px), sur une ligne. */
 .hx__h {
   font-family: var(--ff-p);
-  font-size: clamp(2.6rem, 0.9rem + 5.8vw, 7rem);
+  font-size: clamp(2.5rem, 0.8rem + 5vw, 6rem);
   font-weight: 400;
-  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
-  line-height: 1.1; letter-spacing: -0.025em;
+  line-height: 1; letter-spacing: var(--ls-hero);
   color: var(--ink);
 }
 .hx__br { display: none; }
 /* Le titre du brief (§10.A), en deux temps : la promesse en grand, puis ce
-   qui la porte, plus petit, en italique, dans l'accent du thème. Chaque mot
-   monte de son masque à l'arrivée (`home.js`). */
+   qui la porte, plus petit, en Plex Sans droite (aucune italique n'est
+   servie), dans l'accent du thème. Chaque mot monte de son masque à
+   l'arrivée (`home.js`). */
 .hx__h-a, .hx__h-b { display: block; }
 .hx__h-b {
-  margin-top: 0.12em;
-  font-size: 0.46em; font-style: italic; line-height: 1.12; letter-spacing: -0.015em;
+  margin-top: 0.3em;
+  font-family: var(--ff-t); font-weight: 400;
+  font-size: 0.5em; line-height: 1.15; letter-spacing: -0.012em;
   color: color-mix(in srgb, var(--gold-lt) 88%, var(--ink));
   text-wrap: balance;
 }
@@ -601,7 +614,7 @@ html.js .hx__roll > span + span { visibility: visible; opacity: 0; }
 .hx__btn, .hx__link {
   display: inline-flex; align-items: center; gap: 0.5rem;
   padding: 0.75rem 1.25rem; border-radius: 999px;
-  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  font-family: var(--ff-t); font-size: 0.875rem; line-height: 1.25rem;
   transition: background-color 0.3s var(--e-out), color 0.3s var(--e-out);
 }
 /* L'appel principal, plein : terre cuite et encre basalte, comme la bande des
@@ -637,7 +650,7 @@ html.js .hx__roll > span + span { visibility: visible; opacity: 0; }
   display: flex; align-items: center; gap: 0.75em;
   padding: 0 clamp(1.25rem, 0.4rem + 2.2vw, 2.75rem) 0 var(--pad-x);
   border-right: 1px solid color-mix(in srgb, var(--basalt) 26%, transparent);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); line-height: 1.3; letter-spacing: 0.14em;
   text-transform: uppercase; white-space: nowrap;
   color: var(--basalt);
@@ -672,8 +685,7 @@ html.js .hx__roll > span + span { visibility: visible; opacity: 0; }
 }
 .hx-mq__t {
   font-family: var(--ff-d); font-size: clamp(1.05rem, 0.8rem + 0.7vw, 1.5rem); line-height: 1.02;
-  font-variation-settings: 'wdth' 86, 'wght' 700;
-  letter-spacing: 0.005em; text-transform: uppercase;
+  letter-spacing: 0.017em; text-transform: uppercase;
   color: var(--basalt); white-space: nowrap;
 }
 
@@ -720,8 +732,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
   margin-bottom: var(--s-3);
   font-family: var(--ff-d);
   font-size: clamp(1.3rem, 0.95rem + 0.95vw, 1.85rem);
-  line-height: 1.04; letter-spacing: -0.02em;
-  font-variation-settings: 'wdth' 86, 'wght' 700;
+  line-height: 1.04; letter-spacing: -0.008em;
   text-transform: uppercase;
 }
 .hm-kit__t p { max-width: 46ch; font-size: var(--fs-sm); color: var(--cream-2); }
@@ -764,20 +775,20 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
   container-type: inline-size;
 }
 .k3__plan[data-side='right'] .k3__text { right: auto; left: var(--pad-x); }
+/* Le compteur « 01 / 06 » : la voix des chiffres, le rang mis en avant. */
 .k3__n {
   margin-bottom: var(--s-5);
-  font-family: var(--ff-m); font-stretch: 87.5%;
-  font-size: var(--fs-nano); letter-spacing: 0.14em; color: var(--gold-lt);
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums;
+  font-size: var(--fs-nano); letter-spacing: 0.06em; color: var(--gold-lt);
 }
-.k3__n span { color: var(--cream-3); }
+.k3__n span { font-weight: 500; color: var(--cream-3); }
 /* Taillé sur la largeur de SA colonne (`cqw`), pas sur celle de l'écran :
    MICROPHONES, le mot le plus long, y tient à toutes les tailles — même sur
    un grand écran dézoomé, où il débordait (26/09). */
 .k3__h {
   font-family: var(--ff-d);
   font-size: min(6rem, 13cqw);
-  line-height: 0.9; letter-spacing: -0.035em;
-  font-variation-settings: 'wdth' 84, 'wght' 760;
+  line-height: 0.9; letter-spacing: -0.027em;
   text-transform: uppercase; color: var(--cream);
 }
 .k3__h--long { font-size: min(4.6rem, 10cqw); }
@@ -799,18 +810,21 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 
 .k3__load {
   position: absolute; left: 32%; top: 50%; translate: -50% -50%;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-3);
 }
 .k3__plan[data-side='right'] .k3__load { left: 68%; }
-.k3__load [data-k3-pct] { color: var(--gold-lt); font-variant-numeric: tabular-nums; }
+.k3__load [data-k3-pct] {
+  font-family: var(--ff-n); letter-spacing: 0.06em; font-variant-numeric: tabular-nums lining-nums;
+  color: var(--gold-lt);
+}
 .k3__plan.is-ready .k3__load, .k3__plan[data-mode='photo'] .k3__load { display: none; }
 
 /* Le crédit du modèle (licence CC BY), sous l'objet, avec son plan. */
 .k3__credit {
   position: absolute; left: var(--pad-x); bottom: var(--s-5);
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--cream-3);
 }
@@ -868,8 +882,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .sv__q:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .sv__name {
   font-family: var(--ff-d); font-size: clamp(1.2rem, 0.9rem + 0.8vw, 1.6rem); line-height: 1.1;
-  letter-spacing: -0.015em; text-transform: uppercase;
-  font-variation-settings: 'wdth' 86, 'wght' 680;
+  letter-spacing: -0.003em; text-transform: uppercase;
   color: var(--cream-2); transition: color 0.35s var(--e-out);
 }
 .sv__i.is-open .sv__name, .sv__q:hover .sv__name { color: var(--cream); }
@@ -890,7 +903,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .sv__i.is-open .sv__a { grid-template-rows: 1fr; }
 .sv__i.is-open .sv__a-in { padding-bottom: 1.2rem; }
 .sv__covers {
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-lt);
 }
 .sv__text { max-width: 58ch; margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.6; color: var(--cream-2); }
@@ -920,11 +933,11 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .hm-about__fig img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--e-out); }
 @media (hover: hover) and (pointer: fine) { .hm-about__fig:hover img { transform: scale(1.03); } }
 .hm-about__side { display: grid; gap: var(--s-6); align-content: start; }
+/* Une phrase-manifeste, en bas de casse : le texte, en grand, pas l'affiche. */
 .hm-about__stmt {
-  font-family: var(--ff-d);
+  font-family: var(--ff-t); font-weight: 400;
   font-size: clamp(1.4rem, 0.85rem + 1.55vw, 2.3rem);
-  line-height: 1.22; letter-spacing: -0.016em;
-  font-variation-settings: 'wdth' 90, 'wght' 470;
+  line-height: 1.22; letter-spacing: -0.028em;
   color: var(--cream);
 }
 .hm-about__p { max-width: var(--measure); color: var(--cream-2); }
@@ -937,7 +950,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 }
 .hm-facts dt {
   padding-top: 0.25em;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--cream-3);
 }
@@ -985,15 +998,14 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .hm-why__q:focus-visible { outline: 2px solid var(--gold-lt); outline-offset: 4px; }
 .hm-why__n {
   grid-area: n;
-  font-family: var(--ff-m); font-stretch: 87.5%;
-  font-size: var(--fs-nano); letter-spacing: 0.06em; color: var(--gold-lt);
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums;
+  font-size: var(--fs-nano); letter-spacing: 0.025em; color: var(--gold-lt);
 }
 .hm-why__h {
   grid-area: h;
   font-family: var(--ff-d);
   font-size: clamp(1.2rem, 0.95rem + 0.6vw, 1.55rem);
-  line-height: 1.06; letter-spacing: -0.015em;
-  font-variation-settings: 'wdth' 86, 'wght' 700;
+  line-height: 1.06; letter-spacing: -0.003em;
   text-transform: uppercase;
 }
 .hm-why__plus { grid-area: plus; position: relative; width: 1rem; height: 1rem; }
@@ -1051,16 +1063,15 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .hm-loc__h {
   font-family: var(--ff-d);
   font-size: clamp(1rem, 0.85rem + 0.45vw, 1.3rem);
-  line-height: 1.1; letter-spacing: -0.01em;
-  font-variation-settings: 'wdth' 86, 'wght' 680;
+  line-height: 1.1; letter-spacing: 0.002em;
   text-transform: uppercase;
   transition: color 0.35s var(--e-out);
 }
 .hm-loc__alt {
   flex: none;
-  font-family: var(--ff-m); font-stretch: 87.5%;
-  font-size: var(--fs-nano); letter-spacing: 0.06em; color: var(--cream-3);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n);
+  font-size: var(--fs-nano); letter-spacing: 0.025em; color: var(--cream-3);
+  font-variant-numeric: tabular-nums lining-nums;
 }
 @media (hover: hover) and (pointer: fine) {
   .hm-loc a:hover .hm-loc__fig img { transform: scale(1.04); }
@@ -1085,11 +1096,16 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .reel__gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
 .reel__count, .reel__hint {
   position: absolute; bottom: var(--s-6); margin: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-2); pointer-events: none;
 }
-.reel__count { left: var(--pad-x); }
+/* « 01 / 09 · Simien Mountains » : un bandeau de chiffres, tout entier
+   dans leur voix, comme les repères des ouvertures de division. */
+.reel__count {
+  left: var(--pad-x);
+  font-family: var(--ff-n); letter-spacing: 0.06em; font-variant-numeric: tabular-nums lining-nums;
+}
 .reel__hint { right: var(--pad-x); color: var(--cream-3); }
 @media (hover: none) { .reel__hint { display: none; } }
 
@@ -1116,15 +1132,16 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .reel-view__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); }
 .reel-view__k {
   display: flex; align-items: center; gap: 0.8em; margin: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-2);
 }
+.reel-view__k [data-rv-n] { font-family: var(--ff-n); letter-spacing: 0.06em; font-variant-numeric: tabular-nums lining-nums; }
 .reel-view__nav { display: flex; align-items: center; gap: var(--s-3); margin: 0; }
 .reel-view__btn, .reel-view__close {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.6em;
   height: 2.6rem; min-width: 2.6rem; padding: 0 0.9rem;
   border: 1px solid var(--line); color: var(--cream);
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   transition: border-color 0.3s var(--e-out), background 0.3s var(--e-out);
 }
@@ -1140,27 +1157,26 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .reel-view__h {
   font-family: var(--ff-d);
   font-size: clamp(2.2rem, 0.9rem + 3.1vw, 4.4rem);
-  line-height: 0.92; letter-spacing: -0.035em;
-  font-variation-settings: 'wdth' 84, 'wght' 760;
+  line-height: 0.92; letter-spacing: -0.027em;
   text-transform: uppercase; color: var(--cream);
 }
 .reel-view__region {
   margin-top: var(--s-3);
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-lt);
 }
 .reel-view__about { font-size: var(--fs-body); line-height: 1.55; color: var(--cream); }
 .reel-view__desc, .reel-view__note { margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.5; color: var(--cream-2); }
 .reel-view__lab {
   margin-right: 0.5em;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
 }
 .reel-view__facts > div { grid-template-columns: minmax(0, 6rem) minmax(0, 1fr); padding: var(--s-3) 0; }
 .reel-view__act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3) var(--s-5); margin: var(--s-4) 0 0; }
 .reel-view__credit {
   margin-top: var(--s-3);
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase; color: var(--cream-3);
 }
 
@@ -1191,7 +1207,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
    qu'on entre dans l'objectif, et elle rogne le zoom. */
 .hm-sec--gal .hm-head { margin-bottom: var(--s-7); }
 .hm-drag {
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-3);
 }
@@ -1209,13 +1225,12 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .hm-film__h {
   font-family: var(--ff-d);
   font-size: clamp(1.05rem, 0.9rem + 0.4vw, 1.35rem);
-  line-height: 1.06; letter-spacing: -0.01em;
-  font-variation-settings: 'wdth' 86, 'wght' 700;
+  line-height: 1.06; letter-spacing: 0.002em;
   text-transform: uppercase;
 }
 .hm-film__alt {
   margin-top: 0.4rem;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--cream-3);
 }
@@ -1275,7 +1290,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .dvg__t { display: grid; gap: var(--s-3); justify-items: start; }
 .dvg__n {
   display: flex; align-items: center; gap: 0.7em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em;
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.034em;
   color: var(--cream-3);
 }
 .dvg__n::before { content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--c); flex: none; }
@@ -1283,8 +1298,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
   position: relative; padding-bottom: 0.35rem;
   font-family: var(--ff-d);
   font-size: clamp(1.1rem, 0.85rem + 0.6vw, 1.5rem);
-  line-height: 1.04; letter-spacing: -0.015em;
-  font-variation-settings: 'wdth' 86, 'wght' 720;
+  line-height: 1.04; letter-spacing: -0.003em;
   text-transform: uppercase; color: var(--cream);
 }
 .dvg__i--feat .dvg__h { font-size: clamp(1.5rem, 1rem + 1.4vw, 2.5rem); }
@@ -1296,7 +1310,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .dvg__p { max-width: 40ch; font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
 .dvg__go {
   display: inline-flex; align-items: center; gap: 0.5em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream);
 }
 .dvg__go svg { width: 0.95rem; height: 0.95rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.4s var(--e-out); }
@@ -1321,14 +1335,14 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
   position: absolute; top: 0.8rem; left: 0.8rem; z-index: 2;
   display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.65rem; border-radius: 999px;
   background: rgb(0 0 0 / 0.55); color: #fff; font-style: normal;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.16em; text-transform: uppercase;
 }
 .dvg__rec b { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #ff2d2d; animation: dvg-rec 1.2s steps(1) infinite; }
 @keyframes dvg-rec { 50% { opacity: 0.2; } }
 .dvg__tc {
   position: absolute; right: 0.9rem; bottom: 0.75rem; z-index: 2; font-style: normal;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.08em; color: #fff;
-  font-variant-numeric: tabular-nums; text-shadow: 0 1px 4px rgb(0 0 0 / 0.8);
+  font-family: var(--ff-n); font-size: 0.75rem; letter-spacing: 0.034em; color: #fff;
+  font-variant-numeric: tabular-nums lining-nums; text-shadow: 0 1px 4px rgb(0 0 0 / 0.8);
 }
 .dvg__i:first-child .dvg__v::before {
   content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -1410,7 +1424,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .dvg__sub {
   position: absolute; left: 50%; bottom: 1rem; z-index: 2; translate: -50% 0; white-space: nowrap; font-style: normal;
   padding: 0.25rem 0.55rem; background: rgb(0 0 0 / 0.6); color: #fff;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase;
 }
 .dvg__i:nth-child(6) .dvg__v > img { filter: saturate(0.85) contrast(1.05); }
 
@@ -1440,7 +1454,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
    Ce qui distingue chaque projet (brief §10.C) : sa catégorie et son statut. */
 .hm-film__st {
   display: flex; flex-wrap: wrap; gap: 0.35rem 0.8rem; margin-bottom: var(--s-3);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--cream-3);
 }
 .hm-film__st span + span { color: var(--gold-lt); }
@@ -1459,7 +1473,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 @media (max-width: 36rem) { .hm-why--7 { grid-template-columns: 1fr; } }
 
 /* ─────────────── L'appel final ───────────────
-   Le grand titre en serif, comme l'ouverture : la page se referme sur la
+   Le grand titre à l'affiche, comme l'ouverture : la page se referme sur la
    même voix. Une lueur terre cuite suit le pointeur (`--mx`, `--my`). */
 .hm-cta { overflow: clip; isolation: isolate; text-align: center; padding-block: calc(var(--hm-y) * 1.3); }
 .hm-cta::after {
@@ -1469,12 +1483,15 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 }
 .hm-cta__in { display: grid; justify-items: center; }
 .hm-cta .hm-k { justify-content: center; }
+/* En Archivo Black, sur deux lignes à toutes les tailles (« Have a Project /
+   in Mind? »), un cran plus grand que l'ouverture à l'ordinateur, comme
+   avant (94 px contre 85 à 1440 px) ; le plancher tient « Have a Project »
+   sur une ligne jusqu'à 360 px. */
 .hm-cta__h {
   max-width: 15ch;
   font-family: var(--ff-p);
-  font-size: clamp(2.8rem, 1rem + 6.4vw, 7.5rem);
-  font-weight: 400; font-variation-settings: 'opsz' 144, 'wght' 380;
-  line-height: 1.02; letter-spacing: -0.03em; color: var(--cream);
+  font-size: clamp(2.6rem, 0.9rem + 5.5vw, 6.4rem);
+  line-height: 0.98; letter-spacing: var(--ls-hero); color: var(--cream);
   text-wrap: balance;
 }
 .hm-cta__p { max-width: 36rem; margin-top: var(--s-5); font-size: var(--fs-lede); line-height: 1.55; color: var(--cream-2); }
@@ -1482,7 +1499,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .hm-cta__btn, .hm-cta__ghost {
   display: inline-flex; align-items: center; gap: 0.6rem;
   padding: 1.05rem 1.7rem; border-radius: 999px;
-  font-family: var(--ff-t); font-size: 1rem; font-weight: 500; line-height: 1.2;
+  font-family: var(--ff-t); font-size: 1rem; line-height: 1.2;
   transition: background-color 0.3s var(--e-out), color 0.3s var(--e-out), box-shadow 0.3s var(--e-out);
 }
 .hm-cta__btn { background: var(--gold); color: var(--basalt); }
@@ -1498,7 +1515,7 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 }
 .hm-cta__reach dt {
   margin-bottom: 0.4rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-3);
 }
 .hm-cta__reach dd { font-size: var(--fs-sm); color: var(--cream); }
@@ -1830,6 +1847,9 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
   gap: var(--s-5) var(--hm-gap);
 }
 .hm-why-head__t { min-width: 0; }
+/* Sur un téléphone de 360 px, à côté de l'objectif, « WHY WORK » en Archivo
+   Black ne tenait plus sur sa ligne : un cran plus petit. */
+@media (max-width: 23.75rem) { .hm-why-head .hm-h { font-size: 2.2rem; } }
 .hm-iris {
   flex: none; container-type: inline-size;
   width: clamp(5.75rem, 2.6rem + 12.5vw, 15rem); aspect-ratio: 1;
@@ -1841,8 +1861,10 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
   fill: none; stroke: color-mix(in srgb, var(--cream) 32%, transparent); stroke-width: 1;
   vector-effect: non-scaling-stroke; opacity: 0; transition: opacity 1.4s var(--e-out);
 }
+/* Les sept repères de la bague : des chiffres, dans leur voix. */
 .hm-iris__n {
-  font-family: var(--ff-m); font-size: 14px; letter-spacing: 0.04em;
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums;
+  font-size: 14px; letter-spacing: 0.017em;
   fill: var(--cream-3); text-anchor: middle; dominant-baseline: central;
   opacity: 0; transition: fill 0.35s var(--e-out), opacity 1s var(--e-out);
 }

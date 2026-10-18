@@ -624,6 +624,25 @@ Retours de Dominique depuis son iPhone, sur le site en ligne :
   fontes allégées ci-dessous, chargement différé des modèles et vidéos de l'accueil et de
   Location, cibles tactiles, champs de Book à 16 px pour éviter le zoom d'iOS).
 
+### Vague 17 — les polices (18/10/2026, après-midi)
+
+Dominique : la police des grands titres (Fraunces, le « Life » d'Event Organizing) « fait trop
+AI », et les chiffres méritaient mieux. Après deux planches sur les vraies pages
+(`polices-comparaison-1/2.jpg`, puis `polices-melange.jpg`), le choix : **les titres en Archivo
+Black, le texte en IBM Plex Sans, les chiffres en Barlow Condensed**.
+- Cinq fichiers dans `public/fonts/` (Google Fonts, licence SIL OFL, sous-ensemble latin, 112 Ko
+  au lieu de 192) ; Fraunces, Archivo, Instrument Sans et Martian Mono sont retirés (originaux
+  dans `design/fonts-src/`).
+- Un rôle par jeton dans `tokens.css` : `--ff-p` titres, `--ff-d` titres en capitales (86 %),
+  `--ff-t` texte, `--ff-m` étiquettes (Plex 500 mi-étroite), `--ff-n` chiffres (Barlow, chiffres
+  tabulaires). Les tailles passent par `size-adjust` : les tailles écrites pour les anciennes
+  polices gardent leur rendu.
+- Le mot « TEDDY STUDIO » du pied passe à 9,9vw (il débordait sur téléphone).
+- Contrôles : 16 pages × ordinateur et téléphone sans erreur ni débordement, formulaires
+  identiques, version GitHub Pages vérifiée. Publié à la demande de Dominique (« juste publie »)
+  avant les relectures croisées prévues : à refaire au calme (titres de chaque page, chiffres
+  restés en étiquettes, règle de la piste Music en canvas).
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).
@@ -653,6 +672,9 @@ GitHub Pages ne permet ni l'un ni l'autre ; à régler sur l'hébergeur du domai
   texte pèse 10 à 18 % de moins qu'en gzip.
 
 ## Les fontes livrées sont allégées (18/10/2026)
+
+> Remplacées le jour même par Archivo Black, IBM Plex Sans et Barlow Condensed (vague 17) ;
+> ce qui suit décrit les anciennes polices, gardées dans `design/fonts-src/`.
 
 Les originaux sont dans `design/fonts-src/`. Dans `public/fonts/`, mêmes noms, on n'a gardé que
 ce que le site utilise, relevé sur les 16 pages (téléphone et ordinateur, menus, formulaires) :

@@ -28,6 +28,14 @@
    aux lumières, aux pastilles et aux aplats.
    Pas de photo d'événement : nous n'en avons pas encore, et nous n'en
    inventons pas. La lumière, la typographie et la couleur portent la page.
+
+   Les voix (18/10/2026) : les titres en Archivo Black ; le texte, les titres
+   moyens (les actes, le billet) et les étiquettes en Plex Sans ; les numéros
+   (familles, programme, badges, tops « Cue 01 ») dans la voix des chiffres,
+   Barlow Condensed (`--ff-n`, tokens.css). Les titres des familles et des
+   tops ont pris un cran de moins : même à 86 %, l'Archivo Black prend un
+   peu plus de place que l'Archivo étroite, et ils gardent ainsi leurs
+   coupes d'avant, de 360 à 1440 px.
    ══════════════════════════════════════════════════════════════ */
 
 /* L'encre posée sur l'ambre : la nuit de la division, plutôt que le basalte
@@ -80,6 +88,12 @@ html[data-palette='papier'] body[data-dv='events'] #main {
 .ev-hero__in { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: var(--s-7); }
 .ev-hero__copy { display: grid; justify-items: center; }
 .ev-hero .dv-h1 { margin-inline: auto; max-width: 12ch; color: var(--ev-ink); }
+/* Sur téléphone, l'affiche suit la largeur de la colonne : « We Bring /
+   Events to Life. » sur deux lignes de 360 à 512 px, jamais au-dessus du
+   plancher de 48 px. */
+@media (max-width: 32rem) {
+  .ev-hero .dv-h1 { font-size: min(3rem, (100vw - 2 * var(--pad-x)) / 7.4); }
+}
 .ev-hero .dv-lede {
   margin: var(--s-5) auto 0; max-width: 40rem;
   color: color-mix(in srgb, var(--fg) 80%, var(--bg));
@@ -238,19 +252,19 @@ html[data-palette='papier'] .ev-spot__pool {
 .ev-fam__q:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: -2px; }
 
 .ev-fam__n {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em;
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em;
   color: var(--cream-3); transition: color 0.4s var(--e-out), text-shadow 0.4s var(--e-out);
 }
 .ev-fam__t {
   font-family: var(--ff-d);
-  font-size: clamp(1.4rem, 0.85rem + 2.1vw, 2.85rem); line-height: 1.02; letter-spacing: -0.02em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-size: clamp(1.27rem, 0.74rem + 1.95vw, 2.6rem); line-height: 1.02; letter-spacing: var(--ls-d);
+  text-transform: uppercase;
   color: var(--cream-2); text-wrap: balance;
   transition: color 0.45s var(--e-out), transform 0.7s var(--e-out), text-shadow 0.6s var(--e-out);
 }
 .ev-fam__peek {
   justify-self: end; text-align: right;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1.5; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); line-height: 1.5; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--cream-3); transition: opacity 0.45s var(--e-out);
 }
 .ev-fam__ic {
@@ -336,8 +350,8 @@ html:not([data-palette='papier']) .ev-fam.is-open .ev-fam__n { text-shadow: 0 0 
 .ev-other .dv-mono { color: var(--dv-lt); }
 .ev-other__t {
   display: inline-flex; align-items: baseline; gap: 0.4em;
-  font-family: var(--ff-p); font-size: clamp(2rem, 1.3rem + 2.4vw, 3.6rem); line-height: 1;
-  font-variation-settings: 'opsz' 144, 'wght' 380; letter-spacing: -0.025em;
+  font-family: var(--ff-p); font-size: clamp(1.7rem, 1.05rem + 1.9vw, 2.9rem); line-height: 1;
+  letter-spacing: -0.04em;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
   transition: background-size 0.7s var(--e-out), color 0.35s var(--e-out);
 }
@@ -410,7 +424,7 @@ body[data-dv='events'] #main {
 .ev-menu__head {
   display: flex; align-items: center; justify-content: center; gap: 0.9rem 1.1rem; flex-wrap: wrap;
   margin: 0 0 clamp(1.4rem, 1rem + 1.4vw, 2.4rem);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--m-fg-2);
 }
 .ev-menu__head span:nth-of-type(2) { color: var(--m-acc); }
@@ -433,8 +447,8 @@ body[data-dv='events'] #main {
 }
 .ev-menu__t {
   flex: 0 1 auto; min-width: 0; max-width: 84%;
-  font-family: var(--ff-p); font-size: clamp(1.05rem, 0.96rem + 0.35vw, 1.28rem); line-height: 1.28;
-  font-variation-settings: 'opsz' 36, 'wght' 420; letter-spacing: -0.005em;
+  font-family: var(--ff-t); font-size: clamp(1.05rem, 0.96rem + 0.35vw, 1.28rem); line-height: 1.28;
+  letter-spacing: -0.005em;
   transition: transform 0.6s var(--e-out);
 }
 .ev-menu__dots {
@@ -448,7 +462,7 @@ body[data-dv='events'] #main {
 }
 .ev-menu__n {
   flex: none; padding-bottom: 0.18em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: 0.75rem; letter-spacing: 0.05em;
   color: var(--m-acc); transition: color 0.4s var(--e-out);
 }
 /* La lueur de la ligne : une flamme posée derrière, qui chauffe le papier. */
@@ -471,7 +485,7 @@ body[data-dv='events'] #main {
 .ev-menu__x a:focus-visible { outline: 2px solid var(--m-acc); outline-offset: 3px; border-radius: 2px; }
 .ev-menu__x small {
   display: block; margin-top: 0.25rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--m-fg-2);
+  font-family: var(--ff-m); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--m-fg-2);
 }
 
 /* L'arrivée (events-scenes.js pose `is-js`, puis `is-in`) : les lignes
@@ -539,8 +553,8 @@ body[data-dv='events'] #main {
 .ev-pass__card::before {
   content: counter(ev-pass, decimal-leading-zero) / '';
   position: absolute; right: 1.1rem; bottom: calc(var(--ev-stub) + 0.35rem); z-index: -1; pointer-events: none;
-  font-family: var(--ff-d); font-size: clamp(4rem, 2.8rem + 2.4vw, 5.6rem); line-height: 0.8; letter-spacing: -0.04em;
-  font-variation-settings: 'wdth' 84, 'wght' 760;
+  font-family: var(--ff-n); font-weight: 700; font-variant-numeric: tabular-nums lining-nums;
+  font-size: clamp(4rem, 2.8rem + 2.4vw, 5.6rem); line-height: 0.8; letter-spacing: -0.02em;
   color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--fg) 13%, transparent);
 }
 /* L'ombre du badge (le masque rogne les ombres de la carte elle-même). */
@@ -559,14 +573,14 @@ html[data-palette='papier'] .ev-pass:hover .ev-pass__tilt::before { box-shadow: 
   padding: 1.45rem 1.25rem 1rem;
   background: linear-gradient(180deg, var(--dv), color-mix(in srgb, var(--dv) 80%, var(--dv-dp)));
   color: var(--D-night-2);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.24em; text-transform: uppercase;
 }
 /* La fente où passe l'agrafe. */
 .ev-pass__band::before {
   content: ''; position: absolute; left: 50%; top: 0.5rem; width: 2.3rem; height: 0.42rem; translate: -50% 0; border-radius: 1rem;
   background: color-mix(in srgb, var(--D-night-2) 55%, transparent); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.5);
 }
-.ev-pass__n { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.05em; }
+.ev-pass__n { font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: 1.05rem; letter-spacing: 0.021em; }
 /* L'hologramme : une pastille irisée sous la bande, à hauteur du titre ;
    ses reflets tournent avec la souris (`--ha`). */
 .ev-pass__holo {
@@ -578,8 +592,8 @@ html[data-palette='papier'] .ev-pass:hover .ev-pass__tilt::before { box-shadow: 
 }
 .ev-pass__h {
   margin: 1.7rem 1.25rem 0; max-width: 12ch;
-  font-family: var(--ff-d); font-size: clamp(1.3rem, 0.95rem + 0.85vw, 1.7rem); line-height: 1.02; letter-spacing: -0.012em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; text-wrap: balance;
+  font-family: var(--ff-d); font-size: clamp(1.3rem, 0.95rem + 0.85vw, 1.7rem); line-height: 1.02; letter-spacing: 0;
+  text-transform: uppercase; text-wrap: balance;
 }
 .ev-pass__p { margin: 0.9rem 1.25rem 5.4rem; font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
 .ev-pass__stub {
@@ -590,7 +604,7 @@ html[data-palette='papier'] .ev-pass:hover .ev-pass__tilt::before { box-shadow: 
 }
 .ev-pass__go {
   display: inline-flex; align-items: center; gap: 0.5em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--fg);
 }
 .ev-pass__go::after { content: '→'; color: var(--dv-lt); transition: transform 0.45s var(--e-out); }
@@ -739,19 +753,19 @@ html[data-palette='papier'] .ev-pass__sheen::before {
 .ev-cue.is-now::before { transform: none; }
 .ev-cue.is-now::after { opacity: 1; }
 .ev-cue__n {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--cream-3); transition: color 0.5s var(--e-out);
 }
 .ev-cue__h {
-  font-family: var(--ff-d); font-size: clamp(1.25rem, 0.95rem + 1.1vw, 2.05rem); line-height: 1.02; letter-spacing: -0.015em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; text-wrap: balance;
+  font-family: var(--ff-d); font-size: clamp(1.13rem, 0.78rem + 1.1vw, 2.05rem); line-height: 1.02; letter-spacing: -0.003em;
+  text-transform: uppercase; text-wrap: balance;
   color: var(--cream-3); transition: color 0.6s var(--e-out);
 }
 .ev-cue__p { max-width: 30rem; font-size: var(--fs-sm); line-height: 1.6; color: var(--cream-3); transition: color 0.6s var(--e-out); }
 .ev-cue__st {
   justify-self: end; display: inline-flex; align-items: center; gap: 0.55rem; min-width: 7.2rem; justify-content: center;
   padding: 0.55rem 0.9rem; border-radius: 999px;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--cream-3); box-shadow: inset 0 0 0 1px var(--line);
   transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out), color 0.5s var(--e-out);
 }
@@ -824,8 +838,8 @@ html[data-palette='papier'] .ev-marq__sign { box-shadow: inset 0 0 0 1px color-m
 @keyframes ev-flicker { 0% { opacity: 0.72; } 18% { opacity: 0.2; } 30% { opacity: 0.6; } 44% { opacity: 0.08; } 58% { opacity: 0.3; } 72%, 100% { opacity: 0; } }
 #portfolio .ev-marq .dv-empty__h {
   max-width: 22ch;
-  font-family: var(--ff-d); font-size: clamp(1.65rem, 0.9rem + 3.1vw, 4.1rem); line-height: 1.04; letter-spacing: 0.015em;
-  font-variation-settings: 'wdth' 84, 'wght' 760; text-transform: uppercase; text-wrap: balance;
+  font-family: var(--ff-d); font-size: clamp(1.57rem, 0.85rem + 3.1vw, 4.1rem); line-height: 1.04; letter-spacing: 0.023em;
+  text-transform: uppercase; text-wrap: balance;
   color: #22150f;
 }
 .ev-marq .dv-empty__h .ev-ch { display: inline-block; }
@@ -942,7 +956,7 @@ html[data-palette='papier'] .ev-invite::after { --c: var(--dv-dp); }
 .ev-act:focus-within::before { opacity: 1; }
 
 /* L'en-tête d'acte : « ACT I » en petites capitales ambrées, le titre en
-   serif d'affiche, un filet qui se trace, une lampe qui s'allume. */
+   Plex Sans 500, un filet qui se trace, une lampe qui s'allume. */
 .ev-act__l {
   float: left; width: 100%;
   margin: 0 0 var(--s-5); padding: 0 2.5rem 1rem 0;
@@ -951,13 +965,12 @@ html[data-palette='papier'] .ev-invite::after { --c: var(--dv-dp); }
 .ev-act__f { clear: both; }
 .ev-act__n {
   display: inline-block; margin-right: 0.9rem; vertical-align: 0.35em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500;
+  font-family: var(--ff-m); font-size: 0.8125rem;
   letter-spacing: 0.18em; text-transform: uppercase; color: var(--dv-lt);
 }
 .ev-act__t {
-  font-family: var(--ff-p); font-weight: 400;
-  font-size: clamp(1.7rem, 1.25rem + 1.5vw, 2.6rem); line-height: 1.05; letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 96, 'wght' 380;
+  font-family: var(--ff-t); font-weight: 500;
+  font-size: clamp(1.7rem, 1.25rem + 1.5vw, 2.6rem); line-height: 1.05; letter-spacing: -0.018em;
   color: var(--fg);
 }
 .ev-act__l::after {
@@ -988,7 +1001,7 @@ html[data-palette='papier'] .ev-invite::after { --c: var(--dv-dp); }
 .ev-form .field { margin: 0; min-width: 0; }
 .ev-form .field label, .ev-form .ev-group > legend {
   display: block; margin: 0 0 0.45rem; padding: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500; line-height: 1.35;
+  font-family: var(--ff-m); font-size: 0.8125rem; line-height: 1.35;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
   transition: color 0.35s var(--e-out);
 }
@@ -1053,7 +1066,7 @@ html[data-palette='papier'] .ev-invite::after { --c: var(--dv-dp); }
 #inquiry .field.is-err label { color: var(--ev-err); }
 #inquiry .field__err {
   display: flex; align-items: center; gap: 0.45rem; margin-top: 0.45rem;
-  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; color: var(--ev-err);
+  font-family: var(--ff-t); font-size: 0.9375rem; color: var(--ev-err);
 }
 #inquiry .field__err::before {
   content: ''; width: 0.5rem; height: 0.5rem; flex: none; rotate: 45deg; background: var(--ev-err);
@@ -1073,7 +1086,7 @@ html[data-palette='papier'] #inquiry { --ev-err: #a3261c; }
   min-height: 2.75rem; padding: 0.5rem 1.05rem 0.5rem 0.9rem;
   border: 1px solid var(--cream-3); border-radius: 999px;
   background: transparent; color: var(--fg);
-  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; line-height: 1.25; letter-spacing: 0; text-transform: none;
+  font-family: var(--ff-t); font-size: 0.9375rem; line-height: 1.25; letter-spacing: 0; text-transform: none;
   transition: background-color 0.4s var(--e-out), border-color 0.35s var(--e-out), color 0.35s var(--e-out), box-shadow 0.5s var(--e-out);
 }
 .ev-chips .chip span::before {
@@ -1124,7 +1137,7 @@ html[data-palette='papier'] #inquiry { --ev-err: #a3261c; }
 .ev-send.dv-btn {
   min-height: 3.6rem; padding: 0 0 0 1.6rem; gap: 0; border-radius: 0.5rem;
   background: var(--dv); color: var(--dv-ink);
-  font-size: 1rem; font-weight: 600;
+  font-size: 1rem;
   box-shadow: 0 18px 40px -22px color-mix(in srgb, var(--dv) 90%, transparent);
   transition: color 0.45s var(--e-out), box-shadow 0.6s var(--e-out);
 }
@@ -1208,18 +1221,17 @@ html[data-palette='papier'] .ev-stub {
 .ev-stub .ev-stub__top {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem;
   padding-bottom: 0.85rem; margin: 0 0 1.1rem; border-bottom: 1px solid var(--t-rule);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; color: var(--t-fg-2);
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; color: var(--t-fg-2);
 }
 .ev-stub .ev-stub__k {
   margin: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.8125rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--t-acc);
 }
 .ev-stub .ev-stub__h {
   min-height: 2.3em; margin: 0.35rem 0 1.1rem; overflow: hidden;
-  font-family: var(--ff-p); font-weight: 400;
-  font-size: clamp(1.55rem, 1.3rem + 0.6vw, 1.9rem); line-height: 1.12; letter-spacing: -0.015em;
-  font-variation-settings: 'opsz' 72, 'wght' 400;
+  font-family: var(--ff-t); font-weight: 500;
+  font-size: clamp(1.55rem, 1.3rem + 0.6vw, 1.9rem); line-height: 1.12; letter-spacing: -0.018em;
   color: var(--t-fg); text-wrap: balance;
 }
 .ev-stub__h [data-st] { display: block; }
@@ -1230,10 +1242,10 @@ html[data-palette='papier'] .ev-stub {
   padding: 0.55rem 0; border-top: 1px solid var(--t-rule);
 }
 .ev-stub__rows span {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-fg-2);
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-fg-2);
 }
 .ev-stub__rows b {
-  min-height: 1.4em; font-weight: 500; font-size: 0.9875rem; line-height: 1.4; color: var(--t-fg);
+  min-height: 1.4em; font-weight: 400; font-size: 0.9875rem; line-height: 1.4; color: var(--t-fg);
   overflow-wrap: anywhere;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
@@ -1247,11 +1259,11 @@ html[data-palette='papier'] .ev-stub {
 }
 .ev-stub__acts span {
   margin-right: auto;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-fg-2);
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-fg-2);
 }
 .ev-stub__acts i {
   display: inline-grid; place-items: center; min-width: 2.1rem; height: 1.7rem; padding: 0 0.4rem; border-radius: 999px;
-  font-family: var(--ff-p); font-style: normal; font-size: 0.9rem; line-height: 1; color: var(--t-fg-2);
+  font-family: var(--ff-t); font-style: normal; font-size: 0.9rem; line-height: 1; letter-spacing: -0.005em; color: var(--t-fg-2);
   box-shadow: inset 0 0 0 1px var(--t-off);
   transition: background-color 0.5s var(--e-out), color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
 }
@@ -1266,7 +1278,7 @@ html[data-palette='papier'] .ev-stub {
 .ev-stub__stamp {
   position: absolute; right: 1.25rem; bottom: 1.35rem;
   padding: 0.45rem 0.7rem; border-radius: 0.3rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.8125rem; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--t-acc); box-shadow: inset 0 0 0 2px var(--t-acc);
   background: color-mix(in srgb, var(--t-bg) 70%, transparent);
   rotate: -9deg; opacity: 0; visibility: hidden;
@@ -1303,14 +1315,13 @@ html[data-palette='papier'] .ev-stub {
 .ev-done__slot .ev-stub { position: relative; top: auto; grid-column: auto; grid-row: auto; }
 .ev-done__txt .ev-done__k {
   margin: 0; max-width: none;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.8125rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--dv-lt);
 }
 .ev-done.dv-done h3 {
   margin-top: 0.4rem;
-  font-family: var(--ff-p); font-weight: 400; text-transform: none;
-  font-size: clamp(2rem, 1.4rem + 2.2vw, 3.4rem); line-height: 1.02; letter-spacing: -0.025em;
-  font-variation-settings: 'opsz' 144, 'wght' 380;
+  font-family: var(--ff-t); font-weight: 500; text-transform: none;
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 3.4rem); line-height: 1.02; letter-spacing: -0.018em;
 }
 .ev-done h3:focus { outline: none; }
 .ev-done__txt p { max-width: 36rem; margin-top: var(--s-4); font-size: var(--fs-body); line-height: 1.6; color: var(--cream-2); }

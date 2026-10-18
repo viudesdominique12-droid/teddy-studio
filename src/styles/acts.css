@@ -152,15 +152,13 @@
 }
 .credits__films { margin-bottom: var(--s-8); }
 .credits__films li {
-  font-family: var(--ff-d);
+  font-family: var(--ff-t); font-weight: 500;
   font-size: clamp(1.5rem, 3.8vw, 2.9rem);
-  line-height: 1.24; letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 72, 'wdth' 92, 'wght' 480;
+  line-height: 1.24; letter-spacing: -0.018em;
 }
 .credits__clients { margin-bottom: var(--s-7); }
 .credits__clients li {
   font-size: clamp(1rem, 1.7vw, 1.3rem); line-height: 1.7;
-  font-variation-settings: 'opsz' 24, 'wdth' 100, 'wght' 400;
   color: rgba(255,255,255,0.86);
 }
 .credits__end { color: rgba(255,255,255,0.4); letter-spacing: 0.1em; }

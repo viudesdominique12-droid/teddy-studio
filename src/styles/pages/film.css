@@ -79,12 +79,14 @@ html[data-palette='papier'] body[data-dv='film'] #main {
 }
 .fi-hero__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-5); }
 .fi-hero__top .dv-k { margin: 0; }
+/* Les repères : un bandeau de chiffres (« 05 / 07 », l'heure d'Addis), dans
+   la voix des chiffres, comme `.dv-hero__meta` ; le chiffre en avant en 600. */
 .fi-hero__meta {
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem;
-  font-family: var(--ff-m); font-stretch: 87.5%;
-  font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums;
+  font-size: var(--fs-nano); letter-spacing: 0.05em; text-transform: uppercase; color: var(--cream-3);
 }
-.fi-hero__meta b { color: var(--fg); font-weight: 400; }
+.fi-hero__meta b { color: var(--fg); font-weight: 600; }
 
 /* ── L'écran ── */
 .fi-screen {
@@ -174,25 +176,29 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
   transform: scaleX(0); opacity: 0; visibility: hidden;
 }
 
-/* Le carton-titre. */
+/* Le carton-titre. L'Archivo Black, plus large que Fraunces, passe de 8,3
+   à 7,1 % de la largeur de l'écran : les deux mêmes lignes, « Stories Made
+   for / the Big Screen. ». */
 .fi-title.dv-h1 {
   position: absolute; left: 0; right: 0; bottom: 13%; z-index: 5;
-  max-width: 17ch; margin-inline: auto; padding-inline: 4%;
-  font-size: clamp(2.3rem, 8.3cqw, 8.25rem);
-  line-height: 0.98; text-align: center;
+  max-width: 15ch; margin-inline: auto; padding-inline: 4%;
+  font-size: clamp(2.3rem, 7.1cqw, 7.1rem);
+  line-height: 0.96; text-align: center;
   color: var(--cream);
   text-shadow: 0 2px 30px rgb(0 0 0 / 0.45);
 }
 .fi-title em { color: var(--dv); }
+/* La légende (le titre du film) reste une étiquette ; le format de l'écran,
+   un chiffre. */
 .fi-cap, .fi-ratio {
   position: absolute; bottom: 4.6%; z-index: 5; margin: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: color-mix(in srgb, var(--cream) 80%, transparent);
 }
 .fi-cap { left: 2.6%; display: flex; gap: 0.7em; align-items: center; }
 .fi-cap__k { padding: 0.15rem 0.4rem; border-radius: 2px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 38%, transparent); }
-.fi-ratio { right: 2.6%; }
+.fi-ratio { right: 2.6%; font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.05em; }
 .fi-ratio::before { content: '2.39 : 1'; }
 /* Tablette en portrait : l'autre format du cinéma, 1,85:1, plus haut ; la
    mention suit le format réel de l'écran. */
@@ -217,7 +223,7 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
   /* Sur téléphone, l'écran va d'un bord à l'autre et se fait carré : une
      bande de 2,39:1 n'y ferait que 160 px de haut. */
   .fi-screen { aspect-ratio: 1 / 1; margin-inline: calc(-1 * var(--pad-x)); border-radius: 0; }
-  .fi-title.dv-h1 { font-size: 12.6cqw; bottom: 10%; max-width: 12ch; }
+  .fi-title.dv-h1 { font-size: 10.4cqw; bottom: 10%; max-width: none; }
   .fi-cap { top: 4.5%; bottom: auto; left: var(--pad-x); color: var(--cream); text-shadow: 0 1px 10px rgb(0 0 0 / 0.6); }
   /* La légende passe en haut : un voile sous elle, sur le ciel clair — assez
      dense pour que la légende se lise à 4,5:1 sur le ciel le plus pâle. */
@@ -279,12 +285,13 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 /* Les repères de la cabine, dans les coins (grands écrans seulement). */
 .fi-booth__tc {
   position: absolute; bottom: 1.7rem; display: none; align-items: center; gap: 0.6rem; margin: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-3);
 }
 .fi-booth__tc--l { left: var(--pad-x); }
-.fi-booth__tc--r { right: var(--pad-x); }
-.fi-booth__tc b { font-weight: 400; color: var(--cream-2); font-variant-numeric: tabular-nums; }
+/* Le compteur de la cabine : une lecture, dans la voix des chiffres. */
+.fi-booth__tc--r { right: var(--pad-x); font-family: var(--ff-n); letter-spacing: 0.06em; }
+.fi-booth__tc b { font-weight: 600; color: var(--cream-2); font-variant-numeric: tabular-nums lining-nums; }
 .fi-booth__tc i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--dv); box-shadow: 0 0 10px var(--dv); }
 @media (min-width: 75rem) { .fi-booth__tc { display: flex; } }
 
@@ -308,12 +315,13 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 .fi-roll__k {
   justify-self: end; align-self: start; text-align: right;
   display: flex; align-items: center; gap: 0.9em; padding-top: 0.85em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-family: var(--ff-m);
   font-size: var(--fs-micro); letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--cream-2);
   transition: color 0.6s var(--e-out);
 }
-.fi-roll__k span { color: var(--cream-3); }
+/* Le numéro de l'étape : un chiffre ; le nom de l'étape reste une étiquette. */
+.fi-roll__k span { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.076em; color: var(--cream-3); }
 .fi-roll__k::after {
   content: ''; width: 0.42rem; height: 0.42rem; border-radius: 50%; flex: none;
   background: var(--line-ui); transition: background-color 0.6s var(--e-out), box-shadow 0.6s var(--e-out);
@@ -321,11 +329,12 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 .fi-roll__g.is-lit .fi-roll__k { color: var(--fi-gold); }
 .fi-roll__g.is-lit .fi-roll__k::after { background: var(--dv); box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--dv) 22%, transparent), 0 0 18px color-mix(in srgb, var(--dv) 60%, transparent); }
 .fi-roll__l { display: grid; gap: 0.15em; }
+/* Les métiers du générique : le texte, en 500 (ils étaient en Fraunces). */
 .fi-roll__l li {
-  font-family: var(--ff-p);
+  font-family: var(--ff-t);
   font-size: clamp(1.35rem, 0.95rem + 1.25vw, 2.2rem);
-  font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 340;
-  line-height: 1.24; letter-spacing: -0.012em;
+  font-weight: 500;
+  line-height: 1.24; letter-spacing: -0.018em;
   color: var(--cream-2); text-wrap: balance;
   transition: color 0.7s var(--e-out);
 }
@@ -406,7 +415,7 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 .fi-marq__l {
   display: inline-block;
   font-family: var(--ff-d); font-size: clamp(1.5rem, 1rem + 1.7vw, 2.75rem); line-height: 1;
-  font-variation-settings: 'wdth' 72, 'wght' 820; letter-spacing: 0.02em; text-transform: uppercase;
+  letter-spacing: 0.032em; text-transform: uppercase;
   color: #17120c;
   transform: translateY(var(--y, 0)) rotate(var(--r, 0deg));
 }
@@ -491,14 +500,14 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
   position: absolute; left: 0.7rem; top: 0.7rem; z-index: 2;
   padding: 0.32rem 0.6rem; border-radius: 999px;
   background: color-mix(in srgb, var(--night-2) 78%, transparent); color: var(--cream);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
 }
 /* Sur téléphone, l'étiquette « Worked on » passe à 12 px. */
 @media (max-width: 40rem) { .fi-film__st { font-size: 0.75rem; } }
 .fi-film__open {
   position: absolute; right: 0.8rem; bottom: 0.7rem; z-index: 2;
   display: inline-flex; align-items: center; gap: 0.45rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--cream);
 }
 .fi-film__open::before {
@@ -510,17 +519,18 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 .fi-film__fig:hover .fi-film__open::before, .fi-film__fig:focus-visible .fi-film__open::before { background: var(--dv); color: var(--night-2); box-shadow: none; }
 
 .fi-film__body { display: grid; gap: 0.55rem; padding-inline: 0.15rem; }
-.fi-film__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
+.fi-film__n { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.05em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
 .fi-film.is-lit .fi-film__n { color: var(--fi-gold); }
 .fi-film__h {
   font-family: var(--ff-d); font-size: clamp(1.45rem, 1.15rem + 0.9vw, 2.1rem); line-height: 0.98;
-  font-variation-settings: 'wdth' 84, 'wght' 720; letter-spacing: -0.015em; text-transform: uppercase;
+  letter-spacing: -0.003em; text-transform: uppercase;
 }
 .fi-film__aka { font-size: var(--fs-sm); color: var(--cream-2); }
-.fi-film__aka b { font-weight: 500; color: var(--fg); }
+/* Le titre d'origine se détache par la couleur seulement, comme avant. */
+.fi-film__aka b { font-weight: 400; color: var(--fg); }
 .fi-film__dl { display: grid; gap: 0.3rem; margin-top: 0.3rem; padding-top: 0.7rem; border-top: 1px solid var(--line-2); font-size: var(--fs-sm); }
 .fi-film__dl div { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.8rem; align-items: baseline; }
-.fi-film__dl dt { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+.fi-film__dl dt { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
 .fi-film__dl dd { color: var(--fg); }
 .fi-film__stills { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem; }
 .fi-film__stills .dv-mono { margin-right: 0.35rem; }
@@ -533,7 +543,7 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 .fi-film__stills img { width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
 .fi-film__go {
   justify-self: start; margin-top: 0.2rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream-2); transition: color 0.3s var(--e-out);
 }
 .fi-film__go::after { content: ' →'; }
@@ -547,8 +557,8 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 .fi-rail__foot { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--s-5); margin-top: var(--s-2); }
 .fi-rail__bar { position: relative; height: 1px; background: var(--line); overflow: hidden; }
 .fi-rail__bar i { position: absolute; top: 0; bottom: 0; left: 0; width: var(--w, 40%); background: var(--dv); transform: translateX(var(--x, 0%)); }
-.fi-rail__count { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; color: var(--cream-3); font-variant-numeric: tabular-nums; }
-.fi-rail__count b { color: var(--fg); font-weight: 400; }
+.fi-rail__count { font-family: var(--ff-n); font-size: var(--fs-nano); letter-spacing: 0.05em; color: var(--cream-3); font-variant-numeric: tabular-nums lining-nums; }
+.fi-rail__count b { color: var(--fg); font-weight: 600; }
 .fi-rail__nav { display: flex; gap: 0.5rem; }
 .fi-rail__nav button {
   display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 50%;
@@ -572,7 +582,7 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
   content: ''; position: absolute; left: 1.15rem; top: 0.9rem; bottom: 0.9rem; width: 0;
   border-left: 1.5px dashed color-mix(in srgb, var(--fi-gold) 45%, transparent);
 }
-.fi-soon__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.04; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; }
+.fi-soon__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.04; letter-spacing: 0.012em; text-transform: uppercase; }
 .fi-soon p { margin-top: var(--s-2); max-width: 44rem; color: var(--cream-2); font-size: var(--fs-sm); line-height: 1.6; }
 @media (max-width: 44rem) {
   .fi-soon { grid-template-columns: 1fr; padding: var(--s-5) var(--s-5) var(--s-5) calc(var(--s-5) + 0.8rem); }
@@ -663,7 +673,7 @@ html[data-palette='papier'] .fi-follow i { filter: saturate(1.2); opacity: 0.95;
   position: relative; flex: none; height: var(--cut);
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   padding: 0 1.35rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--cream-3);
   background: color-mix(in srgb, var(--fg) 3%, transparent);
 }
@@ -672,7 +682,8 @@ html[data-palette='papier'] .fi-follow i { filter: saturate(1.2); opacity: 0.95;
   content: ''; position: absolute; left: 0.95rem; right: 0.95rem; bottom: -1px; height: 0;
   border-bottom: 2px dotted color-mix(in srgb, var(--fg) 30%, transparent);
 }
-.fi-tick__stub b { font-weight: 400; color: var(--fg); letter-spacing: 0.1em; font-variant-numeric: tabular-nums; transition: color 0.5s var(--e-out); }
+/* La place (« A·01 ») : un chiffre ; « Admit one » reste une étiquette. */
+.fi-tick__stub b { font-family: var(--ff-n); font-weight: 600; color: var(--fg); letter-spacing: 0.042em; font-variant-numeric: tabular-nums lining-nums; transition: color 0.5s var(--e-out); }
 .fi-tick.is-lit .fi-tick__stub b { color: var(--fi-gold); }
 /* Le poinçon : un trou rond, le fond de la salle au travers. */
 .fi-tick__punch {
@@ -688,11 +699,15 @@ html[data-palette='papier'] .fi-follow i { filter: saturate(1.2); opacity: 0.95;
   border-bottom: 1px solid var(--line-2);
 }
 .fi-role__credit span {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
+/* La mention, en texte : la Plex a l'œil plus grand que Fraunces, elle
+   passe un cran plus petite pour garder ses lignes (« Technical services by »
+   sur une ligne). */
 .fi-role__credit b {
-  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 360;
-  font-size: clamp(1.45rem, 1.05rem + 1vw, 2.05rem); line-height: 1.05; letter-spacing: -0.015em;
+  font-family: var(--ff-t); font-weight: 400;
+  font-size: clamp(1.35rem, 0.98rem + 0.92vw, 1.9rem); line-height: 1.05; letter-spacing: -0.018em;
+  text-wrap: balance;
   color: var(--fi-gold);
 }
 /* Les mentions tiennent sur deux lignes au plus : les quatre billets
@@ -702,7 +717,7 @@ html[data-palette='papier'] .fi-follow i { filter: saturate(1.2); opacity: 0.95;
 .fi-tick__go {
   margin-top: auto; padding-top: var(--s-2);
   display: inline-flex; align-items: center; gap: 0.5em; align-self: flex-start;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--fg);
 }
 .fi-tick__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
@@ -788,20 +803,20 @@ body[data-dv='film'] #main .fi-strip__film {
 }
 .fi-frame.is-lit .fi-frame__pic::before, .fi-frame:has(.fi-frame__go:focus-visible) .fi-frame__pic::before { opacity: 1; }
 @media (hover: hover) and (pointer: fine) { .fi-frame:hover .fi-frame__pic::before { opacity: 1; } }
-.fi-frame__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
+.fi-frame__n { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
 .fi-frame.is-lit .fi-frame__n { color: var(--fi-gold); }
 @media (hover: hover) and (pointer: fine) { .fi-frame:hover .fi-frame__n { color: var(--fi-gold); } }
 .fi-frame__h {
   margin-top: auto;
-  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 360;
-  font-size: clamp(1.6rem, 1.2rem + 1vw, 2.3rem); line-height: 1; letter-spacing: -0.02em;
+  font-family: var(--ff-t); font-weight: 500;
+  font-size: clamp(1.6rem, 1.2rem + 1vw, 2.3rem); line-height: 1.04; letter-spacing: -0.018em;
   color: var(--fg);
 }
 .fi-frame__p { font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
 .fi-frame__go {
   padding-top: var(--s-2);
   display: inline-flex; align-items: center; gap: 0.5em; align-self: flex-start;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--fg);
 }
 .fi-frame__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
@@ -816,7 +831,7 @@ body[data-dv='film'] #main .fi-strip__film {
 /* Le numéro de l'image, sur le bord de la pellicule. */
 .fi-frame__edge {
   position: absolute; left: 1.1rem; top: calc(100% + var(--perf) * 0.05);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1; letter-spacing: 0.14em;
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.625rem; line-height: 1; letter-spacing: 0.06em;
   color: var(--cream-3);
 }
 .fi-frame__edge::before { content: '▸ '; color: var(--dv); }
@@ -884,14 +899,17 @@ body[data-dv='film'] #main .fi-strip__film {
     linear-gradient(color-mix(in srgb, var(--D-cream) 30%, transparent), color-mix(in srgb, var(--D-cream) 30%, transparent)) 50% 0 / 1px 100% no-repeat,
     linear-gradient(color-mix(in srgb, var(--D-cream) 30%, transparent), color-mix(in srgb, var(--D-cream) 30%, transparent)) 0 50% / 100% 1px no-repeat;
 }
+/* Le compte à rebours : un grand chiffre, Barlow en 700 (dessinée à 114 %,
+   d'où la taille écrite un cran plus petite). « Action », à la fin, redevient
+   une étiquette. */
 .fi-leader__n {
   position: relative; z-index: 1;
-  font-family: var(--ff-d); font-weight: 400; font-size: clamp(2.3rem, 1.9rem + 1.3vw, 3.2rem); line-height: 1;
-  font-variation-settings: 'wdth' 80, 'wght' 760; font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-weight: 700; font-size: clamp(2.1rem, 1.75rem + 1.2vw, 2.9rem); line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
   color: var(--D-cream); text-shadow: 0 0 18px rgb(0 0 0 / 0.8);
 }
 .fi-leader.is-done .fi-leader__n {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: var(--ff-m); font-weight: 500; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--D-dv);
 }
 .fi-leader.is-done .fi-leader__cross { opacity: 0.4; }
@@ -976,7 +994,7 @@ html[data-palette='papier'] body[data-dv='film'] #main #inquiry .fi-slate.dv-nig
 }
 .fi-slate__top {
   display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.3rem 1rem; margin-bottom: 0.8rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .fi-slate__top span:first-child { color: var(--cream); }
@@ -1000,18 +1018,19 @@ html[data-palette='papier'] body[data-dv='film'] #main #inquiry .fi-slate.dv-nig
 .fi-cell--prod, .fi-cell--log { grid-column: 1 / -1; }
 .fi-cell--half { grid-column: span 3; }
 .fi-cell__k {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-3); transition: color 0.5s var(--e-out);
 }
 .fi-cell__v {
-  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 48, 'wght' 380;
+  font-family: var(--ff-t); font-weight: 400;
   font-size: clamp(1.02rem, 0.92rem + 0.35vw, 1.25rem); line-height: 1.18; letter-spacing: -0.005em;
   color: var(--cream-3); overflow-wrap: anywhere;
   transition: color 0.5s var(--e-out);
 }
-.fi-cell--prod .fi-cell__v { font-size: clamp(1.45rem, 1.05rem + 1.25vw, 2.15rem); line-height: 1.04; letter-spacing: -0.015em; }
+.fi-cell--prod .fi-cell__v { font-size: clamp(1.45rem, 1.05rem + 1.25vw, 2.15rem); line-height: 1.04; letter-spacing: -0.018em; }
+/* (Plus d'italique : la Plex n'est servie qu'en romain.) */
 .fi-cell--log .fi-cell__v {
-  font-style: italic; line-height: 1.38;
+  line-height: 1.38;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
 }
 .fi-cell.is-set .fi-cell__k { color: var(--fi-gold); }
@@ -1029,10 +1048,11 @@ html[data-palette='papier'] body[data-dv='film'] #main #inquiry .fi-slate.dv-nig
 .fi-slate__foot {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 1.2rem;
   margin-top: 0.85rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream-2);
 }
-.fi-slate__foot b { font-weight: 400; color: var(--cream); margin-left: 0.35em; font-variant-numeric: tabular-nums; }
+/* La date, sur la claquette : un chiffre. */
+.fi-slate__foot b { font-family: var(--ff-n); font-weight: 600; color: var(--cream); margin-left: 0.35em; letter-spacing: 0.05em; font-variant-numeric: tabular-nums lining-nums; }
 /* Le témoin : éteint (« Standby »), allumé quand nom, téléphone et email
    sont là (« Ready »). */
 .fi-slate__lamp { display: inline-flex; align-items: center; gap: 0.55em; transition: color 0.4s var(--e-out); }
@@ -1057,16 +1077,18 @@ html[data-palette='papier'] body[data-dv='film'] #main #inquiry .fi-slate.dv-nig
 }
 .fi-sc__h + * { clear: both; }
 .fi-sc__h::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+/* « Scene 1 » : un numéro, comme sur la claquette, dans la voix des chiffres. */
 .fi-sc__n {
   flex: none; padding: 0.32rem 0.6rem; border-radius: 3px;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums;
+  font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--fi-gold);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fi-gold) 60%, transparent);
 }
 .fi-sc__t {
   flex: none;
-  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 360;
-  font-size: clamp(1.45rem, 1.15rem + 0.8vw, 1.95rem); line-height: 1; letter-spacing: -0.015em;
+  font-family: var(--ff-t); font-weight: 500;
+  font-size: clamp(1.45rem, 1.15rem + 0.8vw, 1.95rem); line-height: 1; letter-spacing: -0.018em;
   color: var(--fg);
 }
 
@@ -1075,7 +1097,7 @@ html[data-palette='papier'] body[data-dv='film'] #main #inquiry .fi-slate.dv-nig
 .fi-form .dv-group > legend,
 .fi-form .field label {
   display: block; margin-bottom: 0.6rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--cream-2); transition: color 0.35s var(--e-out);
 }
 .fi-form .field__opt { text-transform: none; letter-spacing: 0.02em; opacity: 1; color: var(--cream-3); }
@@ -1117,7 +1139,7 @@ body[data-dv='film'] .fi-form .field.is-err :is(input, textarea) {
 }
 body[data-dv='film'] .fi-form .field__err {
   display: flex; align-items: center; gap: 0.45em; margin-top: 0.5rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.04em;
+  font-family: var(--ff-m); font-size: 0.8125rem; letter-spacing: 0.04em;
   color: var(--fi-err);
 }
 body[data-dv='film'] .fi-form .field__err::before { content: '!'; display: grid; place-items: center; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--fi-err); color: var(--night-2); font-weight: 700; font-size: 0.75rem; }
@@ -1151,10 +1173,11 @@ body[data-dv='film'] .fi-pick .fi-cr span {
   font-family: var(--ff-t); letter-spacing: 0; color: var(--fg);
   transition: border-color 0.3s var(--e-out), background-color 0.4s var(--e-out);
 }
-.fi-cr b { font-size: 1rem; font-weight: 600; line-height: 1.2; }
+/* Le nom du rôle garde la graisse du texte (le 600 écrit ne s'est jamais vu). */
+.fi-cr b { font-size: 1rem; font-weight: 400; line-height: 1.2; }
 .fi-cr i {
-  font-family: var(--ff-p); font-style: normal; font-weight: 400; font-variation-settings: 'opsz' 48, 'wght' 380;
-  font-size: 1.02rem; line-height: 1.15; color: var(--fi-gold); text-wrap: balance;
+  font-family: var(--ff-t); font-style: normal; font-weight: 400;
+  font-size: 1.02rem; line-height: 1.15; letter-spacing: -0.005em; color: var(--fi-gold); text-wrap: balance;
 }
 /* La case : un rond qu'on coche. */
 body[data-dv='film'] .fi-pick .fi-cr span::after {
@@ -1223,21 +1246,22 @@ body[data-dv='film'] .fi-sheet[hidden], body[data-dv='film'] .fi-sheet [hidden] 
 }
 .fi-sheet__k {
   display: flex; flex-wrap: wrap; gap: 0.3rem 1.1rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-2);
 }
-.fi-sheet__k span:first-child { color: var(--fg); font-weight: 600; }
+.fi-sheet__k span:first-child { color: var(--fg); }
+/* La date de la feuille : un chiffre. */
+.fi-sheet__k [data-sheet-date] { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em; }
 .fi-sheet__stamp {
   flex: none; display: grid; place-content: center; gap: 0.15rem; text-align: center;
   width: 5.4rem; aspect-ratio: 1; margin: -0.4rem -0.2rem 0 0; border-radius: 50%;
   border: 2px solid var(--fi-gold); outline: 1px solid var(--fi-gold); outline-offset: -6px;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.1;
+  font-family: var(--ff-m); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.1;
   color: var(--fi-gold); transform: rotate(-10deg);
 }
-.fi-sheet__stamp span:first-child { font-weight: 700; }
 body[data-dv='film'] .fi-sheet h3 {
-  font-family: var(--ff-p); text-transform: none; font-weight: 400; font-variation-settings: 'opsz' 96, 'wght' 380;
-  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.7rem); line-height: 1.02; letter-spacing: -0.02em;
+  font-family: var(--ff-t); text-transform: none; font-weight: 500;
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.7rem); line-height: 1.04; letter-spacing: -0.018em;
 }
 .fi-sheet h3:focus { outline: none; }
 body[data-dv='film'] .fi-sheet p { margin-top: var(--s-3); max-width: 40rem; color: var(--cream-2); line-height: 1.55; }
@@ -1250,7 +1274,7 @@ body[data-dv='film'] .fi-sheet dt { padding-right: 1rem; font-size: 0.75rem; let
 body[data-dv='film'] .fi-sheet dd { font-size: var(--fs-sm); color: var(--fg); overflow-wrap: anywhere; }
 body[data-dv='film'] .fi-sheet .fi-sheet__foot {
   display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; margin-top: var(--s-5); max-width: none;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream-3);
 }
 

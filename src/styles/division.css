@@ -157,7 +157,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
 .dv-k {
   display: inline-flex; align-items: center; gap: 0.7em;
   margin: 0 0 var(--s-5);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-family: var(--ff-m); font-weight: 500;
   font-size: var(--fs-nano); line-height: 1.3; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--cream-2);
 }
@@ -165,12 +165,15 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   content: ''; width: 0.55em; height: 0.55em; border-radius: 50%; flex: none;
   background: var(--dv); box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--dv) 22%, transparent);
 }
+/* L'affiche en Archivo Black (18/10/2026) : 46 % plus large que Fraunces,
+   elle passe un cran plus petite (105 px contre 114 à 1440 px), avec le même
+   plancher de 48 px sur téléphone. L'interligne laisse le « g » de « Bring »
+   au-dessus de la ligne suivante. */
 .dv-h1 {
-  max-width: 13ch;
+  max-width: 14ch;
   font-family: var(--ff-p);
-  font-size: clamp(3rem, 1.2rem + 6.6vw, 8.25rem);
-  font-weight: 400; font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
-  line-height: 0.98; letter-spacing: -0.032em;
+  font-size: clamp(3rem, 1rem + 6.2vw, 7rem);
+  line-height: 0.98; letter-spacing: var(--ls-hero);
   color: var(--fg);
   text-wrap: balance;
 }
@@ -180,22 +183,20 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   max-width: 17ch;
   font-family: var(--ff-d);
   font-size: var(--fs-d1);
-  line-height: 0.96; letter-spacing: -0.03em;
-  font-variation-settings: 'wdth' 84, 'wght' 740;
+  line-height: 0.98; letter-spacing: var(--ls-d);
   text-transform: uppercase;
   color: var(--fg);
 }
 .dv-h2--wide { max-width: none; }
 .dv-h3 {
   font-family: var(--ff-d);
-  font-size: var(--fs-h3); line-height: 1.04; letter-spacing: -0.012em;
-  font-variation-settings: 'wdth' 86, 'wght' 700;
+  font-size: var(--fs-h3); line-height: 1.04; letter-spacing: 0;
   text-transform: uppercase;
 }
 .dv-lede { max-width: 38rem; font-size: var(--fs-lede); line-height: 1.55; color: var(--cream-2); }
 .dv-p { max-width: var(--measure, 40rem); color: var(--cream-2); line-height: 1.62; }
 .dv-mono {
-  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-family: var(--ff-m);
   font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3);
 }
 
@@ -208,7 +209,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   display: inline-flex; align-items: center; gap: 0.6rem;
   padding: 0.95rem 1.35rem 0.95rem 1.5rem; border-radius: 999px;
   background: var(--fg); color: var(--bg);
-  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 600; line-height: 1;
+  font-family: var(--ff-t); font-size: 0.9375rem; line-height: 1;
   transition: color 0.45s var(--e-out), transform 0.45s var(--e-out);
 }
 .dv-btn::before {
@@ -234,7 +235,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
 
 .dv-link {
   display: inline-flex; align-items: center; gap: 0.5em;
-  color: var(--fg); font-weight: 500;
+  color: var(--fg);
   background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
   transition: background-size 0.5s var(--e-out), color 0.3s var(--e-out);
 }
@@ -263,15 +264,18 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   position: relative; width: 100%;
   display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--s-6) var(--s-8);
 }
+/* Les repères de l'ouverture : un bandeau de chiffres (« 02 / 07 »,
+   l'heure d'Addis), tout entier dans la voix des chiffres ; le chiffre mis
+   en avant en 600. */
 .dv-hero__meta {
   display: grid; gap: 0.55rem; justify-items: end; text-align: right;
-  font-family: var(--ff-m); font-stretch: 87.5%;
-  font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums;
+  font-size: var(--fs-nano); letter-spacing: 0.05em; text-transform: uppercase; color: var(--cream-3);
 }
-.dv-hero__meta b { color: var(--fg); font-weight: 400; }
+.dv-hero__meta b { color: var(--fg); font-weight: 600; }
 .dv-cue {
   display: inline-flex; align-items: center; gap: 0.6rem; margin-top: var(--s-5);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
 .dv-cue::before {
   content: ''; width: 1px; height: 2.4rem; background: linear-gradient(var(--dv), transparent);
@@ -322,9 +326,9 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   opacity: 0; transition: opacity 0.5s var(--e-out);
 }
 .dv-card:hover::before, .dv-card:focus-within::before { opacity: 1; }
-.dv-card__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); transition: color 0.4s var(--e-out); }
+.dv-card__n { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; color: var(--cream-3); transition: color 0.4s var(--e-out); }
 .dv-card:hover .dv-card__n { color: var(--dv); }
-.dv-card__h { font-family: var(--ff-d); font-size: clamp(1.35rem, 1.1rem + 0.7vw, 1.8rem); line-height: 1; letter-spacing: -0.015em; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.dv-card__h { font-family: var(--ff-d); font-size: clamp(1.35rem, 1.1rem + 0.7vw, 1.8rem); line-height: 1; letter-spacing: -0.003em; text-transform: uppercase; }
 .dv-card__p { font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
 .dv-card__list { display: grid; gap: 0.35rem; font-size: var(--fs-sm); line-height: 1.4; color: var(--cream-2); }
 .dv-card__list li { display: flex; gap: 0.6em; }
@@ -332,7 +336,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
 .dv-card__go {
   margin-top: auto; padding-top: var(--s-4);
   display: inline-flex; align-items: center; gap: 0.5em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--fg);
 }
 .dv-card__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
@@ -349,7 +353,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   padding-block: 0.95rem; border-top: 1px solid var(--line-2);
   font-size: var(--fs-body); color: var(--fg);
 }
-.dv-caps li > span:first-child { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--dv); }
+.dv-caps li > span:first-child { font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.034em; color: var(--dv); }
 
 /* ─────────────── Le processus : un filet qui se remplit ───────────────
    `stepsLine()` pose `--p` (0 → 1) au défilement et allume chaque étape
@@ -371,9 +375,9 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   transition: box-shadow 0.5s var(--e-out), background-color 0.5s var(--e-out);
 }
 .dv-step.is-on::before { background: var(--dv); box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--dv) 22%, transparent); }
-.dv-step__n { display: block; margin-bottom: var(--s-3); font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); }
+.dv-step__n { display: block; margin-bottom: var(--s-3); font-family: var(--ff-n); font-weight: 700; font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; color: var(--cream-3); }
 .dv-step__n::before { content: counter(dvs, decimal-leading-zero); }
-.dv-step__h { font-family: var(--ff-d); font-size: clamp(1.1rem, 0.95rem + 0.5vw, 1.4rem); line-height: 1.06; letter-spacing: -0.01em; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; color: var(--cream-2); transition: color 0.5s var(--e-out); }
+.dv-step__h { font-family: var(--ff-d); font-size: clamp(1.1rem, 0.95rem + 0.5vw, 1.4rem); line-height: 1.06; letter-spacing: 0.002em; text-transform: uppercase; color: var(--cream-2); transition: color 0.5s var(--e-out); }
 .dv-step.is-on .dv-step__h { color: var(--fg); }
 .dv-step__p { margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-3); }
 @media (max-width: 60rem) {
@@ -395,7 +399,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
 .dv-band__row { display: flex; align-items: center; gap: var(--s-8); padding-right: var(--s-8); }
 .dv-band__row > * {
   font-family: var(--ff-d); font-size: clamp(1.8rem, 1rem + 2.6vw, 3.4rem); line-height: 1;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; white-space: nowrap;
+  text-transform: uppercase; white-space: nowrap;
   color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--fg) 55%, transparent);
 }
 .dv-band__row > .is-solid { color: var(--fg); -webkit-text-stroke: 0; }
@@ -431,14 +435,14 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   position: absolute; left: 0.6rem; top: 0.6rem;
   padding: 0.3rem 0.55rem; border-radius: 999px;
   background: color-mix(in srgb, var(--night-2) 82%, transparent); color: var(--cream);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
 }
 .dv-proj__st--ai { left: auto; right: 0.6rem; background: color-mix(in srgb, #8f7cff 85%, #000); color: #fff; }
 /* Le champ qu'une carte vient d'orienter s'éclaire un instant (`inquiry.js`). */
 .dv-form .field.is-picked select,
 .dv-form [data-group].is-picked { box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 35%, transparent); transition: box-shadow 0.4s var(--e-out); }
-.dv-proj__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
-.dv-proj__m { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); }
+.dv-proj__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1; letter-spacing: 0.012em; text-transform: uppercase; }
+.dv-proj__m { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); }
 .dv-proj a::before { content: ''; position: absolute; inset: 0; }
 
 /* Une catégorie sans projet réel : jamais de faux exemple. */
@@ -451,7 +455,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
     color-mix(in srgb, var(--fg) 3%, transparent);
   box-shadow: inset 0 0 0 1px var(--line-2);
 }
-.dv-empty__h { font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.dv-empty__h { font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; letter-spacing: var(--ls-d); text-transform: uppercase; }
 .dv-empty p { margin-top: var(--s-3); color: var(--cream-2); max-width: 38rem; }
 @media (max-width: 44rem) { .dv-empty { grid-template-columns: 1fr; } }
 
@@ -464,7 +468,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   padding-block: 1rem; border-bottom: 1px solid var(--line-2);
   color: var(--fg); transition: padding 0.45s var(--e-out), color 0.3s var(--e-out);
 }
-.dv-reach a > span:first-child { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3); }
+.dv-reach a > span:first-child { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3); }
 /* L'adresse email, d'un seul tenant, débordait sur un petit Android (360 px) :
    elle passe à la ligne après « @ » (le <wbr> du gabarit), et ne se coupe
    ailleurs qu'en dernier recours. */
@@ -482,7 +486,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
 .dv-group { margin-bottom: var(--s-5); border: 0; padding: 0; min-width: 0; }
 .dv-group > legend, .dv-group__l {
   display: block; margin-bottom: var(--s-3);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
+  font-family: var(--ff-m); font-size: var(--fs-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
 }
 .dv-form select {
   width: 100%; appearance: none;
@@ -491,7 +495,7 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
 .dv-form select option { color: var(--fg); background-color: var(--bg); }
 .dv-done [tabindex='-1']:focus { outline: none; }
 .dv-form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-5); margin-top: var(--s-4); }
-.dv-form__note { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); letter-spacing: 0.04em; color: var(--cream-3); }
+.dv-form__note { font-family: var(--ff-m); font-size: var(--fs-micro); letter-spacing: 0.04em; color: var(--cream-3); }
 .dv-form.is-sent { display: none; }
 .u-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
 
@@ -500,10 +504,10 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   background: color-mix(in srgb, var(--dv) 9%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 45%, transparent);
 }
-.dv-done h3 { font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.dv-done h3 { font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; letter-spacing: var(--ls-d); text-transform: uppercase; }
 .dv-done p { margin-top: var(--s-3); color: var(--cream-2); }
 .dv-done dl { display: grid; grid-template-columns: minmax(8rem, auto) minmax(0, 1fr); gap: 0.4rem var(--s-4); margin-top: var(--s-5); font-size: var(--fs-sm); }
-.dv-done dt { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); padding-top: 0.2em; }
+.dv-done dt { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); padding-top: 0.2em; }
 .dv-done dd { color: var(--fg); }
 @media (max-width: 60rem) {
   .dv-ask { grid-template-columns: 1fr; }
@@ -526,8 +530,8 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
   transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s var(--e-out);
 }
 .dv-next a:hover::before, .dv-next a:focus-visible::before { transform: none; }
-.dv-next__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); color: var(--cream-3); }
-.dv-next__t { font-family: var(--ff-d); font-size: clamp(1.5rem, 1rem + 2vw, 2.8rem); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; transition: transform 0.7s var(--e-out); }
+.dv-next__n { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); color: var(--cream-3); }
+.dv-next__t { font-family: var(--ff-d); font-size: clamp(1.5rem, 1rem + 2vw, 2.8rem); line-height: 1; letter-spacing: var(--ls-d); text-transform: uppercase; transition: transform 0.7s var(--e-out); }
 .dv-next a:hover .dv-next__t { transform: translateX(0.6rem); }
 .dv-next__s { max-width: 26rem; font-size: var(--fs-sm); color: var(--cream-3); text-align: right; }
 .dv-next a::after { content: '→'; position: absolute; right: 0; opacity: 0; }
@@ -566,7 +570,7 @@ body[data-dv='rentals'] .dv-next [data-id='rentals'] { display: none; }
 .dv-quick.is-on { translate: -50% 0; }
 .dv-quick a {
   display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1rem; border-radius: 999px;
-  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 600; color: var(--fg); white-space: nowrap;
+  font-family: var(--ff-t); font-size: 0.875rem; color: var(--fg); white-space: nowrap;
 }
 .dv-quick a.is-main { background: var(--fg); color: var(--bg); }
 .dv-quick svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }

@@ -29,9 +29,11 @@ body[data-dv='rentals'] { --L-cream-3: #52667a; }
 .re-hero .dv-hero__in { pointer-events: none; }
 .re-hero .dv-hero__in > * { pointer-events: auto; }
 .re-hero__text { max-width: 41rem; }
+/* L'Archivo Black, plus large que Fraunces : le titre passe un cran plus
+   petit, sur 13 caractères, et garde ses quatre lignes à côté de la caméra. */
 .re-hero .dv-h1 {
-  max-width: 12ch;
-  font-size: clamp(2.6rem, 0.9rem + 4.6vw, 5.9rem);
+  max-width: 13ch;
+  font-size: clamp(2.4rem, 0.8rem + 3.9vw, 5.1rem);
   line-height: 1;
 }
 .re-hero .dv-lede { max-width: 33rem; margin-top: var(--s-4); }
@@ -102,23 +104,26 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-crop--bl { bottom: 2.6rem; left: 0; border-width: 0 0 1px 1px; }
 .re-crop--br { bottom: 2.6rem; right: 0; border-width: 0 1px 1px 0; }
 
+/* Les étiquettes du cadre de visée : le nom de l'appareil reste une
+   étiquette ; le numéro de figure et la lecture du bas (chargement, angle)
+   sont des chiffres. */
 .re-lab {
   position: absolute; z-index: 1; pointer-events: none;
   display: inline-flex; align-items: baseline; gap: 0.7em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1.2;
+  font-family: var(--ff-m); font-size: var(--fs-nano); line-height: 1.2;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
 }
-.re-lab b { font-weight: 400; color: var(--fg); }
+.re-lab b { font-family: var(--ff-n); font-weight: 600; letter-spacing: 0.06em; color: var(--fg); }
 .re-lab--tl { top: 0.9rem; left: 2.1rem; }
 .re-lab--tl b { color: var(--dv-lt); }
 .re-lab--tr { top: 0.9rem; right: 2.1rem; }
-.re-lab--bl { bottom: 3.5rem; left: 2.1rem; display: grid; }
+.re-lab--bl { bottom: 3.5rem; left: 2.1rem; display: grid; font-family: var(--ff-n); letter-spacing: 0.06em; }
 /* Le crédit du modèle 3D (CC BY 4.0) : discret, en bas de l'ouverture, hors
    du cadre (dedans, il chevauchait les étiquettes et la réglette). */
 .re-credit {
   position: absolute; right: var(--pad-x); bottom: 0.9rem; z-index: 2; max-width: 34rem; margin: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.4;
+  font-family: var(--ff-m); font-size: 0.625rem; line-height: 1.4;
   letter-spacing: 0.08em; text-transform: uppercase; text-align: right; color: var(--cream-3);
 }
 .re-read { grid-area: 1 / 1; transition: opacity 0.6s var(--e-out); }
@@ -144,8 +149,8 @@ html:not(.js) .re-photo { opacity: 0.9; }
 }
 .re-scale__strip span {
   position: absolute; top: 1.05rem; translate: -50% 0;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.1em; color: var(--cream-2);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: 0.625rem; letter-spacing: 0.042em; color: var(--cream-2);
+  font-variant-numeric: tabular-nums lining-nums;
 }
 .re-scale__needle {
   position: absolute; left: 50%; top: 0; width: 1px; height: 1.15rem; translate: -50% 0;
@@ -172,7 +177,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-ctrl button:focus-visible { outline: 2px solid var(--dv); outline-offset: 3px; }
 .re-ctrl svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .re-ctrl__t {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
 .re-ctrl__touch { display: none; }
 @media (pointer: coarse) { .re-ctrl__fine { display: none; } .re-ctrl__touch { display: inline; } }
@@ -213,6 +218,9 @@ html:not(.js) .re-photo { opacity: 0.9; }
   .re-lab--tr { display: none; }
   .re-credit { position: static; margin: var(--s-6) var(--pad-x) 0; text-align: left; }
   .re-hero .dv-hero__meta { grid-auto-flow: row; gap: 0.4rem; }
+  /* Sur un petit Android (360 px), « Next Production. » tient encore sur sa
+     ligne : le titre garde ses quatre lignes. */
+  .re-hero .dv-h1 { font-size: min(2.4rem, 10.2vw); }
   /* Revue croisée (18/10/2026) : sur un iPhone, la planche un peu plus basse
      pour que « Request Rental Quote » tienne dans le premier écran. */
   .re-hero { --re-fh: calc((100vw - 2 * var(--pad-x)) * 0.8); }
@@ -251,11 +259,11 @@ html:not(.js) .re-photo { opacity: 0.9; }
 /* Le numéro de planche, à droite du petit titre. */
 .re-sheetno {
   position: absolute; top: 0; right: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1.3;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
-  font-variant-numeric: tabular-nums; white-space: nowrap;
+  font-family: var(--ff-n); font-size: var(--fs-nano); line-height: 1.3;
+  letter-spacing: 0.068em; text-transform: uppercase; color: var(--cream-3);
+  font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
 }
-.re-sheetno b { font-weight: 400; color: var(--fg); }
+.re-sheetno b { font-weight: 600; color: var(--fg); }
 
 /* Le réticule (ordinateur) : deux traits qui s'estompent loin du pointeur,
    et la lecture de la position. Plus discret au-dessus des fiches. */
@@ -272,8 +280,8 @@ html:not(.js) .re-photo { opacity: 0.9; }
   position: absolute; left: 0; top: 0; padding: 0.22rem 0.42rem; border-radius: 0.2rem;
   background: color-mix(in srgb, var(--bg) 84%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 28%, transparent);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.1em;
-  color: var(--cream-2); white-space: pre; font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.042em;
+  color: var(--cream-2); white-space: pre; font-variant-numeric: tabular-nums lining-nums;
   will-change: transform;
 }
 
@@ -317,15 +325,16 @@ html:not(.js) .re-photo { opacity: 0.9; }
   position: relative; flex: none;
   display: inline-flex; align-items: baseline; gap: 0.55rem;
   padding: 1.1rem 0 1rem; border: 0; background: none; cursor: pointer;
-  font-family: var(--ff-t); font-size: var(--fs-sm); font-weight: 500; color: var(--cream-3);
+  font-family: var(--ff-t); font-size: var(--fs-sm); color: var(--cream-3);
   white-space: nowrap;
   transition: color 0.4s var(--e-out);
 }
 .re-filter__b:hover, .re-filter__b[aria-pressed='true'] { color: var(--fg); }
 .re-filter__b:focus-visible { outline: 2px solid var(--dv); outline-offset: -2px; border-radius: 0.3rem; }
+/* Le numéro de l'onglet et le nombre d'articles : des chiffres. */
 .re-filter__n, .re-filter__c {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: 0.625rem; letter-spacing: 0.034em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 .re-filter__n { color: var(--cream-3); }
 .re-filter__b[aria-pressed='true'] .re-filter__n { color: var(--dv-lt); }
@@ -351,7 +360,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
   display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: var(--s-2) var(--s-6); align-items: baseline;
   padding-block: var(--s-5) var(--s-6);
 }
-.re-line__k { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.05; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; color: var(--fg); }
+.re-line__k { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.05; letter-spacing: 0.012em; text-transform: uppercase; color: var(--fg); }
 .re-line__v { max-width: 56rem; font-size: var(--fs-sm); line-height: 1.6; color: var(--cream-2); }
 @media (max-width: 44rem) { .re-line { grid-template-columns: 1fr; } }
 
@@ -408,7 +417,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
   position: absolute; top: 0.95rem; left: 0.95rem; z-index: 1;
   padding: 0.34rem 0.58rem; border-radius: 0.2rem;
   background: rgb(255 255 255 / 0.88); color: #0b1a28;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; line-height: 1; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.5625rem; line-height: 1; letter-spacing: 0.1em; text-transform: uppercase;
 }
 /* Les repères d'angle de la plaque : ils se resserrent au survol, comme
    une mise au point. */
@@ -461,10 +470,11 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-dim--v::before, .re-dim--v::after { left: calc(0.5rem - 3px); width: 7px; height: 8px; }
 .re-dim--v::before { top: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .re-dim--v::after { bottom: 0; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+/* La cote (« Fig. 01 ») : un repère chiffré. */
 .re-dim__t {
   position: absolute; left: 50%; top: 0.5rem; translate: -50% -50%;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; font-weight: 400; line-height: 1;
-  letter-spacing: 0.16em; text-transform: uppercase; white-space: nowrap; color: var(--cream-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.625rem; line-height: 1;
+  letter-spacing: 0.068em; text-transform: uppercase; white-space: nowrap; color: var(--cream-3);
   transition: color 0.4s var(--e-out);
 }
 :is(.re-item:hover, .re-item:focus-within, .re-item.is-drawn, .re-item.is-picked) .re-dim__l { transform: none; }
@@ -474,12 +484,14 @@ html:not(.js) .re-photo { opacity: 0.9; }
 :is(.re-item:hover, .re-item:focus-within, .re-item.is-drawn, .re-item.is-picked) .re-item__mk { transform: scale(0.95); opacity: 1; }
 
 .re-item__body { display: flex; flex-direction: column; gap: var(--s-3); flex: 1; padding: var(--s-4) 0.85rem var(--s-4) 2.05rem; }
-.re-item__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+/* Le numéro de la fiche est un chiffre ; sa mention (`__tag`), une étiquette. */
+.re-item__n { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; text-transform: uppercase; color: var(--cream-3); }
 .re-item__tag {
   margin-left: 0.8em; padding-left: 0.8em; border-left: 1px solid var(--line);
+  font-family: var(--ff-m); letter-spacing: 0.1em;
   color: var(--dv-lt);
 }
-.re-item__h { font-family: var(--ff-d); font-size: clamp(1.3rem, 1.1rem + 0.5vw, 1.6rem); line-height: 1; letter-spacing: -0.012em; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.re-item__h { font-family: var(--ff-d); font-size: clamp(1.3rem, 1.1rem + 0.5vw, 1.6rem); line-height: 1; letter-spacing: 0; text-transform: uppercase; }
 .re-item__p { font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
 /* Le cartouche : le tableau d'un bas de planche. */
 .re-item__spec { margin-top: auto; display: grid; border: 1px solid var(--line); border-radius: 0.15rem; }
@@ -487,7 +499,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-item__spec > div + div { border-top: 1px solid var(--line); }
 .re-item__spec dt {
   align-self: stretch; padding: 0.55rem 0.5rem; border-right: 1px solid var(--line);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.5; letter-spacing: 0.07em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: 0.625rem; line-height: 1.5; letter-spacing: 0.07em; text-transform: uppercase; color: var(--cream-3);
 }
 .re-item__spec dd { padding: 0.5rem 0.6rem; font-size: var(--fs-xs); line-height: 1.4; color: var(--fg); }
 .re-item__acts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1rem; padding-top: var(--s-2); }
@@ -497,7 +509,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
   padding: 0.62rem 0.95rem 0.62rem 0.75rem; border: 0; border-radius: 999px; cursor: pointer;
   background: color-mix(in srgb, var(--fg) 6%, transparent); color: var(--fg);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 20%, transparent);
-  font-family: var(--ff-t); font-size: var(--fs-xs); font-weight: 600; line-height: 1;
+  font-family: var(--ff-t); font-size: var(--fs-xs); line-height: 1;
   transition: background-color 0.45s var(--e-out), color 0.45s var(--e-out), box-shadow 0.45s var(--e-out);
 }
 .re-add:hover { box-shadow: inset 0 0 0 1px var(--dv); }
@@ -511,7 +523,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
 
 .re-item__go {
   display: inline-flex; align-items: center; gap: 0.45em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream-2); transition: color 0.3s var(--e-out);
 }
 .re-item__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
@@ -542,14 +554,16 @@ html:not(.js) .re-photo { opacity: 0.9; }
   box-shadow: inset 0 0 0 1px var(--line);
   background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--dv) 26%, transparent) 0 1px, transparent 1px 0.6rem);
 }
+/* Sur la plaque hachurée : le numéro de la catégorie en grand chiffre, son
+   nom en étiquette. */
 .re-ask__plate b, .re-ask__plate i {
   padding: 0.2rem 0.55rem; background: var(--bg); font-style: normal;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); letter-spacing: 0.14em; text-transform: uppercase;
 }
-.re-ask__plate b { font-size: 1.5rem; letter-spacing: 0.06em; color: var(--fg); box-shadow: inset 0 0 0 1px var(--line); }
+.re-ask__plate b { font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: 1.5rem; letter-spacing: 0.025em; color: var(--fg); box-shadow: inset 0 0 0 1px var(--line); }
 .re-ask__plate i { font-size: 0.625rem; color: var(--cream-2); }
-.re-ask__k { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dv-lt); }
-.re-ask__h { font-family: var(--ff-d); font-size: clamp(1.3rem, 1.1rem + 0.5vw, 1.6rem); line-height: 1.02; letter-spacing: -0.012em; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.re-ask__k { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dv-lt); }
+.re-ask__h { font-family: var(--ff-d); font-size: clamp(1.3rem, 1.1rem + 0.5vw, 1.6rem); line-height: 1.02; letter-spacing: 0; text-transform: uppercase; }
 .re-ask__s { font-size: var(--fs-sm); color: var(--cream-2); }
 .re-ask__list { display: grid; gap: 0.3rem; margin-bottom: var(--s-4); font-size: var(--fs-sm); line-height: 1.4; color: var(--fg); }
 .re-ask__list li { display: flex; gap: 0.6em; }
@@ -562,7 +576,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-man__cols, .re-rate__r { grid-template-columns: 3rem minmax(0, 1.05fr) minmax(0, 1fr) 5.4rem; }
 .re-man__cols {
   display: grid; gap: var(--s-5); padding: 0 0.25rem 0.75rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
 }
 .re-man__cols span:last-child { text-align: right; }
 .re-rate { border-top: 1px solid var(--line); }
@@ -582,11 +596,11 @@ html:not(.js) .re-photo { opacity: 0.9; }
   transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s var(--e-out);
 }
 .re-rate__r.is-on::before { transform: none; }
-.re-rate__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); transition: color 0.4s var(--e-out); }
+.re-rate__n { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; color: var(--cream-3); transition: color 0.4s var(--e-out); }
 .re-rate__r.is-on .re-rate__n { color: var(--dv-lt); }
 .re-rate__h {
-  font-family: var(--ff-d); font-size: clamp(1.2rem, 1rem + 0.6vw, 1.6rem); line-height: 1.02; letter-spacing: -0.012em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.2rem, 1rem + 0.6vw, 1.6rem); line-height: 1.02; letter-spacing: 0;
+  text-transform: uppercase;
   transition: transform 0.6s var(--e-out);
 }
 .re-rate__r.is-on .re-rate__h { transform: translateX(0.4rem); }
@@ -594,7 +608,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-rate__go {
   justify-self: end; align-self: center;
   display: inline-flex; align-items: center; gap: 0.6rem; padding-right: 0.25rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
 }
 .re-rate__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
 .re-rate__r.is-on .re-rate__go::after { transform: translateX(0.35em); }
@@ -631,9 +645,11 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-lay__cap {
   display: flex; justify-content: space-between; gap: 1rem; padding: 0.7rem 0.9rem;
   border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--fg) 3%, var(--bg));
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.3; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: 0.625rem; line-height: 1.3; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
-.re-lay__cap b { font-weight: 400; color: var(--dv-lt); }
+/* « Fig. 3.01 » : le numéro du schéma, un chiffre ; son nom, une étiquette. */
+.re-lay__cap > span:first-child { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em; }
+.re-lay__cap b { font-weight: 600; color: var(--dv-lt); }
 .re-lay__t { color: var(--fg); text-align: right; }
 .re-lay__stage { position: relative; aspect-ratio: 360 / 210; margin: 0.9rem 1rem 1rem; }
 .re-lay__d { position: absolute; inset: 0; opacity: 0; transition: opacity 0.25s var(--e-out); }
@@ -652,11 +668,11 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-optsec.is-live .re-lay__d.is-on .re-lay__w { animation: re-flow 0.9s linear infinite; }
 @keyframes re-flow { to { stroke-dashoffset: -16; } }
 .re-lay__tx {
-  fill: var(--fg); font-family: var(--ff-m); font-stretch: 87.5%; font-size: 10.5px; letter-spacing: 0.12em;
+  fill: var(--fg); font-family: var(--ff-m); font-size: 10.5px; letter-spacing: 0.12em;
   text-anchor: middle; dominant-baseline: central;
 }
-.re-lay__tx--to { font-weight: 600; }
-.re-lay__idx { fill: var(--cream-3); font-family: var(--ff-m); font-stretch: 87.5%; font-size: 9px; letter-spacing: 0.12em; }
+/* Les repères des boîtes (A, B, C) : comme les zones de la planche. */
+.re-lay__idx { fill: var(--cream-3); font-family: var(--ff-n); font-weight: 600; font-size: 9px; letter-spacing: 0.05em; }
 
 /* La ligne de rappel, de la ligne allumée au schéma. */
 .re-lead { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; opacity: 0; transition: opacity 0.3s var(--e-out); }
@@ -678,7 +694,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-op__k {
   display: inline-flex; align-items: center; gap: 0.55em;
   padding: 0.35rem 0.65rem; border-radius: 0.2rem; background: var(--dv); color: var(--dv-ink);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.12em; text-transform: uppercase;
 }
 .re-op .dv-p { font-size: var(--fs-sm); }
 .re-op__x { margin-top: var(--s-2); padding-top: var(--s-4); border-top: 1px solid color-mix(in srgb, var(--dv) 25%, transparent); font-size: var(--fs-xs); line-height: 1.55; color: var(--cream-3); }
@@ -692,7 +708,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
   .re-strip { grid-column: 2 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.35rem; }
   .re-strip i, .re-strip em {
     padding: 0.32rem 0.5rem; border-radius: 0.2rem; font-style: normal;
-    font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase;
+    font-family: var(--ff-m); font-size: 0.6875rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase;
   }
   .re-strip i { box-shadow: inset 0 0 0 1px var(--line-ui); color: var(--cream-2); }
   .re-strip em { box-shadow: inset 0 0 0 1px var(--dv); background: color-mix(in srgb, var(--dv) 14%, transparent); color: var(--fg); }
@@ -703,6 +719,9 @@ html:not(.js) .re-photo { opacity: 0.9; }
   .re-man__cols { display: none; }
   .re-rate__r { grid-template-columns: 2.2rem minmax(0, 1fr) auto; padding-block: 1.3rem; }
   .re-rate__p { grid-column: 2 / -1; grid-row: 2; }
+  /* L'Archivo Black est plus large que l'ancienne étroite : un cran plus
+     petit, « Equipment only » reste sur une ligne. */
+  .re-rate__h { font-size: 1.125rem; }
   .re-strip { grid-row: 3; }
   .re-rate__go { grid-column: 3; grid-row: 1; }
 }
@@ -731,9 +750,10 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-zones__top, .re-zones__side { position: absolute; display: flex; }
 .re-zones__top { left: 1rem; right: 0; top: 0; height: 1rem; border-bottom: 1px solid color-mix(in srgb, var(--dv) 22%, transparent); }
 .re-zones__side { left: 0; top: 1rem; bottom: 0; width: 1rem; flex-direction: column; border-right: 1px solid color-mix(in srgb, var(--dv) 22%, transparent); }
+/* Les repères de zone (1 à 6, A à C) : des chiffres de planche. */
 .re-zones i {
   flex: 1; display: grid; place-items: center; font-style: normal;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.1em; color: var(--cream-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.5625rem; letter-spacing: 0.042em; color: var(--cream-3);
 }
 .re-zones__top i + i { border-left: 1px solid color-mix(in srgb, var(--dv) 22%, transparent); }
 .re-zones__side i + i { border-top: 1px solid color-mix(in srgb, var(--dv) 22%, transparent); }
@@ -742,13 +762,15 @@ html:not(.js) .re-photo { opacity: 0.9; }
   position: absolute; right: 0.75rem; bottom: 0.75rem; z-index: 0; pointer-events: none;
   display: grid; grid-template-columns: auto auto;
   border-top: 1px solid color-mix(in srgb, var(--dv) 34%, transparent); border-left: 1px solid color-mix(in srgb, var(--dv) 34%, transparent);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
 .re-tblock > span { padding: 0.55rem 0.8rem; }
 .re-tblock > span + span { border-top: 1px solid color-mix(in srgb, var(--dv) 22%, transparent); }
 .re-tblock > span:last-child { border-left: 1px solid color-mix(in srgb, var(--dv) 22%, transparent); }
 .re-tblock__t { grid-column: 1 / -1; color: var(--fg); }
-.re-tblock b { font-weight: 400; color: var(--dv-lt); }
+/* « Sheet 04 / 05 » : un numéro de planche. */
+.re-tblock > span:last-child { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em; }
+.re-tblock b { font-weight: 600; color: var(--dv-lt); }
 
 /* Le câble et ses fiches. */
 .re-run { position: relative; }
@@ -766,9 +788,10 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-run__s.is-on .re-run__j .j-f { transform: none; }
 .re-run__s.is-on .re-run__j .j-i { stroke: var(--dv); }
 .re-run__s.is-on .re-run__j .j-p, .re-run__s.is-on .re-run__j .j-k { fill: var(--dv-lt); }
-.re-run__n { display: block; margin-bottom: var(--s-3); font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
+/* Les numéros des étapes, comme ceux du processus commun (`.dv-step__n`). */
+.re-run__n { display: block; margin-bottom: var(--s-3); font-family: var(--ff-n); font-weight: 700; font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
 .re-run__s.is-on .re-run__n { color: var(--dv-lt); }
-.re-run__h { font-family: var(--ff-d); font-size: clamp(1.1rem, 0.95rem + 0.5vw, 1.4rem); line-height: 1.06; letter-spacing: -0.01em; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; color: var(--cream-2); transition: color 0.5s var(--e-out); }
+.re-run__h { font-family: var(--ff-d); font-size: clamp(1.1rem, 0.95rem + 0.5vw, 1.4rem); line-height: 1.06; letter-spacing: 0.002em; text-transform: uppercase; color: var(--cream-2); transition: color 0.5s var(--e-out); }
 .re-run__s.is-on .re-run__h { color: var(--fg); }
 .re-run__p { margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
 /* Le câble : la gaine éteinte, le tracé allumé, le signal qui court dans
@@ -780,15 +803,16 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-blue.is-live .re-run__sig.is-on { animation: re-sig 0.85s linear infinite; }
 @keyframes re-sig { to { stroke-dashoffset: -13.5; } }
 .re-run__tag rect { fill: var(--night-3); stroke: color-mix(in srgb, var(--dv) 40%, transparent); stroke-width: 1; transition: stroke 0.4s var(--e-out); }
+/* Les repères des tronçons (W1…) : des chiffres ; l'arrivée, une étiquette. */
 .re-run__tag text {
-  fill: var(--cream-3); font-family: var(--ff-m); font-stretch: 87.5%; font-size: 8.5px; letter-spacing: 0.12em;
+  fill: var(--cream-3); font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: 8.5px; letter-spacing: 0.05em;
   text-anchor: middle; dominant-baseline: central; transition: fill 0.4s var(--e-out);
 }
 .re-run__tag.is-on rect { stroke: var(--dv); }
 .re-run__tag.is-on text { fill: var(--fg); }
 .re-run__end path { fill: none; stroke: color-mix(in srgb, var(--dv) 40%, transparent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.4s var(--e-out); }
 .re-run__end text {
-  fill: var(--cream-3); font-family: var(--ff-m); font-stretch: 87.5%; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  fill: var(--cream-3); font-family: var(--ff-m); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
   text-anchor: end; transition: fill 0.4s var(--e-out);
 }
 .re-run__end.is-col text { text-anchor: start; dominant-baseline: central; }
@@ -824,9 +848,11 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-terms__head {
   display: flex; justify-content: space-between; gap: 1rem; margin: 0 calc(var(--s-5) * -1); padding: 0.8rem var(--s-5);
   border-bottom: 1px solid var(--line);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.3; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: 0.625rem; line-height: 1.3; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
 }
-.re-terms__head b { font-weight: 400; color: var(--fg); }
+/* « Sheet 05 / 05 » : un numéro de planche. */
+.re-terms__head > span:last-child { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.068em; }
+.re-terms__head b { font-weight: 600; color: var(--fg); }
 .re-cond__list { display: grid; }
 .re-cond__list li {
   position: relative;
@@ -841,12 +867,14 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-cond__list li > span:first-child {
   justify-self: start; display: grid; place-items: center; width: 2.1rem; height: 1.7rem; border-radius: 0.2rem;
   box-shadow: inset 0 0 0 1px var(--line-ui);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--dv-lt);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-weight: 600; font-size: var(--fs-nano); letter-spacing: 0.034em; color: var(--dv-lt);
+  font-variant-numeric: tabular-nums lining-nums;
   transition: background-color 0.4s var(--e-out), color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
 }
 .re-cond__list li:hover > span:first-child { background: var(--dv); color: var(--dv-ink); box-shadow: none; }
-.re-cond__list b { font-weight: 600; color: var(--fg); }
+/* La clause clé se détache par la couleur, comme avant (le 600 écrit ne
+   s'est jamais vu). */
+.re-cond__list b { font-weight: 400; color: var(--fg); }
 /* Le tampon : les mots du titre, posés de travers au pied de la feuille. */
 .re-seal {
   position: absolute; right: var(--s-5); bottom: -1.35rem; z-index: 2;
@@ -854,10 +882,11 @@ html:not(.js) .re-photo { opacity: 0.9; }
   padding: 0.55rem 0.95rem 0.6rem; border: 2px solid currentColor; border-radius: 0.45rem;
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   color: var(--dv-lt); transform: rotate(-7deg);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; line-height: 1.2; letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.6875rem; line-height: 1.2; letter-spacing: 0.18em; text-transform: uppercase;
   box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--bg) 88%, transparent), inset 0 0 0 4px color-mix(in srgb, currentColor 55%, transparent);
 }
-.re-seal b { font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.08em; }
+/* (`b` est gras par défaut : 400 garde l'étiquette à sa graisse, 500.) */
+.re-seal b { font-size: 0.9375rem; font-weight: 400; letter-spacing: 0.08em; }
 html[data-palette='papier'] .re-seal { color: var(--L-dv-lt); }
 @media (max-width: 36rem) {
   .re-terms { padding-inline: var(--s-4); }
@@ -899,7 +928,7 @@ html[data-palette='papier'] .re-seal { color: var(--L-dv-lt); }
 .re-desk__intro { display: grid; gap: var(--s-5); justify-items: start; }
 .re-desk__intro .dv-k { margin-bottom: 0; }
 .re-desk__k {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-micro); letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .re-desk__reach .dv-reach { margin-top: var(--s-3); border-top-color: var(--line); }
@@ -916,7 +945,7 @@ html[data-palette='papier'] .re-seal { color: var(--L-dv-lt); }
   background: color-mix(in srgb, var(--dv) 9%, transparent);
   font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2);
 }
-.re-ask__note b, .re-done__note b { color: var(--fg); font-weight: 600; }
+.re-ask__note b, .re-done__note b { color: var(--fg); font-weight: 400; }
 
 /* ── La feuille ── */
 .re-sheet:not(.is-sent) {
@@ -933,13 +962,13 @@ html[data-palette='papier'] .re-seal { color: var(--L-dv-lt); }
 .re-blk.is-done::before { transform: none; }
 .re-blk__h {
   display: flex; align-items: center; gap: 0.9rem;
-  font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.05; letter-spacing: -0.01em;
-  font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; color: var(--fg);
+  font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.05; letter-spacing: 0.002em;
+  text-transform: uppercase; color: var(--fg);
 }
 .re-blk__n {
   display: grid; place-items: center; flex: none; width: 2.3rem; height: 2.3rem; border-radius: 0.55rem;
   box-shadow: inset 0 0 0 1px var(--line-ui);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-variation-settings: normal; letter-spacing: 0.04em;
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: 0.8125rem; letter-spacing: 0.017em;
   color: var(--dv-lt);
   transition: background-color 0.5s var(--e-out), color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
 }
@@ -959,7 +988,7 @@ html[data-palette='papier'] .re-seal { color: var(--L-dv-lt); }
 .re-sheet .dv-group { margin: 0; }
 .re-sheet .field label, .re-sheet .dv-group > legend {
   display: block; margin: 0 0 0.65rem; padding: 0;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.35;
+  font-family: var(--ff-m); font-size: 0.8125rem; line-height: 1.35;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-2);
 }
 .re-sheet .field__opt { text-transform: none; letter-spacing: 0; opacity: 1; color: var(--cream-3); }
@@ -1016,10 +1045,10 @@ html[data-palette='papier'] .re-sheet .field__err {
 .re-pk__img { width: 3rem; height: 3rem; border-radius: 0.55rem; overflow: hidden; background: radial-gradient(120% 90% at 50% 35%, #f6f9fb, #dfe6ec); }
 .re-pk__img img { width: 100%; height: 100%; object-fit: cover; }
 .re-pk__img--contain img { object-fit: contain; padding: 0.2rem; mix-blend-mode: multiply; }
-.re-pk b { display: block; font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 600; line-height: 1.2; color: var(--fg); }
+.re-pk b { display: block; font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 400; line-height: 1.2; color: var(--fg); }
 .re-pk small {
   display: block; margin-top: 0.25rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cream-3);
 }
 .re-pk__box {
   display: grid; place-items: center; width: 1.45rem; height: 1.45rem; border-radius: 0.4rem;
@@ -1040,7 +1069,7 @@ html[data-palette='papier'] .re-sheet .field__err {
   display: inline-flex; align-items: center; gap: 0.55rem;
   min-height: 2.85rem; padding: 0.55rem 1.05rem 0.55rem 0.95rem; border-radius: 999px;
   box-shadow: inset 0 0 0 1px var(--line-ui);
-  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; line-height: 1.2; color: var(--cream-2);
+  font-family: var(--ff-t); font-size: 0.9375rem; line-height: 1.2; color: var(--cream-2);
   transition: background-color 0.35s var(--e-out), color 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
 }
 .re-o span::before {
@@ -1057,9 +1086,10 @@ html[data-palette='papier'] .re-sheet .field__err {
 .re-sheet [data-group] { border-radius: 0.8rem; }
 
 /* La durée lue entre les deux dates. */
+/* La durée lue entre les deux dates : une lecture, dans la voix des chiffres. */
 .re-span {
   margin-top: calc(var(--s-5) * -0.5);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.04em; color: var(--dv-lt);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.8125rem; letter-spacing: 0.017em; color: var(--dv-lt);
 }
 .re-span:empty { display: none; }
 
@@ -1095,7 +1125,7 @@ html[data-palette='papier'] .re-sheet .field__err {
 .re-tk, .re-done__tk {
   --hole: 0.42rem; --pitch: 1.15rem;
   position: relative;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.45; letter-spacing: 0.02em;
+  font-family: var(--ff-m); font-size: 0.8125rem; line-height: 1.45; letter-spacing: 0.02em;
   font-variant-numeric: tabular-nums;
   /* Les bords perforés en haut et en bas, et les deux encoches de la ligne
      de détachement (`--tear-y`, posée par rentals.js ; sans elle, hors du
@@ -1118,26 +1148,34 @@ html[data-palette='papier'] .re-sheet .field__err {
 .re-tk__top { display: grid; gap: 0.4rem; padding-bottom: 0.95rem; border-bottom: 1.5px dashed var(--line-ui); }
 .re-tk__brand { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-2); }
 .re-tk__h {
-  font-family: var(--ff-d); font-stretch: normal; font-size: clamp(1.45rem, 1.15rem + 0.7vw, 1.9rem); line-height: 1; letter-spacing: -0.01em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; color: var(--fg);
+  font-family: var(--ff-d); font-size: clamp(1.45rem, 1.15rem + 0.7vw, 1.9rem); line-height: 1; letter-spacing: 0.002em;
+  text-transform: uppercase; color: var(--fg);
 }
 .re-tk__meta { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-2); }
+/* Les chiffres du ticket : la date, le nombre d'articles, les numéros de
+   ligne, le compteur des lignes remplies. Le reste du ticket est tapé dans
+   la voix des étiquettes. */
+.re-tk__meta [data-tk-today], .re-tk__count, .re-tk__n, .re-tk__meter > :first-child {
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums;
+}
+.re-tk__meta [data-tk-today], .re-tk__meter > :first-child { letter-spacing: 0.034em; }
+.re-tk__n { letter-spacing: 0.008em; }
 .re-tk__sec { padding-block: 0.85rem; border-bottom: 1.5px dashed var(--line-ui); }
 .re-tk__sec:has(+ .re-tk__tear) { border-bottom: 0; padding-bottom: 0.4rem; }
 .re-tk__k { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.45rem; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-2); }
 .re-tk__count {
   display: grid; place-items: center; min-width: 1.6rem; height: 1.6rem; padding: 0 0.4rem; border-radius: 999px;
-  background: var(--fg); color: var(--bg); font-size: 0.8125rem; letter-spacing: 0;
+  background: var(--fg); color: var(--bg); font-size: 0.8125rem; font-weight: 600; letter-spacing: 0;
 }
 .re-tk__items { display: grid; }
 .re-tk__items li { display: flex; align-items: baseline; gap: 0.55rem; padding-block: 0.16rem; overflow: hidden; }
 .re-tk__n { flex: none; color: var(--cream-3); }
-.re-tk__t { min-width: 0; font-weight: 500; color: var(--fg); }
+.re-tk__t { min-width: 0; color: var(--fg); }
 .re-tk__lead { flex: 1 1 1rem; min-width: 1rem; border-bottom: 1.5px dotted var(--line-ui); translate: 0 -0.28em; }
 .re-tk__c { flex: none; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dv-lt); }
 .re-tk__empty { font-family: var(--ff-t); font-size: 0.875rem; line-height: 1.45; letter-spacing: 0; color: var(--cream-2); }
 .re-tk__x { margin-top: 0.3rem; color: var(--cream-2); overflow-wrap: anywhere; }
-.re-tk__x b { font-weight: 500; color: var(--fg); }
+.re-tk__x b { font-weight: 400; color: var(--fg); }
 
 /* Une ligne du ticket : l'intitulé, les points de conduite, la valeur. */
 .re-tk__rows { display: grid; gap: 0.12rem; }
@@ -1169,7 +1207,7 @@ html[data-palette='papier'] .re-sheet .field__err {
 .re-tk__bars { color: var(--fg); clip-path: inset(0 100% 0 0); }
 .re-tk__meter { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cream-2); }
 .re-tk__state { color: var(--cream-2); }
-.re-tk__state.is-ready { color: var(--dv-lt); font-weight: 600; }
+.re-tk__state.is-ready { color: var(--dv-lt); }
 .re-tk__rows--fine .re-tk__r dd { color: var(--cream-2); }
 
 .re-tk .dv-form__foot { display: grid; gap: 0.75rem; margin: 0.15rem 0 0; }
@@ -1182,7 +1220,7 @@ html[data-palette='papier'] .re-sheet .field__err {
 .re-tk .dv-form__note {
   font-family: var(--ff-m); font-size: 0.8125rem; line-height: 1.45; letter-spacing: 0.02em; text-align: center; color: var(--cream-2);
 }
-.re-tk .dv-form__note.is-warn { color: #b3261e; font-weight: 500; }
+.re-tk .dv-form__note.is-warn { color: #b3261e; }
 
 /* ── La confirmation : le ticket détaché, tamponné ── */
 .re-done:not([hidden]) {
@@ -1211,7 +1249,7 @@ html[data-palette='papier'] .re-sheet .field__err {
   font-family: var(--ff-m); font-size: 0.75rem; line-height: 1.25; letter-spacing: 0.14em; text-transform: uppercase;
   box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--L-dv-dp) 18%, transparent);
 }
-.re-stamp b { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.08em; }
+.re-stamp b { font-size: 1.05rem; font-weight: 400; letter-spacing: 0.08em; }
 /* Le ticket détaché porte son ombre (pas de fente au-dessus de lui). */
 .re-done__wrap { filter: drop-shadow(0 26px 34px rgb(0 0 0 / 0.42)); }
 
@@ -1250,7 +1288,7 @@ html[data-palette='papier'] .re-sheet .field__err {
   padding: 0.4rem 1rem 0.4rem 0.45rem; border-radius: 999px;
   background: var(--tray); color: var(--D-night);
   box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.55);
-  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 600; line-height: 1; white-space: nowrap;
+  font-family: var(--ff-t); font-size: 0.875rem; line-height: 1; white-space: nowrap;
   opacity: 0; translate: 0 140%; pointer-events: none;
   transition: translate 0.6s var(--e-out), opacity 0.4s var(--e-out);
 }
@@ -1271,7 +1309,7 @@ html[data-palette='papier'] .re-tray:focus-visible { outline-color: var(--L-dv-d
 .re-tray__n {
   display: grid; place-items: center; min-width: 1.45rem; height: 1.45rem; padding: 0 0.35rem; border-radius: 999px;
   background: var(--D-dv); color: var(--D-night-2);
-  font-family: var(--ff-m); font-size: 0.75rem; font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-weight: 600; font-size: 0.75rem; font-variant-numeric: tabular-nums lining-nums;
 }
 /* Sur téléphone, au-dessus de la barre d'appel. */
 @media (max-width: 63.99rem) {
@@ -1287,6 +1325,7 @@ html.is-locked .re-tray { opacity: 0; pointer-events: none; }
   .re-item__cat, .re-item__spec dt, .re-terms__head, .re-filter__n, .re-filter__c { font-size: 0.75rem; }
   .re-item__spec > div { grid-template-columns: 7.8rem minmax(0, 1fr); }
   .re-terms__head { letter-spacing: 0.08em; }
+  .re-terms__head > span:last-child { letter-spacing: 0.034em; }
 }
 
 /* ─────────────── Sans mouvement ─────────────── */

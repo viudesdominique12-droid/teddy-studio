@@ -34,8 +34,9 @@ const STEP_SCREENS = 0.22; // la course de défilement d'un lieu au suivant (0,4
 
 /* Les couleurs et les polices du thème, lues sur la scène elle-même : le
    fond de la section (la brume du sol s'y fond), l'encre (la grille, le nom
-   des lieux) et les deux polices des vues. Relues quand on change de thème
-   (`palette.js`). */
+   des lieux) et les deux polices des vues — le texte pour le nom, les
+   chiffres pour l'altitude (`--ff-n`, depuis le 18/10/2026). Relues quand on
+   change de thème (`palette.js`). */
 function themeOf(el) {
   const cs = getComputedStyle(el);
   const v = (n, d) => cs.getPropertyValue(n).trim() || d;
@@ -43,8 +44,8 @@ function themeOf(el) {
     bg: v('--bg', '#182d19'),
     shade: v('--bg-2', '#101b13'),
     ink: v('--fg', '#ece7e0'),
-    text: v('--ff-t', '"Instrument Sans", sans-serif'),
-    mono: v('--ff-m', '"Martian Mono", monospace')
+    text: v('--ff-t', '"IBM Plex Sans", sans-serif'),
+    num: v('--ff-n', '"Barlow Condensed Data", sans-serif')
   };
 }
 const rgba = (hex, a) => {
@@ -141,7 +142,7 @@ function paintCard(THREE, img, place, n, maxAniso, th) {
   x.fillText(place.name, 44 * k, H - (place.altitude ? 74 : 48) * k);
   if (place.altitude) {
     x.fillStyle = rgba(th.ink, 0.72);
-    x.font = `400 ${19 * k}px ${th.mono}`;
+    x.font = `500 ${19 * k}px ${th.num}`;
     x.fillText(place.altitude.toUpperCase(), 46 * k, H - 42 * k);
   }
   const bx = W - 70 * k;
@@ -321,7 +322,7 @@ export function initReel(root = document.querySelector('[data-reel]')) {
       let th = themeOf(stage);
       const fontsOf = (t) => Promise.all([
         document.fonts?.load(`500 40px ${t.text}`),
-        document.fonts?.load(`400 19px ${t.mono}`)
+        document.fonts?.load(`500 19px ${t.num}`)
       ].filter(Boolean)).catch(() => {});
       await fontsOf(th);
 

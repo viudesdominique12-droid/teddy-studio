@@ -104,7 +104,11 @@ body[data-page='locations'] .ol-hero {
 }
 .ol-hero__text { position: relative; }
 body[data-page='locations'] .ol-hero .phead__h { max-width: 21ch; }
-body[data-page='locations'] .ol-hero .phead__h em { color: var(--dv-lt); }
+/* Aucune italique n'est servie (18/10/2026) : la couleur seule le distingue. */
+body[data-page='locations'] .ol-hero .phead__h em { font-style: normal; color: var(--dv-lt); }
+/* Sur téléphone, le titre en Archivo Black suit la largeur de l'écran pour
+   que « stunning locations » tienne sur une ligne, comme avant. */
+@media (max-width: 40rem) { body[data-page='locations'] .ol-hero .phead__h { font-size: 8.3vw; } }
 body[data-page='locations'] .ol-hero .eyebrow { color: var(--cream-2); }
 
 /* ── L'index : la coupe d'altitude des neuf lieux ── */
@@ -117,7 +121,7 @@ body[data-page='locations'] .ol-hero .eyebrow { color: var(--cream-2); }
 .ol-p-strata line { stroke: var(--ol-contour-2); stroke-width: 1; }
 .ol-p-ridge { fill: none; stroke: var(--cream); stroke-opacity: 0.8; stroke-width: 1.4; stroke-linejoin: round; }
 .ol-p-sea { stroke: var(--ol-sage); stroke-opacity: 0.55; stroke-width: 1; stroke-dasharray: 3 5; }
-.ol-p-lab { font-family: var(--ff-m); font-size: 10px; letter-spacing: 0.12em; fill: var(--cream-3); }
+.ol-p-lab { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 10px; letter-spacing: 0.05em; fill: var(--cream-3); }
 .ol-p-nomap { stroke: var(--cream-3); stroke-opacity: 0.6; stroke-width: 1; stroke-dasharray: 2 4; }
 .ol-p-pt .h { fill: var(--dv); opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity 0.35s, transform 0.5s var(--e-out); transform: scale(0.6); }
 .ol-p-pt .c { fill: var(--bg); stroke: var(--ol-ochre); stroke-width: 1.5; transition: fill 0.3s, stroke 0.3s; }
@@ -166,14 +170,16 @@ body[data-page='locations'] .ol-hero .eyebrow { color: var(--cream-2); }
 }
 .ol-prof__n { font-size: var(--fs-xs); line-height: 1.25; text-wrap: balance; }
 .ol-prof__a {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em;
-  color: var(--ol-ochre); font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: var(--fs-nano); letter-spacing: 0.042em;
+  color: var(--ol-ochre); font-variant-numeric: tabular-nums lining-nums;
 }
 .ol-prof__list a:is(:hover, :focus-visible, .is-hot) { color: var(--fg); }
 .ol-prof__list a:is(:hover, :focus-visible, .is-hot)::after { transform: scaleX(1); }
 .ol-prof__list a:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: -2px; border-radius: 2px; }
 
-/* ═══════════════════ L'ATLAS : L'ALTIMÈTRE ET LES FICHES ═══════════════════ */
+/* ═══════════════════ L'ATLAS : L'ALTIMÈTRE ET LES FICHES ═══════════════════
+   L'altimètre est une règle de chiffres : Barlow Condensed (la voix des
+   chiffres), la valeur lue en 600. */
 body[data-page='locations'] .ol-atlas { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad-x); }
 body[data-page='locations'] .ol-atlas .locs { max-width: none; margin: 0; padding: 0; list-style: none; }
 .ol-rail { display: none; }
@@ -186,11 +192,11 @@ body[data-page='locations'] .ol-atlas .locs { max-width: none; margin: 0; paddin
   position: sticky; top: calc(var(--bar-h) + 3rem);
   display: grid; grid-template-rows: auto 1fr auto auto; gap: 0.55rem;
   height: min(62vh, 31rem); margin-top: 4.5rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em;
-  color: var(--cream-3); font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: var(--fs-nano); letter-spacing: 0.034em;
+  color: var(--cream-3); font-variant-numeric: tabular-nums lining-nums;
 }
 .ol-alm__end { white-space: nowrap; }
-.ol-alm__end b { font-weight: 400; color: var(--cream-2); }
+.ol-alm__end b { font-weight: 600; color: var(--cream-2); }
 .ol-alm__sc { position: relative; margin-left: 1.1rem; border-left: 1px solid var(--line-ui); }
 .ol-alm__t { position: absolute; left: 0; height: 1px; width: 0.35rem; background: var(--line-ui); top: var(--y); }
 .ol-alm__t--k { width: 0.7rem; background: var(--cream-3); }
@@ -215,7 +221,7 @@ body[data-page='locations'] .ol-atlas .locs { max-width: none; margin: 0; paddin
 .ol-alm__no { color: var(--cream-3); }
 .ol-alm__v { position: relative; display: block; height: 1.25rem; overflow: hidden; }
 .ol-alm__v b {
-  position: absolute; left: 0; top: 0; font-weight: 500; font-size: 0.875rem; letter-spacing: 0.02em;
+  position: absolute; left: 0; top: 0; font-weight: 600; font-size: 0.875rem; letter-spacing: 0.01em;
   color: var(--ol-ochre); white-space: nowrap;
 }
 .ol-alm__v small { font-size: var(--fs-nano); color: var(--cream-3); margin-left: 0.15em; }
@@ -270,7 +276,7 @@ body[data-page='locations'] .loc__fig img { transition: none; will-change: auto;
 .ol-vf__fmt {
   position: absolute; right: 2.9rem; top: 1rem; height: 1.15rem; overflow: hidden;
   padding: 0 0.45rem; border-radius: 2px; background: rgb(10 14 8 / 0.58);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.15rem; letter-spacing: 0.12em;
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.625rem; line-height: 1.15rem; letter-spacing: 0.05em;
   color: var(--cream); text-align: center;
 }
 .ol-vf__fmt span { display: block; transition: transform 0.55s var(--e-out); }
@@ -324,13 +330,13 @@ body[data-page='locations'] .loc__h { max-width: 14ch; }
   border-top: 1px solid var(--line);
 }
 .ol-alt__k {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--cream-3);
 }
 .ol-alt__v {
   display: inline-flex; align-items: baseline; gap: 0.45rem;
-  font-family: var(--ff-d); font-variation-settings: 'wdth' 88, 'wght' 600; font-size: 1.15rem; letter-spacing: 0.01em;
-  color: var(--ol-ochre); font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-weight: 600; font-size: 1.05rem; letter-spacing: 0.02em;
+  color: var(--ol-ochre); font-variant-numeric: tabular-nums lining-nums;
 }
 /* Le repère de nivellement : un triangle, pointe en bas sous le niveau de la mer. */
 .ol-alt__v::before {
@@ -355,8 +361,8 @@ body[data-page='locations'] .loc__credit::before {
   display: flex; align-items: center; gap: 0.9rem; pointer-events: none;
 }
 .ol-div__n {
-  flex: none; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em;
-  color: var(--cream-3); font-variant-numeric: tabular-nums; transition: color 0.4s;
+  flex: none; font-family: var(--ff-n); font-size: var(--fs-nano); letter-spacing: 0.06em;
+  color: var(--cream-3); font-variant-numeric: tabular-nums lining-nums; transition: color 0.4s;
 }
 .ol-div__n small { font-size: inherit; color: color-mix(in srgb, var(--cream-3) 60%, transparent); }
 .loc__i.is-cur .ol-div__n { color: var(--dv-lt); }
@@ -402,7 +408,7 @@ body[data-page='locations'] .locs__cta {
 .ol-cta__map .zone2 { fill: color-mix(in srgb, var(--dv) 7%, transparent); stroke: none; transform-box: fill-box; transform-origin: center; animation: ol-breathe 5s ease-in-out infinite; }
 .ol-cta__map .base { fill: var(--ol-ochre); }
 .ol-cta__map .ping { fill: none; stroke: var(--ol-ochre); stroke-width: 1; transform-box: fill-box; transform-origin: center; animation: ol-ping 3s var(--e-out) infinite; }
-.ol-cta__map .q { font-family: var(--ff-p); font-size: 30px; fill: var(--dv-lt); font-variation-settings: 'opsz' 72, 'wght' 400; }
+.ol-cta__map .q { font-family: var(--ff-t); font-size: 30px; fill: var(--dv-lt); }
 .ol-cta__map .pin { animation: ol-bob 3.2s ease-in-out infinite; }
 .ol-cta__map .lab { font-family: var(--ff-m); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; fill: var(--cream-3); }
 /* Le texte reste lisible sur la carte. */

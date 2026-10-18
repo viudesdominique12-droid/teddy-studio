@@ -8,18 +8,10 @@
    Chargée en dernier : elle a le dernier mot sur tout ce qui précède.
    ══════════════════════════════════════════════════════════════ */
 
-@font-face {
-  font-family: 'Martian Mono';
-  src: url('/fonts/martian-mono-var.woff2') format('woff2-variations');
-  font-weight: 100 800;
-  font-stretch: 75% 112.5%;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
-  /* La donnée parle en machine à écrire : la voix d'un moniteur de plateau. */
-  --ff-m: 'Martian Mono', ui-monospace, Menlo, monospace;
+  /* La donnée parlait en Martian Mono, la machine à écrire d'un moniteur de
+     plateau, jusqu'au 18/10/2026 : les étiquettes et les chiffres ont
+     maintenant leurs voix dans tokens.css (`--ff-m`, `--ff-n`). */
   --fs-mono: 0.75rem;
 
   --e-expo:    cubic-bezier(0.19, 1, 0.22, 1);     /* expo.out : ce qui arrive */
@@ -28,8 +20,6 @@
   --fs-title: clamp(3.1rem, 9.6vw, 9.75rem);
   --hud-in: clamp(0.75rem, 1.6vw, 1.5rem);
 }
-
-.mono { font-stretch: 87.5%; }
 
 /* ─────────────── LES TITRES ───────────────
    Des capitales serrées qui prennent la largeur, sur deux tons : la
@@ -100,7 +90,7 @@
 }
 .bar__pill a {
   padding: 0.5rem 0.75rem; border-radius: 999px;
-  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  font-family: var(--ff-t); font-size: 0.875rem; line-height: 1.25rem;
   color: color-mix(in srgb, var(--bar-ink) 80%, transparent);
   white-space: nowrap;
   transition: color 0.25s var(--e-out), background-color 0.25s var(--e-out);
@@ -125,7 +115,7 @@
 .bar__ddb {
   display: inline-flex; align-items: center; gap: 0.3rem;
   padding: 0.5rem 0.65rem 0.5rem 0.75rem; border: 0; border-radius: 999px; background: none;
-  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  font-family: var(--ff-t); font-size: 0.875rem; line-height: 1.25rem;
   color: color-mix(in srgb, var(--bar-ink) 80%, transparent); cursor: pointer;
   transition: color 0.25s var(--e-out);
 }
@@ -157,15 +147,15 @@
   opacity: 0; transition: opacity 0.4s var(--e-out);
 }
 .bar__svc:hover::before, .bar__svc:focus-visible::before, .bar__svc[aria-current]::before { opacity: 1; }
-.bar__svc-n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.08em; color: var(--c); }
-.bar__svc-t { font-family: var(--ff-d); font-size: 1.05rem; line-height: 1.05; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; letter-spacing: -0.005em; }
+.bar__svc-n { font-family: var(--ff-n); font-size: 0.6875rem; letter-spacing: 0.034em; font-variant-numeric: tabular-nums lining-nums; color: var(--c); }
+.bar__svc-t { font-family: var(--ff-d); font-size: 1.05rem; line-height: 1.05; text-transform: uppercase; letter-spacing: 0.007em; }
 .bar__svc-d { grid-column: 2; font-family: var(--ff-t); font-size: 0.8125rem; line-height: 1.4; color: var(--cream-3); }
 .bar__svc--feat { background: color-mix(in srgb, var(--c) 8%, transparent); }
 .bar__svc--feat .bar__svc-t { font-size: 1.3rem; }
 .bar__pill .bar__all {
   grid-column: 1 / -1; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
   margin-top: 0.25rem; padding: 0.8rem; border-radius: 1rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream-2); background: color-mix(in srgb, var(--fg) 5%, transparent);
 }
 .bar__all svg { width: 0.9rem; height: 0.9rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -310,14 +300,19 @@ html.is-locked .bar .logo {
 /* ═══════════════════ LE PIED ═══════════════════ */
 /* Le bas de page dégage la bobine de montage, fixe en bas de l'écran. */
 .ftr { padding-bottom: calc(var(--s-5) + 5.5rem); }
+/* Le mot est en Archivo Black depuis le 18/10/2026 : 61 % plus large que
+   l'Archivo étroite (wdth 62) d'avant, il passe de 16 à 9,9vw pour garder sa
+   largeur — à 16vw, il débordait de l'écran du téléphone et poussait le
+   menu hors de la barre. L'affiche (100 %) plutôt que le display (86 %) :
+   un Safari d'avant la 17 ignore `size-adjust`, et ce mot d'un seul tenant
+   ne doit jamais dépasser. */
 .ftr__word {
   margin: var(--s-8) 0 var(--s-5);
-  font-family: var(--ff-d);
-  font-variation-settings: 'wdth' 62, 'wght' 800; font-weight: 800;
+  font-family: var(--ff-p);
   line-height: 0.8; text-transform: uppercase; white-space: nowrap;
   color: var(--cream);
 }
-.ftr__wl { display: block; font-size: 16vw; }
+.ftr__wl { display: block; font-size: 9.9vw; }
 .ftr__wl .ln { display: inline-block; vertical-align: bottom; }
 .ftr__wl .ln--b { color: var(--gold-lt); }
 

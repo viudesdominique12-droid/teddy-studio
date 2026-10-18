@@ -47,8 +47,8 @@ initTestCard();
 initDesk();
 remeasure();
 
-/* Une police qui arrive après le chargement (Instrument Serif en Papier)
-   raccourcit la page de 150 px environ, après que les déclencheurs du
+/* Une police qui arrive après le chargement (`font-display: swap`)
+   peut changer la hauteur de la page après que les déclencheurs du
    défilement ont été mesurés : les révélations des plateformes ne partaient
    plus. On remesure quand la hauteur du contenu change. */
 function remeasure() {

@@ -39,9 +39,9 @@
 
 /* ── LA MARQUE ──
    Elle était un mot de 1,16 rem parmi d'autres. C'est le nom du studio : il
-   doit être la première chose qu'on lit. Fraunces à `WONK 1` et `SOFT 24`
-   donne des formes qui ne ressemblent à rien d'autre sur la page — c'est
-   exactement ce qu'on demande à un logotype. */
+   doit être la première chose qu'on lit. (Le mot en Fraunces d'origine a
+   laissé la place à l'image du client ; la règle du mot reste pour un logo
+   qui ne charge pas.) */
 .logo { display: inline-block; line-height: 1; margin-right: var(--s-2); }
 /* Le logo est désormais une IMAGE — celle du client, qu'on n'a pas le droit de
    redessiner. On la cale sur la HAUTEUR : sa largeur suit son dessin, quel que
@@ -59,7 +59,6 @@ img.logo__w {
   display: block;
   font-family: var(--ff-p);
   font-size: clamp(1.45rem, 1.9vw, 1.9rem);
-  font-variation-settings: 'opsz' 144, 'wght' 700, 'SOFT' 24, 'WONK' 1;
   letter-spacing: -0.028em;
   /* En petites capitales plutôt qu'en capitales pleines : le « T » garde sa
      hauteur, tout le reste descend d'un cran. Le mot a un dessin, pas juste
@@ -184,7 +183,7 @@ img.logo__w {
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   width: 100%; min-height: 3.3rem; padding: 0.45rem 0;
   border: 0; border-bottom: 1px solid var(--line-2); background: none;
-  font-family: var(--ff-t); font-size: 1.35rem; font-weight: 500; letter-spacing: -0.01em; text-align: left;
+  font-family: var(--ff-t); font-size: 1.35rem; letter-spacing: -0.01em; text-align: left;
   color: var(--cream); cursor: pointer;
 }
 .index__a[aria-current='page'] { color: var(--gold-lt); }
@@ -204,7 +203,7 @@ img.logo__w {
   font-family: var(--ff-t); font-size: 1.05rem; color: var(--cream-2);
 }
 .index__sl i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--c, var(--gold)); flex: none; box-shadow: 0 0 10px color-mix(in srgb, var(--c, var(--gold)) 60%, transparent); }
-.index__sl[aria-current='page'] { color: var(--cream); font-weight: 600; margin-inline: -0.6rem; padding-left: 0.75rem; border-radius: 0.7rem; background: color-mix(in srgb, var(--c, var(--gold)) 14%, transparent); }
+.index__sl[aria-current='page'] { color: var(--cream); margin-inline: -0.6rem; padding-left: 0.75rem; border-radius: 0.7rem; background: color-mix(in srgb, var(--c, var(--gold)) 14%, transparent); }
 .index__sl--all { justify-content: flex-start; gap: 0.5rem; margin-top: 0.2rem; font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3); }
 .index__sl--all svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -220,14 +219,14 @@ img.logo__w {
   display: flex; align-items: center; justify-content: center; gap: 0.6rem;
   min-height: 3.4rem; border-radius: 999px;
   background: var(--gold); color: var(--basalt);
-  font-family: var(--ff-t); font-size: 1.05rem; font-weight: 600;
+  font-family: var(--ff-t); font-size: 1.05rem;
 }
 .index__cta svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .index__reach { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 .index__reach a {
   display: flex; align-items: center; justify-content: center; min-height: 3rem; border-radius: 999px;
   box-shadow: inset 0 0 0 1px var(--line); color: var(--cream);
-  font-family: var(--ff-t); font-size: 1rem; font-weight: 500;
+  font-family: var(--ff-t); font-size: 1rem;
 }
 .index__x:focus-visible, .index__a:focus-visible, .index__sl:focus-visible, .index__also a:focus-visible,
 .index__cta:focus-visible, .index__reach a:focus-visible { outline: 2px solid var(--gold-lt); outline-offset: 3px; }
@@ -335,7 +334,9 @@ img.logo__w {
   letter-spacing: var(--ls-mono); color: var(--fg-3);
 }
 .ftr__legal strong { font-weight: 400; color: var(--fg-2); }
-.ftr__loc { font-variant-numeric: tabular-nums; }
+/* L'heure d'Addis : un bandeau de chiffres, dans leur voix. */
+.ftr__loc { font-family: var(--ff-n); letter-spacing: 0.023em; font-variant-numeric: tabular-nums lining-nums; }
+.ftr__loc .mono { font-family: inherit; letter-spacing: inherit; }
 
 /* ═══════════ LE CHEVRON (transition de page) ═══════════
    Deux panneaux de 175 vw, découpés une fois pour toutes : un rectangle de

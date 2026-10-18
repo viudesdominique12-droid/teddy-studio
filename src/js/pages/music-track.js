@@ -67,6 +67,8 @@ export function initTrack() {
 
   let W = 0, H = 0, B = 0, base = new Float32Array(0);
   let dv = [255, 92, 138], fg = [252, 235, 243];
+  // La règle prend la voix des chiffres de la page (`--ff-n`, Barlow Condensed).
+  let num = '"Barlow Condensed Data", sans-serif';
   let t = LOOP * 0.38, energy = 0, lastY = window.scrollY;
   let running = false, onScreen = false, raf = 0, last = 0, lastLabel = 0;
   const ptr = { x: 0.5, a: 0, ta: 0 };
@@ -95,6 +97,7 @@ export function initTrack() {
     B = Math.max(48, Math.floor(W / step));
     build();
     dv = rgbOf(host, '--dv'); fg = rgbOf(host, '--fg');
+    num = getComputedStyle(host).getPropertyValue('--ff-n').trim() || num;
   }
 
   const fmt = (sec) => {
@@ -114,8 +117,9 @@ export function initTrack() {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
-    // La règle : huit mesures, quatre temps chacune, les numéros en mono.
-    ctx.font = '500 10px ui-monospace, Menlo, monospace';
+    // La règle : huit mesures, quatre temps chacune, les numéros dans la
+    // voix des chiffres.
+    ctx.font = `500 10px ${num}`;
     ctx.textBaseline = 'middle';
     for (let b = 0; b <= BARS * 4; b++) {
       const x = (b / (BARS * 4)) * W;
@@ -243,6 +247,9 @@ export function initTrack() {
   layout();
   draw();
   label(performance.now() + 1000);
+  // La fonte des chiffres peut arriver après la première image (l'image fixe
+  // du mouvement réduit ne se redessine pas d'elle-même).
+  document.fonts?.load(`500 10px ${num}`).then(() => draw()).catch(() => {});
   new ResizeObserver(() => { layout(); draw(); }).observe(box);
   if (still) return;
 

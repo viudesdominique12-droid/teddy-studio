@@ -26,6 +26,15 @@
    Les fonds de section passent par `background-image` (une couche pleine
    en dernier) : en Papier, `division.css` pose la couleur des sections
    `.dv-night` avec une priorité plus forte, et la couche la recouvre.
+
+   Les voix (18/10/2026) : les titres en Archivo Black ; le texte, la
+   phrase « pour qui » et les étiquettes en Plex Sans ; tout ce que le studio
+   affiche en chiffres (le transport, les compteurs, la règle des mesures,
+   les numéros de pistes et de tranches, les graduations) dans la voix des
+   chiffres, Barlow Condensed (`--ff-n`, tokens.css). Les petits titres en
+   capitales (tranches, pistes, plages) ont pris un cran de moins : même à
+   86 %, l'Archivo Black prend un peu plus de place que l'Archivo étroite,
+   et ils gardent ainsi leurs coupes d'avant, de 360 à 1440 px.
    ══════════════════════════════════════════════════════════════ */
 
 /* Le réglage de la palette pour cette page : le gris rosé le plus clair
@@ -68,6 +77,11 @@ body[data-dv='music'] #main { --dv-ink: var(--D-night); }
 .mu-hero__in { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: var(--s-5); }
 .mu-hero__main { display: grid; justify-items: center; }
 .mu-hero .dv-h1 { max-width: none; }
+/* Sur téléphone, l'affiche suit la largeur de la colonne : « Your Identity. »
+   reste d'un tenant jusqu'à 360 px, jamais au-dessus du plancher de 48 px. */
+@media (max-width: 32rem) {
+  .mu-hero .dv-h1 { font-size: min(3rem, (100vw - 2 * var(--pad-x)) / 6.85); }
+}
 .mu-hero .dv-lede { max-width: 41rem; margin-top: var(--s-4); }
 .mu-hero .dv-acts { justify-content: center; }
 .mu-hero__meta.dv-hero__meta {
@@ -113,8 +127,8 @@ html[data-palette='papier'] .mu-for { --mu-hl: color-mix(in oklab, var(--dv) 62%
   padding: 0.3rem; border-radius: 0.75rem;
   background: color-mix(in srgb, var(--night-2) 75%, transparent);
   box-shadow: inset 0 0 0 1px var(--line-2), inset 0 1px 0 color-mix(in srgb, var(--fg) 5%, transparent);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--cream-3); font-variant-numeric: tabular-nums; white-space: nowrap;
+  font-family: var(--ff-n); font-size: var(--fs-nano); line-height: 1; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--cream-3); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
 }
 .mu-tp > span {
   display: inline-flex; align-items: center; gap: 0.55em;
@@ -123,7 +137,7 @@ html[data-palette='papier'] .mu-for { --mu-hl: color-mix(in oklab, var(--dv) 62%
   box-shadow: inset 0 0 0 1px var(--line-2);
 }
 html[data-palette='papier'] .mu-tp > span { background: var(--night-3); }
-.mu-tp b { font-weight: 400; color: var(--fg); letter-spacing: 0.08em; }
+.mu-tp b { font-weight: 600; color: var(--fg); letter-spacing: 0.034em; }
 .mu-tp__rec { transition: color 0.3s var(--e-out); }
 .mu-tp__rec i {
   width: 0.5rem; height: 0.5rem; border-radius: 50%;
@@ -147,11 +161,14 @@ html[data-palette='papier'] .mu-tp > span { background: var(--night-3); }
    derrière les lettres, mais devant le fond de la section. */
 .mu-say {
   position: relative; isolation: isolate;
-  max-width: 26ch; margin-top: var(--s-2);
-  font-family: var(--ff-p);
-  font-size: clamp(2.1rem, 1rem + 3.7vw, 4.6rem);
-  font-weight: 400; font-variation-settings: 'opsz' 144, 'wght' 360, 'SOFT' 0, 'WONK' 0;
-  line-height: 1.06; letter-spacing: -0.025em;
+  max-width: 31ch; margin-top: var(--s-2);
+  font-family: var(--ff-t);
+  /* La Plex Sans est plus large que la Fraunces étroite d'avant : un cran
+     plus petite et sur une mesure plus longue (31 ch), elle garde les mêmes
+     coupes, trois lignes à l'ordinateur, cinq au téléphone. */
+  font-size: clamp(1.9rem, 0.9rem + 3.4vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.12; letter-spacing: -0.028em;
   color: var(--fg);
   text-wrap: balance;
 }
@@ -256,10 +273,10 @@ html:not(.js) .mu-wire { display: none; }
 .mu-lane__bar {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.4rem;
   padding: 0.7rem 1rem; border-bottom: 1px solid var(--line-2);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--cream-3); font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: var(--fs-nano); letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--cream-3); font-variant-numeric: tabular-nums lining-nums;
 }
-.mu-lane__bar b { font-weight: 400; color: var(--fg); }
+.mu-lane__bar b { font-weight: 600; color: var(--fg); }
 .mu-lane__name { display: inline-flex; align-items: center; gap: 0.55em; margin-right: auto; color: var(--fg); }
 .mu-lane__name i { width: 0.6rem; height: 0.6rem; border-radius: 2px; background: var(--dv); box-shadow: 0 0 10px var(--dv); }
 .mu-lane__wave { position: relative; height: clamp(9rem, 6rem + 9vw, 15rem); cursor: crosshair; }
@@ -317,9 +334,11 @@ html:not(.js) .mu-wire { display: none; }
 
 .mu-ch__top {
   display: flex; align-items: center; justify-content: space-between;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
   color: color-mix(in srgb, var(--cream) 58%, transparent);
 }
+/* « CH 01 » : la tranche se nomme par son numéro. */
+.mu-ch__top > span:first-child { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em; }
 .mu-led {
   width: 0.5rem; height: 0.5rem; border-radius: 50%;
   background: color-mix(in srgb, var(--cream) 13%, transparent); box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.6);
@@ -333,7 +352,7 @@ html:not(.js) .mu-wire { display: none; }
 .mu-knob {
   --knob: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--cream) 26%, var(--night-3)), var(--night-3) 62%, var(--night-2));
   display: grid; justify-items: center; gap: 0.35rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.5625rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: color-mix(in srgb, var(--cream) 50%, transparent);
 }
 .mu-knob b { font-weight: 400; }
@@ -355,8 +374,8 @@ html:not(.js) .mu-wire { display: none; }
 
 .mu-ch__h {
   font-family: var(--ff-d);
-  font-size: clamp(1.2rem, 0.9rem + 0.75vw, 1.6rem); line-height: 1; letter-spacing: -0.012em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-size: clamp(1.18rem, 0.84rem + 0.75vw, 1.6rem); line-height: 1; letter-spacing: 0;
+  text-transform: uppercase;
   color: var(--cream);
 }
 .mu-ch__list { display: grid; gap: 0.5rem; flex: 1; align-content: start; font-size: var(--fs-sm); line-height: 1.32; color: color-mix(in srgb, var(--cream) 74%, transparent); }
@@ -371,7 +390,7 @@ html:not(.js) .mu-wire { display: none; }
 
 .mu-ch__go {
   display: inline-flex; align-items: center; gap: 0.5em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.35;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.35;
   color: var(--cream);
 }
 .mu-ch__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
@@ -430,8 +449,8 @@ html:not(.js) .mu-wire { display: none; }
 .mu-ch.is-on .mu-cap::after, .mu-ch--main .mu-cap::after { background: var(--dv); box-shadow: 0 0 8px var(--dv); }
 .mu-scale {
   display: flex; flex-direction: column; justify-content: space-between;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5rem; line-height: 1; letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--cream) 44%, transparent); font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: 0.5rem; line-height: 1; letter-spacing: 0.025em;
+  color: color-mix(in srgb, var(--cream) 44%, transparent); font-variant-numeric: tabular-nums lining-nums;
 }
 .mu-scale i { display: flex; align-items: center; gap: 0.3rem; translate: 0 -0.25rem; font-style: normal; }
 .mu-scale i::before { content: ''; width: 0.45rem; height: 1px; background: color-mix(in srgb, var(--cream) 30%, transparent); }
@@ -442,7 +461,7 @@ html:not(.js) .mu-wire { display: none; }
   margin: 0; padding: 0.5rem 0.4rem; border-radius: 0.35rem;
   background: color-mix(in srgb, var(--night-2) 45%, #000);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 7%, transparent), inset 0 2px 6px rgb(0 0 0 / 0.8);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase; text-align: center;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase; text-align: center;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   color: color-mix(in srgb, var(--dv) 38%, var(--cream-3));
   transition: color 0.5s var(--e-out), background-color 0.5s var(--e-out), text-shadow 0.5s var(--e-out);
@@ -527,8 +546,8 @@ html[data-palette='papier'] .mu-daw {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;
   padding: 0.55rem; border-bottom: 1px solid var(--line-2);
   background: var(--bay);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--cream-3); font-variant-numeric: tabular-nums; white-space: nowrap;
+  font-family: var(--ff-n); font-size: var(--fs-nano); line-height: 1; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--cream-3); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
 }
 .mu-daw__tr { display: inline-flex; gap: 0.25rem; padding: 0.25rem; border-radius: 0.55rem; background: color-mix(in srgb, var(--fg) 5%, transparent); box-shadow: inset 0 0 0 1px var(--line-2); }
 .mu-daw__tr i {
@@ -550,7 +569,7 @@ html[data-palette='papier'] .mu-daw {
   box-shadow: inset 0 0 0 1px var(--line-2), inset 0 2px 6px rgb(0 0 0 / 0.5);
 }
 html[data-palette='papier'] .mu-daw__lcd { background: var(--night); box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 3px rgb(0 0 0 / 0.08); }
-.mu-daw__lcd b { min-width: 2.6em; font-size: 0.875rem; font-weight: 400; letter-spacing: 0.06em; color: var(--go-text); }
+.mu-daw__lcd b { min-width: 2.6em; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.025em; color: var(--go-text); }
 .mu-daw__lcd small { font-size: 0.5625rem; color: var(--cream-3); }
 .mu-daw__meta { padding-inline: 0.5rem; }
 .mu-daw__meta--end { margin-left: auto; }
@@ -563,7 +582,7 @@ html[data-palette='papier'] .mu-daw__lcd { background: var(--night); box-shadow:
 }
 .mu-daw__corner {
   display: flex; align-items: center; padding-inline: 1.25rem; border-right: 1px solid var(--line-2);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
 .mu-daw__marks { position: relative; overflow: hidden; }
 .mu-daw__bar {
@@ -572,7 +591,7 @@ html[data-palette='papier'] .mu-daw__lcd { background: var(--night); box-shadow:
 }
 .mu-daw__bar.is-major {
   height: 100%; padding: 0.42rem 0 0 0.35rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1; color: var(--cream-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.625rem; line-height: 1; color: var(--cream-3);
   border-left-color: var(--line-ui);
 }
 
@@ -601,8 +620,8 @@ html[data-palette='papier'] .mu-daw__lcd { background: var(--night); box-shadow:
 .mu-trk.is-cur .mu-trk__head { background: color-mix(in srgb, var(--dv) 7%, var(--bay)); }
 .mu-trk__n {
   grid-row: span 2; display: inline-flex; align-items: center; gap: 0.45rem; height: 1.3rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--cream-3);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-weight: 700; font-size: var(--fs-nano); letter-spacing: 0.034em; color: var(--cream-3);
+  font-variant-numeric: tabular-nums lining-nums;
 }
 .mu-trk__arm {   /* l'armement de la piste : rose pendant la prise */
   width: 0.55rem; height: 0.55rem; border-radius: 50%;
@@ -612,8 +631,8 @@ html[data-palette='papier'] .mu-daw__lcd { background: var(--night); box-shadow:
 .mu-trk.is-done .mu-trk__arm { background: color-mix(in srgb, var(--dv) 55%, transparent); }
 .mu-trk.is-cur .mu-trk__arm { background: var(--dv); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 22%, transparent), 0 0 10px var(--dv); }
 .mu-trk__h {
-  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.9rem + 0.45vw, 1.32rem); line-height: 1.06; letter-spacing: -0.01em;
-  font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.5rem + 0.85vw, 1.32rem); line-height: 1.06; letter-spacing: 0.002em;
+  text-transform: uppercase;
   color: var(--cream-2); transition: color 0.5s var(--e-out);
 }
 .mu-trk.is-on .mu-trk__h { color: var(--fg); }
@@ -657,7 +676,7 @@ html[data-palette='papier'] .mu-daw__lcd { background: var(--night); box-shadow:
 .mu-rgn__rec .mu-au { stroke: var(--go-text); }
 .mu-rgn__name {
   position: absolute; z-index: 2; left: 0.5rem; top: 0.3rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.5625rem; line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--cream-3); white-space: nowrap;
   transition: color 0.4s var(--e-out);
 }
@@ -716,7 +735,7 @@ html[data-palette='papier'] .mu-listen {
   padding: 0.74rem 1.05rem 0.74rem 0.8rem; border-radius: 0.6rem;
   background: linear-gradient(180deg, color-mix(in srgb, var(--fg) 8%, var(--night-2)), color-mix(in srgb, var(--fg) 3%, var(--night-2)));
   box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent), 0 2px 0 rgb(0 0 0 / 0.5);
-  font-family: var(--ff-t); font-size: var(--fs-sm); font-weight: 500; line-height: 1.1;
+  font-family: var(--ff-t); font-size: var(--fs-sm); line-height: 1.1;
   color: var(--cream-2);
   transition: color 0.3s var(--e-out), background-color 0.3s var(--e-out), box-shadow 0.3s var(--e-out), transform 0.15s var(--e-out);
 }
@@ -768,7 +787,7 @@ html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
 }
 .mu-tt__brand {
   position: absolute; left: 4%; top: 5.2%;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; line-height: 1; letter-spacing: 0.22em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.5625rem; line-height: 1; letter-spacing: 0.22em; text-transform: uppercase;
   color: color-mix(in srgb, var(--cream) 46%, transparent);
 }
 
@@ -797,8 +816,8 @@ html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
   fill: var(--D-night); font-family: var(--ff-m); text-transform: uppercase; letter-spacing: 0.14em;
 }
 .mu-tt__ring { font-size: 6.4px; letter-spacing: 0.1em; }
-.mu-tt__side { font-size: 8.5px; text-anchor: middle; font-family: var(--ff-d); font-weight: 700; letter-spacing: 0.06em; }
-.mu-tt__rpm { font-size: 7px; text-anchor: middle; }
+.mu-tt__side { font-size: 8.5px; text-anchor: middle; font-family: var(--ff-d); font-weight: 700; letter-spacing: 0.072em; }
+.mu-tt__rpm { font-size: 7px; text-anchor: middle; font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em; }
 .mu-tt__hole { fill: color-mix(in srgb, var(--cream) 78%, #000); stroke: rgb(0 0 0 / 0.5); stroke-width: 0.8; }
 .mu-tt__bands { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .mu-tt__gap { fill: none; stroke: rgb(255 255 255 / 0.075); stroke-width: 0.45; }
@@ -839,8 +858,10 @@ html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
 /* Les commandes et l'écran, dans les coins libres du socle. */
 .mu-tt__ctl { position: absolute; left: 4%; bottom: 5%; display: flex; align-items: center; gap: 0.4rem; }
 .mu-tt__start, .mu-tt__spd i, .mu-tt__lcd {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; line-height: 1; letter-spacing: 0.14em; text-transform: uppercase; font-style: normal;
+  font-family: var(--ff-m); font-size: 0.5625rem; line-height: 1; letter-spacing: 0.14em; text-transform: uppercase; font-style: normal;
 }
+/* Les vitesses (33, 45) : des chiffres. */
+.mu-tt__spd i { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em; }
 .mu-tt__start, .mu-tt__spd i {
   display: grid; place-items: center; padding: 0.5rem 0.6rem; border-radius: 0.35rem;
   background: linear-gradient(180deg, color-mix(in srgb, var(--cream) 10%, #0b0709), color-mix(in srgb, var(--cream) 4%, #0b0709));
@@ -897,13 +918,13 @@ html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
 .mu-side:last-child { border-bottom: 0; padding-bottom: 0; }
 .mu-side__n {
   display: grid; place-items: center; height: 1.7rem; border-radius: 0.35rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--go-text);
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.034em; color: var(--go-text);
   box-shadow: inset 0 0 0 1px var(--line);
   transition: background-color 0.35s var(--e-out), color 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
 }
 .mu-side__t {
-  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.35rem); line-height: 1.05;
-  font-variation-settings: 'wdth' 84, 'wght' 700; text-transform: uppercase; color: var(--fg);
+  font-family: var(--ff-d); font-size: clamp(1.02rem, 0.8rem + 0.48vw, 1.3rem); line-height: 1.05;
+  letter-spacing: 0.012em; text-transform: uppercase; color: var(--fg);
 }
 .mu-side__w {
   position: relative; display: flex; align-items: center; justify-content: center;
@@ -921,13 +942,13 @@ html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
 .mu-side__s {
   display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0.6rem; border-radius: 99px;
   background: var(--night-2);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+  font-family: var(--ff-m); font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
   color: var(--cream-3);
 }
 .mu-side__s::before { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: color-mix(in srgb, var(--dv) 40%, transparent); }
 .mu-side__go {
   display: inline-flex; align-items: center; gap: 0.5em; position: relative; white-space: nowrap;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
   transition: color 0.3s var(--e-out);
 }
 .mu-side__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
@@ -960,11 +981,11 @@ html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
 .mu-cover { width: 3.6rem; aspect-ratio: 1; border-radius: 0.45rem; overflow: hidden; background: var(--night-3); }
 .mu-cover img { width: 100%; height: 100%; object-fit: cover; }
 .mu-cover--none { background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--dv) 45%, transparent) 0 14%, transparent 15%), repeating-radial-gradient(circle at 50% 50%, var(--night-2) 0 2px, var(--night-3) 2px 3px); }
-.mu-track__t { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.02; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
-.mu-track__m { margin-top: 0.3rem; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); }
+.mu-track__t { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.02; letter-spacing: 0.012em; text-transform: uppercase; }
+.mu-track__m { margin-top: 0.3rem; font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); }
 .mu-track__bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-3); }
-.mu-time { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); color: var(--cream-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.mu-track__vid { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg); white-space: nowrap; }
+.mu-time { font-family: var(--ff-n); font-size: var(--fs-micro); color: var(--cream-2); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.mu-track__vid { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg); white-space: nowrap; }
 .mu-track__vid:hover { color: var(--go-text); }
 .mu-track__err { grid-column: 3 / -1; font-family: var(--ff-m); font-size: var(--fs-micro); color: var(--cream-3); }
 
@@ -1012,11 +1033,14 @@ html[data-palette='papier'] .mu-ask {
 /* Les trois portes, juste sous l'introduction. */
 .mu-reach-k {
   display: flex; align-items: center; gap: 0.7rem; margin-top: var(--s-3);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .mu-reach-k::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
 .mu-reach-k + .dv-reach { margin-top: calc(0.4rem - var(--s-5)); }
+/* Le titre de la demande, dans sa colonne étroite : un cran sous le display
+   des autres sections, pour garder « Start a Music / Project ». */
+.mu-ask .dv-h2 { font-size: clamp(2.4rem, 4.8vw, 4.5rem); }
 .mu-ask .dv-reach a > span:first-child { display: inline-flex; align-items: center; gap: 0.55rem; }
 .mu-ask .dv-reach a > span:first-child::before {
   content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%;
@@ -1085,7 +1109,7 @@ html:not(.js) .mu-bridge { display: none; }
 .mu-vu__red { fill: none; stroke: var(--dv-dp); stroke-width: 5; }
 .mu-vu__ticks line { stroke: var(--night); stroke-width: 1.2; }
 .mu-vu__ticks .is-hot { stroke: var(--dv-dp); }
-.mu-vu__nums text { fill: var(--night); font-family: var(--ff-m); font-size: 9px; text-anchor: middle; }
+.mu-vu__nums text { fill: var(--night); font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 9px; text-anchor: middle; }
 .mu-vu__nums .is-hot { fill: var(--dv-dp); }
 .mu-vu__vu { fill: var(--night); font-family: var(--ff-d); font-size: 15px; font-weight: 700; letter-spacing: 0.04em; text-anchor: middle; }
 .mu-vu__hand { stroke: var(--night); stroke-width: 1.5; stroke-linecap: round; }
@@ -1100,7 +1124,7 @@ html:not(.js) .mu-bridge { display: none; }
   padding: 0.65rem 0.85rem 0.7rem; border-radius: 0.7rem;
   background: color-mix(in srgb, var(--night-2) 35%, #000);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 7%, transparent), inset 0 2px 10px rgb(0 0 0 / 0.8);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase;
 }
 .mu-disp p { margin: 0; }
 .mu-disp__top {
@@ -1116,8 +1140,9 @@ html:not(.js) .mu-bridge { display: none; }
 }
 .mu-bridge.is-ready .mu-disp__lamp, .mu-bridge.is-done .mu-disp__lamp { background: var(--mu-hot); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mu-hot) 25%, transparent), 0 0 12px var(--mu-hot); }
 .mu-bridge.is-clip .mu-disp__lamp { background: var(--mu-err); box-shadow: 0 0 10px var(--mu-err); }
-.mu-disp__req { margin-left: auto; color: var(--cream-3); white-space: nowrap; }
-.mu-disp__req b { font-weight: 400; color: var(--dv-lt); }
+/* « Req. 0/3 » : un compteur, dans la voix des chiffres. */
+.mu-disp__req { margin-left: auto; color: var(--cream-3); white-space: nowrap; font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.034em; }
+.mu-disp__req b { font-weight: 600; color: var(--dv-lt); }
 .mu-disp__row { display: grid; grid-template-columns: 4.4rem minmax(0, 1fr); align-items: baseline; gap: 0.5rem; padding-block: 0.24rem; }
 .mu-disp__row > span { color: var(--cream-3); }
 .mu-disp__row > b {
@@ -1141,7 +1166,7 @@ html[data-palette='papier'] .mu-form .dv-fields { background: var(--line); box-s
   display: flex; align-items: center; gap: 0.7rem; margin: 0;
   padding: 0.75rem 1.1rem;
   background: var(--mu-band);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 400; line-height: 1.2; letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; font-weight: 400; line-height: 1.2; letter-spacing: 0.16em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .mu-part span {
@@ -1164,8 +1189,8 @@ html[data-palette='papier'] .mu-form .dv-fields { background: var(--line); box-s
 .mu-cell::before {
   content: counter(mu-tk, decimal-leading-zero);
   position: absolute; left: 1.1rem; top: 1.06rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; line-height: 1.3; letter-spacing: 0.06em;
-  color: var(--cream-3); font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: 0.75rem; line-height: 1.3; letter-spacing: 0.025em;
+  color: var(--cream-3); font-variant-numeric: tabular-nums lining-nums;
   transition: color 0.4s var(--e-out);
 }
 .mu-cell::after {
@@ -1177,14 +1202,14 @@ html[data-palette='papier'] .mu-form .dv-fields { background: var(--line); box-s
 }
 .mu-cell > label, .mu-cell > legend {
   display: block; margin: 0 0 0.7rem; padding: 0 1.6rem 0 2.05rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.3; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.8125rem; line-height: 1.3; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .mu-cell:has(.mu-req) > label { padding-right: 6.2rem; }
 .mu-cell .field__opt { opacity: 1; color: var(--cream-3); letter-spacing: 0.02em; text-transform: none; }
 .mu-req {
   position: absolute; right: 2.2rem; top: 1.06rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; line-height: 1.3; letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.6875rem; line-height: 1.3; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--cream-3);
 }
 .mu-cell:focus-within { background: color-mix(in srgb, var(--dv) 5%, var(--mu-card)); }
@@ -1230,7 +1255,7 @@ html[data-palette='papier'] .mu-form .dv-fields { background: var(--line); box-s
 .mu-cell select option { color: var(--fg); background-color: var(--mu-card); }
 .mu-cell .field__err {
   display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.04em;
+  font-family: var(--ff-m); font-size: 0.8125rem; letter-spacing: 0.04em;
   color: var(--mu-err);
 }
 .mu-cell .field__err::before { content: ''; flex: none; width: 0.5rem; height: 0.5rem; border-radius: 1px; background: currentColor; }
@@ -1247,7 +1272,7 @@ html[data-palette='papier'] .mu-form .dv-fields { background: var(--line); box-s
   border: 1px solid var(--mu-edge); border-radius: 0.65rem;
   background: linear-gradient(180deg, color-mix(in srgb, var(--fg) 7%, var(--mu-card)), color-mix(in srgb, var(--fg) 2%, var(--mu-card)));
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent), 0 2px 0 rgb(0 0 0 / 0.28);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.25; letter-spacing: 0.03em;
+  font-family: var(--ff-m); font-size: 0.8125rem; line-height: 1.25; letter-spacing: 0.03em;
   color: var(--cream-2);
   transition: color 0.35s var(--e-out), border-color 0.35s var(--e-out), background-color 0.35s var(--e-out), box-shadow 0.35s var(--e-out), transform 0.2s var(--e-out);
 }
@@ -1304,7 +1329,7 @@ html[data-palette='papier'] .mu-key span { box-shadow: inset 0 1px 0 #fff, 0 2px
 }
 .mu-done .mu-done__k {
   display: flex; align-items: center; gap: 0.6rem; margin: 0 0 var(--s-4);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .mu-done__stop { width: 0.6rem; height: 0.6rem; border-radius: 1px; background: var(--dv); box-shadow: 0 0 10px color-mix(in srgb, var(--dv) 60%, transparent); }
@@ -1312,7 +1337,7 @@ html[data-palette='papier'] .mu-key span { box-shadow: inset 0 1px 0 #fff, 0 2px
 .mu-done p { max-width: 38rem; }
 .mu-done .mu-done__list {
   display: flex; align-items: center; gap: 0.9rem; max-width: none; margin-top: var(--s-6);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--cream-2);
 }
 .mu-done__bar { position: relative; flex: 1; height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; }
@@ -1328,7 +1353,7 @@ html[data-palette='papier'] .mu-key span { box-shadow: inset 0 1px 0 #fff, 0 2px
   display: flex; gap: 0.8rem; padding-right: 1rem; padding-top: 0.86rem;
   font-size: 0.75rem; letter-spacing: 0.08em; color: var(--cream-2);
 }
-.mu-done dt::before { content: counter(mu-tl, decimal-leading-zero); color: var(--go-text); font-variant-numeric: tabular-nums; }
+.mu-done dt::before { content: counter(mu-tl, decimal-leading-zero); font-family: var(--ff-n); font-weight: 600; letter-spacing: 0.034em; color: var(--go-text); font-variant-numeric: tabular-nums lining-nums; }
 .mu-done dd { color: var(--fg); white-space: pre-line; overflow-wrap: anywhere; }
 
 /* Un champ prérempli par un lien de la page : la piste s'allume un instant. */
@@ -1438,6 +1463,11 @@ html[data-palette='papier'] .mu-key span { box-shadow: inset 0 1px 0 #fff, 0 2px
   .mu-foot .dv-form__note { width: 100%; text-align: center; }
   .mu-done dl { grid-template-columns: minmax(0, 1fr); }
   .mu-done dd { padding-top: 0; border-top: 0; }
+}
+/* Sur un petit Android (360 px), la Plex Sans, plus large que l'Instrument
+   Sans d'avant, mangeait la marge droite de la touche de la tranche MAIN. */
+@media (max-width: 23rem) {
+  .mu-ch__btn { font-size: 0.8125rem; }
 }
 
 /* ═══════════════════ SANS MOUVEMENT ═══════════════════ */

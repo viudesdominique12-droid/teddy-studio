@@ -93,7 +93,9 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
   display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: var(--s-7) clamp(2rem, 4.5vw, 5.5rem); align-items: end;
 }
-.pf-hero .dv-h1 { font-size: clamp(3.2rem, 1rem + 6.4vw, 8rem); max-width: 9ch; }
+/* L'Archivo Black (18/10/2026) : « Selected / work » sur deux lignes, un cran
+   plus petit que la Fraunces d'avant, qui tenait sur une seule. */
+.pf-hero .dv-h1 { font-size: clamp(3rem, 1rem + 5.6vw, 7rem); max-width: 9ch; }
 .pf-hero .dv-lede { margin-top: var(--s-5); max-width: 32rem; }
 
 /* L'écran : la toile tendue, son cache de velours, et la lumière qu'elle
@@ -161,7 +163,7 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 }
 .pf-screen__k {
   grid-area: k; display: inline-flex; align-items: center; gap: 0.8em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
 /* La lampe témoin du projecteur : elle respire tant que la séance tourne. */
 .pf-screen__k::before {
@@ -170,20 +172,20 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
   animation: pf-pilot 2.6s ease-in-out infinite;
 }
 @keyframes pf-pilot { 50% { opacity: 0.35; } }
-.pf-screen__n { color: var(--fg); font-variant-numeric: tabular-nums; }
+.pf-screen__n { color: var(--fg); font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em; }
 .pf-screen__t {
   grid-area: t; display: block;
-  font-family: var(--ff-d); font-size: clamp(1.6rem, 1rem + 1.6vw, 2.6rem); line-height: 1; letter-spacing: -0.02em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.6rem, 1rem + 1.6vw, 2.6rem); line-height: 1; letter-spacing: var(--ls-d);
+  text-transform: uppercase;
 }
 .pf-screen__st {
   grid-area: s; display: block;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
 }
 .pf-screen__open {
   grid-area: open;
   display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.1rem 0.8rem 1.25rem; border-radius: 999px;
-  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 600; line-height: 1;
+  font-family: var(--ff-t); font-size: 0.875rem; line-height: 1;
   color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-ui);
   transition: background-color 0.4s var(--e-out), color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
 }
@@ -283,7 +285,7 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
   transition: opacity 0.3s var(--e-out), scale 0.45s var(--e-out);
 }
 .pf-tag__t { display: flex; align-items: center; gap: 0.5rem; }
-.pf-tag b { font-weight: 600; font-size: var(--fs-sm); line-height: 1.25; }
+.pf-tag b { font-weight: 400; font-size: var(--fs-sm); line-height: 1.25; }
 .pf-tag__d { font-size: var(--fs-micro); line-height: 1.4; color: var(--pf-ink-2); }
 .pf-tag .pf-mark { color: var(--pf-ink); }
 .pf-tag:focus-visible { outline: none; }
@@ -346,7 +348,7 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
   position: relative; display: block;
   padding: 0.45rem 0.85rem;
   border-radius: 0.2rem;
-  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; line-height: 1; white-space: nowrap;
+  font-family: var(--ff-t); font-size: 0.9375rem; line-height: 1; white-space: nowrap;
   background:
     radial-gradient(circle at 0.32rem 50%, var(--pf-brass) 0 1.3px, transparent 1.9px),
     radial-gradient(circle at calc(100% - 0.32rem) 50%, var(--pf-brass) 0 1.3px, transparent 1.9px);
@@ -354,8 +356,8 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
   transition: background-color 0.45s var(--e-out), color 0.45s var(--e-out), box-shadow 0.45s var(--e-out);
 }
 .pf-chip sup {
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.06em; line-height: 1;
-  font-variant-numeric: tabular-nums; color: var(--cream-3); transition: color 0.4s;
+  font-family: var(--ff-n); font-size: 0.6875rem; letter-spacing: 0.025em; line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums; color: var(--cream-3); transition: color 0.4s;
 }
 /* La poignée. */
 .pf-chip__pull {
@@ -396,6 +398,9 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 .pf-chip:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 3px; }
 
 /* Le compteur peut s'allonger (une étiquette épinglée) : il passe à la ligne. */
+/* Le compteur et le numéro de la fiche ouverte sont des chiffres : ils
+   quittent la voix des étiquettes (`.dv-mono`) pour celle des chiffres. */
+.pf-count, .pf-dlg__no { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.042em; }
 .pf-count { display: inline-flex; align-items: baseline; gap: 0.6em; max-width: 100%; line-height: 1.5; }
 .pf-count::before { content: ''; flex: none; width: 0.45em; height: 0.45em; background: var(--pf-lamp); border-radius: 1px; opacity: 0.7; }
 
@@ -494,13 +499,13 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 .pf-card__strip {
   display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
   padding: 0.6rem 0.2rem 0.55rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
+  font-family: var(--ff-m); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
   color: var(--pf-ink);
 }
-.pf-card__no { color: var(--pf-ink-2); font-variant-numeric: tabular-nums; }
+.pf-card__no { color: var(--pf-ink-2); font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.042em; }
 .pf-badge {
   display: inline-flex; align-items: center; gap: 0.5rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
+  font-family: var(--ff-m); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
 }
 .pf-badge .pf-mark { width: 0.55rem; height: 0.55rem; }
 .pf-badge--flat { color: var(--fg); font-size: var(--fs-nano); }
@@ -559,13 +564,13 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 .pf-card__meta { display: grid; gap: 0.45rem; padding-inline: 0.15rem; }
 .pf-card__k {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3);
 }
 .pf-card__cat { display: inline-flex; align-items: center; gap: 0.55em; color: var(--cream-2); }
 .pf-card__cat::before { content: ''; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--c); }
 .pf-card__h {
-  font-family: var(--ff-d); font-size: clamp(1.45rem, 1.1rem + 0.9vw, 2.05rem); line-height: 0.98; letter-spacing: -0.02em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.45rem, 1.1rem + 0.9vw, 2.05rem); line-height: 0.98; letter-spacing: -0.008em;
+  text-transform: uppercase;
 }
 .pf-card.is-big .pf-card__h { font-size: clamp(2rem, 1.2rem + 2.4vw, 3.6rem); }
 .pf-card__h a { color: var(--fg); }
@@ -597,11 +602,13 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
   transition: opacity 0.45s var(--e-out);
 }
 .pf-soon .dv-k { margin-bottom: 0; }
+/* « More work on the way » tient sur une ligne dans son porte-étiquette :
+   l'Archivo Black, plus large, y est un cran plus petite. */
 .pf-soon__h {
   justify-self: start;
   padding: 0.6rem 1rem 0.55rem;
-  font-family: var(--ff-d); font-size: clamp(1.35rem, 1.05rem + 0.8vw, 1.9rem); line-height: 0.98; letter-spacing: -0.02em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.1rem, 0.86rem + 0.64vw, 1.55rem); line-height: 0.98; letter-spacing: -0.008em;
+  text-transform: uppercase;
   border-radius: 0.2rem;
   background:
     radial-gradient(circle at 0.35rem 50%, var(--pf-brass) 0 1.5px, transparent 2.1px),
@@ -663,8 +670,8 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 .pf-prep__word {
   grid-area: word; justify-self: start;
   display: block; max-width: 100%;
-  font-family: var(--ff-d); font-size: clamp(2.4rem, 0.8rem + 4.4vw, 6rem); line-height: 0.86; letter-spacing: -0.03em;
-  font-variation-settings: 'wdth' 80, 'wght' 760; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(2.4rem, 0.8rem + 4.4vw, 6rem); line-height: 0.86; letter-spacing: var(--ls-d);
+  text-transform: uppercase;
   color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--c) 42%, transparent);
 }
 /* La boîte de bobine, vue de dessus : couvercle cerclé, gorges, moyeu. */
@@ -701,7 +708,7 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
   display: grid; place-items: center; padding-inline: 8%;
   background: linear-gradient(180deg, #ece2c9, var(--pf-manila));
   box-shadow: 0 3px 8px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(0 0 0 / 0.06);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: clamp(0.625rem, 0.55rem + 0.25vw, 0.75rem); letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.2; text-align: center;
+  font-family: var(--ff-m); font-size: clamp(0.625rem, 0.55rem + 0.25vw, 0.75rem); letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.2; text-align: center;
   color: var(--pf-ink);
 }
 .pf-prep__band span { border-block: 1px solid rgb(26 31 27 / 0.3); padding-block: 0.3em; }
@@ -724,8 +731,8 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 .pf-prep__txt { grid-area: txt; display: grid; gap: var(--s-4); max-width: 34rem; }
 .pf-prep__txt .dv-k { margin-bottom: 0; }
 .pf-prep__h {
-  font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; letter-spacing: -0.015em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; letter-spacing: var(--ls-d);
+  text-transform: uppercase;
 }
 .pf-prep__p { color: var(--cream-2); line-height: 1.6; }
 .pf-prep .dv-acts { margin-top: var(--s-3); }
@@ -864,17 +871,17 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 .pf-dlg__info .dv-k { margin-bottom: 0; }
 .pf-dlg__info .dv-k::before { background: var(--c); }
 .pf-dlg__h {
-  font-family: var(--ff-d); font-size: clamp(2.2rem, 1rem + 2.8vw, 4rem); line-height: 0.92; letter-spacing: -0.03em;
-  font-variation-settings: 'wdth' 82, 'wght' 740; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(2.2rem, 1rem + 2.8vw, 4rem); line-height: 0.92; letter-spacing: var(--ls-d);
+  text-transform: uppercase;
   padding-right: 2.5rem;
 }
 .pf-dlg__aka {
-  font-family: var(--ff-p); font-size: clamp(1.15rem, 0.9rem + 0.6vw, 1.5rem); line-height: 1.2; letter-spacing: -0.01em;
-  font-variation-settings: 'opsz' 48, 'wght' 380; color: var(--cream-2);
+  font-family: var(--ff-t); font-size: clamp(1.15rem, 0.9rem + 0.6vw, 1.5rem); line-height: 1.25; letter-spacing: -0.005em;
+  color: var(--cream-2);
 }
 .pf-dlg__dl { margin-top: var(--s-3); border-top: 1px solid var(--line); }
 .pf-dlg__dl > div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--s-4); padding-block: 0.85rem; border-bottom: 1px solid var(--line); }
-.pf-dlg__dl dt { padding-top: 0.15rem; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+.pf-dlg__dl dt { padding-top: 0.15rem; font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
 .pf-dlg__dl dd { display: grid; gap: 0.3rem; font-size: var(--fs-sm); color: var(--fg); }
 .pf-dlg__note { font-size: var(--fs-micro); color: var(--cream-3); }
 .pf-dlg__acts { margin-top: var(--s-3); }
@@ -889,7 +896,7 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 }
 .pf-dlg__nav button:last-child { justify-items: end; text-align: right; }
 .pf-dlg__nav b {
-  font-family: var(--ff-d); font-size: 1rem; line-height: 1.05; font-variation-settings: 'wdth' 86, 'wght' 680; text-transform: uppercase; font-weight: 400;
+  font-family: var(--ff-d); font-size: 1rem; line-height: 1.05; letter-spacing: 0.012em; text-transform: uppercase;
 }
 .pf-dlg__nav button:hover, .pf-dlg__nav button:focus-visible { box-shadow: inset 0 2px 0 var(--pf-lamp), inset 0 0 0 1px var(--line-ui); background: color-mix(in srgb, var(--fg) 5%, transparent); transform: translateY(-2px); }
 .pf-dlg__nav button:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 2px; }

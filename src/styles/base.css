@@ -5,6 +5,11 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: auto; /* Lenis conduit ; on ne double pas le pilote */
+  /* Jamais de gras ni de penché fabriqués : l'Archivo Black n'a que sa
+     noire, Barlow Condensed que ses trois graisses, Plex Sans n'a pas
+     d'italique. Une demande qui n'existe pas prend la graisse la plus
+     proche, et reste droite. */
+  font-synthesis: none;
 }
 html.is-locked { overflow: hidden; }
 
@@ -15,7 +20,12 @@ body {
   font-family: var(--ff-t);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
-  font-variation-settings: 'wdth' 100, 'wght' 400;
+  /* Plus de réglage d'axes posé ici (18/10/2026) : le `'wdth' 100, 'wght'
+     400` hérité passait avant toutes les `font-weight` et `font-stretch` du
+     texte, qui rendaient donc en 400 quoi qu'elles disent. Les graisses
+     écrites sont désormais celles qu'on voit ; celles qui ne s'étaient
+     jamais vues (la barre, les boutons) ont été ramenées à 400, l'aspect
+     validé. */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -70,7 +80,6 @@ em { font-style: normal; }
 .mono {
   font-family: var(--ff-m);
   font-size: var(--fs-mono);
-  font-variation-settings: 'wdth' 100, 'wght' 400;
   letter-spacing: var(--ls-mono);
   font-variant-numeric: tabular-nums;
 }

@@ -5,31 +5,111 @@
    l'accent rare ; la crème est l'encre.
    ══════════════════════════════════════════════════════════════ */
 
+/* ─────────────── LES FONTES (18/10/2026) ───────────────
+   Dominique, après les avoir vues côte à côte sur les vraies pages :
+   Fraunces « fait trop AI », et les chiffres méritaient mieux. Retenu, un
+   mélange : « le texte on prend A et les chiffres B », les titres en A.
+     Archivo Black (Omnibus-Type) — les titres. Une seule graisse, la noire,
+       en bas de casse pour l'affiche, en capitales pour le display.
+     IBM Plex Sans (Mike Abbink, IBM) — le texte, les titres moyens, les
+       boutons, la barre, et les étiquettes en lettres. Variable : wght
+       100→700, wdth 75→100. Romain seulement : aucune italique n'est servie,
+       et `font-synthesis: none` (base.css) interdit au navigateur d'en
+       fabriquer une penchée, ou un gras.
+     Barlow Condensed (Jeremy Tribby) — les chiffres : horloges, codes
+       temporels, compteurs, numéros d'étape, bandeaux de données. Trois
+       graisses statiques, 500, 600 et 700.
+   Google Fonts, licence SIL OFL 1.1, jeu latin, servies par le site. Les
+   anciennes (Fraunces, Archivo, Instrument Sans, Martian Mono) restent dans
+   `design/fonts-src/`.
+
+   UNE FAMILLE PAR VOIX, MÊME QUAND LE FICHIER EST LE MÊME. `size-adjust`
+   règle la taille du dessin pour toutes les règles d'une voix : c'est ce
+   qui garde la composition d'aujourd'hui sans retoucher les centaines de
+   tailles écrites pour les anciennes fontes. Un fichier partagé n'est
+   téléchargé qu'une fois (même adresse). Les interlignes et les `em` des
+   marges restent calculés sur la taille écrite.
+     affiche ....... 100 %  les tailles des grands titres sont réécrites
+     display ........ 86 %  l'Archivo Black en capitales est ~26 % plus
+                            large que l'Archivo étroite 84/740 d'avant
+     texte ......... 100 %
+     étiquettes .... 114 %  ⎫ la hauteur de capitale de Martian Mono, la
+     chiffres ...... 114 %  ⎭ mono d'avant (800 contre 698 et 700)
+   Les graisses absentes se rabattent sur la plus proche, jamais fabriquées :
+   l'Archivo Black répond à toutes, une étiquette demandée en 400 sort en
+   500, un chiffre en 400 sort en 500, en 800 il sort en 700.
+
+   Pendant le chargement : Arial Black a exactement les chasses de
+   l'Archivo Black, et Helvetica Neue celles de Plex Sans à 0,1 % près
+   (mesuré le 18/10/2026) — la ligne ne bouge pas quand la vraie arrive. */
 @font-face {
-  font-family: 'Archivo';
-  src: url('/fonts/archivo-var.woff2') format('woff2-variations');
-  font-weight: 100 900;
-  font-stretch: 62% 125%;
+  font-family: 'Archivo Black';
+  src: url('/fonts/archivo-black.woff2') format('woff2');
+  font-weight: 100 900;   /* la noire, quelle que soit la graisse demandée */
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Archivo Black Display';
+  src: url('/fonts/archivo-black.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 86%;
+}
+/* Le display a sa doublure à sa taille : sans elle, un titre de section
+   sortirait 16 % plus grand le temps du chargement. */
+@font-face {
+  font-family: 'Archivo Black Display Fallback';
+  src: local('Arial Black'), local('Arial-Black');
+  font-weight: 100 900;
+  font-style: normal;
+  size-adjust: 86%;
+}
 
 @font-face {
-  font-family: 'Instrument Sans';
-  src: url('/fonts/instrument-sans-var.woff2') format('woff2-variations');
-  font-weight: 400 700;
+  font-family: 'IBM Plex Sans';
+  src: url('/fonts/ibm-plex-sans-var.woff2') format('woff2');
+  font-weight: 100 700;
   font-stretch: 75% 100%;
   font-style: normal;
   font-display: swap;
 }
-
-
+/* Les étiquettes : la même Plex, en 500 semi-étroite, réglée une fois pour
+   toutes ici (une règle qui demande 400 ou une autre largeur l'a quand même). */
 @font-face {
-  font-family: 'Fraunces';
-  src: url('/fonts/fraunces-var.woff2') format('woff2-variations');
-  font-weight: 100 900;
+  font-family: 'IBM Plex Sans Label';
+  src: url('/fonts/ibm-plex-sans-var.woff2') format('woff2');
+  font-weight: 500 600;
+  font-stretch: 87.5%;
   font-style: normal;
   font-display: swap;
+  size-adjust: 114%;
+}
+
+@font-face {
+  font-family: 'Barlow Condensed Data';
+  src: url('/fonts/barlow-condensed-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 114%;
+}
+@font-face {
+  font-family: 'Barlow Condensed Data';
+  src: url('/fonts/barlow-condensed-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 114%;
+}
+@font-face {
+  font-family: 'Barlow Condensed Data';
+  src: url('/fonts/barlow-condensed-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 114%;
 }
 
 :root {
@@ -83,15 +163,24 @@
   --paper: #ffffff;
 
   /* ─────────────── Typographie ─────────────── */
-  /* L'AFFICHE. Fraunces est une serif à caractère, variable sur quatre axes —
-     dont `WONK`, qui débride les formes aux grandes tailles. Sur un fond
-     sombre elle tient : une didone y perdrait ses déliés, une grotesque de
-     plus n'aurait rien dit. C'est elle qui porte le nom et les titres.
-       opsz 9→144 · wght 100→900 · SOFT 0→100 · WONK 0/1 */
-  --ff-p: 'Fraunces', 'Iowan Old Style', Georgia, serif;            /* affiche */
-  --ff-d: 'Archivo', 'Helvetica Neue', Impact, sans-serif;          /* display */
-  --ff-t: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;   /* titres + corps */
-  --ff-m: 'Instrument Sans', ui-monospace, Menlo, monospace;        /* données */
+  /* LES CINQ VOIX (18/10/2026, voir les `@font-face` en tête du fichier).
+       affiche ...... Archivo Black en bas de casse, serrée : les grands titres
+       display ...... Archivo Black en capitales, à 86 % : les titres de section
+       titres+corps . IBM Plex Sans ; les titres moyens en 500
+       étiquettes ... IBM Plex Sans 500 semi-étroite, en capitales espacées
+                      (0,12 à 0,2em) : surtitres, libellés, onglets
+       chiffres ..... Barlow Condensed, chiffres tabulaires
+                      (`font-variant-numeric: tabular-nums lining-nums`) :
+                      500 pour un bandeau, 600 pour un chiffre mis en avant,
+                      700 pour un grand nombre. Barlow est étroite :
+                      l'interlettrage de la mono d'avant × 0,42.
+     Un numéro de téléphone dans une phrase ou une ligne de contact reste
+     dans le texte. */
+  --ff-p: 'Archivo Black', 'Arial Black', Impact, sans-serif;                          /* affiche */
+  --ff-d: 'Archivo Black Display', 'Archivo Black Display Fallback', Impact, sans-serif; /* display */
+  --ff-t: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;                        /* titres + corps */
+  --ff-m: 'IBM Plex Sans Label', 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; /* étiquettes */
+  --ff-n: 'Barlow Condensed Data', 'Arial Narrow', 'Helvetica Neue', sans-serif;       /* chiffres */
 
   /* Échelle fluide, 390 → 1440 px. Rapport display ÷ corps ≈ 8:1. */
   --fs-hero:  clamp(4rem, 12.4vw, 10.5rem);
@@ -110,27 +199,23 @@
   --lh-h: 1.06;
   --lh-body: 1.6;
 
-  --ls-hero: -0.025em;
-  --ls-d: -0.018em;
+  /* L'Archivo Black est large : les titres se resserrent un peu plus
+     qu'avec Fraunces (-0,025em) et l'Archivo étroite (-0,018em). */
+  --ls-hero: -0.04em;
+  --ls-d: -0.022em;
   --ls-eyebrow: 0.18em;
 
-  /* ── LES SIX JETONS QUI MANQUAIENT ──
-     Ceux-ci étaient APPELÉS 25 fois et définis nulle part. En CSS, une
+  /* ── LES JETONS QUI MANQUAIENT ──
+     Ils étaient APPELÉS 25 fois et définis nulle part. En CSS, une
      déclaration qui contient un `var()` non résolu est invalide *at computed
      value time* : elle ne tombe pas en arrière sur une valeur par défaut, elle
-     est jetée en entier, en silence.
-     Conséquence mesurée : `font-variation-settings: 'opsz' 72, 'wdth'
-     var(--wd-h2), 'wght' 700` était rejeté sur `.film__h`, `.loc__h`,
-     `.locs__q`, `.sec__h`, `.vac__empty-h` et le H1 du 404 — TOUS les titres
-     des pages profondes rendaient donc en Archivo neutre (wdth 100, wght 400)
-     au lieu du 86/720 voulu. Et les 9 éléments `.mono` n'avaient aucune taille
-     propre : ils héritaient. Ça échouait sans un mot dans la console. */
+     est jetée en entier, en silence. Les 9 éléments `.mono` n'avaient ainsi
+     aucune taille propre : ils héritaient. Ça échouait sans un mot dans la
+     console. (Les quatre jetons d'axes de l'Archivo variable, `--wd-h2`,
+     `--wg-h2`, `--wd-display` et `--wg-display`, sont partis avec elle le
+     18/10/2026.) */
   --fs-mono:    0.8125rem;   /* entre --fs-sm (15px) et --fs-micro (12px) */
-  --ls-mono:    0.055em;     /* l'interlettrage d'un chiffre, pas d'un sur-titre */
-  --wd-h2:      86;          /* la largeur resserrée des titres de section */
-  --wg-h2:      720;
-  --wd-display: 78;          /* plus étroit encore pour le très grand corps */
-  --wg-display: 800;
+  --ls-mono:    0.055em;     /* l'interlettrage d'une étiquette en casse normale */
 
   /* ─────────────── Espacement ─────────────── */
   --s-1: 0.3125rem; --s-2: 0.5625rem; --s-3: 0.875rem;
@@ -196,7 +281,7 @@
 }
 
 /* Sur téléphone, la plus petite étiquette passe de 11 à 12 px : c'est le
-   seuil sous lequel une capitale mono se déchiffre au lieu de se lire (F23). */
+   seuil sous lequel une petite capitale se déchiffre au lieu de se lire (F23). */
 @media (max-width: 40rem) {
   :root { --fs-nano: 0.75rem; }
 }

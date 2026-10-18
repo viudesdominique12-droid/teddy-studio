@@ -4,7 +4,9 @@
 import os
 from fontTools.ttLib import TTFont
 from fontTools.varLib.instancer import instantiateVariableFont
-SRC = os.path.join(os.path.dirname(__file__), '..', '..', 'public', 'fonts') + '/'
+# Le flyer garde les polices d'avant : depuis le 18/10/2026, le site n'en sert
+# plus aucune, leurs originaux sont dans design/fonts-src/.
+SRC = os.path.join(os.path.dirname(__file__), '..', '..', 'design', 'fonts-src') + '/'
 os.makedirs('fonts', exist_ok=True)
 jobs = [
     ('archivo-var', 'Archivo-Titre',    'archivo-84-740',   {'wdth': 84, 'wght': 740}),

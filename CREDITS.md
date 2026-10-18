@@ -36,7 +36,17 @@ Ces licences sont compatibles avec un usage commercial, mais la clause *ShareAli
 réelle : **raison de plus pour les remplacer par les photos du studio.**
 
 ## 3. Typographies
-Voir `src/styles/tokens.css`. Google Fonts / Fontshare uniquement (licence SIL OFL, usage commercial libre).
+Voir `src/styles/tokens.css`. Hébergées sur le site (`public/fonts/`), jamais chargées depuis un service tiers. Depuis le 18/10/2026 :
+
+| Fichier | Famille | Auteurs | Licence |
+|---|---|---|---|
+| `public/fonts/archivo-black.woff2` | **Archivo Black** (une graisse, la noire), jeu latin — les titres | The Archivo Black Project Authors (Omnibus-Type) | SIL Open Font License 1.1 |
+| `public/fonts/ibm-plex-sans-var.woff2` | **IBM Plex Sans** (variable, wght 100–700, wdth 75–100, romain), jeu latin — le texte et les étiquettes | IBM Corp. | SIL Open Font License 1.1 |
+| `public/fonts/barlow-condensed-500.woff2`, `-600.woff2`, `-700.woff2` | **Barlow Condensed** (Medium, SemiBold, Bold), jeu latin — les chiffres | The Barlow Project Authors (Jeremy Tribby) | SIL Open Font License 1.1 |
+
+Fichiers pris sur Google Fonts. La licence SIL OFL permet l'usage commercial et l'intégration au site ; elle interdit seulement de vendre les fontes seules.
+
+Les fontes d'avant (Fraunces, Archivo, Instrument Sans, Martian Mono, toutes SIL OFL) ne servent plus au site ; leurs originaux restent dans `design/fonts-src/` (le flyer, `docs/flyer/`, s'en sert encore).
 
 ## 4. Ce qui a été retiré
 - Les 8 icônes de services (dégradé violet→bleu, stock) — supprimées, la typographie porte les services.
@@ -46,7 +56,7 @@ Voir `src/styles/tokens.css`. Google Fonts / Fontshare uniquement (licence SIL O
 ## 5. La caméra de la galerie (refonte, 26/09/2026)
 - `public/cam/camera-2400.webp` et `camera-1400.webp` : caméra Sony avec zoom Fujinon 50-135, photo de **Vanilla Bear Films** sur Unsplash (`unsplash.com/photos/black-shoulder-mount-camera-Wnly2mV4YKw`), **licence Unsplash** — usage commercial libre, sans attribution obligatoire ; on la crédite quand même.
 - `public/cam/camera-lines-2400.webp` et `camera-lines-1400.webp` : le dessin au trait, tiré de cette photo par détection des contours (OpenCV).
-- Typographie Martian Mono (`public/fonts/martian-mono-var.woff2`) : licence SIL OFL.
+- Typographie Martian Mono (licence SIL OFL) : remplacée le 18/10/2026 par IBM Plex Sans et Barlow Condensed (§3).
 - `public/cam/blueprint-2400.webp` et `blueprint-1400.webp` : le plan de l'ouverture, tiré de la photo « Camera » du site (`public/kit/photo/camera.webp`, visuel de catalogue Canon EOS C500 Mark II), logos effacés.
 
 ## 6. Le matériel en 3D (refonte, 26/09/2026)
@@ -60,6 +70,6 @@ Voir `src/styles/tokens.css`. Google Fonts / Fontshare uniquement (licence SIL O
 ## 7. Les thèmes à comparer (refonte, 27/09/2026)
 Polices des deux thèmes d'essai, toutes sous **licence SIL Open Font License 1.1**, chargées depuis Google Fonts le temps de la comparaison (le thème retenu aura ses polices hébergées sur le site, comme les autres) :
 - thème Nuit : **Big Shoulders Display** (Patric King), **Geist** et **Geist Mono** (Vercel) ;
-- thème Papier : **Instrument Serif** (Instrument), **DM Mono** (Colophon Foundry). Le texte reste en Instrument Sans (§3).
+- thème Papier : **Instrument Serif** (Instrument), **DM Mono** (Colophon Foundry). Le texte restait en Instrument Sans.
 Les couleurs du thème Papier s'inspirent de la mise en page de hobro.digital (papier blanc et sections noires). On en reprend l'idée, jamais le code, les images, les textes ni les polices (Hobro utilise des polices commerciales).
 

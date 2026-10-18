@@ -12,11 +12,9 @@
 .phead__h {
   max-width: 22ch;
   font-family: var(--ff-d);
-  font-size: var(--fs-d1); line-height: 0.98; letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' 96, 'wdth' 84, 'wght' 740;
+  font-size: var(--fs-d1); line-height: 0.98; letter-spacing: var(--ls-d);
   text-transform: uppercase;
 }
-.phead__h em { font-variation-settings: 'opsz' 96, 'wdth' 78, 'wght' 800; }
 .phead__meta {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3);
   margin-top: var(--s-5); color: var(--fg-3);
@@ -38,7 +36,6 @@
 .sec__h {
   font-family: var(--ff-d); font-size: var(--fs-d2);
   line-height: 1.02; letter-spacing: var(--ls-d);
-  font-variation-settings: 'opsz' 72, 'wdth' var(--wd-h2), 'wght' var(--wg-h2);
 }
 .sec__lede { max-width: var(--measure); margin-top: var(--s-5); font-size: var(--fs-lede); color: var(--fg-2); }
 
@@ -58,7 +55,6 @@
 .loc__h {
   font-family: var(--ff-d); font-size: clamp(1.8rem, 4.6vw, 3.4rem);
   letter-spacing: var(--ls-d); text-transform: uppercase; line-height: 1.02;
-  font-variation-settings: 'opsz' 72, 'wdth' 86, 'wght' 720;
 }
 .loc__note { margin-top: var(--s-3); color: var(--fg-2); font-size: var(--fs-sm); }
 .loc__credit { margin-top: var(--s-4); color: var(--fg-3); font-size: var(--fs-micro); }
@@ -76,7 +72,6 @@
 .locs__q {
   font-family: var(--ff-d); font-size: var(--fs-d2);
   letter-spacing: var(--ls-d); line-height: 1.06; text-transform: uppercase;
-  font-variation-settings: 'opsz' 72, 'wdth' 84, 'wght' 740;
 }
 .locs__a { margin: var(--s-4) auto var(--s-6); max-width: 44ch; color: var(--fg-2); }
 
@@ -97,7 +92,7 @@
   transition: background var(--d-settle) var(--e-settle);
 }
 .cli__i:nth-child(4n) { border-right: 0; }
-.cli__n { font-family: var(--ff-d); font-size: var(--fs-sm); font-variation-settings: 'opsz' 24, 'wdth' 96, 'wght' 620; max-width: 14ch; }
+.cli__n { font-family: var(--ff-d); font-size: var(--fs-sm); letter-spacing: 0.012em; max-width: 14ch; }
 /* Les logos ont été détourés et aplatis en encre crème à la source : aucun
    filtre à leur appliquer, seulement une présence qui monte au survol. */
 .cli__i img { width: auto; height: 2.4rem; flex: none; opacity: 0.62; transition: opacity var(--d-settle) var(--e-settle); }

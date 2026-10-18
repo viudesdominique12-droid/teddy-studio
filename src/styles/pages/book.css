@@ -132,9 +132,10 @@ body[data-page='book'] .bk__head .sec__lede { max-width: 38rem; }
 .bk-stamp__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .bk-stamp__o { fill: none; stroke: currentColor; stroke-width: 3.2; }
 .bk-stamp__o--thin { stroke-width: 1.4; }
+/* L'interlettrage règle la longueur du texte sur celle du cercle (515 px) :
+   l'Archivo Black est plus large que l'Archivo étroite d'avant. */
 .bk-stamp__ring {
-  fill: currentColor; font-family: var(--ff-d); font-size: 13.4px; letter-spacing: 0.16em;
-  font-variation-settings: 'wdth' 80, 'wght' 760;
+  fill: currentColor; font-family: var(--ff-d); font-size: 13.4px; letter-spacing: 0.12em;
 }
 .bk-stamp__mid {
   position: absolute; inset: 22%; border-radius: 50%;
@@ -142,14 +143,17 @@ body[data-page='book'] .bk__head .sec__lede { max-width: 38rem; }
   text-align: center; text-transform: uppercase; line-height: 1;
 }
 .bk-stamp__k { font-family: var(--ff-m); font-size: 3.5cqw; letter-spacing: 0.14em; }
+/* La date et l'heure du tampon : des chiffres, Barlow Condensed 700. Elle
+   dessine 1,14 fois la taille écrite : la taille est réduite d'un dixième
+   pour garder la hauteur des chiffres d'avant. */
 .bk-stamp__date {
   padding: 0.28em 0.35em; border-block: 1.5px solid currentColor;
-  font-family: var(--ff-d); font-size: 7.4cqw;
-  font-variation-settings: 'wdth' 72, 'wght' 820; letter-spacing: 0.04em; white-space: nowrap;
+  font-family: var(--ff-n); font-weight: 700; font-size: 6.7cqw;
+  font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.04em; white-space: nowrap;
 }
 .bk-stamp__time {
-  font-family: var(--ff-d); font-size: 12.5cqw;
-  font-variation-settings: 'wdth' 70, 'wght' 840; font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+  font-family: var(--ff-n); font-weight: 700; font-size: 11.2cqw;
+  font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.01em;
 }
 /* Les empreintes laissées par les coups de tampon précédents. */
 .bk-stamp__prints { position: absolute; inset: 0; pointer-events: none; }
@@ -179,8 +183,8 @@ body[data-page='book'] .rail__i {
 }
 .rail__n {
   grid-column: 1 / -1;
-  font-family: var(--ff-d); font-size: clamp(1.35rem, 2.2vw, 2rem); line-height: 1;
-  font-variation-settings: 'wdth' 64, 'wght' 760;
+  font-family: var(--ff-n); font-weight: 700; font-size: clamp(1.2rem, 2vw, 1.8rem); line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.01em;
   color: transparent; -webkit-text-stroke: 1px var(--cream-3);
   transition: color var(--d-clear) var(--e-clear), -webkit-text-stroke-color var(--d-clear) var(--e-clear);
 }
@@ -238,16 +242,16 @@ body[data-page='book'] .step__h {
   display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) auto; column-gap: 1.4rem; row-gap: 0.4rem;
   align-items: center;
   padding: 0 0 1.35rem; margin-bottom: 1.9rem;
-  font-size: clamp(1.35rem, 1rem + 1.1vw, 1.85rem); line-height: 1.15;
+  font-size: clamp(1.25rem, 1rem + 1.1vw, 1.85rem); line-height: 1.15;
 }
 .step__no {
   grid-column: 1; grid-row: 1 / span 2; align-self: center;
-  font-family: var(--ff-d); font-size: 3rem; line-height: 0.85; letter-spacing: -0.02em;
-  font-variation-settings: 'wdth' 62, 'wght' 800;
+  font-family: var(--ff-n); font-weight: 700; font-size: 2.7rem; line-height: 0.85; letter-spacing: 0;
+  font-variant-numeric: tabular-nums lining-nums;
   color: transparent; -webkit-text-stroke: 1.2px var(--cream-3);
   transition: color var(--d-clear) var(--e-clear), -webkit-text-stroke-color var(--d-clear) var(--e-clear), transform 0.8s var(--e-out), opacity 0.6s var(--e-out);
 }
-body[data-page='book'] .step__k { grid-column: 2; grid-row: 1; font-size: var(--fs-micro); font-variation-settings: normal; letter-spacing: var(--ls-eyebrow); }
+body[data-page='book'] .step__k { grid-column: 2; grid-row: 1; font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow); }
 body[data-page='book'] .step.is-cleared .step__k { color: var(--dv-lt); }
 body[data-page='book'] .step.is-cleared .step__no { color: var(--dv); -webkit-text-stroke-color: var(--dv); }
 
@@ -268,7 +272,6 @@ body[data-page='book'] .step.is-cleared .step__no { color: var(--dv); -webkit-te
   border: 2.5px solid var(--dv); outline: 1px solid var(--dv); outline-offset: -6px;
   color: var(--dv); background: color-mix(in srgb, var(--dv) 9%, transparent);
   font-family: var(--ff-d); font-size: 1.02rem; letter-spacing: 0.16em; text-transform: uppercase;
-  font-variation-settings: 'wdth' 72, 'wght' 820;
   -webkit-mask: var(--bk-ink-mask) 0 0 / 180px 180px;
           mask: var(--bk-ink-mask) 0 0 / 180px 180px;
   opacity: 0; transform: rotate(-7deg) scale(1.7);
@@ -393,7 +396,7 @@ body[data-page='book'] .chip span::before {
 body[data-page='book'] .chip span::after {
   content: '\00D7'; position: absolute; left: 0.8em; top: 50%; width: 0.95em; text-align: center;
   font-family: var(--ff-d); font-size: 1.35em; line-height: 1; margin-top: -0.53em; margin-left: -0.18em;
-  font-variation-settings: 'wght' 800; color: var(--dv);
+  color: var(--dv);
   opacity: 0; transform: scale(2.2) rotate(-20deg);
   transition: opacity 0.12s ease-in, transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
 }
@@ -477,7 +480,7 @@ body[data-page='book'] .field input:focus-visible,
 body[data-page='book'] .field textarea:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 2px; }
 body[data-page='book'] .field input[type='date'],
 body[data-page='book'] .field input[type='time'],
-body[data-page='book'] .field input[type='number'] { font-family: var(--ff-m); font-size: max(1rem, var(--fs-sm)); letter-spacing: 0.04em; }
+body[data-page='book'] .field input[type='number'] { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: max(1rem, var(--fs-sm)); letter-spacing: 0.017em; }
 /* 16 px au moins : en dessous, l'iPhone zoome sur le champ au toucher (F19). */
 body[data-page='book'] #bk-title { font-family: var(--ff-m); font-size: max(1rem, var(--fs-sm)); letter-spacing: 0.03em; }
 /* La note libre : du papier réglé, dont les lignes suivent le texte. */
@@ -510,12 +513,12 @@ body[data-page='book'] .field__err { color: #ffb3a1; }
 .bk-days__d {
   display: grid; place-items: center; width: 2.15rem; height: 2.5rem;
   border: 1px solid var(--line); background: color-mix(in srgb, var(--night-2) 60%, transparent);
-  font-family: var(--ff-m); line-height: 1.05; text-align: center;
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; line-height: 1.05; text-align: center;
   opacity: 0; transform: translateY(6px);
   transition: opacity 0.3s ease calc(var(--i) * 18ms), transform 0.45s var(--e-out) calc(var(--i) * 18ms);
 }
-.bk-days__d b { display: block; font-size: 0.72rem; font-weight: 500; color: var(--fg); }
-.bk-days__d small { display: block; font-size: 0.55rem; letter-spacing: 0.08em; color: var(--fg-3); }
+.bk-days__d b { display: block; font-size: 0.72rem; font-weight: 600; color: var(--fg); }
+.bk-days__d small { display: block; font-size: 0.55rem; letter-spacing: 0.034em; color: var(--fg-3); }
 .bk-days__d.is-end { border-color: var(--dv); background: color-mix(in srgb, var(--dv) 16%, var(--night-2)); }
 .bk-days__d.is-end small { color: var(--dv-lt); }
 .bk-days__d.is-more { width: auto; padding: 0 0.6rem; font-size: 0.7rem; color: var(--fg-2); }
@@ -587,12 +590,13 @@ body[data-page='book'] .callslot .field--inline { margin-top: 0; }
 .slip__org { font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bk-ink-2); }
 .slip__t {
   margin-top: 0.3rem; font-family: var(--ff-d); font-size: 1.55rem; line-height: 1; text-transform: uppercase;
-  font-variation-settings: 'wdth' 66, 'wght' 800; letter-spacing: 0.01em;
+  letter-spacing: 0.012em;
 }
+/* La date et l'heure de la fiche : une ligne de chiffres. */
 .slip__meta {
   display: flex; justify-content: space-between; gap: 1rem; margin-top: 0.55rem;
-  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bk-ink-2);
-  font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: 0.62rem; letter-spacing: 0.034em; text-transform: uppercase; color: var(--bk-ink-2);
+  font-variant-numeric: tabular-nums lining-nums;
 }
 .slip__rows { display: grid; }
 .slip__r {
@@ -608,7 +612,7 @@ body[data-page='book'] .callslot .field--inline { margin-top: 0; }
   display: flex; align-items: baseline; gap: 0.4rem;
   font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bk-ink-3);
 }
-.slip__k i { font-style: normal; color: var(--bk-ink-2); }
+.slip__k i { font-style: normal; font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.042em; color: var(--bk-ink-2); }
 .slip__r.is-here .slip__k i { color: var(--bk-red); }
 .slip__v {
   font-size: 0.8rem; line-height: 1.35; color: var(--bk-ink); min-height: 1.1em;
@@ -624,7 +628,7 @@ body[data-page='book'] .callslot .field--inline { margin-top: 0; }
 .slip__boxes li {
   position: relative; display: grid; place-items: center; width: 1.85rem; height: 1.85rem;
   border: 1px solid color-mix(in srgb, var(--bk-ink) 45%, transparent);
-  font-family: var(--ff-m); font-size: 0.56rem; color: var(--bk-ink-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.56rem; color: var(--bk-ink-3);
 }
 .slip__boxes li::after {
   content: ''; position: absolute; inset: 3px; border-radius: 50%;
@@ -635,7 +639,8 @@ body[data-page='book'] .callslot .field--inline { margin-top: 0; }
 }
 .slip__boxes li.is-cleared { color: var(--bk-red); font-weight: 600; }
 .slip__boxes li.is-cleared::after { opacity: 1; transform: none; }
-.slip__count { font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bk-ink-2); white-space: nowrap; }
+/* « 0/5 cleared » : un compteur, dans la voix des chiffres. */
+.slip__count { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: 0.6rem; letter-spacing: 0.034em; text-transform: uppercase; color: var(--bk-ink-2); white-space: nowrap; }
 .slip__count b { font-weight: 600; color: var(--bk-red); font-size: 0.8rem; }
 
 /* « Ready » : le grand coup de tampon, quand la demande est prête. */
@@ -643,7 +648,6 @@ body[data-page='book'] .callslot .field--inline { margin-top: 0; }
   position: absolute; left: 50%; top: 52%; pointer-events: none;
   padding: 0.25em 0.6em; border: 4px solid var(--bk-red); outline: 1.5px solid var(--bk-red); outline-offset: 3px;
   color: var(--bk-red); font-family: var(--ff-d); font-size: 2.6rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.14em;
-  font-variation-settings: 'wdth' 70, 'wght' 860;
   -webkit-mask: var(--bk-ink-mask) 0 0 / 180px 180px; mask: var(--bk-ink-mask) 0 0 / 180px 180px;
   opacity: 0; transform: translate(-50%, -50%) rotate(-14deg) scale(2);
   transition: opacity 0.16s ease-in, transform 0.42s cubic-bezier(0.3, 1.5, 0.5, 1);
@@ -710,7 +714,7 @@ body[data-page='book'] .ftr__wl .ln--b { color: var(--dv); }
   .bk-desk__grid { width: 100%; }
   body[data-page='book'] .step > :not(legend) { margin-left: 0; }
   body[data-page='book'] .step__h { grid-template-columns: 2.5rem minmax(0, 1fr) auto; column-gap: 0.9rem; }
-  .step__no { font-size: 2.35rem; }
+  .step__no { font-size: 2.1rem; }
   .step__box { width: 5.6rem; height: 2.7rem; }
   .step__stamp { font-size: 0.82rem; letter-spacing: 0.12em; }
   .step__use { font-size: 0.58rem; letter-spacing: 0.1em; }

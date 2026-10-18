@@ -123,7 +123,9 @@ html.ab-hidden body[data-page='about'] .ftr::before { animation-play-state: paus
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
   align-items: end; gap: var(--s-7) var(--s-8);
 }
-.ab-h1 { max-width: 11ch; font-size: clamp(3rem, 0.9rem + 6.3vw, 8.25rem); }
+/* L'Archivo Black (18/10/2026) : ~87 px à 1440, trois lignes à côté de la
+   photo, et les boutons restent dans l'écran (1440 × 900). */
+.ab-h1 { max-width: 12ch; font-size: clamp(3rem, 1rem + 4.9vw, 5.6rem); }
 .ab-hero__txt .dv-lede { max-width: 34rem; margin-top: var(--s-6); }
 
 .ab-hero__media { justify-self: end; width: min(100%, 35rem); }
@@ -174,7 +176,7 @@ html.ab-hidden body[data-page='about'] .ftr::before { animation-play-state: paus
 .ab-seal__o { fill: none; stroke: var(--ab-brass); stroke-width: 1; }
 .ab-seal__i { fill: none; stroke: var(--ab-brass-line); stroke-width: 1; stroke-dasharray: 1.5 3; }
 .ab-seal text {
-  fill: var(--ab-brass-lt); font-family: var(--ff-m); font-stretch: 87.5%;
+  fill: var(--ab-brass-lt); font-family: var(--ff-m);
   font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
 }
 .ab-seal__core {
@@ -191,10 +193,11 @@ html.ab-hidden body[data-page='about'] .ftr::before { animation-play-state: paus
 
 .ab-hero__cap {
   display: grid; gap: 0.35rem; margin-top: var(--s-5); padding-left: 14%;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--cream-3);
 }
-.ab-hero__cap b { color: var(--fg); font-weight: 400; font-variant-numeric: tabular-nums; }
+/* L'heure d'Addis, dans la voix des chiffres. */
+.ab-hero__cap b { color: var(--fg); font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.042em; }
 .ab-hero__cap sup { font-size: 0.7em; }
 /* Avant le script, les cadres et le sceau attendent (le même filet de 3 s
    que le titre). */
@@ -239,7 +242,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 }
 @keyframes ab-glint { 0% { transform: translateX(-110%); } 55%, 100% { transform: translateX(560%); } }
 .ab-mast__side {
-  flex: none; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano);
+  flex: none; font-family: var(--ff-m); font-size: var(--fs-nano);
   letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
 }
 
@@ -247,22 +250,22 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-stmt {
   position: relative; z-index: 1;
   max-width: 21em; margin-top: var(--s-2);
-  font-family: var(--ff-p);
+  font-family: var(--ff-t);
   font-size: clamp(1.75rem, 0.95rem + 2.55vw, 3.65rem);
-  line-height: 1.14; letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 96, 'wght' 360, 'SOFT' 0, 'WONK' 0;
+  line-height: 1.12; letter-spacing: -0.028em;
   color: var(--fg);
   text-wrap: pretty;
 }
-/* La lettrine : une capitale de fonte, terre cuite, sur trois lignes. */
+/* La lettrine : une capitale de l'affiche (Archivo Black), terre cuite, sur
+   trois lignes. */
 .ab-stmt::first-letter {
   float: left; margin: 0.06em 0.09em 0 -0.02em;
-  font-size: 3.32em; line-height: 0.8;
-  font-variation-settings: 'opsz' 144, 'wght' 480, 'SOFT' 0, 'WONK' 1;
+  font-family: var(--ff-p); font-size: 3.32em; line-height: 0.8;
   color: var(--dv);
   text-shadow: 0.025em 0.025em 0 color-mix(in srgb, var(--ab-brass) 45%, transparent);
 }
-.ab-stmt em { font-style: italic; color: var(--dv-lt); }
+/* Aucune italique n'est servie (18/10/2026) : la couleur seule les distingue. */
+.ab-stmt em { font-style: normal; color: var(--dv-lt); }
 /* Le rouleau encreur : il descend avec l'encre, au défilement. */
 .ab-roller {
   position: absolute; z-index: 0; left: -1.2rem; right: -1.2rem; top: 0; height: 2.2rem;
@@ -302,7 +305,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-facts > div:last-child { border-bottom: 0; }
 .ab-facts dt {
   display: flex; align-items: baseline; gap: 0.5rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
 }
 .ab-facts dt::after {
   content: ''; flex: 1; min-width: 1.2rem; height: 2px; translate: 0 -0.2em;
@@ -358,7 +361,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-scope__cap {
   display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-4);
   margin-top: var(--s-3);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
 }
 .ab-scope__scale {
   position: relative; height: 0.6rem; overflow: hidden;
@@ -401,10 +404,11 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-plate__frame i:nth-child(2) { top: 0; right: 0; bottom: 0; width: 1px; transform-origin: 50% 0; }
 .ab-plate__frame i:nth-child(3) { bottom: 0; left: 0; right: 0; height: 1px; transform-origin: 100% 50%; }
 .ab-plate__frame i:nth-child(4) { top: 0; left: 0; bottom: 0; width: 1px; transform-origin: 50% 100%; }
+/* Le numéro de la plaque (I, II) : un grand chiffre, en Barlow 700 ; elle
+   dessine 1,14 fois la taille écrite (tokens.css). */
 .ab-plate__num {
   position: absolute; top: var(--s-5); right: var(--s-6);
-  font-family: var(--ff-p); font-size: clamp(3rem, 2rem + 3vw, 5.6rem); line-height: 1;
-  font-variation-settings: 'opsz' 144, 'wght' 300, 'SOFT' 0, 'WONK' 0;
+  font-family: var(--ff-n); font-weight: 700; font-size: clamp(2.6rem, 1.75rem + 2.6vw, 4.9rem); line-height: 1;
   color: transparent; -webkit-text-stroke: 1px var(--ab-brass-line);
   transition: color 0.8s var(--e-out);
 }
@@ -412,10 +416,9 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-plate .dv-k { margin-bottom: var(--s-4); color: var(--ab-brass-lt); }
 .ab-mv__t {
   max-width: 24ch;
-  font-family: var(--ff-p);
+  font-family: var(--ff-t); font-weight: 500;
   font-size: clamp(1.45rem, 1rem + 1.25vw, 2.35rem);
-  line-height: 1.2; letter-spacing: -0.014em;
-  font-variation-settings: 'opsz' 72, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  line-height: 1.2; letter-spacing: -0.018em;
   color: var(--fg);
 }
 /* La bande de guilloche : des sinusoïdes entrelacées qui défilent, vers la
@@ -472,16 +475,16 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 }
 .ab-pan__h {
   display: flex; align-items: baseline; gap: 0.8rem;
-  font-family: var(--ff-d); font-size: clamp(1.3rem, 1rem + 0.9vw, 1.9rem); line-height: 1; letter-spacing: -0.012em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.25rem, 0.95rem + 0.88vw, 1.85rem); line-height: 1; letter-spacing: 0;
+  text-transform: uppercase;
 }
-.ab-pan__h span { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; font-weight: 400; color: var(--c, var(--dv)); }
-.ab-pan__t { font-family: var(--ff-p); font-size: clamp(1.2rem, 1rem + 0.6vw, 1.6rem); line-height: 1.2; font-variation-settings: 'opsz' 48, 'wght' 400; color: var(--fg); }
+.ab-pan__h span { font-family: var(--ff-n); font-size: var(--fs-nano); letter-spacing: 0.042em; font-weight: 500; font-variant-numeric: tabular-nums lining-nums; color: var(--c, var(--dv)); }
+.ab-pan__t { font-family: var(--ff-t); font-size: clamp(1.2rem, 1rem + 0.6vw, 1.6rem); line-height: 1.25; letter-spacing: -0.005em; color: var(--fg); }
 .ab-pan__p { grid-column: 2; color: var(--cream-2); font-size: var(--fs-sm); line-height: 1.55; }
 .ab-pan__go {
   grid-column: 3; grid-row: 1; justify-self: end;
   display: inline-flex; align-items: center; gap: 0.5em; white-space: nowrap;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
 }
 .ab-pan__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
 .ab-pan__go:hover::after { transform: translateX(0.35em); }
@@ -548,14 +551,18 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
   transform: rotateX(calc(var(--i) * -51.4286deg)) translateZ(2.25em);
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
   font-family: var(--ff-p); line-height: 1.2; white-space: nowrap;
-  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--ls-hero);
   color: var(--fg);
   transition: color 0.6s var(--e-out);
 }
+/* Sur ordinateur, les noms du cylindre prennent l'affiche à 86 % (la face du
+   display, tokens.css) : à 100 %, « Equipment Rentals » débordait du
+   cylindre. La géométrie (en `em` de la taille écrite) ne bouge pas. */
+@media (min-width: 52.0625rem) { .ab-drum__f { font-family: var(--ff-d); } }
 .ab-drum__f i {
   align-self: flex-start; margin-top: 0.32em;
-  font-style: normal; font-family: var(--ff-m); font-stretch: 87.5%; font-size: max(0.15em, 0.6875rem); letter-spacing: 0.1em;
+  font-style: normal; font-family: var(--ff-n); font-size: max(0.15em, 0.6875rem); letter-spacing: 0.042em;
+  font-variant-numeric: tabular-nums lining-nums;
   color: var(--cream-3); transition: color 0.6s var(--e-out);
 }
 .ab-drum__f.is-front { color: var(--c); }
@@ -566,7 +573,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-tabs button {
   position: relative; overflow: hidden;
   flex: 1; display: grid; gap: 0.5rem; padding: 0 0 0.25rem; border: 0; background: none; cursor: pointer;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--cream-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.034em; color: var(--cream-3);
   text-align: left; transition: color 0.4s var(--e-out);
 }
 .ab-tabs button::before {
@@ -596,9 +603,9 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
   grid-area: 1 / 1; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4);
   padding: 0; border: 0;
 }
-.ab-svc.is-drum .ab-pan__h { font-size: var(--fs-nano); font-family: var(--ff-m); font-stretch: 87.5%; font-variation-settings: normal; font-weight: 400; letter-spacing: 0.14em; color: var(--cream-2); gap: 0.7rem; }
+.ab-svc.is-drum .ab-pan__h { font-size: var(--fs-nano); font-family: var(--ff-m); font-weight: 400; letter-spacing: 0.14em; color: var(--cream-2); gap: 0.7rem; }
 .ab-svc.is-drum .ab-pan__h span { color: var(--c); }
-.ab-svc.is-drum .ab-pan__t { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.6rem); line-height: 1.1; letter-spacing: -0.015em; font-variation-settings: 'opsz' 96, 'wght' 380; max-width: 16ch; }
+.ab-svc.is-drum .ab-pan__t { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.6rem); line-height: 1.12; letter-spacing: -0.018em; max-width: 16ch; }
 .ab-svc.is-drum .ab-pan__p { font-size: var(--fs-body); max-width: 30rem; }
 .ab-svc.is-drum .ab-pan__go {
   margin-top: var(--s-2); padding: 0.85rem 1.2rem 0.85rem 1.35rem; border-radius: 999px;
@@ -653,16 +660,16 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
   transition: transform 0.8s var(--e-out);
 }
 .ab-appr__i:hover::before, .ab-appr__i.is-on::before { transform: none; }
+/* Les numéros de la démarche : grands chiffres en creux, Barlow 700. */
 .ab-appr__n {
-  font-family: var(--ff-p); font-size: clamp(2.5rem, 1.7rem + 2.2vw, 4.2rem); line-height: 0.9;
-  font-variation-settings: 'opsz' 144, 'wght' 420, 'SOFT' 0, 'WONK' 0; letter-spacing: -0.02em;
+  font-family: var(--ff-n); font-weight: 700; font-variant-numeric: tabular-nums lining-nums;
+  font-size: clamp(2.5rem, 1.75rem + 2.4vw, 4.5rem); line-height: 0.9; letter-spacing: 0.01em;
   color: transparent; -webkit-text-stroke: 1px var(--ab-brass);
   transition: color 0.6s var(--e-out), -webkit-text-stroke-color 0.6s var(--e-out);
 }
 .ab-appr__i:hover .ab-appr__n, .ab-appr__i.is-on .ab-appr__n { color: var(--dv); -webkit-text-stroke-color: var(--dv); }
 .ab-appr__h {
-  font-family: var(--ff-p); font-size: clamp(1.5rem, 1.05rem + 1.3vw, 2.45rem); line-height: 1.08; letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 96, 'wght' 400, 'SOFT' 0, 'WONK' 0;
+  font-family: var(--ff-t); font-weight: 500; font-size: clamp(1.35rem, 0.98rem + 1.05vw, 2.1rem); line-height: 1.12; letter-spacing: -0.018em;
   transition: transform 0.7s var(--e-out);
 }
 .ab-appr__i:hover .ab-appr__h, .ab-appr__i.is-on .ab-appr__h { transform: translateX(0.5rem); }
@@ -681,7 +688,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 @media (max-width: 52rem) {
   .ab-appr__i { grid-template-columns: 3.6rem minmax(0, 1fr); }
   .ab-appr__p { grid-column: 2; }
-  .ab-appr__n { font-size: 2.3rem; }
+  .ab-appr__n { font-size: 2rem; }
 }
 
 /* ═══════════════════ NOS MOYENS : LE CABINET ═══════════════════
@@ -711,7 +718,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-kit__cat {
   position: absolute; left: 0.45rem; top: 0.45rem; z-index: 2;
   padding: 0.18rem 0.38rem 0.14rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; font-size: 0.5625rem; letter-spacing: 0.05em; text-transform: uppercase;
   color: var(--ab-ink); background: color-mix(in srgb, var(--ab-paper) 88%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ab-ink) 30%, transparent);
 }
@@ -724,10 +731,10 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-kit__i:is(:hover, :focus-visible) .ab-kit__plate::after { opacity: 1; transform: none; }
 .ab-kit__i:hover .ab-kit__plate img { transform: scale(1.05); }
 .ab-kit__n {
-  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.3rem); line-height: 1.05;
-  font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.3rem); line-height: 1.05; letter-spacing: 0.012em;
+  text-transform: uppercase;
 }
-.ab-kit__t { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+.ab-kit__t { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
 .ab-kit__i:focus-visible { outline-offset: 8px; border-radius: 0.2rem; }
 
 /* La règle de section du cabinet respire lentement. */
@@ -833,7 +840,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
   display: flex; align-items: center; gap: 0.75em;
   padding: 0 clamp(1.25rem, 0.4rem + 2.2vw, 2.75rem) 0 var(--pad-x);
   border-right: 1px solid color-mix(in srgb, var(--basalt) 26%, transparent);
-  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-family: var(--ff-m); font-weight: 400;
   font-size: var(--fs-nano); line-height: 1.3; letter-spacing: 0.14em;
   text-transform: uppercase; white-space: nowrap;
   color: var(--basalt);
@@ -859,8 +866,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-mq__i img { display: block; width: auto; height: clamp(3.4rem, 2.5rem + 2.4vw, 5.4rem); filter: brightness(0); }
 .ab-mq__t {
   font-family: var(--ff-d); font-size: clamp(1.05rem, 0.8rem + 0.7vw, 1.5rem); line-height: 1.02;
-  font-variation-settings: 'wdth' 86, 'wght' 700;
-  letter-spacing: 0.005em; text-transform: uppercase;
+  letter-spacing: 0.017em; text-transform: uppercase;
   color: var(--basalt); white-space: nowrap;
 }
 @media (max-width: 40rem) {
@@ -904,9 +910,10 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 }
 .ab-founder__rose svg { animation: ab-spin-r 140s linear infinite; }
 .ab-founder .dv-mono { color: var(--ab-brass-lt); }
+/* Le nom du fondateur, à l'affiche : l'Archivo Black, plus large que
+   Fraunces, un cran plus petite. */
 .ab-founder__n {
-  font-family: var(--ff-p); font-size: clamp(2.2rem, 1.3rem + 2.6vw, 4.2rem); line-height: 0.98; letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  font-family: var(--ff-p); font-size: clamp(1.7rem, 1rem + 2.15vw, 3.4rem); line-height: 1; letter-spacing: var(--ls-hero);
 }
 .ab-founder__p { max-width: 32rem; color: var(--cream-2); line-height: 1.6; }
 
@@ -959,7 +966,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-perf::after { right: -0.55rem; }
 .ab-team__join:hover .ab-perf { border-top-color: var(--dv); }
 
-.ab-team__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.04; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; }
+.ab-team__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.04; letter-spacing: 0.012em; text-transform: uppercase; }
 .ab-team__soon p, .ab-team__join p { color: var(--cream-2); font-size: var(--fs-sm); line-height: 1.6; }
 .ab-team__soon .dv-link, .ab-team__join .dv-link { margin-top: auto; align-self: flex-start; }
 @media (max-width: 60rem) {

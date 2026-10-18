@@ -72,6 +72,12 @@ body[data-page='services'] .ftr {
 }
 .hb-hero .dv-hero__in { grid-template-columns: minmax(0, 1fr); }
 .hb-hero .dv-lede { margin-top: var(--s-5); }
+/* L'affiche en Archivo Black (18/10/2026) : plus large que Fraunces, le titre
+   passe à ~82 px à 1440 pour tenir en deux lignes sous le prisme, sans
+   toucher les rayons. Sur téléphone, il suit la largeur de l'écran et garde
+   ses trois lignes d'avant (« Seven divisions. / One production / company. »). */
+.hb-hero .dv-h1 { font-size: clamp(3rem, 1rem + 4.6vw, 5.4rem); max-width: 17ch; }
+@media (max-width: 40rem) { .hb-hero .dv-h1 { font-size: 10.6vw; } }
 
 .hb-fan {
   position: absolute; top: var(--fan-top); bottom: var(--fan-bot);
@@ -191,15 +197,15 @@ body[data-page='services'] .ftr {
   content: ''; position: absolute; left: -0.95rem; top: 50%; width: 0.5rem; height: 0.5rem; translate: 0 -50%; border-radius: 50%;
   background: var(--c); box-shadow: 0 0 12px 2px color-mix(in srgb, var(--c) 70%, transparent);
 }
-.hb-fan__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); }
+.hb-fan__n { font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; color: var(--cream-3); }
 .hb-fan__t {
-  font-family: var(--ff-d); font-size: clamp(0.95rem, 0.8rem + 0.35vw, 1.2rem); line-height: 1; letter-spacing: -0.005em;
-  font-variation-settings: 'wdth' 86, 'wght' 640; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(0.95rem, 0.8rem + 0.35vw, 1.2rem); line-height: 1; letter-spacing: 0.007em;
+  text-transform: uppercase;
 }
 .hb-fan__s {
   display: none;
-  font-family: var(--ff-d); font-size: 0.8125rem; line-height: 1; letter-spacing: 0.01em;
-  font-variation-settings: 'wdth' 86, 'wght' 640; text-transform: uppercase; color: var(--fg);
+  font-family: var(--ff-d); font-size: 0.8125rem; line-height: 1; letter-spacing: 0.022em;
+  text-transform: uppercase; color: var(--fg);
 }
 .hb-fan__nav a.is-feat .hb-fan__t { font-size: clamp(1.05rem, 0.85rem + 0.5vw, 1.4rem); color: var(--fg); }
 .hb-fan__nav a:hover, .hb-fan__nav a:focus-visible, .hb-fan__nav a.is-near { color: var(--fg); transform: translateX(0.35rem); }
@@ -330,10 +336,12 @@ body[data-page='services'] .ftr {
 .hb-pan__body { flex: 1; display: grid; align-content: start; gap: var(--s-4); padding: var(--s-6) clamp(1rem, 2vw, 2rem) clamp(1rem, 2vw, 1.75rem); }
 .hb-pan__k {
   display: flex; align-items: center; gap: 0.8em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
 }
+/* Le numéro du panneau, dans la voix des chiffres. */
 .hb-pan__k span {
   display: inline-flex; align-items: center; gap: 0.6em; color: var(--fg);
+  font-family: var(--ff-n); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; letter-spacing: 0.06em;
 }
 .hb-pan__k span::before {
   content: ''; width: 0.55em; height: 0.55em; border-radius: 50%; background: var(--c);
@@ -341,13 +349,12 @@ body[data-page='services'] .ftr {
 }
 .hb-pan__h {
   font-family: var(--ff-d);
-  font-size: clamp(2.3rem, 1.1rem + 3.2vw, 4.6rem); line-height: 0.92; letter-spacing: -0.03em;
-  font-variation-settings: 'wdth' 84, 'wght' 740; text-transform: uppercase;
+  font-size: clamp(2.2rem, 1.05rem + 3.05vw, 4.4rem); line-height: 0.92; letter-spacing: var(--ls-d);
+  text-transform: uppercase;
 }
 .hb-pan__tag {
-  font-family: var(--ff-p);
-  font-size: clamp(1.45rem, 1rem + 1.2vw, 2.2rem); line-height: 1.06; letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 72, 'wght' 380;
+  font-family: var(--ff-t);
+  font-size: clamp(1.45rem, 1rem + 1.2vw, 2.2rem); line-height: 1.1; letter-spacing: -0.012em;
   color: var(--fg);
 }
 .hb-pan__p { max-width: 36rem; color: var(--cream-2); line-height: 1.6; }
@@ -422,7 +429,7 @@ body[data-page='services'] .ftr {
 .hb-pgm__cam.is-pvw::after { box-shadow: inset 0 0 0 2px #1fd26a; }
 .hb-tag {
   position: absolute; left: 0.45rem; bottom: 0.3rem; z-index: 3;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.5625rem; letter-spacing: 0.12em; text-transform: uppercase;
   color: rgb(255 255 255 / 0.86); text-shadow: 0 1px 3px rgb(0 0 0 / 0.7);
 }
 .hb-tag--pgm { top: 0.6rem; left: 0.7rem; bottom: auto; padding: 0.15rem 0.4rem; border-radius: 0.15rem; background: #ff2d2d; color: #fff; text-shadow: none; }
@@ -430,14 +437,14 @@ body[data-page='services'] .ftr {
   position: absolute; top: 0.6rem; right: 0.7rem; z-index: 3;
   display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.22rem 0.55rem; border-radius: 999px;
   background: rgb(0 0 0 / 0.55); color: #fff;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
 }
 .hb-onair i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #ff2d2d; animation: hb-rec 1.2s steps(1) infinite; }
 @keyframes hb-rec { 50% { opacity: 0.2; } }
 .hb-tc {
   position: absolute; right: 0.7rem; bottom: 0.55rem; z-index: 3;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.72rem; letter-spacing: 0.08em; color: #fff;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--ff-n); font-size: 0.72rem; letter-spacing: 0.034em; color: #fff;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 
 /* ── La scène d'Event Organizing : un projecteur, un plateau ── */
@@ -489,8 +496,7 @@ body[data-page='services'] .ftr {
 .hb-stage__words {
   position: absolute; left: 6%; right: 6%; top: 52%; z-index: 3; height: 2.6em;
   translate: 0 -50%;
-  font-family: var(--ff-p); font-size: clamp(1.3rem, 0.7rem + 1.6vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 72, 'wght' 360;
+  font-family: var(--ff-t); font-weight: 500; font-size: clamp(1.3rem, 0.7rem + 1.6vw, 2.4rem); line-height: 1.1; letter-spacing: -0.018em;
   color: #f7efe1; text-align: center;
   text-shadow: 0 2px 30px rgb(0 0 0 / 0.6);
 }
@@ -548,15 +554,15 @@ body[data-page='services'] .ftr {
 .hb-div__n {
   grid-area: n; align-self: start; padding-top: 0.85em;
   display: inline-flex; align-items: center; gap: 0.55em;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3);
+  font-family: var(--ff-n); font-variant-numeric: tabular-nums lining-nums; font-size: var(--fs-nano); letter-spacing: 0.042em; color: var(--cream-3);
   transition: color 0.5s var(--e-out);
 }
 .hb-div__n::before { content: ''; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--c); opacity: 0.45; transition: opacity 0.5s, box-shadow 0.5s; }
 .hb-div__t {
   grid-area: t;
   font-family: var(--ff-d);
-  font-size: clamp(1.9rem, 0.9rem + 2.7vw, 3.7rem); line-height: 0.94; letter-spacing: -0.028em;
-  font-variation-settings: 'wdth' 82, 'wght' 720; text-transform: uppercase;
+  font-size: clamp(1.9rem, 0.9rem + 2.7vw, 3.7rem); line-height: 0.94; letter-spacing: var(--ls-d);
+  text-transform: uppercase;
   color: var(--cream-2);
   transition: transform 0.9s var(--e-out), color 0.5s var(--e-out);
 }
@@ -653,15 +659,14 @@ body[data-page='services'] .ftr {
 .hb-div.is-on .hb-div__info > :nth-child(2) { transition-delay: 0.36s; }
 .hb-div.is-on .hb-div__info > :nth-child(3) { transition-delay: 0.44s; }
 .hb-div__tag {
-  font-family: var(--ff-p);
-  font-size: clamp(1.5rem, 0.9rem + 1.3vw, 2.35rem); line-height: 1.05; letter-spacing: -0.02em;
-  font-variation-settings: 'opsz' 72, 'wght' 380;
+  font-family: var(--ff-t);
+  font-size: clamp(1.5rem, 0.9rem + 1.3vw, 2.35rem); line-height: 1.1; letter-spacing: -0.012em;
   text-wrap: balance;
 }
 .hb-div__svc { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .hb-div__svc li {
   padding: 0.38rem 0.65rem; border-radius: 999px;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
   text-wrap: balance;   /* 12 px (F23) : sur téléphone, les plus longues passent sur deux lignes égales */
   color: var(--fg); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
   background: rgb(0 0 0 / 0.25);
@@ -678,7 +683,7 @@ body[data-page='services'] .ftr {
 .hb-m__cap {
   position: absolute; top: 1.05rem; left: 1.15rem; z-index: 5;
   display: inline-flex; align-items: center; gap: 0.5rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: rgb(255 255 255 / 0.82);
 }
 .hb-m__cap::before { content: ''; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--c); }
@@ -756,7 +761,7 @@ body[data-page='services'] .ftr {
 .hb-m__ph figcaption {
   position: absolute; top: 1.05rem; left: 1.15rem; z-index: 2;
   display: inline-flex; align-items: center; gap: 0.5rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--ff-m); font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
   color: rgb(255 255 255 / 0.85); text-shadow: 0 1px 6px rgb(0 0 0 / 0.6);
 }
 .hb-m__ph figcaption::before { content: ''; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--c); }
@@ -772,7 +777,7 @@ body[data-page='services'] .ftr {
 .hb-m__plate img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #fff; }
 .hb-m__plate figcaption {
   position: absolute; left: 0.6rem; bottom: 0.45rem;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.14em; text-transform: uppercase; color: #3a3836;
+  font-family: var(--ff-m); font-size: 0.5625rem; letter-spacing: 0.14em; text-transform: uppercase; color: #3a3836;
 }
 .hb-m__plate:nth-child(1) { left: 8%;  top: 9%;  --rot: -6deg; z-index: 1; }
 .hb-m__plate:nth-child(2) { right: 6%; top: 15%; --rot: 5deg;  z-index: 2; }
@@ -812,7 +817,9 @@ body[data-page='services'] .ftr {
   .hb-div__row { order: 2; border: 0 !important; padding: var(--s-5) var(--s-5) 0; grid-template-columns: 2.6rem minmax(0, 1fr) 1.6rem; }
   .hb-div__row::before { display: none; }
   .hb-div__row::after { top: auto; bottom: auto; height: 0; }
-  .hb-div__t { font-size: clamp(1.75rem, 1.1rem + 3vw, 2.6rem); color: var(--fg); }
+  /* L'Archivo Black, plus large : « AI PRODUCTION » tient sur une ligne à
+     390 px, « DOCUMENTARY » dans sa colonne à 360 px. */
+  .hb-div__t { font-size: clamp(1.45rem, 6.5vw, 2.4rem); color: var(--fg); }
   .hb-div.is-on .hb-div__t { transform: none; }
   .hb-div__s { color: var(--cream-2); }
   .hb-div__info {
@@ -919,8 +926,8 @@ html.js .hb-mix.is-in .hb-mix__lights { opacity: 1; }
 .hb-mix__i:is(:hover, :focus-within, .is-lit) .hb-mix__lights b { opacity: 1; transform: none; transition-delay: 0.25s; }
 
 .hb-mix__h {
-  font-family: var(--ff-d); font-size: clamp(1.4rem, 1.1rem + 0.8vw, 1.95rem); line-height: 1; letter-spacing: -0.015em;
-  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  font-family: var(--ff-d); font-size: clamp(1.3rem, 1.02rem + 0.8vw, 1.9rem); line-height: 1; letter-spacing: -0.003em;
+  text-transform: uppercase;
 }
 .hb-mix__p { color: var(--cream-2); line-height: 1.6; max-width: 30rem; }
 .hb-mix__go { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; margin-top: var(--s-3); font-size: var(--fs-sm); }
