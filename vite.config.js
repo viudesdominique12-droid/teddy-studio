@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import { existsSync } from 'fs';
 import htmlInclude from './plugins/html-include.js';
 import { identity } from './src/data/site.js';
 
@@ -26,14 +27,16 @@ export default defineConfig({
     cssTarget: 'safari15',
     assetsInlineLimit: 2048,
     rollupOptions: {
-      input: {
-        main:      resolve(__dirname, 'index.html'),
-        locations: resolve(__dirname, 'locations.html'),
-        works:     resolve(__dirname, 'works.html'),
-        book:      resolve(__dirname, 'book.html'),
-        vacancy:   resolve(__dirname, 'vacancy.html'),
-        notfound:  resolve(__dirname, '404.html')
-      },
+      // Les pages du site. Depuis le brief du 17/10/2026 : les sept divisions,
+      // Services, Portfolio, About et Contact. Une page absente est ignorée.
+      input: Object.fromEntries([
+        ['main', 'index.html'], ['locations', 'locations.html'], ['works', 'works.html'],
+        ['book', 'book.html'], ['vacancy', 'vacancy.html'], ['notfound', '404.html'],
+        ['services', 'services.html'], ['live', 'live-streaming.html'], ['events', 'event-organizing.html'],
+        ['ai', 'ai-production.html'], ['music', 'music-production.html'], ['film', 'feature-film.html'],
+        ['doc', 'documentary.html'], ['rentals', 'equipment-rentals.html'], ['portfolio', 'portfolio.html'],
+        ['about', 'about.html'], ['contact', 'contact.html']
+      ].filter(([, f]) => existsSync(resolve(__dirname, f))).map(([k, f]) => [k, resolve(__dirname, f)])),
       output: {
         manualChunks(id) {
           if (id.includes('node_modules/gsap')) return 'gsap';

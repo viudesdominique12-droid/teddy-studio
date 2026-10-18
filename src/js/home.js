@@ -18,7 +18,7 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './scroll.js';
-import { startClocks } from './clock.js';
+import { startClocks, addisTime } from './clock.js';
 import { cursor, indexPanel, bar, reduced, breathe } from './motion.js';
 import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js';
 import { initWipe } from './wipe.js';
@@ -29,6 +29,13 @@ import { kit3dAvailable, initKit3d } from './kit3d.js';
 import { initReel } from './reel3d.js';
 import { initServices, initWhy } from './services.js';
 import { applyPalette } from './palette.js';
+import { splitWords } from './division.js';
+import { initInquiries } from './inquiry.js';
+import { initLines } from './home-lines.js';
+import { initLobby } from './home-lobby.js';
+import { initIris } from './home-iris.js';
+import { initScout } from './home-scout.js';
+import { initFrame } from './home-frame.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,17 +63,103 @@ window.addEventListener('index:close', () => window.__lenis?.start());
    départ sont écrits AVANT de lever le gate. */
 function heroIn() {
   const hero = document.querySelector('.hx');
-  if (!hero || reduced()) { ungate(); return Promise.resolve(); }
+  if (!hero || reduced()) { root.classList.add('hx-in'); ungate(); rollBadge(hero); return Promise.resolve(); }
 
+  // Le titre du brief, mot à mot : chaque mot monte de son masque (le geste
+  // des pages de division), puis le badge, la phrase, les appels, les clients.
+  const words = splitWords(hero.querySelector('.hx__h'));
   const items = hero.querySelectorAll('[data-hx-in]');
+  gsap.set(words, { yPercent: 115 });
   gsap.set(items, { autoAlpha: 0, y: 20 });
+  root.classList.add('hx-in');
   ungate();
+  rollBadge(hero);
   // La promesse tient jusqu'à la fin de l'entrée : la page attend ce moment
   // pour préparer ses sections plus bas (`start`).
-  return gsap.to(items, {
-    autoAlpha: 1, y: 0, duration: 1, ease: 'power1.out', stagger: 0.1, delay: 0.1,
-    clearProps: 'transform,opacity,visibility'
-  }).then(() => {});
+  return gsap.timeline({ delay: 0.1 })
+    .to(words, { yPercent: 0, duration: 1.25, ease: 'expo.out', stagger: 0.055 }, 0.05)
+    .to(items, {
+      autoAlpha: 1, y: 0, duration: 1, ease: 'power2.out', stagger: 0.1,
+      clearProps: 'transform,opacity,visibility'
+    }, 0)
+    .then(() => {});
+}
+
+/* Les sept divisions passent dans le badge, une à une, tant que le premier
+   écran est à l'écran. */
+function rollBadge(hero) {
+  const roll = hero?.querySelector('[data-roll]');
+  if (!roll) return;
+  const words = [...roll.children];
+  if (reduced() || words.length < 2) return;
+  let i = 0;
+  let on = true;
+  const step = () => {
+    if (!on || document.hidden) return;
+    const cur = words[i];
+    i = (i + 1) % words.length;
+    gsap.to(cur, { yPercent: -110, duration: 0.6, ease: 'power3.inOut' });
+    gsap.fromTo(words[i], { yPercent: 110 }, { yPercent: 0, duration: 0.6, ease: 'power3.inOut' });
+  };
+  gsap.set(words.slice(1), { yPercent: 110, opacity: 1 });
+  setInterval(step, 2400);
+  new IntersectionObserver(([e]) => { on = e.isIntersecting; }).observe(hero);
+}
+
+/* ───────────────────────── Les sept divisions ─────────────────────────
+   Chaque vignette ne s'anime que visible (`.is-vis`). La régie : le
+   minutage court à l'heure d'Addis, et au survol (souris) le programme
+   passe en vidéo. */
+function initDivisionGrid() {
+  const grid = document.querySelector('[data-dvg]');
+  if (!grid) return;
+  const cards = [...grid.children];
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => e.target.classList.toggle('is-vis', e.isIntersecting));
+  }, { rootMargin: '10% 0px' });
+  cards.forEach((c) => io.observe(c));
+
+  const live = cards[0];
+  const tc = live?.querySelector('[data-dvg-tc]');
+  if (tc) {
+    let f = 0;
+    gsap.ticker.add(() => {
+      if (!live.classList.contains('is-vis')) return;
+      f = (f + 1) % 25;
+      tc.textContent = `${addisTime(true)}:${String(f).padStart(2, '0')}`;
+    });
+  }
+  const video = live?.querySelector('video[data-src]');
+  if (video && !LITE && !reduced() && !navigator.connection?.saveData) {
+    const a = live.querySelector('a');
+    a.addEventListener('pointerenter', () => {
+      if (!video.src) video.src = video.dataset.src;
+      video.play().then(() => video.classList.add('is-on')).catch(() => {});
+    });
+    a.addEventListener('pointerleave', () => { video.classList.remove('is-on'); video.pause(); });
+  }
+}
+
+/* ───────────────────────── L'appel final ─────────────────────────
+   « Have a Project in Mind? » monte mot à mot à son arrivée ; la lueur suit
+   le pointeur. */
+function finalCall() {
+  const sec = document.querySelector('.hm-cta');
+  if (!sec) return;
+  if (!LITE) {
+    sec.addEventListener('pointermove', (e) => {
+      const r = sec.getBoundingClientRect();
+      sec.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      sec.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  }
+  if (reduced()) return;
+  const words = splitWords(sec.querySelector('[data-cta-h]'));
+  gsap.set(words, { yPercent: 115 });
+  ScrollTrigger.create({
+    trigger: sec, start: 'top 72%', once: true,
+    onEnter: () => gsap.to(words, { yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.07 })
+  });
 }
 
 /* ───────────────────────── Les cascades ─────────────────────────
@@ -96,53 +189,6 @@ function cascade(sel, { blur = !LITE, step = 0.08 } = {}) {
   els.forEach((el) => io.observe(el));
 }
 
-/* ───────────────────────── Le formulaire ─────────────────────────
-   Pas de serveur : le message part par la messagerie du visiteur. */
-function contactForm() {
-  const form = document.getElementById('contact-form');
-  if (!form) return;
-  const note = document.getElementById('form-note');
-
-  const setErr = (field, msg) => {
-    const p = field.closest('.field');
-    p?.classList.toggle('is-err', Boolean(msg));
-    field.setAttribute('aria-invalid', msg ? 'true' : 'false');
-    let e = p?.querySelector('.field__err');
-    if (msg) {
-      if (!e) { e = document.createElement('span'); e.className = 'field__err'; p.appendChild(e); }
-      e.textContent = msg;
-    } else e?.remove();
-  };
-
-  form.addEventListener('submit', (ev) => {
-    ev.preventDefault();
-    const data = new FormData(form);
-    let bad = null;
-
-    for (const f of form.querySelectorAll('input,textarea')) {
-      const v = String(data.get(f.name) || '').trim();
-      if (f.required && !v) { setErr(f, 'Required'); bad = bad || f; }
-      else if (f.type === 'email' && v && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) {
-        setErr(f, 'Check this address'); bad = bad || f;
-      } else setErr(f, null);
-    }
-    if (bad) { bad.focus(); note.textContent = 'Some fields still need you.'; return; }
-
-    const subject = `Production enquiry — ${data.get('first_name')} ${data.get('last_name')}`;
-    const body = [
-      `Name: ${data.get('first_name')} ${data.get('last_name')}`,
-      `Email: ${data.get('email')}`,
-      `Phone: ${data.get('phone') || '—'}`,
-      '',
-      String(data.get('message') || '')
-    ].join('\n');
-
-    note.textContent = 'Opening your mail app so the message reaches us directly.';
-    window.location.href =
-      `mailto:info@ethiopianfilmoffice.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  });
-}
-
 /* ───────────────────────── Démarrage ───────────────────────── */
 
 async function start() {
@@ -154,9 +200,10 @@ async function start() {
   indexPanel();
   bar();
   initViewer();
-  contactForm();
+  initInquiries();
   initServices();
   initWhy();
+  initDivisionGrid();
   // Le modèle 3D du matériel est-il là ? On le demande pendant l'ouverture.
   const kit3d = kit3dAvailable();
   const page = preparer(kit3d);
@@ -215,15 +262,29 @@ function preparer(kit3d) {
     () => {
       markReveals('.hm-h, .hm-about__stmt', 'lines');
       markReveals('.hm-sec .hm-k, .hm-split__head .hm-lede, .hm-head__side, '
-                + '.hm-about__fig, .hm-about__p, .hm-facts, .hm-note, .hm-form');
+                + '.hm-about__fig, .hm-about__p, .hm-facts, .hm-note, '
+                + '.hm-cta__p, .hm-cta__act, .hm-cta__reach');
       initReveals();
+      finalCall();
     },
     () => {
+      cascade('.dvg__i', { step: 0.07 });
       cascade('.sv__i', { step: 0.05 });
       cascade('.hm-kit');
       cascade('.hm-why__i', { step: 0.1 });
       cascade('.hm-loc');
       cascade('.hm-film');
+    },
+    // L'accueil qui vit (18/10) : les filets de section, le mur d'affiches,
+    // le diaphragme, le repérage, le cadrage final. Aucun épinglage, aucune
+    // hauteur qui change : les scènes épinglées restent à leur place.
+    () => {
+      const opts = { lite: LITE, still: reduced() };
+      initLines();
+      initLobby(opts);
+      initIris(opts);
+      initScout(opts);
+      initFrame(opts);
     },
     () => {
       ScrollTrigger.refresh();

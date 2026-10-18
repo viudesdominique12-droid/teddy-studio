@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Domaine définitif du client (l'ancien site), pas encore activé : à garder
+     en accord avec les balises canonical si le domaine change. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ethiopianfilmoffice.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/services.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/live-streaming.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/event-organizing.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/ai-production.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/music-production.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/feature-film.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/documentary.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/equipment-rentals.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/portfolio.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/about.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/contact.html</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/locations.html</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/book.html</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://ethiopianfilmoffice.com/vacancy.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+</urlset>

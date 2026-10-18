@@ -1,0 +1,1004 @@
+/* ══════════════════════════════════════════════════════════════
+   PORTFOLIO — la galerie (brief §12, 17/10/2026)
+   « L'une des parties les plus importantes du site. »
+
+   18/10/2026 — « la même logique de customisation de thème » que les
+   pages de services : la page a SA couleur, et chaque section vit son
+   monde. Ici, la salle de projection puis la salle d'archives :
+     · l'ouverture : l'écran, et le faisceau du projecteur qui traverse la
+       salle, la poussière dedans (portfolio-beam.js) ;
+     · la légende : des étiquettes d'archive suspendues, qui se balancent ;
+     · les filtres : les tiroirs d'un meuble à fiches (porte-étiquette,
+       poignée, languette de la couleur de la division) ;
+     · les projets : des tirages montés posés sur une table lumineuse, lus
+       à la loupe ; une catégorie vide est un tiroir ouvert sur une boîte de
+       bobine scellée ;
+     · la fiche : une projection (iris, obturateur, bande de pellicule) et
+       une carte d'archive ;
+     · l'appel final : la bobine réceptrice, vide, qui tourne.
+   Chaque filet bouge à sa façon : la tringle qui brille, la réglette du
+   meuble, le tube de la table, les perforations, les lignes de l'index, la
+   lumière qui longe le pied de page — seulement à l'écran (`.is-live`).
+
+   LA PALETTE — un vert charbon (plus sourd et plus sombre que le vert
+   nuit de la marque), le blanc chaud d'une lampe de projecteur, la terre
+   cuite de la marque. Mesuré sur le fond #131a16 : crème 15:1, gris 8,8:1
+   et 5,9:1, terre cuite 4,9:1 (grands textes et composants seulement),
+   terre cuite claire 7,8:1. Encre des étiquettes (#1a1f1b) sur le manille
+   11,6:1, le gris d'encre 6,5:1.
+   La barre, le menu et la barre d'appel du téléphone gardent la marque.
+   ══════════════════════════════════════════════════════════════ */
+
+body[data-page='portfolio'] #main,
+body[data-page='portfolio'] .ftr,
+body[data-page='portfolio'] .pf-dlg {
+  --dv: #db6336; --dv-lt: #f2956a; --dv-dp: #a74226; --dv-ink: #141211;
+  --night: #131a16; --night-2: #0c110e; --night-3: #1c2520;
+  --cream: #f2ece0; --cream-2: #bdb6a8; --cream-3: #9a9486;
+  --line: #ffffff24; --line-2: #ffffff12; --line-ui: #ffffff5c;
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --gold: var(--dv); --gold-lt: var(--dv-lt); --gold-dp: var(--dv-dp);
+  --go: var(--dv); --go-text: var(--dv-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --g-300: var(--dv-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  /* La matière de la page */
+  --pf-lamp: #fff1d6;     /* la lampe du projecteur */
+  --pf-void: #070a08;     /* l'écran éteint */
+  --pf-mount: #ebe4d4;    /* le passe-partout des tirages */
+  --pf-manila: #e3d6b8;   /* les étiquettes d'archive */
+  --pf-ink: #1a1f1b;      /* l'encre sur le papier : 11,6:1 sur le manille */
+  --pf-ink-2: #4a463c;    /* 6,5:1 */
+  --pf-brass: #c8925f;    /* le laiton du meuble (filets, rivets) */
+  color-scheme: dark;
+}
+body[data-page='portfolio'] #main,
+body[data-page='portfolio'] .ftr { background-color: var(--bg); color: var(--fg); }
+
+/* Les animations continues ne tournent que dans la section à l'écran
+   (`.is-live`, portfolio-archive.js), et dans la fiche ouverte. Seulement
+   celles de la page : le filet de secours commun de l'ouverture
+   (`[data-in]`, division.css) doit pouvoir jouer même sans script. */
+body[data-page='portfolio'] [data-live]:not(.is-live) :is([class*='pf-'], .pf-legend__rail i, .pf-tags li, .pf-screen__ticks i):not([data-in]),
+body[data-page='portfolio'] [data-live]:not(.is-live) :is([class*='pf-'], .pf-tags li, .pf-screen__ticks i, .dv-next a)::before,
+body[data-page='portfolio'] [data-live]:not(.is-live) :is([class*='pf-'], .pf-tags li, .pf-screen__ticks i, .dv-next a)::after,
+body[data-page='portfolio'] [data-live]:not(.is-live)::before,
+body[data-page='portfolio'] .pf-dlg:not(.is-live) [class*='pf-'],
+body[data-page='portfolio'] .pf-dlg:not(.is-live) [class*='pf-']::before,
+body[data-page='portfolio'] .pf-dlg:not(.is-live) [class*='pf-']::after,
+body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: paused !important; }
+
+/* ═══════════════════ L'OUVERTURE : LA SALLE DE PROJECTION ═══════════════════ */
+.pf-hero { justify-content: flex-end; padding-bottom: var(--s-8); background-color: var(--bg); }
+.pf-hero::before {
+  content: ''; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    linear-gradient(0deg, var(--bg), transparent 16%),
+    radial-gradient(46% 58% at 72% 48%, color-mix(in srgb, var(--pf-lamp) 7%, transparent), transparent 72%),
+    radial-gradient(30% 24% at 70% 80%, color-mix(in srgb, var(--dv) 8%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--night-2), transparent 30%);
+}
+.pf-booth { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+/* Le bas de la salle se fond dans l'archive : pas de couture. */
+.pf-hero::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 22%; z-index: -1; pointer-events: none;
+  background: linear-gradient(0deg, var(--bg), transparent);
+}
+.pf-beam { position: absolute; left: 0; top: 0; display: block; }
+
+.pf-hero__in {
+  width: 100%;
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-7) clamp(2rem, 4.5vw, 5.5rem); align-items: end;
+}
+.pf-hero .dv-h1 { font-size: clamp(3.2rem, 1rem + 6.4vw, 8rem); max-width: 9ch; }
+.pf-hero .dv-lede { margin-top: var(--s-5); max-width: 32rem; }
+
+/* L'écran : la toile tendue, son cache de velours, et la lumière qu'elle
+   renvoie sur la salle. */
+.pf-screen { position: relative; margin: 0; display: flex; flex-direction: column; }
+.pf-screen::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -14%; right: -14%; top: -10%; aspect-ratio: 16 / 9;
+  background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--pf-lamp) 13%, transparent), transparent 72%);
+  animation: pf-spill 5.2s steps(1) infinite;
+}
+@keyframes pf-spill { 0%, 100% { opacity: 1; } 31% { opacity: 0.86; } 33% { opacity: 1; } 64% { opacity: 0.92; } 66% { opacity: 1; } }
+.pf-screen__frame {
+  position: relative; overflow: hidden; isolation: isolate;
+  aspect-ratio: 16 / 9; border-radius: 0.25rem;
+  background: var(--pf-void);
+  box-shadow:
+    0 0 0 0.55rem #050706,
+    0 0 0 calc(0.55rem + 1px) rgb(255 255 255 / 0.06),
+    0 60px 120px -50px rgb(0 0 0 / 0.9),
+    0 0 200px -40px color-mix(in srgb, var(--pf-lamp) 30%, transparent);
+}
+.pf-screen__img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity 1.3s var(--e-inout);
+}
+.pf-screen__img.is-on { opacity: 1; animation: pf-kb 8s linear both; }
+@keyframes pf-kb { from { transform: scale(1.05); } to { transform: scale(1); } }
+.pf-screen.is-paused .pf-screen__img.is-on, .pf-screen.is-still .pf-screen__img { animation-play-state: paused; }
+.pf-screen.is-still .pf-screen__img.is-on { animation: none; }
+.pf-screen__frame::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 45%, transparent 55%, rgb(0 0 0 / 0.5) 100%),
+    linear-gradient(115deg, color-mix(in srgb, var(--pf-lamp) 8%, transparent), transparent 40%);
+}
+.pf-screen__hit { position: absolute; inset: 0; z-index: 2; cursor: pointer; border-radius: inherit; }
+.pf-screen__hit:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: -4px; }
+
+/* Les jauges : une par image ; la courante se remplit de lumière. */
+.pf-screen__ticks { order: 2; display: flex; gap: 0.4rem; margin-top: 1.3rem; }
+.pf-screen__ticks button { flex: 1; padding: 0.55rem 0; cursor: pointer; }
+.pf-screen__ticks i { position: relative; display: block; height: 2px; overflow: hidden; border-radius: 2px; background: var(--line); }
+.pf-screen__ticks i::after {
+  content: ''; position: absolute; inset: 0; background: var(--pf-lamp);
+  transform: scaleX(0); transform-origin: 0 50%;
+}
+.pf-screen__ticks .is-done i::after { transform: none; opacity: 0.45; }
+.pf-screen__ticks .is-on i::after { animation: pf-tick var(--dur, 5s) linear forwards; }
+.pf-screen.is-still .pf-screen__ticks .is-on i::after { animation: none; transform: none; }
+.pf-screen.is-held .pf-screen__ticks .is-on i::after,
+.pf-screen.is-paused .pf-screen__ticks .is-on i::after { animation-play-state: paused; }
+@keyframes pf-tick { to { transform: none; } }
+.pf-screen__ticks button:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 2px; border-radius: 0.2rem; }
+
+.pf-screen__cap {
+  order: 3;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'k open' 't open' 's open';
+  align-items: end; gap: 0.35rem var(--s-5); margin-top: 0.5rem;
+}
+.pf-screen__k {
+  grid-area: k; display: inline-flex; align-items: center; gap: 0.8em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+}
+/* La lampe témoin du projecteur : elle respire tant que la séance tourne. */
+.pf-screen__k::before {
+  content: ''; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--dv);
+  box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--dv) 22%, transparent);
+  animation: pf-pilot 2.6s ease-in-out infinite;
+}
+@keyframes pf-pilot { 50% { opacity: 0.35; } }
+.pf-screen__n { color: var(--fg); font-variant-numeric: tabular-nums; }
+.pf-screen__t {
+  grid-area: t; display: block;
+  font-family: var(--ff-d); font-size: clamp(1.6rem, 1rem + 1.6vw, 2.6rem); line-height: 1; letter-spacing: -0.02em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+}
+.pf-screen__st {
+  grid-area: s; display: block;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
+}
+.pf-screen__open {
+  grid-area: open;
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.1rem 0.8rem 1.25rem; border-radius: 999px;
+  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 600; line-height: 1;
+  color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-ui);
+  transition: background-color 0.4s var(--e-out), color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.pf-screen__open svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--e-out); }
+.pf-screen__open:hover, .pf-screen__open:focus-visible { background: var(--pf-lamp); color: var(--pf-ink); box-shadow: 0 0 40px -6px color-mix(in srgb, var(--pf-lamp) 45%, transparent); }
+.pf-screen__open:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 3px; }
+.pf-screen__open:hover svg { transform: translate(2px, -2px); }
+
+@media (max-width: 60rem) {
+  .pf-hero { justify-content: flex-start; padding-top: calc(var(--bar-h) + var(--s-5)); }
+  .pf-hero__in { grid-template-columns: 1fr; gap: var(--s-6); }
+  .pf-screen { order: -1; }
+  .pf-hero .dv-h1 { max-width: none; }
+  .pf-screen__frame { box-shadow: 0 0 0 0.35rem #050706, 0 0 0 calc(0.35rem + 1px) rgb(255 255 255 / 0.06), 0 40px 80px -40px rgb(0 0 0 / 0.9), 0 0 120px -30px color-mix(in srgb, var(--pf-lamp) 30%, transparent); }
+}
+@media (max-width: 30rem) {
+  .pf-screen__cap { grid-template-columns: 1fr; grid-template-areas: 'k' 't' 's' 'open'; }
+  .pf-screen__open { justify-self: start; margin-top: 0.6rem; }
+}
+
+/* ═══════════════════ LA SALLE D'ARCHIVES ═══════════════════ */
+/* Une suspension au-dessus de la table : la lumière tombe du haut. */
+.pf-work {
+  padding-bottom: var(--s-8);
+  background-image:
+    radial-gradient(56rem 24rem at 50% 30rem, color-mix(in srgb, var(--pf-lamp) 4.5%, transparent), transparent 100%),
+    linear-gradient(180deg, var(--bg), var(--night-2) 45%, var(--bg));
+}
+.pf-head {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 34rem);
+  align-items: end; gap: var(--s-6) var(--s-8); margin-bottom: var(--s-7);
+}
+.pf-head .dv-k { margin-bottom: var(--s-5); }
+
+/* ─────────────── La légende : des étiquettes d'archive ───────────────
+   Chacune pend à sa ficelle, se balance à son rythme ; au survol elle se
+   redresse et éclaire les tirages qui la portent ; touchée (ou validée au
+   clavier), elle reste épinglée. */
+.pf-legend__k { margin-bottom: var(--s-3); }
+/* La tringle de laiton, et l'éclat qui la parcourt. */
+.pf-legend__rail {
+  position: relative; display: block; overflow: hidden;
+  height: 4px; border-radius: 4px; margin-bottom: 1.15rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pf-brass) 55%, #fff) 0 30%, var(--pf-brass) 30% 65%, color-mix(in srgb, var(--pf-brass) 55%, #000) 65%);
+  box-shadow: 0 3px 6px -2px rgb(0 0 0 / 0.6);
+}
+.pf-legend__rail i {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 16%;
+  background: linear-gradient(90deg, transparent, rgb(255 248 230 / 0.95), transparent);
+  transform: translateX(-100%);
+  animation: pf-glint 7s var(--e-inout) infinite alternate;
+}
+@keyframes pf-glint { to { transform: translateX(625%); } }
+
+.pf-tags { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem 1.1rem; }
+.pf-tags li {
+  --sw: 4.6s;
+  position: relative; padding-left: 1.35rem;
+  transition: opacity 0.4s var(--e-out);
+}
+.pf-tags li:nth-child(2) { --sw: 5.4s; }
+.pf-tags li:nth-child(3) { --sw: 3.9s; }
+.pf-tags li:nth-child(4) { --sw: 6.1s; }
+.pf-tags li:nth-child(5) { --sw: 4.3s; }
+/* La ficelle : une boucle qui sort de l'œillet. */
+.pf-tags li::before {
+  content: ''; position: absolute; left: 0; top: 50%; width: 2.6rem; height: 1.5rem; margin-top: -0.75rem;
+  border: 1.5px solid color-mix(in srgb, var(--pf-manila) 55%, transparent);
+  border-right-color: transparent; border-radius: 50%;
+  transform-origin: 100% 50%;
+  animation: pf-string var(--sw) ease-in-out infinite alternate;
+}
+@keyframes pf-string { from { rotate: -7deg; } to { rotate: 6deg; } }
+.pf-tag {
+  position: relative; display: grid; gap: 0.2rem; width: 100%;
+  padding: 0.75rem 0.95rem 0.8rem 2.15rem; text-align: left;
+  color: var(--pf-ink);
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 0.05), transparent 1.8rem),
+    var(--pf-manila);
+  clip-path: polygon(0.8rem 0, 100% 0, 100% 100%, 0.8rem 100%, 0 calc(100% - 0.8rem), 0 0.8rem);
+  transform-origin: 1.05rem 50%;
+  animation: pf-sway var(--sw) ease-in-out infinite alternate;
+  transition: background-color 0.4s var(--e-out), translate 0.5s var(--e-out);
+}
+@keyframes pf-sway { from { rotate: -1.1deg; } to { rotate: 1deg; } }
+/* L'œillet : le trou, et son renfort de métal. */
+.pf-tag::before {
+  content: ''; position: absolute; left: 0.75rem; top: 50%; width: 0.6rem; height: 0.6rem; margin-top: -0.3rem; border-radius: 50%;
+  background: var(--night-2);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--pf-brass) 80%, #fff 10%), 0 0 0 calc(0.2rem + 1px) rgb(0 0 0 / 0.25), inset 0 1px 2px rgb(0 0 0 / 0.8);
+}
+/* La marque d'un tampon, quand l'étiquette est épinglée. */
+.pf-tag::after {
+  content: ''; position: absolute; top: 0.45rem; right: 0.5rem; width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  background: var(--dv); opacity: 0; scale: 0.4;
+  transition: opacity 0.3s var(--e-out), scale 0.45s var(--e-out);
+}
+.pf-tag__t { display: flex; align-items: center; gap: 0.5rem; }
+.pf-tag b { font-weight: 600; font-size: var(--fs-sm); line-height: 1.25; }
+.pf-tag__d { font-size: var(--fs-micro); line-height: 1.4; color: var(--pf-ink-2); }
+.pf-tag .pf-mark { color: var(--pf-ink); }
+.pf-tag:focus-visible { outline: none; }
+.pf-tags li:has(.pf-tag:focus-visible) { outline: 2px solid var(--pf-lamp); outline-offset: 3px; border-radius: 0.3rem; }
+.pf-tag[aria-pressed='true'] { background: linear-gradient(90deg, color-mix(in srgb, var(--dv) 22%, transparent), transparent 1.8rem), #f6efdf; translate: 0.3rem 0; animation-play-state: paused; }
+.pf-tag[aria-pressed='true']::after { opacity: 1; scale: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .pf-tag:hover { translate: 0.3rem 0; background-color: #ece1c7; }
+}
+.pf-tags li.is-none { opacity: 0.55; }
+
+/* Les marques de statut : une forme par statut (jamais la couleur seule). */
+.pf-mark { display: inline-block; flex: none; width: 0.62rem; height: 0.62rem; color: inherit; }
+.pf-mark--client { background: currentColor; border-radius: 0.1rem; }
+.pf-mark--own { background: currentColor; border-radius: 50%; }
+.pf-mark--demo { border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; background: radial-gradient(circle, currentColor 0 22%, transparent 24%); }
+.pf-mark--worked { border-radius: 0.1rem; box-shadow: inset 0 0 0 1.5px currentColor; }
+.pf-mark--third { border-radius: 50%; box-shadow: inset 0 0 0 1.5px currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+
+/* ─────────────── Les tiroirs du meuble à fiches ─────────────── */
+.pf-bar {
+  position: relative;
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--s-4) var(--s-5);
+  margin-bottom: var(--s-6); padding-bottom: calc(var(--s-5) + 0.6rem);
+}
+/* La réglette du meuble : ses graduations défilent lentement. */
+.pf-bar__rule {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 0.6rem; pointer-events: none;
+  background:
+    linear-gradient(var(--line-ui), var(--line-ui)) 0 100% / 100% 1px no-repeat,
+    linear-gradient(90deg, var(--line-ui) 0 1px, transparent 1px) 0 100% / 2.5rem 100% repeat-x,
+    linear-gradient(90deg, var(--line) 0 1px, transparent 1px) 0 100% / 0.5rem 45% repeat-x;
+  animation: pf-ruler 24s linear infinite;
+}
+@keyframes pf-ruler {
+  from { background-position: 0 100%, 0 100%, 0 100%; }
+  to { background-position: 0 100%, -10rem 100%, -10rem 100%; }
+}
+.pf-filters { display: flex; flex-wrap: wrap; gap: 0.6rem; padding-top: 0.35rem; }
+.pf-chip {
+  position: relative;
+  display: grid; grid-template-columns: auto auto; align-items: center; justify-items: center; gap: 0.4rem 0.55rem;
+  padding: 0.7rem 0.7rem 0.5rem; border-radius: 0.35rem;
+  color: var(--fg);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.05), transparent 45%, rgb(0 0 0 / 0.2)),
+    var(--night-3);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.07), inset 0 -2px 0 rgb(0 0 0 / 0.35),
+    0 0 0 1px var(--line-2), 0 10px 18px -12px rgb(0 0 0 / 0.75);
+  transition: transform 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+/* La languette : la couleur de la division. */
+.pf-chip__tab {
+  position: absolute; top: 0; left: 0.7rem; width: 1.5rem; height: 3px; border-radius: 0 0 2px 2px;
+  background: var(--c); transition: width 0.55s var(--e-out);
+}
+/* Le porte-étiquette de laiton, ses deux rivets. */
+.pf-chip__holder {
+  position: relative; display: block;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.2rem;
+  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; line-height: 1; white-space: nowrap;
+  background:
+    radial-gradient(circle at 0.32rem 50%, var(--pf-brass) 0 1.3px, transparent 1.9px),
+    radial-gradient(circle at calc(100% - 0.32rem) 50%, var(--pf-brass) 0 1.3px, transparent 1.9px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pf-brass) 62%, transparent), inset 0 2px 3px rgb(0 0 0 / 0.3);
+  transition: background-color 0.45s var(--e-out), color 0.45s var(--e-out), box-shadow 0.45s var(--e-out);
+}
+.pf-chip sup {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.06em; line-height: 1;
+  font-variant-numeric: tabular-nums; color: var(--cream-3); transition: color 0.4s;
+}
+/* La poignée. */
+.pf-chip__pull {
+  grid-column: 1 / -1; width: 1.8rem; height: 0.3rem; border-radius: 0 0 0.35rem 0.35rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pf-brass) 85%, #fff), color-mix(in srgb, var(--pf-brass) 55%, #000));
+  box-shadow: 0 2px 2px rgb(0 0 0 / 0.4);
+}
+/* Un tiroir encore scellé : la façade hachurée, la languette en creux, un
+   cachet de la couleur de la division. */
+.pf-chip.is-empty {
+  background:
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.028) 0 2px, transparent 2px 7px),
+    linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 45%, rgb(0 0 0 / 0.2)),
+    var(--night-3);
+}
+.pf-chip.is-empty .pf-chip__holder { color: var(--cream-2); }
+.pf-chip.is-empty .pf-chip__tab { background: transparent; box-shadow: inset 0 0 0 1px var(--c); height: 4px; }
+.pf-chip.is-empty::after {
+  content: ''; position: absolute; top: 0.35rem; right: 0.35rem; width: 0.4rem; height: 0.4rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--c) 70%, transparent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pf-chip:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.09), inset 0 -2px 0 rgb(0 0 0 / 0.35), 0 0 0 1px var(--line), 0 14px 22px -12px rgb(0 0 0 / 0.8); }
+  .pf-chip:hover .pf-chip__tab { width: 2.4rem; }
+}
+/* Le tiroir ouvert : il sort, son étiquette s'éclaire. */
+.pf-chip[aria-pressed='true'] {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 -2px 0 rgb(0 0 0 / 0.35),
+    0 0 0 1px color-mix(in srgb, var(--pf-lamp) 30%, transparent),
+    0 18px 26px -14px rgb(0 0 0 / 0.85),
+    0 0 36px -10px color-mix(in srgb, var(--pf-lamp) 28%, transparent);
+}
+.pf-chip[aria-pressed='true'] .pf-chip__holder { background-color: var(--pf-lamp); color: var(--pf-ink); box-shadow: inset 0 0 0 1px var(--pf-brass); }
+.pf-chip[aria-pressed='true'] .pf-chip__tab { width: calc(100% - 1.4rem); }
+.pf-chip[aria-pressed='true'] sup { color: var(--fg); }
+.pf-chip:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 3px; }
+
+/* Le compteur peut s'allonger (une étiquette épinglée) : il passe à la ligne. */
+.pf-count { display: inline-flex; align-items: baseline; gap: 0.6em; max-width: 100%; line-height: 1.5; }
+.pf-count::before { content: ''; flex: none; width: 0.45em; height: 0.45em; background: var(--pf-lamp); border-radius: 1px; opacity: 0.7; }
+
+/* ─────────────── La table lumineuse ───────────────
+   Un plateau de verre dépoli sur un quadrillage, éclairé par-dessous ; le
+   tube passe lentement d'un bord à l'autre. Elle s'allume en arrivant. */
+/* Sur la table éclairée, le gris le plus clair remonte d'un cran : 4,9:1
+   au moins, même au cœur de la lumière (3,8:1 sinon). */
+.pf-table {
+  --cream-3: #b3ad9f;
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: clamp(1.1rem, 2.4vw, 2.4rem);
+  border-radius: 1.1rem;
+  background:
+    linear-gradient(color-mix(in srgb, var(--pf-lamp) 4%, transparent) 1px, transparent 1px) 0 0 / 2.5rem 2.5rem,
+    linear-gradient(90deg, color-mix(in srgb, var(--pf-lamp) 4%, transparent) 1px, transparent 1px) 0 0 / 2.5rem 2.5rem,
+    color-mix(in srgb, var(--night-3) 70%, var(--night));
+  box-shadow:
+    inset 0 0 0 1px var(--line-2),
+    inset 0 0 0 0.45rem color-mix(in srgb, var(--night-2) 75%, transparent),
+    inset 0 0 0 calc(0.45rem + 1px) var(--line-2),
+    0 50px 90px -60px rgb(0 0 0 / 0.9);
+}
+.pf-table__glow {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(70% 60% at 50% 42%, color-mix(in srgb, var(--pf-lamp) 12%, transparent), transparent 76%),
+    radial-gradient(40% 40% at 12% 92%, color-mix(in srgb, var(--pf-lamp) 5%, transparent), transparent 70%);
+}
+.pf-table__scan {
+  position: absolute; left: 0; right: 0; top: 0; height: 36%; z-index: -1; pointer-events: none;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--pf-lamp) 6%, transparent) 50%, transparent);
+  transform: translateY(-100%); opacity: 0;
+  animation: pf-scan 12s linear infinite;
+}
+.pf-table.is-on .pf-table__scan { opacity: 1; transition: opacity 1.2s 0.8s; }
+@keyframes pf-scan { to { transform: translateY(280%); } }
+
+/* La grille : la première carte en grand, les autres en colonnes. */
+.pf-grid {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-flow: dense;
+  gap: var(--s-7) var(--s-6);
+}
+.pf-grid > * { grid-column: span 4; }
+.pf-grid > .is-hidden { display: none !important; }
+.pf-card.is-big { grid-column: span 8; grid-row: span 2; }
+
+/* ─────────────── Les tirages ─────────────── */
+.pf-card { position: relative; display: flex; flex-direction: column; gap: var(--s-4); transition: opacity 0.45s var(--e-out); }
+.pf-grid.is-dim > :not(.is-hit) { opacity: 0.22; }
+/* Le passe-partout : posé de travers sur la table, comme à la main. */
+.pf-card__fig {
+  position: relative;
+  padding: 0.5rem 0.5rem 0; border-radius: 0.25rem;
+  background: linear-gradient(180deg, #f3eee3, var(--pf-mount));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 2px 3px rgb(0 0 0 / 0.35),
+    0 22px 34px -20px rgb(0 0 0 / 0.8);
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.75s var(--e-out), box-shadow 0.75s var(--e-out);
+}
+.pf-card.is-big .pf-card__fig { flex: 1; display: flex; flex-direction: column; transform: rotate(calc(var(--tilt, 0deg) * 0.4)); }
+.pf-card__pic {
+  position: relative; overflow: hidden; isolation: isolate;
+  aspect-ratio: 16 / 9; border-radius: 1px;
+  background: var(--pf-void);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.18);
+}
+.pf-card.is-big .pf-card__pic { flex: 1; aspect-ratio: auto; min-height: 22rem; }
+.pf-card__img, .pf-card__bg, .pf-card__flip img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+/* Un léger recadrage : certaines affiches portent un liseré blanc. */
+.pf-card__img, .pf-card__bg { transform: scale(1.03); }
+.pf-card__bg { display: none; }
+/* En grand, la photo de tournage occupe l'image ; l'affiche s'y pose,
+   tirage plus petit dans son propre passe-partout. */
+.pf-card.is-big.has-bg .pf-card__bg { display: block; object-position: 70% 50%; }
+.pf-card.is-big.has-bg .pf-card__img {
+  inset: 1.2rem 1.2rem auto auto; width: 27%; height: auto; aspect-ratio: 16 / 9; z-index: 2;
+  border-radius: 1px;
+  box-shadow: 0 0 0 0.3rem var(--pf-mount), 0 24px 40px -14px rgb(0 0 0 / 0.75);
+  transform: rotate(-2deg);
+  transition: transform 0.7s var(--e-out);
+}
+.pf-card__flip { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.pf-card__flip img { opacity: 0; transition: opacity 0.6s var(--e-out); }
+.pf-card__flip img.is-on { opacity: 1; }
+.pf-card__pic::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; z-index: 3;
+  background: var(--c); transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.8s var(--e-out);
+}
+/* La marge du bas : le statut et le numéro d'archive, imprimés. */
+.pf-card__strip {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+  padding: 0.6rem 0.2rem 0.55rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
+  color: var(--pf-ink);
+}
+.pf-card__no { color: var(--pf-ink-2); font-variant-numeric: tabular-nums; }
+.pf-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
+}
+.pf-badge .pf-mark { width: 0.55rem; height: 0.55rem; }
+.pf-badge--flat { color: var(--fg); font-size: var(--fs-nano); }
+
+/* Le tirage qu'on regarde : il se soulève, se redresse, la lumière passe
+   dessous (souris ; au doigt, celui du milieu de l'écran ; au clavier). */
+.pf-card:is(.is-near, :focus-within, .is-hit) .pf-card__fig,
+.pf-card.is-hit .pf-card__fig {
+  transform: translateY(-6px) rotate(0deg);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 2px 3px rgb(0 0 0 / 0.3),
+    0 34px 50px -24px rgb(0 0 0 / 0.85),
+    0 0 70px -12px color-mix(in srgb, var(--pf-lamp) 30%, transparent);
+}
+.pf-card:is(.is-near, :focus-within) .pf-card__pic::after { transform: none; }
+@media (hover: hover) and (pointer: fine) {
+  .pf-card:hover { z-index: 2; }
+  .pf-card:hover .pf-card__fig {
+    transform: translateY(-6px) rotate(0deg);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.6),
+      0 2px 3px rgb(0 0 0 / 0.3),
+      0 34px 50px -24px rgb(0 0 0 / 0.85),
+      0 0 70px -12px color-mix(in srgb, var(--pf-lamp) 30%, transparent);
+  }
+  .pf-card:hover .pf-card__pic::after { transform: none; }
+  .pf-card.is-big.has-bg:hover .pf-card__img { transform: rotate(0deg) translateY(4px); }
+}
+
+/* La loupe d'archiviste : une lentille cerclée, un réticule fin. */
+.pf-loupe {
+  position: absolute; left: 0; top: 0; z-index: 5;
+  width: clamp(8.5rem, 11vw, 10.5rem); aspect-ratio: 1; border-radius: 50%;
+  pointer-events: none;
+  background-color: var(--pf-void); background-repeat: no-repeat;
+  box-shadow:
+    0 0 0 2px rgb(255 250 238 / 0.92),
+    0 0 0 5px #141a16,
+    0 0 0 6px rgb(255 255 255 / 0.22),
+    0 18px 36px -10px rgb(0 0 0 / 0.75),
+    inset 0 0 26px rgb(0 0 0 / 0.38);
+  opacity: 0; scale: 0.6;
+  transition: opacity 0.25s var(--e-out), scale 0.4s var(--e-out);
+  will-change: transform;
+}
+.pf-loupe::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background:
+    radial-gradient(60% 45% at 32% 24%, rgb(255 255 255 / 0.2), transparent 70%),
+    linear-gradient(rgb(255 241 214 / 0.55), rgb(255 241 214 / 0.55)) 50% 50% / 1px 12% no-repeat,
+    linear-gradient(90deg, rgb(255 241 214 / 0.55), rgb(255 241 214 / 0.55)) 50% 50% / 12% 1px no-repeat;
+}
+.pf-card.is-loupe .pf-loupe { opacity: 1; scale: 1; }
+
+.pf-card__meta { display: grid; gap: 0.45rem; padding-inline: 0.15rem; }
+.pf-card__k {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3);
+}
+.pf-card__cat { display: inline-flex; align-items: center; gap: 0.55em; color: var(--cream-2); }
+.pf-card__cat::before { content: ''; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--c); }
+.pf-card__h {
+  font-family: var(--ff-d); font-size: clamp(1.45rem, 1.1rem + 0.9vw, 2.05rem); line-height: 0.98; letter-spacing: -0.02em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+}
+.pf-card.is-big .pf-card__h { font-size: clamp(2rem, 1.2rem + 2.4vw, 3.6rem); }
+.pf-card__h a { color: var(--fg); }
+.pf-card__h a::before { content: ''; position: absolute; inset: 0; z-index: 6; border-radius: 0.4rem; }
+.pf-card__h a:focus-visible { outline: none; }
+.pf-card__h a:focus-visible::before { outline: 2px solid var(--pf-lamp); outline-offset: 6px; }
+.pf-card__m { font-size: var(--fs-sm); color: var(--cream-3); }
+
+/* Au-dessus d'un tirage, le curseur cède la place à la loupe. */
+.cursor[data-state='loupe'] > * { opacity: 0 !important; }
+.cursor[data-state='view'] .cursor__t { opacity: 1; }
+.cursor[data-state='view'] .cursor__d,
+.cursor[data-state='view'] .cursor__r { opacity: 0; }
+
+/* ─────────────── « More work on the way » : un tiroir fermé ───────────────
+   La façade, son porte-étiquette, sa poignée, la bande de scellé en coin ;
+   les fiches des divisions dépassent comme des intercalaires. */
+.pf-soon {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; align-content: start; gap: var(--s-4);
+  padding: var(--s-6) var(--s-5) calc(var(--s-6) + 1.2rem); border-radius: 0.45rem;
+  background:
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.022) 0 2px, transparent 2px 8px),
+    linear-gradient(180deg, rgb(255 255 255 / 0.05), transparent 40%, rgb(0 0 0 / 0.22)),
+    var(--night-3);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.07), inset 0 -3px 0 rgb(0 0 0 / 0.35),
+    0 0 0 1px var(--line-2), 0 26px 40px -26px rgb(0 0 0 / 0.85);
+  transition: opacity 0.45s var(--e-out);
+}
+.pf-soon .dv-k { margin-bottom: 0; }
+.pf-soon__h {
+  justify-self: start;
+  padding: 0.6rem 1rem 0.55rem;
+  font-family: var(--ff-d); font-size: clamp(1.35rem, 1.05rem + 0.8vw, 1.9rem); line-height: 0.98; letter-spacing: -0.02em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  border-radius: 0.2rem;
+  background:
+    radial-gradient(circle at 0.35rem 50%, var(--pf-brass) 0 1.5px, transparent 2.1px),
+    radial-gradient(circle at calc(100% - 0.35rem) 50%, var(--pf-brass) 0 1.5px, transparent 2.1px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pf-brass) 62%, transparent), inset 0 2px 4px rgb(0 0 0 / 0.3);
+}
+.pf-soon__p { font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
+.pf-soon__l { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: var(--s-2); }
+.pf-soon__l a {
+  position: relative; display: inline-flex; align-items: center; padding: 0.55rem 0.75rem 0.5rem; border-radius: 0.2rem 0.2rem 0.1rem 0.1rem;
+  font-size: var(--fs-micro); color: var(--fg);
+  background: color-mix(in srgb, var(--c) 7%, var(--night-2));
+  box-shadow: inset 0 2px 0 var(--c), inset 0 0 0 1px var(--line-2);
+  transition: transform 0.4s var(--e-out), background-color 0.4s var(--e-out);
+}
+.pf-soon__l a:hover, .pf-soon__l a:focus-visible { transform: translateY(-2px); background: color-mix(in srgb, var(--c) 16%, var(--night-2)); }
+.pf-soon__l a:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 2px; }
+.pf-soon__pull {
+  position: absolute; left: 50%; bottom: 1rem; width: 3.6rem; height: 0.45rem; translate: -50% 0; border-radius: 0 0 0.45rem 0.45rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pf-brass) 85%, #fff), color-mix(in srgb, var(--pf-brass) 55%, #000));
+  box-shadow: 0 3px 3px rgb(0 0 0 / 0.4);
+}
+/* La bande de scellé, en travers du coin ; un reflet la parcourt. */
+.pf-soon__seal {
+  position: absolute; top: 1.25rem; right: -2.6rem; z-index: -1; width: 10rem; height: 1.15rem; overflow: hidden;
+  rotate: 40deg;
+  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--dv) 70%, #000) 0 0.7rem, color-mix(in srgb, var(--dv) 52%, #000) 0.7rem 1.4rem);
+  opacity: 0.75;
+}
+.pf-soon__seal::after {
+  content: ''; position: absolute; inset: 0; width: 30%;
+  background: linear-gradient(90deg, transparent, rgb(255 241 214 / 0.35), transparent);
+  transform: translateX(-120%);
+  animation: pf-seal 5.5s var(--e-inout) infinite;
+}
+@keyframes pf-seal { 60%, 100% { transform: translateX(380%); } }
+
+/* ─────────────── Une catégorie vide : le tiroir ouvert, la boîte scellée ─────────────── */
+.pf-table.is-drawer { padding: clamp(0.6rem, 1.2vw, 1.1rem); }
+.pf-prep__in {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); align-items: center;
+  grid-template-areas: 'word word' 'can txt';
+  gap: var(--s-5) var(--s-7);
+  min-height: clamp(26rem, 58vh, 34rem);
+  padding: var(--s-7); border-radius: 0.7rem;
+  background:
+    radial-gradient(48% 70% at 24% 55%, color-mix(in srgb, var(--c) 14%, transparent), transparent 72%),
+    linear-gradient(180deg, rgb(0 0 0 / 0.4), transparent 22%),
+    var(--night-2);
+  box-shadow: inset 0 0 0 1px var(--line-2), inset 0 26px 34px -18px rgb(0 0 0 / 0.75);
+}
+/* Le nom de la catégorie, en grand et en creux, sur le fond du tiroir. */
+.pf-prep__word {
+  grid-area: word; justify-self: start;
+  display: block; max-width: 100%;
+  font-family: var(--ff-d); font-size: clamp(2.4rem, 0.8rem + 4.4vw, 6rem); line-height: 0.86; letter-spacing: -0.03em;
+  font-variation-settings: 'wdth' 80, 'wght' 760; text-transform: uppercase;
+  color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--c) 42%, transparent);
+}
+/* La boîte de bobine, vue de dessus : couvercle cerclé, gorges, moyeu. */
+.pf-prep__can {
+  grid-area: can; position: relative; justify-self: center;
+  width: min(100%, 21rem); aspect-ratio: 1; border-radius: 50%;
+}
+.pf-prep__lid {
+  position: absolute; inset: 0; border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 44%, #050706 0 1.4%, transparent 1.6%),
+    radial-gradient(circle at 45% 53%, #050706 0 1.4%, transparent 1.6%),
+    radial-gradient(circle at 55% 53%, #050706 0 1.4%, transparent 1.6%),
+    radial-gradient(circle, #222a25 0 7.2%, color-mix(in srgb, var(--pf-lamp) 28%, #2b332e) 7.2% 8.4%, transparent 8.6%),
+    repeating-radial-gradient(circle, transparent 0 0.42rem, rgb(255 255 255 / 0.05) 0.42rem calc(0.42rem + 1px)),
+    radial-gradient(circle at 34% 28%, #48534c, #252d28 55%, #161c18 100%);
+  box-shadow:
+    inset 0 0 0 0.6rem #2b342e,
+    inset 0 0 0 calc(0.6rem + 1px) rgb(255 255 255 / 0.14),
+    inset 0 0 0 1rem rgb(0 0 0 / 0.22),
+    0 0 0 1px rgb(0 0 0 / 0.5),
+    0 40px 60px -26px rgb(0 0 0 / 0.9);
+}
+/* Le reflet de la lampe sur le métal : il tourne, lentement. */
+.pf-prep__sheen {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from 0deg, transparent 0deg, rgb(255 241 214 / 0.13) 26deg, transparent 72deg, transparent 180deg, rgb(255 241 214 / 0.07) 208deg, transparent 250deg);
+  animation: pf-spin 16s linear infinite;
+}
+@keyframes pf-spin { to { transform: rotate(360deg); } }
+/* L'étiquette collée en travers du couvercle. */
+.pf-prep__band {
+  position: absolute; left: 7%; right: 7%; top: 50%; height: 16%; translate: 0 -50%;
+  display: grid; place-items: center; padding-inline: 8%;
+  background: linear-gradient(180deg, #ece2c9, var(--pf-manila));
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(0 0 0 / 0.06);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: clamp(0.625rem, 0.55rem + 0.25vw, 0.75rem); letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.2; text-align: center;
+  color: var(--pf-ink);
+}
+.pf-prep__band span { border-block: 1px solid rgb(26 31 27 / 0.3); padding-block: 0.3em; }
+/* Le ruban de scellé, de la couleur de la division, fait le tour de la
+   boîte ; son bout replié dépasse. Il s'enroule quand le tiroir s'ouvre
+   (`--wrap`, portfolio.js). */
+.pf-prep__tape {
+  position: absolute; inset: -2.5%; border-radius: 50%;
+  border: clamp(0.55rem, 1.4vw, 0.8rem) solid color-mix(in srgb, var(--c) 58%, #121614);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.35), inset 0 0 0 1px rgb(255 255 255 / 0.1), 0 6px 14px -6px rgb(0 0 0 / 0.6);
+  -webkit-mask: conic-gradient(from -32deg, #000 var(--wrap, 360deg), transparent 0);
+          mask: conic-gradient(from -32deg, #000 var(--wrap, 360deg), transparent 0);
+}
+.pf-prep__tape::after {
+  content: ''; position: absolute; left: 21%; top: 1%; width: 1.5rem; height: 0.85rem;
+  background: color-mix(in srgb, var(--c) 66%, #121614);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.45);
+  rotate: -32deg; border-radius: 1px 3px 3px 1px;
+}
+.pf-prep__txt { grid-area: txt; display: grid; gap: var(--s-4); max-width: 34rem; }
+.pf-prep__txt .dv-k { margin-bottom: 0; }
+.pf-prep__h {
+  font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; letter-spacing: -0.015em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+}
+.pf-prep__p { color: var(--cream-2); line-height: 1.6; }
+.pf-prep .dv-acts { margin-top: var(--s-3); }
+.pf-prep__in { --dv: var(--c); }
+
+@media (max-width: 64rem) {
+  .pf-grid > * { grid-column: span 6; }
+  .pf-card.is-big { grid-column: span 12; grid-row: auto; }
+  .pf-card.is-big .pf-card__fig { flex: none; }
+  .pf-card.is-big .pf-card__pic { flex: none; aspect-ratio: 16 / 9; min-height: 0; }
+}
+@media (max-width: 60rem) {
+  .pf-head { grid-template-columns: 1fr; }
+  .pf-prep__in { grid-template-columns: 1fr; grid-template-areas: 'word' 'can' 'txt'; justify-items: start; gap: var(--s-5); }
+  .pf-prep__can { justify-self: start; width: min(70%, 15rem); }
+}
+@media (max-width: 44rem) {
+  /* Une seule colonne : douze colonnes et leurs onze intervalles
+     déborderaient de la table sur un téléphone. */
+  .pf-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-6); }
+  .pf-grid > *, .pf-card.is-big { grid-column: 1; }
+  .pf-tags { grid-template-columns: 1fr; }
+  /* Les tiroirs en un ruban qui défile au doigt. */
+  .pf-bar { margin-inline: calc(-1 * var(--pad-x)); padding-inline: var(--pad-x); }
+  .pf-bar__rule { left: var(--pad-x); right: var(--pad-x); }
+  .pf-filters {
+    flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    margin-inline: calc(-1 * var(--pad-x)); padding: 0.45rem var(--pad-x) 0.5rem; width: calc(100% + 2 * var(--pad-x));
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--pad-x), #000 calc(100% - var(--pad-x)), transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 var(--pad-x), #000 calc(100% - var(--pad-x)), transparent);
+  }
+  .pf-filters::-webkit-scrollbar { display: none; }
+  .pf-chip { flex: none; }
+  .pf-table { margin-inline: calc(-0.5 * var(--pad-x)); border-radius: 0.9rem; }
+  .pf-card.is-big.has-bg .pf-card__img { width: 34%; inset: 0.8rem 0.8rem auto auto; }
+  .pf-prep__in { padding: var(--s-6) var(--s-5); min-height: 0; }
+}
+
+/* ═══════════════════ LA FICHE : LA PROJECTION ═══════════════════ */
+.pf-dlg {
+  position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none;
+  margin: 0; padding: 0; border: 0; overflow: hidden;
+  background: transparent; color: var(--fg);
+}
+.pf-dlg::backdrop { background: transparent; }
+.pf-dlg__scrim { position: absolute; inset: 0; background: color-mix(in srgb, #040605 90%, transparent); }
+.pf-dlg__panel {
+  --dv: var(--c, var(--gold));
+  position: absolute; inset: clamp(0.75rem, 2.4vw, 2.25rem);
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  overflow: hidden; border-radius: 0.9rem;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--line-2), 0 60px 140px -40px rgb(0 0 0 / 0.85);
+}
+.pf-dlg__x {
+  position: absolute; top: 1rem; right: 1rem; z-index: 6;
+  width: 2.9rem; height: 2.9rem; border-radius: 50%;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--bg) 70%, transparent); color: var(--fg);
+  box-shadow: inset 0 0 0 1px var(--line-ui);
+  transition: transform 0.5s var(--e-out), background-color 0.4s;
+}
+.pf-dlg__x span { position: absolute; width: 1.1rem; height: 1.5px; background: currentColor; border-radius: 2px; }
+.pf-dlg__x span:first-child { transform: rotate(45deg); }
+.pf-dlg__x span:last-child { transform: rotate(-45deg); }
+.pf-dlg__x:hover { transform: rotate(90deg); }
+.pf-dlg__x:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 3px; }
+
+/* La salle : le faisceau qui arrive d'en haut, l'image projetée. */
+.pf-dlg__media {
+  position: relative; isolation: isolate; overflow: hidden; min-height: 0;
+  display: grid; grid-template-rows: minmax(0, 1fr) auto;
+  background: var(--pf-void);
+}
+.pf-dlg__beam {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    conic-gradient(from 122deg at -8% -14%, transparent 0deg, rgb(255 241 214 / 0.05) 9deg, rgb(255 241 214 / 0.09) 20deg, rgb(255 241 214 / 0.04) 32deg, transparent 44deg),
+    radial-gradient(60% 50% at 50% 55%, color-mix(in srgb, var(--c, var(--pf-lamp)) 10%, transparent), transparent 75%);
+  animation: pf-haze 6.5s ease-in-out infinite alternate;
+}
+@keyframes pf-haze { from { opacity: 0.7; } to { opacity: 1; } }
+.pf-dlg__main { position: relative; z-index: 1; overflow: hidden; min-height: 0; }
+.pf-dlg__main::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: var(--pf-lamp); opacity: 0;
+  animation: pf-flicker 4.4s steps(1) infinite;
+}
+@keyframes pf-flicker { 0% { opacity: 0; } 11% { opacity: 0.025; } 13% { opacity: 0; } 47% { opacity: 0.018; } 49% { opacity: 0; } 78% { opacity: 0.03; } 80% { opacity: 0; } }
+.pf-dlg__img {
+  position: absolute; inset: clamp(1rem, 3vw, 2.5rem); width: calc(100% - 2 * clamp(1rem, 3vw, 2.5rem)); height: calc(100% - 2 * clamp(1rem, 3vw, 2.5rem));
+  object-fit: contain;
+  filter: drop-shadow(0 30px 50px rgb(0 0 0 / 0.6));
+}
+/* L'obturateur : il bat entre deux images. */
+.pf-dlg__shutter { position: absolute; inset: 0; z-index: 3; background: #000; opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* Les vignettes : une bande de pellicule, perforée dessus et dessous. */
+.pf-dlg__thumbs {
+  position: relative; z-index: 4;
+  display: flex; gap: 0.45rem; overflow-x: auto; scrollbar-width: none;
+  padding: 1.05rem clamp(1rem, 3vw, 2.5rem);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 0.45rem, rgb(255 241 214 / 0.16) 0.45rem 0.85rem, transparent 0.85rem 1.3rem) 0 0.32rem / 100% 0.3rem no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 0.45rem, rgb(255 241 214 / 0.16) 0.45rem 0.85rem, transparent 0.85rem 1.3rem) 0 calc(100% - 0.32rem) / 100% 0.3rem no-repeat,
+    #0b0e0c;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+}
+.pf-dlg__thumbs[hidden] { display: none; }
+.pf-dlg__thumbs::-webkit-scrollbar { display: none; }
+.pf-dlg__thumbs button {
+  flex: none; width: 6.5rem; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 1px;
+  opacity: 0.5; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
+  transition: opacity 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.pf-dlg__thumbs img { width: 100%; height: 100%; object-fit: cover; }
+.pf-dlg__thumbs button:hover { opacity: 0.85; }
+.pf-dlg__thumbs button.is-on { opacity: 1; box-shadow: 0 0 0 2px var(--pf-lamp), 0 0 18px -2px color-mix(in srgb, var(--pf-lamp) 50%, transparent); }
+.pf-dlg__thumbs button:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 2px; }
+
+/* La carte d'archive : la marge rouge, les lignes réglées. */
+.pf-dlg__info {
+  position: relative;
+  display: flex; flex-direction: column; gap: var(--s-4);
+  min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.75rem) clamp(1.5rem, 3vw, 2.5rem) clamp(2.4rem, 3.6vw, 3.4rem);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 1.95rem, rgb(255 241 214 / 0.035) 1.95rem calc(1.95rem + 1px)),
+    color-mix(in srgb, var(--night-3) 55%, var(--night));
+}
+.pf-dlg__info::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: clamp(1.3rem, 2vw, 1.8rem); width: 1px;
+  background: color-mix(in srgb, var(--dv) 55%, transparent);
+}
+.pf-dlg__no { color: var(--cream-3); margin-bottom: calc(-1 * var(--s-2)); }
+.pf-dlg__info .dv-k { margin-bottom: 0; }
+.pf-dlg__info .dv-k::before { background: var(--c); }
+.pf-dlg__h {
+  font-family: var(--ff-d); font-size: clamp(2.2rem, 1rem + 2.8vw, 4rem); line-height: 0.92; letter-spacing: -0.03em;
+  font-variation-settings: 'wdth' 82, 'wght' 740; text-transform: uppercase;
+  padding-right: 2.5rem;
+}
+.pf-dlg__aka {
+  font-family: var(--ff-p); font-size: clamp(1.15rem, 0.9rem + 0.6vw, 1.5rem); line-height: 1.2; letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 48, 'wght' 380; color: var(--cream-2);
+}
+.pf-dlg__dl { margin-top: var(--s-3); border-top: 1px solid var(--line); }
+.pf-dlg__dl > div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--s-4); padding-block: 0.85rem; border-bottom: 1px solid var(--line); }
+.pf-dlg__dl dt { padding-top: 0.15rem; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+.pf-dlg__dl dd { display: grid; gap: 0.3rem; font-size: var(--fs-sm); color: var(--fg); }
+.pf-dlg__note { font-size: var(--fs-micro); color: var(--cream-3); }
+.pf-dlg__acts { margin-top: var(--s-3); }
+.pf-dlg__acts .dv-btn { --dv: var(--c, var(--gold)); }
+.pf-dlg__nav { margin-top: auto; padding-top: var(--s-5); display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.pf-dlg__nav button {
+  display: grid; gap: 0.3rem; justify-items: start; text-align: left;
+  padding: 0.85rem 1rem; border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--night-2) 60%, transparent);
+  box-shadow: inset 0 2px 0 color-mix(in srgb, var(--pf-lamp) 18%, transparent), inset 0 0 0 1px var(--line-2);
+  transition: box-shadow 0.4s var(--e-out), background-color 0.4s var(--e-out), transform 0.4s var(--e-out);
+}
+.pf-dlg__nav button:last-child { justify-items: end; text-align: right; }
+.pf-dlg__nav b {
+  font-family: var(--ff-d); font-size: 1rem; line-height: 1.05; font-variation-settings: 'wdth' 86, 'wght' 680; text-transform: uppercase; font-weight: 400;
+}
+.pf-dlg__nav button:hover, .pf-dlg__nav button:focus-visible { box-shadow: inset 0 2px 0 var(--pf-lamp), inset 0 0 0 1px var(--line-ui); background: color-mix(in srgb, var(--fg) 5%, transparent); transform: translateY(-2px); }
+.pf-dlg__nav button:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 2px; }
+.pf-dlg__nav button:first-child .dv-mono::before { content: '← '; }
+.pf-dlg__nav button:last-child .dv-mono::after { content: ' →'; }
+
+@media (max-width: 60rem) {
+  .pf-dlg__panel {
+    inset: 0; border-radius: 0;
+    display: block; overflow-y: auto; overscroll-behavior: contain;
+  }
+  .pf-dlg__media { display: block; }
+  .pf-dlg__main { aspect-ratio: 4 / 3; }
+  .pf-dlg__img { inset: 1rem; width: calc(100% - 2rem); height: calc(100% - 2rem); }
+  .pf-dlg__thumbs { padding: 1rem; }
+  .pf-dlg__info { overflow: visible; padding: var(--s-6) var(--pad-x) calc(var(--s-7) + env(safe-area-inset-bottom)) calc(var(--pad-x) + 1.4rem); }
+  .pf-dlg__info::before { left: calc(var(--pad-x) + 0.4rem); }
+  .pf-dlg__x { position: fixed; top: max(0.75rem, env(safe-area-inset-top)); right: 0.75rem; background: rgb(8 10 9 / 0.75); color: #f2ece0; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22); }
+}
+
+/* ═══════════════════ L'APPEL FINAL : LA BOBINE SUIVANTE ═══════════════════ */
+.pf-final { background-color: var(--bg); }
+.pf-final::before {
+  background:
+    radial-gradient(38% 50% at 50% 58%, color-mix(in srgb, var(--dv) 16%, transparent), transparent 70%),
+    radial-gradient(30% 34% at 50% 40%, color-mix(in srgb, var(--pf-lamp) 6%, transparent), transparent 70%);
+}
+.pf-final__reel {
+  position: absolute; z-index: -1; pointer-events: none;
+  top: 50%; right: -11rem; width: min(44rem, 92vw); aspect-ratio: 1; margin-top: calc(min(44rem, 92vw) / -2);
+  opacity: 0.55;
+}
+.pf-final__reel svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.pf-reel__spin { transform-box: view-box; transform-origin: 50% 50%; animation: pf-spin 50s linear infinite; }
+.pf-reel__rim { fill: none; stroke: color-mix(in srgb, var(--pf-lamp) 24%, transparent); stroke-width: 1.2; }
+.pf-reel__rim2 { fill: none; stroke: color-mix(in srgb, var(--pf-lamp) 10%, transparent); stroke-width: 1; }
+.pf-reel__win { fill: color-mix(in srgb, var(--pf-lamp) 3%, transparent); stroke: color-mix(in srgb, var(--pf-lamp) 18%, transparent); stroke-width: 1; stroke-linejoin: round; }
+.pf-reel__hub { fill: color-mix(in srgb, var(--pf-lamp) 4%, transparent); stroke: color-mix(in srgb, var(--pf-lamp) 22%, transparent); stroke-width: 1; }
+.pf-reel__holes circle { fill: color-mix(in srgb, var(--pf-lamp) 22%, transparent); }
+.pf-reel__film {
+  fill: none; stroke: color-mix(in srgb, var(--dv) 32%, transparent); stroke-width: 1; stroke-dasharray: 2 9;
+  transform-box: view-box; transform-origin: 50% 50%;
+  animation: pf-spin 90s linear infinite reverse;
+}
+/* Le trait de lumière de l'objectif, qui respire derrière le titre. */
+.pf-final__streak {
+  position: absolute; left: 50%; bottom: 13%; z-index: -1; width: min(62rem, 92%); height: 1px; margin-left: calc(min(62rem, 92%) / -2);
+  background: linear-gradient(90deg, transparent, rgb(255 241 214 / 0.6), transparent);
+  transform: scaleX(0.4); opacity: 0.25;
+  animation: pf-streak 6.5s ease-in-out infinite;
+}
+@keyframes pf-streak { 50% { transform: scaleX(1); opacity: 0.65; } }
+@media (max-width: 44rem) {
+  .pf-final__reel { right: -40%; top: auto; bottom: -18%; margin-top: 0; width: 110vw; opacity: 0.4; }
+}
+
+/* ═══════════════════ L'INDEX DES DIVISIONS ═══════════════════
+   La règle du haut devient une bande perforée qui avance ; sous chaque
+   ligne, une lumière de la couleur de la division passe, chacune à son
+   rythme ; le numéro est rangé dans un petit porte-étiquette. */
+.pf-index::before {
+  height: 6px; top: -3px;
+  background: repeating-linear-gradient(90deg, var(--line) 0 0.5rem, transparent 0.5rem 1.15rem) 0 0 / 100% 100%;
+  animation: pf-perf 14s linear infinite;
+}
+@keyframes pf-perf { to { background-position: 2.3rem 0; } }
+body[data-page='portfolio'] .pf-index .dv-next a::after {
+  content: ''; right: auto; left: 0; bottom: 0; width: 22%; height: 1px; opacity: 1;
+  background: linear-gradient(90deg, transparent, var(--c), transparent);
+  transform: translateX(-110%);
+  animation: pf-run var(--rd, 7s) linear infinite;
+  animation-delay: var(--rdl, 0s);
+}
+@keyframes pf-run { to { transform: translateX(560%); } }
+.pf-index .dv-next a:nth-child(1) { --rd: 6.4s; --rdl: -1s; }
+.pf-index .dv-next a:nth-child(2) { --rd: 8.2s; --rdl: -5s; }
+.pf-index .dv-next a:nth-child(3) { --rd: 5.6s; --rdl: -3s; }
+.pf-index .dv-next a:nth-child(4) { --rd: 9.4s; --rdl: -7s; }
+.pf-index .dv-next a:nth-child(5) { --rd: 7.1s; --rdl: -2s; }
+.pf-index .dv-next a:nth-child(6) { --rd: 10.3s; --rdl: -4s; }
+.pf-index .dv-next a:nth-child(7) { --rd: 6.8s; --rdl: -6s; }
+.pf-index .dv-next__n {
+  justify-self: start; padding: 0.3rem 0.45rem; border-radius: 0.15rem;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pf-brass) 45%, transparent);
+  transition: color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.pf-index .dv-next a:hover .dv-next__n, .pf-index .dv-next a:focus-visible .dv-next__n { color: var(--fg); box-shadow: inset 0 0 0 1px var(--c), inset 0 -3px 0 var(--c); }
+.pf-index .dv-next a:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: -2px; }
+
+/* ═══════════════════ LE PIED DE PAGE ═══════════════════
+   Le charbon de la page, la lampe au ras du sol, et une lumière qui longe
+   le filet du haut. La barre du haut et le menu ne changent pas. */
+body[data-page='portfolio'] .ftr {
+  border-top-color: color-mix(in srgb, var(--pf-lamp) 14%, transparent);
+  background-image:
+    radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--pf-lamp) 6%, transparent), transparent 70%),
+    radial-gradient(30% 30% at 88% 100%, color-mix(in srgb, var(--dv) 9%, transparent), transparent 70%);
+}
+body[data-page='portfolio'] .ftr::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0 42%, rgb(255 241 214 / 0.75) 50%, transparent 58% 100%) 0 0 / 250% 100% no-repeat;
+  animation: pf-sweep 10s ease-in-out infinite;
+}
+@keyframes pf-sweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+body[data-page='portfolio'] .ftr__wl .ln--b { color: var(--dv-lt); }
+
+/* ─────────────── Sans mouvement : tout est là, immobile ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .pf-screen__img { transition: none; }
+  .pf-screen__img.is-on { animation: none; }
+  .pf-screen__ticks .is-on i::after { animation: none; transform: none; }
+  .pf-screen::before, .pf-screen__k::before,
+  .pf-legend__rail i, .pf-tags li::before, .pf-tag,
+  .pf-bar__rule, .pf-table__scan, .pf-soon__seal::after, .pf-prep__sheen,
+  .pf-dlg__beam, .pf-dlg__main::after,
+  .pf-reel__spin, .pf-reel__film, .pf-final__streak,
+  .pf-index::before, body[data-page='portfolio'] .pf-index .dv-next a::after,
+  body[data-page='portfolio'] .ftr::before { animation: none !important; }
+  .pf-legend__rail i, body[data-page='portfolio'] .pf-index .dv-next a::after { display: none; }
+  .pf-table__scan { opacity: 0 !important; }
+  .pf-card__fig, .pf-card__pic::after, .pf-chip, .pf-chip__tab, .pf-chip__holder, .pf-tag, .pf-loupe { transition: none; }
+}

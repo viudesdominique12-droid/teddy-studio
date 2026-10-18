@@ -1,0 +1,1004 @@
+/* ══════════════════════════════════════════════════════════════
+   SERVICES — « le prisme » (17/10/2026 ; immersion du 18/10/2026)
+   Une seule maison, sept lumières. L'ouverture fait passer une lumière
+   blanche dans un prisme : elle en sort en sept rayons, un par division, et
+   chaque rayon porte un photon jusqu'au nom de sa division. Toute la page
+   vit ensuite dans ce monde de lumière : les deux têtes d'affiche ont un
+   liseré de leur couleur qui fait le tour du panneau, l'index des cinq
+   autres relie la ligne active à son aperçu par un rayon, « Combined when
+   you need them » croise deux faisceaux dont le mélange blanchit, et l'appel
+   final refait le chemin inverse : les sept couleurs se recomposent en une
+   seule lumière blanche. Entre les sections, un filet de lumière différent
+   à chaque fois (un trait blanc frangé, le spectre qui coule, deux photons
+   qui se croisent, des reflets d'eau, la dispersion du pied de page).
+   La couleur de la page : le vert-noir le plus profond de la marque, une
+   lumière blanche prismatique, la terre cuite en accent.
+   ══════════════════════════════════════════════════════════════ */
+
+@property --sweep { syntax: '<color>'; inherits: true; initial-value: #8f7cff; }
+
+/* ═══════════════════ LA COULEUR DE LA PAGE ═══════════════════
+   Le contenu (#main) et le pied de page seulement : la barre, le menu et la
+   barre d'appel du téléphone gardent la marque. Mesuré sur --night :
+   --cream 17:1, --cream-2 9,9:1, --cream-3 6,8:1, --dv 6,5:1, --dv-lt 9,6:1. */
+body[data-page='services'] #main,
+body[data-page='services'] .ftr {
+  --dv: #e8764b; --dv-lt: #f7a47c; --dv-dp: #b4502b; --dv-ink: #141211;
+  --night: #0a140c; --night-2: #050b07; --night-3: #122016;
+  --cream: #f4f2ec; --cream-2: #b7bcb3; --cream-3: #969c92;
+  --line: #ffffff24; --line-2: #ffffff12; --line-ui: #ffffff5c;
+  --gold: var(--dv); --gold-lt: var(--dv-lt); --gold-dp: var(--dv-dp);
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --go: var(--dv); --go-text: var(--dv-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --g-300: var(--gold-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  /* Les sept lumières, dans l'ordre des divisions. */
+  --c1: #ff4a3d; --c2: #f2a93b; --c3: #8f7cff; --c4: #ff5c8a; --c5: #e8c27a; --c6: #c98a52; --c7: #7fb7d9;
+  background-color: var(--bg);
+  color: var(--fg);
+  color-scheme: dark;
+}
+
+/* Le point de chaque surtitre porte la lumière de sa section : le spectre
+   entier qui tourne (l'ouverture), Live et Events (les têtes d'affiche), les
+   cinq autres, deux lumières mêlées (ensemble), le blanc (l'appel final). */
+#main .dv-k::before { box-shadow: 0 0 0 0.25em rgb(255 255 255 / 0.08), 0 0 10px rgb(255 255 255 / 0.12); }
+.hb-hero .dv-k::before { background: conic-gradient(var(--c1), var(--c2), var(--c5), var(--c6), var(--c4), var(--c3), var(--c7), var(--c1)); animation: hb-spin 6s linear infinite; }
+.hb-feat .dv-k::before { background: linear-gradient(90deg, var(--c1) 50%, var(--c2) 50%); }
+.hb-ix-sec .dv-k::before { background: conic-gradient(var(--c3) 0 20%, var(--c4) 0 40%, var(--c5) 0 60%, var(--c6) 0 80%, var(--c7) 0); animation: hb-spin 10s linear infinite reverse; }
+.hb-mix .dv-k::before { background: radial-gradient(circle at 35% 50%, #fff 0 18%, var(--c2) 45%, var(--c1) 100%); }
+.hb-hero:has(.hb-fan.is-paused) .dv-k::before { animation-play-state: paused; }
+#main .hb-final .dv-k::before { background: #fff; box-shadow: 0 0 0 0.25em rgb(255 255 255 / 0.14), 0 0 12px 2px rgb(255 255 255 / 0.5); }
+
+/* Les boucles décoratives s'arrêtent hors de l'écran ou onglet caché
+   (`data-off`, posé par hub-spectrum.js). */
+[data-off] *, [data-off] *::before, [data-off] *::after, [data-off]::before, [data-off]::after { animation-play-state: paused !important; }
+
+/* ═══════════════════ L'OUVERTURE : UNE LUMIÈRE, SEPT COULEURS ═══════════════════
+   Le décor est un SVG étiré sur sa boîte (`preserveAspectRatio="none"`) : les
+   rayons partent du même point et se posent pile sur les noms, à toutes les
+   tailles, sans calcul. Les noms (`.hb-fan__nav`) sont placés aux mêmes
+   hauteurs, en pourcentage de la même boîte. */
+.hb-hero {
+  --fan-top: calc(var(--bar-h) + 1.25rem); --fan-bot: 27%; --nav-w: 15.5rem;
+  /* Le bord droit de la colonne de contenu, même sur un très grand écran. */
+  --edge: max(var(--pad-x), calc((100% - var(--maxw)) / 2 + var(--pad-x)));
+}
+.hb-hero .dv-hero__veil {
+  background: linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 88%, transparent) 24%, color-mix(in srgb, var(--bg) 35%, transparent) 46%, transparent 62%);
+}
+.hb-hero .dv-hero__in { grid-template-columns: minmax(0, 1fr); }
+.hb-hero .dv-lede { margin-top: var(--s-5); }
+
+.hb-fan {
+  position: absolute; top: var(--fan-top); bottom: var(--fan-bot);
+  left: 0; right: calc(var(--edge) + var(--nav-w) + 0.75rem);
+}
+.hb-fan__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.hb-fan__svg line { stroke-width: 1px; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.hb-fan__in line { stroke-width: 1.5px; }
+.hb-ray { transition: opacity 0.7s var(--e-out); }
+.hb-ray__haze { opacity: 0.16; }
+.hb-ray__band { opacity: 0.5; animation: hb-breathe var(--t, 7s) var(--e-inout) infinite alternate; }
+.hb-ray__core { opacity: 0.9; }
+.hb-ray.is-feat .hb-ray__haze { opacity: 0.22; }
+.hb-ray.is-feat .hb-ray__band { opacity: 0.62; }
+.hb-ray:nth-of-type(2) .hb-ray__band { --t: 8.4s; animation-delay: -2s; }
+.hb-ray:nth-of-type(3) .hb-ray__band { --t: 6.2s; animation-delay: -4s; }
+.hb-ray:nth-of-type(4) .hb-ray__band { --t: 9s;   animation-delay: -1s; }
+.hb-ray:nth-of-type(5) .hb-ray__band { --t: 7.6s; animation-delay: -5s; }
+.hb-ray:nth-of-type(6) .hb-ray__band { --t: 6.8s; animation-delay: -3s; }
+.hb-ray:nth-of-type(7) .hb-ray__band { --t: 8s;   animation-delay: -6s; }
+@keyframes hb-breathe { from { opacity: 0.34; } to { opacity: 0.62; } }
+.hb-fan.has-near .hb-ray { opacity: 0.28; }
+.hb-fan.has-near .hb-ray.is-near { opacity: 1; }
+.hb-fan.has-near .hb-ray.is-near .hb-ray__band { animation: none; opacity: 0.85; }
+.hb-fan.is-paused .hb-ray__band, .hb-fan.is-paused .hb-fan__flare { animation-play-state: paused; }
+/* Sur écran tactile, les rayons ne respirent pas : animer l'opacité d'un
+   tracé SVG fait repeindre toute l'image à chaque trame. */
+@media (pointer: coarse) { .hb-ray__band { animation: none; opacity: 0.5; } .hb-ray.is-feat .hb-ray__band { opacity: 0.62; } }
+
+/* Le point où la lumière se disperse. */
+.hb-fan__flare {
+  position: absolute; z-index: 2; width: 0.6rem; height: 0.6rem; translate: -50% -50%; border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px 3px rgb(255 255 255 / 0.85), 0 0 46px 14px rgb(255 255 255 / 0.2), 0 0 140px 50px rgb(255 255 255 / 0.06);
+  animation: hb-flare 3.6s var(--e-inout) infinite alternate;
+}
+@keyframes hb-flare { from { transform: scale(0.85); opacity: 0.85; } to { transform: scale(1.15); opacity: 1; } }
+/* L'onde qui part du prisme quand un photon blanc y entre (hub-prism.js). */
+.hb-fan__pulse {
+  position: absolute; z-index: 2; width: 5rem; height: 5rem; translate: -50% -50%; border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.5), 0 0 24px rgb(255 255 255 / 0.15);
+  opacity: 0; pointer-events: none;
+}
+
+/* Le prisme : un triangle de verre, la face de sortie frangée du spectre.
+   Il n'est pas étiré avec les rayons : il garde sa forme à toutes les tailles. */
+.hb-prism {
+  position: absolute; z-index: 1; width: clamp(4rem, 2.6rem + 2.8vw, 6.6rem); aspect-ratio: 1; translate: -50% -50%;
+  overflow: visible;
+}
+.hb-prism__glass { stroke: none; }
+.hb-prism__flash { opacity: 0; }
+.hb-prism__rim { stroke: rgb(255 255 255 / 0.42); stroke-width: 1px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.hb-prism__edge { stroke-width: 1.6px; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+
+/* La poussière dans la lumière : visible seulement dans les faisceaux. */
+.hb-fan__dust { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* Les photons : un trait de lumière par rayon, posé et orienté par
+   hub-prism.js ; la tête est blanche, la traîne prend la couleur du rayon. */
+.hb-fan__ph { position: absolute; inset: 0; pointer-events: none; }
+.hb-ph {
+  position: absolute; height: 2px; margin-top: -1px; transform-origin: 0 50%;
+  overflow: hidden; border-radius: 2px;
+  transition: opacity 0.6s var(--e-out), scale 0.6s var(--e-out);
+}
+.hb-ph i {
+  position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0 78%, color-mix(in srgb, var(--c, #fff) 55%, transparent) 90%, color-mix(in srgb, var(--c, #fff) 40%, #fff) 98%, #fff 100%);
+}
+.hb-ph--in i { background: linear-gradient(90deg, transparent 0 62%, rgb(255 255 255 / 0.4) 86%, #fff 100%); }
+.hb-fan.has-near .hb-ph { opacity: 0.2; }
+.hb-fan.has-near .hb-ph.is-near { opacity: 1; scale: 1 1.8; }
+/* L'arrivée : un anneau autour du point du nom. */
+.hb-fan__hit {
+  position: absolute; left: -0.95rem; top: 50%; width: 0.5rem; height: 0.5rem; margin-top: -0.25rem; border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--c), 0 0 10px 1px var(--c);
+  opacity: 0; pointer-events: none;
+}
+
+/* « One » : la lumière blanche, frangée de rouge et de bleu comme au sortir
+   d'un prisme. */
+.hb-hero .dv-h1 em {
+  color: #fff;
+  text-shadow: -0.016em 0 rgb(255 74 61 / 0.6), 0.016em 0 rgb(127 183 217 / 0.65), 0 0 0.7em rgb(255 255 255 / 0.18);
+}
+
+/* Les noms, au bout de leur rayon. */
+.hb-fan__nav {
+  position: absolute; z-index: 1;
+  top: var(--fan-top); bottom: var(--fan-bot); right: var(--edge); width: var(--nav-w);
+}
+.hb-fan__nav a {
+  position: absolute; left: 0; right: 0; translate: 0 -50%;
+  display: flex; align-items: baseline; gap: 0.8rem;
+  padding: 0.35rem 0;
+  color: var(--cream-2);
+  transition: color 0.4s var(--e-out), transform 0.6s var(--e-out);
+}
+.hb-fan__nav a::before {
+  content: ''; position: absolute; left: -0.95rem; top: 50%; width: 0.5rem; height: 0.5rem; translate: 0 -50%; border-radius: 50%;
+  background: var(--c); box-shadow: 0 0 12px 2px color-mix(in srgb, var(--c) 70%, transparent);
+}
+.hb-fan__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); }
+.hb-fan__t {
+  font-family: var(--ff-d); font-size: clamp(0.95rem, 0.8rem + 0.35vw, 1.2rem); line-height: 1; letter-spacing: -0.005em;
+  font-variation-settings: 'wdth' 86, 'wght' 640; text-transform: uppercase;
+}
+.hb-fan__s {
+  display: none;
+  font-family: var(--ff-d); font-size: 0.8125rem; line-height: 1; letter-spacing: 0.01em;
+  font-variation-settings: 'wdth' 86, 'wght' 640; text-transform: uppercase; color: var(--fg);
+}
+.hb-fan__nav a.is-feat .hb-fan__t { font-size: clamp(1.05rem, 0.85rem + 0.5vw, 1.4rem); color: var(--fg); }
+.hb-fan__nav a:hover, .hb-fan__nav a:focus-visible, .hb-fan__nav a.is-near { color: var(--fg); transform: translateX(0.35rem); }
+.hb-fan__nav a:focus-visible { outline: 2px solid var(--c); outline-offset: 4px; border-radius: 0.2rem; }
+
+@media (max-width: 60rem) {
+  .hb-hero { --fan-top: calc(var(--bar-h) + 0.5rem); --fan-bot: 50%; --nav-w: 2.2rem; }
+  .hb-hero { --nav-w: 5.6rem; }
+  .hb-fan__t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .hb-fan__s { display: inline; }
+  .hb-fan__nav a { gap: 0.45rem; }
+  .hb-fan__nav a::before { left: -0.75rem; width: 0.4rem; height: 0.4rem; }
+  .hb-fan__hit { left: -0.75rem; width: 0.4rem; height: 0.4rem; margin-top: -0.2rem; }
+  .hb-prism { width: 3rem; }
+  .hb-fan__pulse { width: 3rem; height: 3rem; }
+  .hb-fan__n { color: var(--fg); }
+  .hb-hero .dv-hero__veil {
+    background: linear-gradient(0deg, var(--bg) 0%, var(--bg) 34%, color-mix(in srgb, var(--bg) 50%, transparent) 46%, transparent 56%);
+  }
+}
+
+/* ═══════════════════ LES FILETS DE LUMIÈRE ═══════════════════
+   Un filet en tête de chaque section, chacun différent : tous n'animent que
+   des transformations et des opacités. */
+.hb-seam {
+  position: absolute; top: 0; left: 50%; z-index: 1;
+  width: min(calc(100% - 2 * var(--pad-x)), var(--maxw)); height: 1px; translate: -50% 0;
+  overflow: hidden; pointer-events: none;
+  background: var(--line-2);
+}
+.hb-seam i, .hb-seam b { position: absolute; top: 0; height: 100%; display: block; }
+
+/* 1 · Le trait blanc : une lumière frangée (rouge devant, bleu derrière)
+   qui traverse la page de gauche à droite. */
+.hb-seam--beam i {
+  left: 0; width: 22%;
+  background: linear-gradient(90deg, transparent, rgb(127 183 217 / 0.7) 40%, #fff 78%, rgb(255 74 61 / 0.9) 92%, transparent);
+  transform: translateX(-100%);
+  animation: hb-beam 7.5s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes hb-beam { 0% { transform: translateX(-100%); } 70%, 100% { transform: translateX(460%); } }
+
+/* 2 · Le spectre qui coule : sept bandes, une par division, sans fin. */
+.hb-seam--spectrum { background: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.hb-seam--spectrum i {
+  left: 0; width: 200%; opacity: 0.75;
+  background: linear-gradient(90deg,
+    var(--c1) 0 7.14%, var(--c2) 0 14.28%, var(--c3) 0 21.42%, var(--c4) 0 28.57%, var(--c5) 0 35.71%, var(--c6) 0 42.85%, var(--c7) 0 50%,
+    var(--c1) 0 57.14%, var(--c2) 0 64.28%, var(--c3) 0 71.42%, var(--c4) 0 78.57%, var(--c5) 0 85.71%, var(--c6) 0 92.85%, var(--c7) 0 100%);
+  animation: hb-flow 36s linear infinite;
+}
+@keyframes hb-flow { to { transform: translateX(-50%); } }
+
+/* 3 · Deux photons partent des deux bouts et se croisent au milieu : là où
+   ils se rencontrent, la lumière blanchit. */
+.hb-seam--cross i { width: 16%; }
+.hb-seam--cross i:nth-child(1) { left: 0; background: linear-gradient(90deg, transparent, var(--c2)); transform: translateX(-100%); animation: hb-cross-a 6s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+.hb-seam--cross i:nth-child(2) { right: 0; background: linear-gradient(270deg, transparent, var(--c1)); transform: translateX(100%); animation: hb-cross-b 6s cubic-bezier(0.5, 0, 0.3, 1) infinite; }
+.hb-seam--cross b { left: 50%; width: 14rem; margin-left: -7rem; background: radial-gradient(closest-side, #fff, rgb(255 255 255 / 0.4) 40%, transparent); opacity: 0; transform: scaleX(0.2); animation: hb-cross-c 6s var(--e-out) infinite; }
+@keyframes hb-cross-a { 0% { transform: translateX(-100%); } 46% { transform: translateX(262%); opacity: 1; } 56%, 100% { transform: translateX(262%); opacity: 0; } }
+@keyframes hb-cross-b { 0% { transform: translateX(100%); } 46% { transform: translateX(-262%); opacity: 1; } 56%, 100% { transform: translateX(-262%); opacity: 0; } }
+@keyframes hb-cross-c { 0%, 44% { opacity: 0; transform: scaleX(0.2); } 50% { opacity: 1; transform: scaleX(1); } 80%, 100% { opacity: 0; transform: scaleX(1.6); } }
+
+/* 4 · Les reflets d'eau : trois lueurs blanches qui glissent à des vitesses
+   différentes, dans les deux sens, comme la lumière sous une vitre. */
+.hb-seam--caustic { background: rgb(255 255 255 / 0.05); }
+.hb-seam--caustic i { left: 0; width: 34%; background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent); }
+.hb-seam--caustic i:nth-child(1) { animation: hb-drift 13s var(--e-inout) infinite alternate; }
+.hb-seam--caustic i:nth-child(2) { width: 20%; animation: hb-drift 9s var(--e-inout) -4s infinite alternate-reverse; background: linear-gradient(90deg, transparent, rgb(232 194 122 / 0.6), transparent); }
+.hb-seam--caustic i:nth-child(3) { width: 26%; animation: hb-drift 17s var(--e-inout) -9s infinite alternate; background: linear-gradient(90deg, transparent, rgb(127 183 217 / 0.6), transparent); }
+@keyframes hb-drift { from { transform: translateX(-60%); } to { transform: translateX(300%); } }
+
+/* ═══════════════════ LES DEUX TÊTES D'AFFICHE ═══════════════════
+   Chaque panneau a un liseré de lumière de SA couleur qui en fait le tour
+   (`.hb-pan__edge`, un dégradé conique qui tourne derrière une plaque
+   pleine) ; au survol — au doigt : quand le panneau est au milieu de
+   l'écran — le liseré s'allume et la lumière suit le curseur. */
+.hb-duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1rem, 2.2vw, 2.25rem); }
+.hb-pan {
+  --dv: var(--c);
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column;
+  padding: 0.65rem; border-radius: 1.6rem;
+}
+.hb-pan__edge {
+  position: absolute; inset: 0; z-index: -3; overflow: hidden; border-radius: inherit;
+  background: color-mix(in srgb, var(--fg) 10%, var(--bg));
+}
+.hb-pan__edge i {
+  position: absolute; inset: -100%;
+  background: conic-gradient(from 0deg, transparent 0 74%, color-mix(in srgb, var(--c) 70%, transparent) 88%, #fff 91.5%, color-mix(in srgb, var(--c) 60%, transparent) 93%, transparent 96%);
+  opacity: 0.5; transition: opacity 0.7s var(--e-out);
+  animation: hb-rim 10s linear infinite;
+}
+.hb-pan--events .hb-pan__edge i { animation-duration: 13s; animation-direction: reverse; }
+@keyframes hb-rim { to { transform: rotate(1turn); } }
+/* La plaque, un pixel en retrait : le liseré n'apparaît que sur le bord. */
+.hb-pan::after {
+  content: ''; position: absolute; inset: 1px; z-index: -2; pointer-events: none;
+  border-radius: calc(1.6rem - 1px);
+  background: color-mix(in srgb, var(--fg) 3.5%, var(--bg));
+}
+.hb-pan::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(34rem circle at var(--mx, 50%) var(--my, 30%), color-mix(in srgb, var(--c) 16%, transparent), transparent 62%);
+  opacity: 0.45; transition: opacity 0.6s var(--e-out);
+}
+.hb-pan:is(:hover, :focus-within, .is-lit)::before { opacity: 1; }
+.hb-pan:is(:hover, :focus-within, .is-lit) .hb-pan__edge i { opacity: 1; }
+.hb-pan__screen {
+  position: relative; overflow: hidden; isolation: isolate;
+  aspect-ratio: 16 / 10; border-radius: 1.05rem;
+  background: #060606;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06), 0 30px 60px -36px color-mix(in srgb, var(--c) 55%, transparent);
+}
+.hb-pan__body { flex: 1; display: grid; align-content: start; gap: var(--s-4); padding: var(--s-6) clamp(1rem, 2vw, 2rem) clamp(1rem, 2vw, 1.75rem); }
+.hb-pan__k {
+  display: flex; align-items: center; gap: 0.8em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+}
+.hb-pan__k span {
+  display: inline-flex; align-items: center; gap: 0.6em; color: var(--fg);
+}
+.hb-pan__k span::before {
+  content: ''; width: 0.55em; height: 0.55em; border-radius: 50%; background: var(--c);
+  box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--c) 24%, transparent), 0 0 14px 2px color-mix(in srgb, var(--c) 60%, transparent);
+}
+.hb-pan__h {
+  font-family: var(--ff-d);
+  font-size: clamp(2.3rem, 1.1rem + 3.2vw, 4.6rem); line-height: 0.92; letter-spacing: -0.03em;
+  font-variation-settings: 'wdth' 84, 'wght' 740; text-transform: uppercase;
+}
+.hb-pan__tag {
+  font-family: var(--ff-p);
+  font-size: clamp(1.45rem, 1rem + 1.2vw, 2.2rem); line-height: 1.06; letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 72, 'wght' 380;
+  color: var(--fg);
+}
+.hb-pan__p { max-width: 36rem; color: var(--cream-2); line-height: 1.6; }
+.hb-pan__list { display: grid; gap: var(--s-3); margin-top: var(--s-2); }
+.hb-pan__list ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-5); }
+/* Chaque ligne : une facette de prisme pour puce, qui s'allume à son tour ;
+   au survol, son filet se remplit de la couleur du panneau. */
+.hb-pan__list li {
+  position: relative;
+  display: flex; gap: 0.7em; padding-block: 0.7rem; border-top: 1px solid var(--line-2);
+  font-size: var(--fs-sm); line-height: 1.35; color: var(--fg);
+}
+.hb-pan__list li::before {
+  content: ''; flex: none; width: 0.42em; height: 0.42em; margin-top: 0.45em;
+  background: var(--c); rotate: 45deg;
+  box-shadow: 0 0 0 0 transparent;
+  animation: hb-facet 6s var(--e-inout) infinite;
+}
+.hb-pan__list li:nth-child(2)::before { animation-delay: 0.5s; }
+.hb-pan__list li:nth-child(3)::before { animation-delay: 1s; }
+.hb-pan__list li:nth-child(4)::before { animation-delay: 1.5s; }
+@keyframes hb-facet { 0%, 22%, 100% { opacity: 0.55; transform: scale(1); } 8% { opacity: 1; transform: scale(1.45); } }
+.hb-pan__list li::after {
+  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px;
+  background: linear-gradient(90deg, var(--c), color-mix(in srgb, var(--c) 30%, transparent));
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s var(--e-out);
+}
+.hb-pan__list li:hover::after { transform: none; }
+.hb-pan__acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-5); margin-top: var(--s-3); }
+
+/* Deux divisions séparées : le filet se coupe autour de la phrase, rouge vers
+   Live, ambre vers Events, et une lumière court vers chacune. */
+.hb-duo__note { display: flex; align-items: center; gap: var(--s-4); margin-top: var(--s-6); text-align: center; }
+.hb-duo__txt { flex: none; max-width: min(46rem, 78%); }
+.hb-split { position: relative; flex: 1; height: 1px; overflow: hidden; background: linear-gradient(270deg, color-mix(in srgb, var(--c) 55%, transparent), transparent); }
+.hb-split--r { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 55%, transparent), transparent); }
+.hb-split i { position: absolute; top: 0; bottom: 0; right: 0; width: 30%; background: linear-gradient(270deg, transparent, var(--c) 60%, #fff); transform: translateX(110%); animation: hb-out-l 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.hb-split--r i { right: auto; left: 0; background: linear-gradient(90deg, transparent, var(--c) 60%, #fff); transform: translateX(-110%); animation: hb-out-r 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+@keyframes hb-out-l { 0% { transform: translateX(110%); } 75%, 100% { transform: translateX(-340%); } }
+@keyframes hb-out-r { 0% { transform: translateX(-110%); } 75%, 100% { transform: translateX(340%); } }
+/* Sur téléphone, la phrase au-dessus, et le filet coupé en deux dessous. */
+@media (max-width: 40rem) {
+  .hb-duo__note { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4) 1.4rem; }
+  .hb-duo__txt { grid-column: 1 / -1; order: -1; max-width: none; }
+}
+
+/* ── La régie de Live Streaming : un programme et quatre caméras ── */
+.hb-pgm { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 0.35rem; padding: 0.4rem; background: #050505; }
+.hb-pgm__main {
+  position: relative; overflow: hidden; border-radius: 0.6rem; background: #0d0d0d;
+  box-shadow: inset 0 0 0 3px #ff2d2d;
+}
+.hb-pgm__layer { position: absolute; inset: 0; opacity: 0; }
+.hb-pgm__layer.is-on { opacity: 1; }
+.hb-pgm__layer img, .hb-pgm__layer video, .hb-pgm__cam img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.hb-pgm__layer img { animation: hb-push 9s ease-out both; }
+@keyframes hb-push { from { transform: scale(1.1); } to { transform: scale(1.02); } }
+.hb-pgm__main::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: linear-gradient(transparent 58%, rgb(0 0 0 / 0.55)), linear-gradient(90deg, rgb(0 0 0 / 0.25), transparent 30%);
+}
+.hb-pgm__flash { position: absolute; inset: 0; z-index: 2; background: #fff; opacity: 0; pointer-events: none; mix-blend-mode: screen; }
+.hb-pgm__row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.35rem; }
+.hb-pgm__cam {
+  position: relative; overflow: hidden; aspect-ratio: 16 / 9; border-radius: 0.35rem; background: #0d0d0d;
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 0.08);
+}
+.hb-pgm__cam::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 2px transparent; border-radius: inherit; transition: box-shadow 0.18s linear; }
+.hb-pgm__cam.is-pgm::after { box-shadow: inset 0 0 0 2px #ff2d2d; }
+.hb-pgm__cam.is-pvw::after { box-shadow: inset 0 0 0 2px #1fd26a; }
+.hb-tag {
+  position: absolute; left: 0.45rem; bottom: 0.3rem; z-index: 3;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgb(255 255 255 / 0.86); text-shadow: 0 1px 3px rgb(0 0 0 / 0.7);
+}
+.hb-tag--pgm { top: 0.6rem; left: 0.7rem; bottom: auto; padding: 0.15rem 0.4rem; border-radius: 0.15rem; background: #ff2d2d; color: #fff; text-shadow: none; }
+.hb-onair {
+  position: absolute; top: 0.6rem; right: 0.7rem; z-index: 3;
+  display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.22rem 0.55rem; border-radius: 999px;
+  background: rgb(0 0 0 / 0.55); color: #fff;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.hb-onair i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #ff2d2d; animation: hb-rec 1.2s steps(1) infinite; }
+@keyframes hb-rec { 50% { opacity: 0.2; } }
+.hb-tc {
+  position: absolute; right: 0.7rem; bottom: 0.55rem; z-index: 3;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.72rem; letter-spacing: 0.08em; color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── La scène d'Event Organizing : un projecteur, un plateau ── */
+.hb-stage {
+  background:
+    radial-gradient(90% 60% at 50% 112%, color-mix(in srgb, var(--c) 18%, #0b0906) 0%, #070605 62%),
+    #070605;
+}
+.hb-stage__truss {
+  position: absolute; top: 9%; left: 10%; right: 10%; z-index: 2;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.hb-stage__truss::before { content: ''; position: absolute; left: -4%; right: -4%; top: 50%; height: 1px; background: rgb(255 255 255 / 0.12); }
+.hb-stage__truss i {
+  position: relative; width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--c) 45%, #2a2015);
+  animation: hb-lamp 5.6s var(--e-inout) infinite;
+}
+.hb-stage__truss i:nth-child(2) { animation-delay: 0.4s; }
+.hb-stage__truss i:nth-child(3) { animation-delay: 0.8s; }
+.hb-stage__truss i:nth-child(4) { animation-delay: 1.2s; }
+.hb-stage__truss i:nth-child(5) { animation-delay: 1.6s; }
+.hb-stage__truss i:nth-child(6) { animation-delay: 2s; }
+.hb-stage__truss i:nth-child(7) { animation-delay: 2.4s; }
+@keyframes hb-lamp {
+  0%, 100% { background: color-mix(in srgb, var(--c) 40%, #2a2015); box-shadow: none; }
+  18% { background: #fff4dc; box-shadow: 0 0 10px 2px var(--c), 0 0 26px 6px color-mix(in srgb, var(--c) 45%, transparent); }
+  40% { background: color-mix(in srgb, var(--c) 40%, #2a2015); box-shadow: none; }
+}
+/* Le faisceau : une découpe fixe, un dégradé, une rotation lente. */
+.hb-stage__beam {
+  position: absolute; top: 9%; left: 50%; width: 92%; height: 96%; z-index: 1;
+  transform-origin: 50% 0; translate: -50% 0;
+  clip-path: polygon(48.5% 0, 51.5% 0, 82% 100%, 18% 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 72%, #fff) 0%, color-mix(in srgb, var(--c) 32%, transparent) 30%, color-mix(in srgb, var(--c) 12%, transparent) 72%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 18%, #000 42%, #000 58%, transparent 82%);
+          mask-image: linear-gradient(90deg, transparent 18%, #000 42%, #000 58%, transparent 82%);
+  opacity: 0.85;
+  animation: hb-sweep 9s var(--e-inout) infinite alternate;
+}
+@keyframes hb-sweep { from { transform: rotate(-11deg); } to { transform: rotate(11deg); } }
+.hb-stage__pool {
+  position: absolute; left: 50%; bottom: 7%; width: 64%; height: 18%; z-index: 1; translate: -50% 0;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c) 42%, transparent), transparent);
+  animation: hb-pool 9s var(--e-inout) infinite alternate;
+}
+@keyframes hb-pool { from { transform: translateX(-16%) scaleX(0.9); } to { transform: translateX(16%) scaleX(0.9); } }
+.hb-tag--ev { top: auto; bottom: 0.7rem; left: 0.9rem; }
+.hb-stage__words {
+  position: absolute; left: 6%; right: 6%; top: 52%; z-index: 3; height: 2.6em;
+  translate: 0 -50%;
+  font-family: var(--ff-p); font-size: clamp(1.3rem, 0.7rem + 1.6vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 72, 'wght' 360;
+  color: #f7efe1; text-align: center;
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.6);
+}
+.hb-stage__words li { position: absolute; inset: 0; display: grid; place-items: center; text-wrap: balance; opacity: 0; }
+.hb-stage__words li:first-child { opacity: 1; }
+.hb-stage.is-paused :is(.hb-stage__beam, .hb-stage__pool, .hb-stage__truss i) { animation-play-state: paused; }
+
+@media (max-width: 60rem) {
+  .hb-duo { grid-template-columns: 1fr; }
+}
+@media (max-width: 30rem) {
+  .hb-pan__list ul { grid-template-columns: 1fr; }
+  .hb-pan__screen { aspect-ratio: 4 / 3; }
+}
+
+/* ═══════════════════ L'INDEX DES CINQ AUTRES ═══════════════════
+   Sur ordinateur, `.hb-ix` réserve à droite la place de l'écran (`--sw`) ;
+   chaque division y pose son aperçu et sa fiche, en absolu, l'une sur
+   l'autre. La division active (`is-on`) découvre son aperçu de gauche à
+   droite, la précédente (`is-prev`) reste dessous le temps du geste. */
+.hb-ix-sec { --sweep: #8f7cff; transition: --sweep 1s var(--e-out); overflow: hidden; }
+.hb-ix-sec::before {
+  content: ''; position: absolute; right: -10%; top: 18%; width: 70%; height: 90%; pointer-events: none; z-index: -1;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--sweep) 14%, transparent), transparent);
+}
+.hb-ix { --sw: min(34rem, 41%); --r: 1.4rem; position: relative; padding-right: calc(var(--sw) + clamp(2rem, 4vw, 5rem)); }
+
+/* Le cadre de l'écran, toujours là, même entre deux aperçus. */
+.hb-ix__frame {
+  position: absolute; top: 0; right: 0; bottom: 0; width: var(--sw); z-index: 0;
+  border-radius: var(--r); background: #070707;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07), inset 1px 0 0 color-mix(in srgb, var(--sweep) 60%, transparent), 0 50px 90px -50px rgb(0 0 0 / 0.75), 0 0 130px -34px color-mix(in srgb, var(--sweep) 55%, transparent);
+}
+/* Les lignes */
+.hb-div { --dv: var(--c); }
+.hb-div__row {
+  position: relative; isolation: isolate;
+  display: grid; grid-template-columns: 3.4rem minmax(0, 1fr) 2.2rem; grid-template-areas: 'n t go' '. s go';
+  align-items: center; column-gap: var(--s-4);
+  padding: 1.35rem 1rem 1.35rem 0.4rem;
+  border-top: 1px solid var(--line-2);
+  color: var(--fg);
+}
+.hb-div:last-of-type .hb-div__row { border-bottom: 1px solid var(--line-2); }
+.hb-div__row::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--c) 20%, transparent), color-mix(in srgb, var(--c) 5%, transparent) 62%, transparent);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.6s var(--e-out);
+}
+.hb-div__row::after {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c);
+  transform: scaleY(0); transition: transform 0.6s var(--e-out);
+}
+.hb-div__n {
+  grid-area: n; align-self: start; padding-top: 0.85em;
+  display: inline-flex; align-items: center; gap: 0.55em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3);
+  transition: color 0.5s var(--e-out);
+}
+.hb-div__n::before { content: ''; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--c); opacity: 0.45; transition: opacity 0.5s, box-shadow 0.5s; }
+.hb-div__t {
+  grid-area: t;
+  font-family: var(--ff-d);
+  font-size: clamp(1.9rem, 0.9rem + 2.7vw, 3.7rem); line-height: 0.94; letter-spacing: -0.028em;
+  font-variation-settings: 'wdth' 82, 'wght' 720; text-transform: uppercase;
+  color: var(--cream-2);
+  transition: transform 0.9s var(--e-out), color 0.5s var(--e-out);
+}
+.hb-div__s { grid-area: s; max-width: 32rem; margin-top: 0.55rem; font-size: var(--fs-sm); line-height: 1.45; color: var(--cream-3); transition: color 0.5s var(--e-out); }
+.hb-div__go {
+  grid-area: go; width: 1.5rem; height: 1.5rem; justify-self: end;
+  fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  color: var(--cream-3); opacity: 0.5;
+  transition: transform 0.7s var(--e-out), opacity 0.5s, color 0.5s;
+}
+.hb-div.is-on .hb-div__row::before { transform: none; transition-duration: 1.1s; }
+.hb-div.is-on .hb-div__row::after { transform: none; transition-duration: 0.9s; }
+.hb-div.is-on .hb-div__t { color: var(--fg); transform: translateX(0.7rem); }
+.hb-div.is-on .hb-div__n { color: var(--fg); }
+.hb-div.is-on .hb-div__n::before { opacity: 1; box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--c) 25%, transparent); }
+.hb-div.is-on .hb-div__s { color: var(--cream-2); }
+.hb-div.is-on .hb-div__go { opacity: 1; color: var(--fg); transform: translate(2px, -2px); }
+.hb-div__row:focus-visible { outline: 2px solid var(--c); outline-offset: -2px; }
+/* La ligne active est éclairée par sa propre couleur : le titre prend la
+   lumière blanche, frangée comme au sortir du prisme. */
+.hb-div.is-on .hb-div__t { text-shadow: -0.02em 0 color-mix(in srgb, var(--c) 70%, transparent), 0.02em 0 rgb(127 183 217 / 0.35), 0 0 0.9em color-mix(in srgb, var(--c) 28%, transparent); }
+
+/* Le filet de chaque ligne : une lueur de SA couleur le parcourt sans fin,
+   à sa vitesse et dans son sens. */
+.hb-div__glint { position: absolute; left: 0; right: 0; top: -1px; height: 1px; overflow: hidden; pointer-events: none; }
+.hb-div__glint::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 28%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c) 85%, #fff), transparent);
+  transform: translateX(-100%);
+  animation: hb-glint var(--gl, 9s) var(--e-inout) infinite;
+  animation-delay: var(--gd, 0s);
+}
+@keyframes hb-glint { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(360%); } }
+.hb-div:nth-of-type(2) .hb-div__glint::before { --gl: 11s; --gd: -3s; animation-direction: reverse; }
+.hb-div:nth-of-type(3) .hb-div__glint::before { --gl: 8s;  --gd: -6s; }
+.hb-div:nth-of-type(4) .hb-div__glint::before { --gl: 12.5s; --gd: -1s; animation-direction: reverse; }
+.hb-div:nth-of-type(5) .hb-div__glint::before { --gl: 10s; --gd: -7s; }
+
+/* Le rayon qui relie la ligne active à son aperçu (ordinateur) : il glisse
+   d'une ligne à l'autre (hub.js) et porte un photon jusqu'à l'écran, où il
+   allume un point sur le bord du cadre. */
+.hb-ix__ray {
+  position: absolute; top: 0; z-index: 6; height: 1px;
+  right: var(--sw); width: clamp(2rem, 4vw, 5rem);
+  pointer-events: none; opacity: 0; transition: opacity 0.5s var(--e-out);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--sweep) 75%, transparent));
+}
+.hb-ix.has-ray .hb-ix__ray { opacity: 1; }
+.hb-ix__ray i { position: absolute; inset: 0; overflow: hidden; }
+.hb-ix__ray i::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 60%;
+  background: linear-gradient(90deg, transparent, var(--sweep) 70%, #fff);
+  transform: translateX(-100%); animation: hb-ray-go 1.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+@keyframes hb-ray-go { to { transform: translateX(170%); } }
+.hb-ix__ray b {
+  position: absolute; right: -0.3rem; top: 50%; width: 0.6rem; height: 0.6rem; margin-top: -0.3rem; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 10px 2px var(--sweep), 0 0 28px 8px color-mix(in srgb, var(--sweep) 45%, transparent);
+  animation: hb-ray-hit 1.8s var(--e-out) infinite;
+}
+@keyframes hb-ray-hit { 0%, 55% { transform: scale(0.6); opacity: 0.6; } 70% { transform: scale(1.25); opacity: 1; } 100% { transform: scale(0.6); opacity: 0.6; } }
+
+
+/* L'aperçu (l'écran) et la fiche */
+.hb-div__media {
+  position: absolute; top: 0; right: 0; bottom: 0; width: var(--sw); z-index: 1;
+  overflow: hidden; border-radius: var(--r);
+  background: #08080a;
+  clip-path: inset(0 100% 0 0 round var(--r));
+  visibility: hidden;
+  cursor: pointer;
+}
+.hb-div.is-prev .hb-div__media { visibility: visible; clip-path: inset(0 0 0 0 round var(--r)); z-index: 1; }
+.hb-div.is-on .hb-div__media {
+  visibility: visible; clip-path: inset(0 0 0 0 round var(--r)); z-index: 2;
+  transition: clip-path 1.05s var(--e-out);
+}
+.hb-div__media::after {
+  content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.35) 0%, transparent 18%, transparent 36%, rgb(0 0 0 / 0.72) 62%, rgb(0 0 0 / 0.92) 100%);
+}
+
+.hb-div__info {
+  position: absolute; right: 0; bottom: 0; width: var(--sw); z-index: 5;
+  display: grid; gap: var(--s-4); justify-items: start;
+  padding: var(--s-6) clamp(1.25rem, 2.2vw, 2.25rem) clamp(1.25rem, 2.2vw, 2.25rem);
+  color: var(--fg);
+  visibility: hidden; pointer-events: none;
+}
+.hb-div__info > * { opacity: 0; transform: translateY(14px); transition: opacity 0.3s var(--e-out), transform 0.3s var(--e-out); }
+.hb-div.is-on .hb-div__info { visibility: visible; pointer-events: auto; }
+.hb-div.is-on .hb-div__info > * { opacity: 1; transform: none; transition: opacity 0.7s var(--e-out), transform 0.9s var(--e-out); }
+.hb-div.is-on .hb-div__info > :nth-child(1) { transition-delay: 0.28s; }
+.hb-div.is-on .hb-div__info > :nth-child(2) { transition-delay: 0.36s; }
+.hb-div.is-on .hb-div__info > :nth-child(3) { transition-delay: 0.44s; }
+.hb-div__tag {
+  font-family: var(--ff-p);
+  font-size: clamp(1.5rem, 0.9rem + 1.3vw, 2.35rem); line-height: 1.05; letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 72, 'wght' 380;
+  text-wrap: balance;
+}
+.hb-div__svc { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.hb-div__svc li {
+  padding: 0.38rem 0.65rem; border-radius: 999px;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  background: rgb(0 0 0 / 0.25);
+}
+.hb-div__svc li:first-child { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 80%, transparent); }
+
+/* L'écran est toujours sombre : la fiche y garde l'encre claire, quel que soit le thème. */
+@media (min-width: 60.0625rem) {
+  .hb-div__info { --fg: #f2efe9; --bg: #0b0b0b; --cream-2: #c9c4bc; --cream-3: #9b968f; --line: #ffffff2e; }
+}
+
+/* ── Les aperçus ── */
+.hb-m { color: #f2efe9; }
+.hb-m__cap {
+  position: absolute; top: 1.05rem; left: 1.15rem; z-index: 5;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgb(255 255 255 / 0.82);
+}
+.hb-m__cap::before { content: ''; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--c); }
+
+/* AI : la lumière qui se compose (une sphère violette, un anneau qui balaie, une trame). */
+.hb-m--ai { background: radial-gradient(80% 60% at 50% 34%, #17112e 0%, #08070d 70%); }
+.hb-m__grid {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgb(255 255 255 / 0.16) 1px, transparent 1.3px);
+  background-size: 22px 22px; background-position: center;
+  -webkit-mask-image: radial-gradient(60% 46% at 50% 34%, #000, transparent);
+          mask-image: radial-gradient(60% 46% at 50% 34%, #000, transparent);
+}
+.hb-m__prism {
+  position: absolute; left: 50%; top: 34%; width: 46%; aspect-ratio: 1; translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, #efeaff 0%, #b9adff 9%, rgb(143 124 255 / 0.55) 30%, rgb(108 92 240 / 0.16) 62%, transparent 100%);
+  animation: hb-beat 4.2s var(--e-inout) infinite alternate;
+}
+/* L'orbite : un anneau fin, et un arc de lumière qui le parcourt. */
+.hb-m__orbit {
+  position: absolute; left: 50%; top: 34%; width: 72%; aspect-ratio: 1; translate: -50% -50%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1);
+}
+.hb-m__orbit::before, .hb-m__orbit::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  -webkit-mask-image: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px), #000 100%, transparent 100%);
+          mask-image: radial-gradient(closest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px), #000 100%, transparent 100%);
+}
+.hb-m__orbit::before {
+  background: conic-gradient(from 0deg, transparent 0deg, rgb(201 191 255 / 0.15) 210deg, #d9d1ff 300deg, transparent 302deg);
+  animation: hb-spin 7s linear infinite;
+}
+.hb-m__orbit::after {
+  inset: 14%;
+  background: conic-gradient(from 180deg, transparent 0deg, rgb(143 124 255 / 0.12) 250deg, #a99bff 330deg, transparent 332deg);
+  animation: hb-spin 11s linear infinite reverse;
+}
+@keyframes hb-spin { to { transform: rotate(360deg); } }
+
+/* Music : des ondes qui partent d'un seul point. */
+.hb-m--music { background: radial-gradient(80% 60% at 50% 36%, #2a0d19 0%, #0a0608 70%); }
+.hb-m__rings { position: absolute; left: 50%; top: 36%; width: 80%; aspect-ratio: 1; translate: -50% -50%; }
+.hb-m__rings i {
+  position: absolute; inset: 0; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 80%, transparent);
+  opacity: 0; transform: scale(0.15);
+  animation: hb-ring 5.2s cubic-bezier(0.2, 0.6, 0.35, 1) infinite;
+}
+.hb-m__rings i:nth-child(2) { animation-delay: 1.3s; }
+.hb-m__rings i:nth-child(3) { animation-delay: 2.6s; }
+.hb-m__rings i:nth-child(4) { animation-delay: 3.9s; }
+@keyframes hb-ring { 0% { opacity: 0; transform: scale(0.15); } 12% { opacity: 0.9; } 100% { opacity: 0; transform: scale(1); } }
+.hb-m__core {
+  position: absolute; left: 50%; top: 36%; width: 34%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
+  background: radial-gradient(closest-side, #ffd3df 0%, color-mix(in srgb, var(--c) 85%, transparent) 26%, color-mix(in srgb, var(--c) 20%, transparent) 62%, transparent);
+  animation: hb-beat 2.6s var(--e-inout) infinite alternate;
+}
+@keyframes hb-beat { from { transform: scale(0.92); opacity: 0.85; } to { transform: scale(1.06); opacity: 1; } }
+
+/* Film et documentaire : de vraies images qui se relaient. */
+.hb-m__ph { position: absolute; inset: 0; margin: 0; opacity: 0; animation: hb-cycle 13.5s linear infinite both; }
+.hb-m__ph img { width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 40%; animation: hb-kb 13.5s linear infinite both; }
+.hb-m__ph:nth-child(1), .hb-m__ph:nth-child(1) img { animation-delay: -1.2s; }
+.hb-m__ph:nth-child(2), .hb-m__ph:nth-child(2) img { animation-delay: 3.3s; }
+.hb-m__ph:nth-child(3), .hb-m__ph:nth-child(3) img { animation-delay: 7.8s; }
+@keyframes hb-cycle { 0% { opacity: 0; } 7% { opacity: 1; } 33% { opacity: 1; } 41% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes hb-kb { 0% { transform: scale(1.14); } 41% { transform: scale(1.02); } 100% { transform: scale(1.02); } }
+.hb-m--photos::after { display: none; }
+.hb-m__ph::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.45) 0%, transparent 16%, transparent 36%, rgb(0 0 0 / 0.7) 62%, rgb(0 0 0 / 0.92) 100%);
+}
+.hb-m__ph figcaption {
+  position: absolute; top: 1.05rem; left: 1.15rem; z-index: 2;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgb(255 255 255 / 0.85); text-shadow: 0 1px 6px rgb(0 0 0 / 0.6);
+}
+.hb-m__ph figcaption::before { content: ''; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--c); }
+/* Location : les planches du matériel, comme un catalogue posé sur la table. */
+.hb-m--kit { background: radial-gradient(70% 50% at 50% 32%, #10202b 0%, #06090b 72%); }
+.hb-m__plate {
+  position: absolute; margin: 0; width: 56%;
+  padding: 0.5rem 0.5rem 1.7rem; border-radius: 0.35rem;
+  background: #fbfaf7;
+  box-shadow: 0 24px 40px -18px rgb(0 0 0 / 0.75);
+  transition: transform 1s var(--e-out), opacity 0.6s var(--e-out);
+}
+.hb-m__plate img { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #fff; }
+.hb-m__plate figcaption {
+  position: absolute; left: 0.6rem; bottom: 0.45rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.14em; text-transform: uppercase; color: #3a3836;
+}
+.hb-m__plate:nth-child(1) { left: 8%;  top: 9%;  --rot: -6deg; z-index: 1; }
+.hb-m__plate:nth-child(2) { right: 6%; top: 15%; --rot: 5deg;  z-index: 2; }
+.hb-m__plate:nth-child(3) { left: 20%; top: 33%; --rot: -1.5deg; z-index: 3; }
+.hb-m__plate { transform: translateX(40%) rotate(calc(var(--rot) + 8deg)); opacity: 0; }
+.hb-div.is-on .hb-m__plate { transform: rotate(var(--rot)); opacity: 1; }
+.hb-div.is-prev .hb-m__plate { transform: rotate(var(--rot)); opacity: 1; transition: none; }
+.hb-div.is-on .hb-m__plate:nth-child(2) { transition-delay: 0.1s; }
+.hb-div.is-on .hb-m__plate:nth-child(3) { transition-delay: 0.2s; }
+
+/* Les boucles ne tournent que pour l'aperçu actif, et seulement à l'écran. */
+.hb-m :is(.hb-m__prism, .hb-m__orbit::before, .hb-m__orbit::after, .hb-m__rings i, .hb-m__core, .hb-m__ph, .hb-m__ph img) { animation-play-state: paused; }
+.hb-ix-sec.is-live .hb-div.is-on .hb-m :is(.hb-m__prism, .hb-m__rings i, .hb-m__core, .hb-m__ph, .hb-m__ph img) { animation-play-state: running; }
+.hb-ix-sec.is-live .hb-div.is-on .hb-m__orbit::before, .hb-ix-sec.is-live .hb-div.is-on .hb-m__orbit::after { animation-play-state: running; }
+
+/* ── Sur téléphone et tablette : une carte par division ── */
+@media (max-width: 60rem) {
+  .hb-ix { padding-right: 0; display: grid; gap: var(--s-5); }
+  .hb-ix__frame, .hb-ix__ray { display: none; }
+  .hb-div {
+    position: relative; overflow: hidden; isolation: isolate;
+    display: flex; flex-direction: column;
+    border-radius: 1.3rem;
+    background: color-mix(in srgb, var(--fg) 3.5%, transparent);
+    box-shadow: inset 0 0 0 1px var(--line-2);
+    transition: box-shadow 0.8s var(--e-out);
+  }
+  /* Au doigt : la carte qui entre à l'écran s'allume de sa couleur. */
+  .hb-div.is-on { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 55%, transparent), 0 24px 60px -40px color-mix(in srgb, var(--c) 70%, transparent); }
+  .hb-div.is-on .hb-div__t { text-shadow: none; }
+  .hb-div__glint { top: 0; }
+  .hb-div__media, .hb-div.is-on .hb-div__media, .hb-div.is-prev .hb-div__media {
+    order: 1; position: relative; inset: auto; width: auto; aspect-ratio: 16 / 10;
+    border-radius: 0; clip-path: none; visibility: visible; transition: none;
+  }
+  .hb-div__media::after { background: linear-gradient(180deg, rgb(0 0 0 / 0.35), transparent 30%, transparent 70%, rgb(0 0 0 / 0.35)); }
+  .hb-div__row { order: 2; border: 0 !important; padding: var(--s-5) var(--s-5) 0; grid-template-columns: 2.6rem minmax(0, 1fr) 1.6rem; }
+  .hb-div__row::before { display: none; }
+  .hb-div__row::after { top: auto; bottom: auto; height: 0; }
+  .hb-div__t { font-size: clamp(1.75rem, 1.1rem + 3vw, 2.6rem); color: var(--fg); }
+  .hb-div.is-on .hb-div__t { transform: none; }
+  .hb-div__s { color: var(--cream-2); }
+  .hb-div__info {
+    order: 3; position: static; width: auto; visibility: visible; pointer-events: auto;
+    padding: var(--s-4) var(--s-5) var(--s-5);
+  }
+  .hb-div__info > * { opacity: 1; transform: none; }
+  .hb-div__tag { font-size: clamp(1.35rem, 1rem + 1.6vw, 1.8rem); }
+  .hb-div__svc li { color: var(--fg); background: none; box-shadow: inset 0 0 0 1px var(--line); }
+  .hb-m__plate { transform: rotate(var(--rot)); opacity: 1; width: 44%; }
+  .hb-m__plate:nth-child(1) { left: 6%; top: 10%; }
+  .hb-m__plate:nth-child(2) { right: 5%; top: 16%; }
+  .hb-m__plate:nth-child(3) { left: 30%; top: 40%; }
+  .hb-m__prism { top: 50%; width: 34%; }
+  .hb-m__orbit { top: 50%; width: 54%; }
+  .hb-m__grid { -webkit-mask-image: radial-gradient(50% 50% at 50% 50%, #000, transparent); mask-image: radial-gradient(50% 50% at 50% 50%, #000, transparent); }
+  .hb-m__rings { top: 50%; width: 58%; }
+  .hb-m__core { top: 50%; width: 24%; }
+  .hb-m--ai { background: radial-gradient(80% 70% at 50% 50%, #17112e 0%, #08070d 70%); }
+  .hb-m--music { background: radial-gradient(80% 70% at 50% 50%, #2a0d19 0%, #0a0608 70%); }
+  /* Sur une carte, la boucle tourne dès que la carte est à l'écran. */
+  .hb-div.is-on .hb-m :is(.hb-m__prism, .hb-m__rings i, .hb-m__core, .hb-m__ph, .hb-m__ph img) { animation-play-state: running; }
+  .hb-div.is-on .hb-m__orbit::before, .hb-div.is-on .hb-m__orbit::after { animation-play-state: running; }
+}
+
+/* ═══════════════════ ENSEMBLE ═══════════════════
+   Deux faisceaux, un par division, tombent de part et d'autre de la carte :
+   leurs flaques se recouvrent et le mélange blanchit. Au survol — au doigt :
+   quand la carte est au milieu de l'écran, ou d'une touche — ils se
+   resserrent et la lumière commune s'allume. Les séparations des cartes
+   portent chacune une lueur qui descend (sur téléphone, qui traverse). */
+.hb-mix__list {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px; background: var(--line-2); border: 1px solid var(--line-2);
+}
+.hb-mix__i {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: grid; align-content: start; gap: var(--s-4);
+  padding: var(--s-6) var(--s-5) var(--s-5);
+  background: var(--bg);
+}
+.hb-mix__i::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(24rem circle at var(--mx, 50%) var(--my, 0%), rgb(255 255 255 / 0.06), transparent 62%);
+  opacity: 0; transition: opacity 0.5s var(--e-out);
+}
+.hb-mix__i:is(:hover, :focus-within, .is-lit)::before { opacity: 1; }
+
+.hb-mix__seam { position: absolute; left: 0; top: 0; bottom: 0; width: 1px; overflow: hidden; pointer-events: none; }
+.hb-mix__i:first-child .hb-mix__seam { display: none; }
+.hb-mix__seam i {
+  position: absolute; left: 0; right: 0; top: 0; height: 32%;
+  background: linear-gradient(180deg, transparent, rgb(255 255 255 / 0.75), transparent);
+  transform: translateY(-100%); animation: hb-fall 8s var(--e-inout) infinite;
+}
+.hb-mix__i:nth-child(3) .hb-mix__seam i { animation-duration: 11s; animation-delay: -4s; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--c7) 80%, #fff), transparent); }
+@keyframes hb-fall { 0% { transform: translateY(-100%); } 65%, 100% { transform: translateY(320%); } }
+
+/* La table de lumière. Chaque faisceau pivote autour de sa source (en haut,
+   au bord) ; sa flaque, au bout, se contre-tourne pour rester à plat. */
+.hb-mix__lights {
+  position: relative; display: block; width: min(100%, 15rem); height: 6rem; margin-bottom: var(--s-2);
+  --ang: 30deg;
+}
+.hb-mix__lights i {
+  position: absolute; top: 0; width: 0; height: 100%; transform-origin: 0 0;
+  transition: transform 1s var(--e-out);
+}
+.hb-mix__lights i:first-child { left: 18%;  --k: var(--a); transform: rotate(calc(-1 * var(--ang))); }
+.hb-mix__lights i:nth-of-type(2) { right: 18%; --k: var(--b); transform: rotate(var(--ang)); }
+.hb-mix__lights i::before {
+  content: ''; position: absolute; top: 0; left: -2.4rem; width: 4.8rem; height: 116%;
+  clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
+  background:
+    radial-gradient(circle at 50% 0, #fff 0 0.12rem, color-mix(in srgb, var(--k) 60%, #fff) 0.2rem, transparent 0.45rem),
+    linear-gradient(90deg, transparent 4%, color-mix(in srgb, var(--k) 70%, #fff) 50%, transparent 96%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.45) 50%, rgb(0 0 0 / 0.12) 100%);
+          mask-image: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.45) 50%, rgb(0 0 0 / 0.12) 100%);
+  mix-blend-mode: screen; opacity: 0.6;
+}
+.hb-mix__lights i::after {
+  content: ''; position: absolute; top: 100%; left: -3rem; width: 6rem; height: 1.7rem; margin-top: -0.85rem; border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--k) 60%, #fff) 0%, var(--k) 40%, color-mix(in srgb, var(--k) 30%, transparent) 75%, transparent);
+  mix-blend-mode: screen;
+  transition: transform 1s var(--e-out);
+  animation: hb-pool-breathe 4.8s var(--e-inout) infinite alternate;
+}
+.hb-mix__lights i:first-child::after { transform: rotate(var(--ang)); }
+.hb-mix__lights i:nth-of-type(2)::after { transform: rotate(calc(-1 * var(--ang))); animation-delay: -2.4s; }
+@keyframes hb-pool-breathe { from { opacity: 0.75; } to { opacity: 1; } }
+/* Le blanc commun, là où les deux lumières se rencontrent. */
+.hb-mix__lights b {
+  position: absolute; left: 50%; top: 72%; width: 3.6rem; height: 1.1rem; margin: -0.55rem 0 0 -1.8rem; border-radius: 50%;
+  background: radial-gradient(closest-side, #fff, rgb(255 255 255 / 0.5) 45%, transparent);
+  opacity: 0; transform: scale(0.4);
+  transition: opacity 0.8s var(--e-out), transform 1s var(--e-out);
+}
+.hb-mix__i:is(:hover, :focus-within, .is-lit) .hb-mix__lights { --ang: 44deg; }
+/* À l'arrivée de la section, les faisceaux s'allument l'un après l'autre. */
+html.js .hb-mix__lights { opacity: 0; transition: opacity 1.4s var(--e-out); }
+html.js .hb-mix.is-in .hb-mix__lights { opacity: 1; }
+.hb-mix__i:nth-child(2) .hb-mix__lights { transition-delay: 0.25s; }
+.hb-mix__i:nth-child(3) .hb-mix__lights { transition-delay: 0.5s; }
+.hb-mix__i:is(:hover, :focus-within, .is-lit) .hb-mix__lights b { opacity: 1; transform: none; transition-delay: 0.25s; }
+
+.hb-mix__h {
+  font-family: var(--ff-d); font-size: clamp(1.4rem, 1.1rem + 0.8vw, 1.95rem); line-height: 1; letter-spacing: -0.015em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+}
+.hb-mix__p { color: var(--cream-2); line-height: 1.6; max-width: 30rem; }
+.hb-mix__go { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; margin-top: var(--s-3); font-size: var(--fs-sm); }
+@media (max-width: 60rem) {
+  .hb-mix__list { grid-template-columns: 1fr; }
+  .hb-mix__seam { top: 0; bottom: auto; left: 0; right: 0; width: auto; height: 1px; }
+  .hb-mix__seam i { top: 0; bottom: 0; left: 0; width: 32%; height: auto; background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.75), transparent); transform: translateX(-100%); animation-name: hb-cross-run; }
+  .hb-mix__i:nth-child(3) .hb-mix__seam i { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c7) 80%, #fff), transparent); animation-direction: reverse; }
+}
+@keyframes hb-cross-run { 0% { transform: translateX(-100%); } 65%, 100% { transform: translateX(320%); } }
+
+/* ═══════════════════ L'APPEL FINAL ═══════════════════
+   Le chemin inverse de l'ouverture : les sept couleurs arrivent de la
+   gauche, se recomposent en un point, et repartent en une seule lumière
+   blanche. Les rayons se tracent au défilement, puis des photons les
+   parcourent et se rejoignent au centre (hub-spectrum.js). */
+.hb-final::before {
+  background:
+    radial-gradient(42% 50% at 50% 62%, rgb(255 255 255 / 0.065), transparent 70%),
+    radial-gradient(24% 26% at 50% 16%, rgb(255 255 255 / 0.05), transparent 70%);
+}
+.hb-recomb {
+  position: relative; width: min(100%, 64rem); height: clamp(4.5rem, 2.8rem + 5vw, 8.5rem);
+  margin: 0 auto var(--s-6);
+}
+.hb-rc { position: absolute; height: 1px; transform-origin: 0 50%; pointer-events: none; }
+.hb-rc__line {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--c) 55%, transparent) 55%, color-mix(in srgb, var(--c) 70%, #fff) 100%);
+}
+.hb-rc__ph { position: absolute; inset: 0; overflow: hidden; }
+.hb-rc__ph i {
+  position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0 70%, color-mix(in srgb, var(--c) 75%, transparent) 94%, color-mix(in srgb, var(--c) 40%, #fff) 99%, #fff 100%);
+}
+.hb-rc--out { height: 2px; margin-top: -1px; }
+.hb-rc--out .hb-rc__line { background: linear-gradient(90deg, #fff, rgb(255 255 255 / 0.6) 40%, transparent); }
+.hb-rc--out .hb-rc__ph i { background: linear-gradient(90deg, transparent 0 60%, rgb(255 255 255 / 0.6) 85%, #fff 100%); }
+.hb-recomb__flare {
+  position: absolute; width: 0.55rem; height: 0.55rem; margin: -0.275rem 0 0 -0.275rem; border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 3px rgb(255 255 255 / 0.8), 0 0 40px 12px rgb(255 255 255 / 0.18);
+}
+.hb-recomb__ring {
+  position: absolute; width: 3.4rem; height: 3.4rem; margin: -1.7rem 0 0 -1.7rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.55); opacity: 0;
+}
+
+/* « Not sure which division fits? » : sept points, une équipe par couleur,
+   et la lumière passe de l'une à l'autre. */
+.hb-route { display: flex; justify-content: center; gap: 0.55rem; margin-top: var(--s-7); }
+.hb-route i {
+  width: 0.42rem; height: 0.42rem; border-radius: 50%; background: var(--c);
+  opacity: 0.32;
+  animation: hb-route 7s var(--e-inout) infinite;
+}
+.hb-route i:nth-child(2) { animation-delay: 1s; }
+.hb-route i:nth-child(3) { animation-delay: 2s; }
+.hb-route i:nth-child(4) { animation-delay: 3s; }
+.hb-route i:nth-child(5) { animation-delay: 4s; }
+.hb-route i:nth-child(6) { animation-delay: 5s; }
+.hb-route i:nth-child(7) { animation-delay: 6s; }
+@keyframes hb-route { 0%, 16%, 100% { opacity: 0.32; transform: scale(1); } 6% { opacity: 1; transform: scale(1.55); } }
+.hb-final__note { margin-top: var(--s-4); font-size: var(--fs-sm); color: var(--cream-3); }
+.hb-final__note .dv-link { color: var(--fg); }
+
+/* ═══════════════════ LE PIED DE PAGE ═══════════════════
+   La couleur de la page, et un filet de dispersion en tête : la lumière
+   blanche au centre, les sept couleurs vers les bords, qui s'ouvre et se
+   referme lentement. « Studio » prend la terre cuite claire. */
+body[data-page='services'] .ftr {
+  border-top-color: transparent;
+  background-image: radial-gradient(60% 40% at 50% 100%, rgb(255 255 255 / 0.035), transparent 70%);
+}
+body[data-page='services'] .ftr::before {
+  content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--c1) 8%, var(--c2) 18%, var(--c5) 30%, #fff 50%, var(--c4) 66%, var(--c3) 78%, var(--c7) 90%, transparent);
+  transform-origin: 50% 50%;
+  animation: hb-disperse 10s var(--e-inout) infinite alternate;
+}
+@keyframes hb-disperse { from { transform: scaleX(0.42); opacity: 0.55; } to { transform: scaleX(1); opacity: 0.9; } }
+body[data-page='services'] .ftr__wl .ln--b { color: var(--dv-lt); }
+
+/* ─────────────── Sans mouvement ───────────────
+   Tout est posé, et reste beau : les filets gardent leur lumière, arrêtée
+   à un bon endroit ; aucun photon ne circule. */
+@media (prefers-reduced-motion: reduce) {
+  .hb-ray__band, .hb-fan__flare, .hb-onair i, .hb-stage__truss i, .hb-stage__beam, .hb-stage__pool,
+  .hb-m__prism, .hb-m__orbit::before, .hb-m__orbit::after, .hb-m__rings i, .hb-m__core, .hb-pgm__layer img,
+  .hb-seam i, .hb-seam b, .hb-pan__edge i, #main .dv-k::before, .hb-pan__list li::before, .hb-split i, .hb-div__glint::before,
+  .hb-ix__ray i::before, .hb-ix__ray b, .hb-mix__seam i, .hb-mix__lights i::after, .hb-route i,
+  body[data-page='services'] .ftr::before { animation: none !important; }
+  .hb-seam--beam i { transform: translateX(230%); }
+  .hb-seam--cross i { opacity: 0; }
+  .hb-seam--cross b { opacity: 0.7; transform: none; }
+  .hb-seam--caustic i:nth-child(1) { transform: translateX(40%); }
+  .hb-seam--caustic i:nth-child(2) { transform: translateX(260%); }
+  .hb-seam--caustic i:nth-child(3) { transform: translateX(150%); }
+  .hb-pan__edge i { transform: rotate(40deg); }
+  .hb-split i, .hb-div__glint, .hb-ix__ray i, .hb-mix__seam i { display: none; }
+  .hb-route i { opacity: 0.6; }
+  html.js .hb-mix__lights { opacity: 1; transition: none; }
+  .hb-m__ph { animation: none !important; opacity: 0; }
+  .hb-m__ph:first-child { opacity: 1; }
+  .hb-m__ph img { animation: none !important; transform: none; }
+  .hb-m__rings i:nth-child(1) { opacity: 0.5; transform: scale(0.45); }
+  .hb-m__rings i:nth-child(2) { opacity: 0.3; transform: scale(0.75); }
+  .hb-div__media, .hb-div__info > *, .hb-m__plate, .hb-div__row::before, .hb-div__row::after, .hb-div__t,
+  .hb-mix__lights i, .hb-mix__lights i::after, .hb-mix__lights b, .hb-pan__list li::after { transition: none !important; }
+}

@@ -1,0 +1,486 @@
+/* ══════════════════════════════════════════════════════════════
+   LOCATIONS — l'atlas (18/10/2026)
+   Dominique : « améliore-moi les autres pages avec la même logique de
+   customisation de thème ». La page des neuf lieux devient un atlas de
+   repérage :
+     · l'ouverture est une carte topographique vivante (courbes de niveau
+       tracées en direct, une courbe terre cuite qui monte les altitudes, le
+       relief qui se soulève sous la main), puis l'index des neuf lieux posé
+       sur leur coupe d'altitude, du plus haut au plus bas ;
+     · à gauche, un altimètre suit le défilement (ordinateur) ;
+     · chaque lieu est une fiche de repérage : la photo dans un viseur (coins,
+       croix, tiers ; au survol, les caches du 2,39:1), son signe de carte et
+       ses courbes, l'altitude, le crédit de la photo en étiquette ;
+     · chaque fiche est séparée par un trait de relief qui vit à sa façon
+       (une crête, des rides d'eau, des gradins taillés, un cratère, des
+       créneaux, une caravane, une coulée, une rue, des lacets).
+   Les altitudes sont celles de src/data/site.js, déjà publiées sur l'accueil
+   (faits géographiques publics). Winding Road n'en a pas : rien n'est
+   affiché pour elle.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════ LA PALETTE : LES HAUTS PLATEAUX ═══════════════════
+   La famille de la marque (vert nuit, terre cuite, crème), dans une nuance
+   à elle : un vert de mousse des hauts plateaux, plus olive que celui de la
+   marque, la crème d'un papier de carte, la terre cuite d'une latérite, et
+   deux encres de carte — l'ocre des herbes sèches (les altitudes) et le
+   lichen (les courbes de niveau). Sur le contenu (#main) et le pied de page
+   seulement ; la barre, le menu et la fiche d'appel gardent la marque.
+   Contrastes mesurés sur --night (#1b2716) :
+     crème 12,5:1 · crème-2 8,1:1 · crème-3 5,7:1 (4,8:1 sur --night-3)
+     terre cuite 4,6:1 · terre cuite claire 7,3:1 · ocre 7,0:1 · lichen 5,9:1
+     encre sur la terre cuite (bouton) 5,6:1 */
+body[data-page='locations'] #main,
+body[data-page='locations'] .ftr {
+  --dv: #dd6b3b; --dv-lt: #f39d6c; --dv-dp: #a3482a; --dv-ink: #141211;
+  --night: #1b2716; --night-2: #121b0e; --night-3: #25351f;
+  --cream: #eee6d5; --cream-2: #c4baa3; --cream-3: #a69c85;
+  --line: #eee6d526; --line-2: #eee6d514; --line-ui: #eee6d566;
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --gold: var(--dv); --gold-lt: var(--dv-lt); --gold-dp: var(--dv-dp);
+  --go: var(--dv); --go-text: var(--dv-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --on-go: var(--dv-ink);
+  --g-300: var(--dv-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  /* Les encres de la carte. */
+  --ol-ochre: #d2a75e;
+  --ol-sage: #93a679;
+  --ol-contour: color-mix(in srgb, #93a679 58%, transparent);
+  --ol-contour-2: color-mix(in srgb, #93a679 28%, transparent);
+  --ol-matte: rgb(10 14 8 / 0.8);
+  color-scheme: dark;
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+/* ═══════════════════ LES BOUCLES ═══════════════════
+   Tout ce qui tourne en continu ne tourne que dans un bloc à l'écran
+   (`.is-live`, posée par locations.js) et quand l'onglet est affiché. */
+html.ol-js [data-ol-live]:not(.is-live) *,
+html.ol-js [data-ol-live]:not(.is-live) *::before,
+html.ol-js [data-ol-live]:not(.is-live) *::after,
+html.ol-js body[data-page='locations'] .ftr:not(.is-live)::before,
+html.ol-hidden #main *, html.ol-hidden #main *::before, html.ol-hidden #main *::after,
+html.ol-hidden body[data-page='locations'] .ftr::before { animation-play-state: paused !important; }
+
+@keyframes ol-run   { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+@keyframes ol-march { to { stroke-dashoffset: -40; } }
+@keyframes ol-draw  { 0% { stroke-dashoffset: 1000; } 46%, 56% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1000; } }
+@keyframes ol-slide { to { transform: translateX(calc(var(--p, 120px) * -1)); } }
+@keyframes ol-breathe { 0%, 100% { transform: scale(0.94); opacity: 0.45; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes ol-walk  { from { transform: translateX(-90px); } to { transform: translateX(var(--w, 1200px)); } }
+@keyframes ol-flick { 0%, 100% { opacity: 0.55; } 30% { opacity: 1; } 55% { opacity: 0.7; } 75% { opacity: 0.95; } }
+@keyframes ol-ping  { 0% { transform: scale(0.4); opacity: 0.9; } 80%, 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes ol-bear  { from { transform: translateX(0); } to { transform: translateX(var(--w, 600px)); } }
+@keyframes ol-spin  { to { transform: rotate(1turn); } }
+@keyframes ol-bob   { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes ol-ring  { 0%, 14% { stroke: var(--dv); stroke-opacity: 1; } 26%, 100% { stroke: var(--ol-sage); stroke-opacity: 0.5; } }
+@keyframes ol-rise  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes ol-fade  { from { opacity: 0; } to { opacity: 1; } }
+
+/* ═══════════════════ L'OUVERTURE : LA CARTE ═══════════════════ */
+body[data-page='locations'] .ol-hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  max-width: none;
+  padding-inline: max(var(--pad-x), calc((100% - var(--maxw)) / 2 + var(--pad-x)));
+  padding-bottom: var(--s-5);
+  background:
+    radial-gradient(60% 55% at 80% 26%, color-mix(in srgb, var(--ol-ochre) 8%, transparent), transparent 72%),
+    radial-gradient(40% 40% at 8% 100%, color-mix(in srgb, var(--dv) 6%, transparent), transparent 70%);
+}
+.ol-topo { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.ol-topo__c { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 1.6s var(--e-out); }
+.ol-topo.is-on .ol-topo__c { opacity: 1; }
+/* Le texte se lit sur une carte apaisée : la carte se retire sous le titre
+   et sous l'index. */
+.ol-topo::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 30%, color-mix(in srgb, var(--bg) 20%, transparent) 58%, transparent 74%),
+    linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 88%, transparent) 26%, transparent 46%);
+}
+.ol-hero__text { position: relative; }
+body[data-page='locations'] .ol-hero .phead__h { max-width: 21ch; }
+body[data-page='locations'] .ol-hero .phead__h em { color: var(--dv-lt); }
+body[data-page='locations'] .ol-hero .eyebrow { color: var(--cream-2); }
+
+/* ── L'index : la coupe d'altitude des neuf lieux ── */
+.ol-prof { position: relative; margin-top: clamp(2rem, 5vh, 3.5rem); }
+.ol-prof__chart { position: relative; height: 9.5rem; pointer-events: none; }
+.ol-prof__chart svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ol-prof__chart svg { opacity: 0; transition: opacity 0.9s var(--e-out); }
+.ol-prof__chart.is-drawn svg { opacity: 1; }
+.ol-p-fill { fill: url(#ol-p-grad); }
+.ol-p-strata line { stroke: var(--ol-contour-2); stroke-width: 1; }
+.ol-p-ridge { fill: none; stroke: var(--cream); stroke-opacity: 0.8; stroke-width: 1.4; stroke-linejoin: round; }
+.ol-p-sea { stroke: var(--ol-sage); stroke-opacity: 0.55; stroke-width: 1; stroke-dasharray: 3 5; }
+.ol-p-lab { font-family: var(--ff-m); font-size: 10px; letter-spacing: 0.12em; fill: var(--cream-3); }
+.ol-p-nomap { stroke: var(--cream-3); stroke-opacity: 0.6; stroke-width: 1; stroke-dasharray: 2 4; }
+.ol-p-pt .h { fill: var(--dv); opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity 0.35s, transform 0.5s var(--e-out); transform: scale(0.6); }
+.ol-p-pt .c { fill: var(--bg); stroke: var(--ol-ochre); stroke-width: 1.5; transition: fill 0.3s, stroke 0.3s; }
+.ol-p-drop { stroke: var(--dv); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0; transition: opacity 0.3s; }
+.ol-p-pt.is-hot .h { opacity: 0.28; transform: scale(1.5); }
+.ol-p-pt.is-hot .c { fill: var(--dv); stroke: var(--dv-lt); }
+.ol-p-drop.is-hot { opacity: 0.9; }
+/* Le géomètre : un point qui parcourt la crête, sans fin. */
+.ol-prof__dot {
+  position: absolute; left: 0; top: 0; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%;
+  background: var(--dv-lt); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 30%, transparent), 0 0 14px var(--dv);
+  offset-rotate: 0deg; offset-anchor: 50% 50%;
+  animation: ol-survey 11s linear infinite;
+  opacity: 0;
+}
+@keyframes ol-survey {
+  0% { offset-distance: 0%; opacity: 0; }
+  6% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+@supports not (offset-path: path('M0 0')) { .ol-prof__dot { display: none; } }
+
+.ol-prof__list {
+  display: grid; grid-template-columns: repeat(9, minmax(0, 1fr));
+  list-style: none; margin: 0; padding: 0;
+  border-top: 1px solid var(--line);
+}
+.ol-prof__list li { min-width: 0; animation: ol-rise 0.8s var(--e-out) both; }
+.ol-prof__list li:nth-child(1) { animation-delay: 0.55s; } .ol-prof__list li:nth-child(2) { animation-delay: 0.6s; }
+.ol-prof__list li:nth-child(3) { animation-delay: 0.65s; } .ol-prof__list li:nth-child(4) { animation-delay: 0.7s; }
+.ol-prof__list li:nth-child(5) { animation-delay: 0.75s; } .ol-prof__list li:nth-child(6) { animation-delay: 0.8s; }
+.ol-prof__list li:nth-child(7) { animation-delay: 0.85s; } .ol-prof__list li:nth-child(8) { animation-delay: 0.9s; }
+.ol-prof__list li:nth-child(9) { animation-delay: 0.95s; }
+.ol-prof__list a {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  padding: 0.85rem 0.35rem 0.4rem; text-align: center; color: var(--fg-2);
+  transition: color 0.3s;
+}
+/* La colonne entière, au-dessus du libellé, appartient au lien : on vise le
+   point sur la coupe ou son nom, c'est pareil. */
+.ol-prof__list a::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 9.5rem; }
+.ol-prof__list a::after {
+  content: ''; position: absolute; top: -1px; left: 50%; width: 1.6rem; height: 2px; margin-left: -0.8rem;
+  background: var(--dv); transform: scaleX(0); transition: transform 0.45s var(--e-out);
+}
+.ol-prof__n { font-size: var(--fs-xs); line-height: 1.25; text-wrap: balance; }
+.ol-prof__a {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em;
+  color: var(--ol-ochre); font-variant-numeric: tabular-nums;
+}
+.ol-prof__list a:is(:hover, :focus-visible, .is-hot) { color: var(--fg); }
+.ol-prof__list a:is(:hover, :focus-visible, .is-hot)::after { transform: scaleX(1); }
+.ol-prof__list a:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: -2px; border-radius: 2px; }
+
+/* ═══════════════════ L'ATLAS : L'ALTIMÈTRE ET LES FICHES ═══════════════════ */
+body[data-page='locations'] .ol-atlas { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad-x); }
+body[data-page='locations'] .ol-atlas .locs { max-width: none; margin: 0; padding: 0; list-style: none; }
+.ol-rail { display: none; }
+
+@media (min-width: 72rem) {
+  body[data-page='locations'] .ol-atlas { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); column-gap: var(--s-6); }
+  .ol-rail { display: block; position: relative; }
+}
+.ol-alm {
+  position: sticky; top: calc(var(--bar-h) + 3rem);
+  display: grid; grid-template-rows: auto 1fr auto auto; gap: 0.55rem;
+  height: min(62vh, 31rem); margin-top: 4.5rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em;
+  color: var(--cream-3); font-variant-numeric: tabular-nums;
+}
+.ol-alm__end { white-space: nowrap; }
+.ol-alm__end b { font-weight: 400; color: var(--cream-2); }
+.ol-alm__sc { position: relative; margin-left: 1.1rem; border-left: 1px solid var(--line-ui); }
+.ol-alm__t { position: absolute; left: 0; height: 1px; width: 0.35rem; background: var(--line-ui); top: var(--y); }
+.ol-alm__t--k { width: 0.7rem; background: var(--cream-3); }
+.ol-alm__loc {
+  position: absolute; left: -0.25rem; top: var(--y); width: 0.5rem; height: 0.5rem; margin-top: -0.25rem; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--ol-ochre); transition: background 0.3s, transform 0.4s var(--e-out);
+}
+.ol-alm__loc.is-on { background: var(--dv); border-color: var(--dv-lt); transform: scale(1.35); }
+.ol-alm__sea { position: absolute; left: -0.55rem; right: -0.9rem; top: var(--y); border-top: 1px dashed color-mix(in srgb, var(--ol-sage) 70%, transparent); }
+.ol-alm__sea span { position: absolute; left: 1.55rem; top: -0.55rem; font-size: 0.5625rem; color: var(--ol-sage); }
+.ol-alm__nd {
+  position: absolute; left: -1.05rem; top: 0; width: 2.9rem; height: 0; will-change: transform;
+  transition: opacity 0.4s;
+}
+.ol-alm__nd::before {
+  content: ''; position: absolute; left: 0; top: -0.36rem; width: 0.6rem; height: 0.72rem;
+  background: var(--dv); clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.ol-alm__nd::after { content: ''; position: absolute; left: 0.75rem; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, var(--dv), transparent); }
+.ol-alm.is-off .ol-alm__nd { opacity: 0.18; }
+.ol-alm__read { display: grid; gap: 0.2rem; padding-top: 0.55rem; border-top: 1px solid var(--line); }
+.ol-alm__no { color: var(--cream-3); }
+.ol-alm__v { position: relative; display: block; height: 1.25rem; overflow: hidden; }
+.ol-alm__v b {
+  position: absolute; left: 0; top: 0; font-weight: 500; font-size: 0.875rem; letter-spacing: 0.02em;
+  color: var(--ol-ochre); white-space: nowrap;
+}
+.ol-alm__v small { font-size: var(--fs-nano); color: var(--cream-3); margin-left: 0.15em; }
+
+/* ── La fiche ── */
+body[data-page='locations'] .ol-atlas .loc__i {
+  position: relative; border-top: 0;
+  padding: clamp(4rem, 6.5vw, 5.75rem) 0 clamp(1.25rem, 2.5vw, 2rem);
+  align-items: end;
+  /* Arrivée par l'adresse (#lalibela, depuis l'accueil) : le trait et son
+     numéro restent visibles sous la barre. */
+  scroll-margin-top: calc(var(--bar-h) - 0.5rem);
+}
+body[data-page='locations'] .loc__i:hover .loc__fig img { transform: none; }
+body[data-page='locations'] .loc__fig { position: relative; background: var(--night-2); border-radius: 2px; }
+body[data-page='locations'] .loc__fig img { transition: none; will-change: auto; }
+@media (min-width: 72rem) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  body[data-page='locations'] .loc__fig img { scale: 1.1; }
+}
+
+/* Le viseur : coins, croix, tiers, caches 2,39:1, format. */
+.ol-vf { position: absolute; inset: 0; pointer-events: none; }
+.ol-vf__c {
+  position: absolute; width: 1.5rem; height: 1.5rem;
+  border: 0 solid color-mix(in srgb, var(--cream) 82%, transparent);
+  transition: transform 0.6s var(--e-out), border-color 0.4s;
+  filter: drop-shadow(0 0 2px rgb(0 0 0 / 0.45));
+}
+.ol-vf__c--tl { top: 0.9rem; left: 0.9rem; border-width: 1.5px 0 0 1.5px; }
+.ol-vf__c--tr { top: 0.9rem; right: 0.9rem; border-width: 1.5px 1.5px 0 0; }
+.ol-vf__c--bl { bottom: 0.9rem; left: 0.9rem; border-width: 0 0 1.5px 1.5px; }
+.ol-vf__c--br { bottom: 0.9rem; right: 0.9rem; border-width: 0 1.5px 1.5px 0; }
+.ol-vf__x {
+  position: absolute; left: 50%; top: 50%; width: 1.1rem; height: 1.1rem; margin: -0.55rem 0 0 -0.55rem;
+  background:
+    linear-gradient(color-mix(in srgb, var(--cream) 75%, transparent), color-mix(in srgb, var(--cream) 75%, transparent)) center / 100% 1px no-repeat,
+    linear-gradient(color-mix(in srgb, var(--cream) 75%, transparent), color-mix(in srgb, var(--cream) 75%, transparent)) center / 1px 100% no-repeat;
+  filter: drop-shadow(0 0 2px rgb(0 0 0 / 0.5));
+  transition: transform 0.6s var(--e-out);
+}
+.ol-vf__g {
+  position: absolute; inset: 0; opacity: 0; transition: opacity 0.5s var(--e-out);
+  --gl: color-mix(in srgb, var(--cream) 42%, transparent);
+  background:
+    linear-gradient(90deg, transparent calc(33.333% - 0.5px), var(--gl) 0 calc(33.333% + 0.5px), transparent 0 calc(66.666% - 0.5px), var(--gl) 0 calc(66.666% + 0.5px), transparent 0),
+    linear-gradient(0deg, transparent calc(33.333% - 0.5px), var(--gl) 0 calc(33.333% + 0.5px), transparent 0 calc(66.666% - 0.5px), var(--gl) 0 calc(66.666% + 0.5px), transparent 0);
+}
+/* 2,39:1 dans une photo 3:2 : une bande de 18,6 % en haut et en bas. */
+.ol-vf__m { position: absolute; left: 0; right: 0; height: 18.62%; background: var(--ol-matte); transform: scaleY(0); transition: transform 0.7s var(--e-out); }
+.ol-vf__m--t { top: 0; transform-origin: 50% 0; }
+.ol-vf__m--b { bottom: 0; transform-origin: 50% 100%; }
+.ol-vf__fmt {
+  position: absolute; right: 2.9rem; top: 1rem; height: 1.15rem; overflow: hidden;
+  padding: 0 0.45rem; border-radius: 2px; background: rgb(10 14 8 / 0.58);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.15rem; letter-spacing: 0.12em;
+  color: var(--cream); text-align: center;
+}
+.ol-vf__fmt span { display: block; transition: transform 0.55s var(--e-out); }
+.ol-vf__s { position: absolute; top: 0; bottom: 0; width: 50.5%; background: var(--night-2); }
+.ol-vf__s--l { left: 0; transform-origin: 0 50%; }
+.ol-vf__s--r { right: 0; transform-origin: 100% 50%; }
+
+/* Survol (ordinateur), toucher (téléphone) : on cadre en 2,39:1. */
+@media (hover: hover) {
+  .loc__i:hover .ol-vf__m { transform: scaleY(1); }
+  .loc__i:hover .ol-vf__g { opacity: 1; }
+  .loc__i:hover .ol-vf__c { border-color: var(--dv-lt); }
+  .loc__i:hover .ol-vf__fmt span { transform: translateY(-100%); }
+  .loc__i:hover .ol-vf__x { transform: rotate(45deg) scale(0.8); }
+}
+.loc__i.is-framed .ol-vf__m { transform: scaleY(1); }
+.loc__i.is-framed .ol-vf__g { opacity: 1; }
+.loc__i.is-framed .ol-vf__c { border-color: var(--dv-lt); }
+.loc__i.is-framed .ol-vf__fmt span { transform: translateY(-100%); }
+.loc__i.is-framed .ol-vf__x { transform: rotate(45deg) scale(0.8); }
+/* Les coins se resserrent sur le cadre 2,39:1. */
+@media (hover: hover) {
+  .loc__i:hover .ol-vf__c--tl, .loc__i:hover .ol-vf__c--tr { transform: translateY(calc(var(--mh, 0px))); }
+  .loc__i:hover .ol-vf__c--bl, .loc__i:hover .ol-vf__c--br { transform: translateY(calc(var(--mh, 0px) * -1)); }
+}
+.loc__i.is-framed .ol-vf__c--tl, .loc__i.is-framed .ol-vf__c--tr { transform: translateY(var(--mh, 0px)); }
+.loc__i.is-framed .ol-vf__c--bl, .loc__i.is-framed .ol-vf__c--br { transform: translateY(calc(var(--mh, 0px) * -1)); }
+.loc__i.is-cur .ol-vf__c { border-color: var(--dv-lt); }
+@media (pointer: coarse) { .loc__fig { cursor: pointer; -webkit-tap-highlight-color: transparent; } }
+
+/* Le texte : une fiche de repérage. */
+body[data-page='locations'] .loc__t { position: relative; min-width: 0; padding-bottom: 0.25rem; }
+.ol-hill { display: block; width: clamp(5rem, 7.5vw, 6.75rem); aspect-ratio: 1; margin-bottom: var(--s-4); overflow: visible; }
+.ol-hill path, .ol-hill ellipse { fill: none; stroke: var(--ol-sage); stroke-opacity: 0.5; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ol-hill .ol-hill__r { animation: ol-ring 7s linear infinite; animation-delay: calc(var(--k) * 0.55s); }
+.ol-hill .ol-hill__r--dash { stroke-dasharray: 3 3; }
+.ol-hill .ol-hill__sym { fill: var(--ol-ochre); stroke: none; }
+.ol-hill .ol-hill__sym-l { fill: none; stroke: var(--ol-ochre); stroke-opacity: 1; stroke-width: 1.4; }
+.ol-hill .ol-hill__lava { fill: var(--dv); stroke: none; animation: ol-flick 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.ol-hill .ol-hill__water { fill: color-mix(in srgb, #6f9fa3 45%, transparent); stroke: none; }
+.ol-hill g { transform-box: view-box; transform-origin: 50% 50%; transition: transform 0.9s var(--e-out); }
+@media (hover: hover) {
+  .loc__i:hover .ol-hill g { transform: scale(1.06) rotate(-4deg); }
+}
+.loc__i.is-cur .ol-hill .ol-hill__r { animation-duration: 4.2s; }
+
+body[data-page='locations'] .loc__h { max-width: 14ch; }
+.ol-alt {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.4rem 0.75rem;
+  max-width: 24rem; margin-top: var(--s-3); padding-top: 0.6rem;
+  border-top: 1px solid var(--line);
+}
+.ol-alt__k {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.ol-alt__v {
+  display: inline-flex; align-items: baseline; gap: 0.45rem;
+  font-family: var(--ff-d); font-variation-settings: 'wdth' 88, 'wght' 600; font-size: 1.15rem; letter-spacing: 0.01em;
+  color: var(--ol-ochre); font-variant-numeric: tabular-nums;
+}
+/* Le repère de nivellement : un triangle, pointe en bas sous le niveau de la mer. */
+.ol-alt__v::before {
+  content: ''; width: 0.62rem; height: 0.55rem; flex: none; align-self: center;
+  background: currentColor; clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+#afar .ol-alt__v::before { clip-path: polygon(0 0, 100% 0, 50% 100%); }
+body[data-page='locations'] .loc__note { color: var(--cream-2); max-width: 30ch; }
+body[data-page='locations'] .loc__credit {
+  display: inline-flex; align-items: center; gap: 0.5rem; margin-top: var(--s-4);
+  padding: 0.35rem 0.6rem; border: 1px solid var(--line); border-radius: 2px;
+  color: var(--cream-3); font-size: 0.6875rem; letter-spacing: 0.06em;
+}
+body[data-page='locations'] .loc__credit::before {
+  content: ''; width: 0.5rem; height: 0.5rem; flex: none; border-radius: 50%;
+  border: 1px solid var(--ol-sage);
+}
+
+/* ── Les traits de relief entre les fiches ── */
+.ol-div {
+  position: absolute; left: 0; right: 0; top: 0.4rem; height: 2.9rem;
+  display: flex; align-items: center; gap: 0.9rem; pointer-events: none;
+}
+.ol-div__n {
+  flex: none; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em;
+  color: var(--cream-3); font-variant-numeric: tabular-nums; transition: color 0.4s;
+}
+.ol-div__n small { font-size: inherit; color: color-mix(in srgb, var(--cream-3) 60%, transparent); }
+.loc__i.is-cur .ol-div__n { color: var(--dv-lt); }
+.ol-div__s { flex: 1; min-width: 0; height: 100%; display: block; overflow: hidden; }
+.ol-div__s .b  { fill: none; stroke: var(--ol-contour); stroke-width: 1; stroke-linejoin: round; stroke-linecap: round; }
+.ol-div__s .b2 { fill: none; stroke: var(--ol-contour-2); stroke-width: 1; }
+.ol-div__s .hi { fill: none; stroke: var(--dv-lt); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ol-div__s .oc { fill: none; stroke: var(--ol-ochre); stroke-width: 1.1; stroke-linecap: round; }
+.ol-div__s .dot { fill: var(--ol-ochre); }
+.ol-div__s .lava { fill: var(--dv); }
+.ol-div__s .ring { fill: none; stroke: var(--dv-lt); stroke-width: 1; transform-box: fill-box; transform-origin: center; }
+/* Chaque trait a sa vie. */
+.ol-div__s .run   { stroke-dasharray: 34 966; animation: ol-run 7s linear infinite; }
+.ol-div__s .run--lava { stroke: var(--dv); stroke-width: 2.2; stroke-dasharray: 60 940; animation-duration: 4.8s; }
+.ol-div__s .march { stroke-dasharray: 8 12; animation: ol-march 2.4s linear infinite; }
+.ol-div__s .lane  { stroke-dasharray: 14 10; animation: ol-march 1.6s linear infinite reverse; }
+.ol-div__s .road  { stroke-dasharray: 5 7; animation: ol-march 1.2s linear infinite; }
+.ol-div__s .draw  { stroke-dasharray: 1000 1000; animation: ol-draw 10s var(--e-inout) infinite; }
+.ol-div__s .wave  { animation: ol-slide var(--d, 9s) linear infinite; }
+.ol-div__s .crat  { transform-box: fill-box; transform-origin: center; animation: ol-breathe 4.2s ease-in-out infinite; }
+.ol-div__s .crat:nth-of-type(2) { animation-delay: -1.4s; }
+.ol-div__s .crat:nth-of-type(3) { animation-delay: -2.8s; }
+.ol-div__s .walk  { animation: ol-walk 46s linear infinite; }
+.ol-div__s .flick { animation: ol-flick 2.2s ease-in-out infinite; }
+.ol-div__s .ping  { animation: ol-ping 2.6s var(--e-out) infinite; }
+.ol-div__s .bear  { animation: ol-bear 7s var(--e-inout) infinite alternate; }
+.ol-div__s .spin  { transform-box: fill-box; transform-origin: center; animation: ol-spin 16s linear infinite; }
+/* L'entrée : le trait se déroule depuis la gauche. */
+.ol-div__s > g.all { transform-origin: 0 50%; }
+
+/* ═══════════════════ L'APPEL : LA ZONE BLANCHE DE LA CARTE ═══════════════════ */
+body[data-page='locations'] .locs__cta {
+  position: relative; isolation: isolate; overflow: hidden;
+  margin-top: var(--s-8); border-top: 0;
+  padding-top: clamp(4.5rem, 8vw, 6.5rem);
+}
+.ol-cta__map { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.ol-cta__map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ol-cta__map .c  { fill: none; stroke: var(--ol-contour-2); stroke-width: 1; }
+.ol-cta__map .c2 { fill: none; stroke: var(--ol-contour); stroke-width: 1; }
+.ol-cta__map .route { fill: none; stroke: var(--ol-ochre); stroke-width: 1.2; stroke-dasharray: 2 6; stroke-linecap: round; animation: ol-march 3s linear infinite; }
+.ol-cta__map .zone { fill: none; stroke: var(--dv-lt); stroke-width: 1.2; stroke-dasharray: 6 8; transform-box: fill-box; transform-origin: center; animation: ol-spin 30s linear infinite; }
+.ol-cta__map .zone2 { fill: color-mix(in srgb, var(--dv) 7%, transparent); stroke: none; transform-box: fill-box; transform-origin: center; animation: ol-breathe 5s ease-in-out infinite; }
+.ol-cta__map .base { fill: var(--ol-ochre); }
+.ol-cta__map .ping { fill: none; stroke: var(--ol-ochre); stroke-width: 1; transform-box: fill-box; transform-origin: center; animation: ol-ping 3s var(--e-out) infinite; }
+.ol-cta__map .q { font-family: var(--ff-p); font-size: 30px; fill: var(--dv-lt); font-variation-settings: 'opsz' 72, 'wght' 400; }
+.ol-cta__map .pin { animation: ol-bob 3.2s ease-in-out infinite; }
+.ol-cta__map .lab { font-family: var(--ff-m); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; fill: var(--cream-3); }
+/* Le texte reste lisible sur la carte. */
+.ol-cta__map::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(48% 60% at 50% 56%, var(--bg) 30%, color-mix(in srgb, var(--bg) 55%, transparent) 62%, transparent 100%);
+}
+body[data-page='locations'] .locs__q, body[data-page='locations'] .locs__a { position: relative; }
+body[data-page='locations'] .locs__cta .ol-div { left: var(--pad-x); right: var(--pad-x); top: 1rem; }
+
+/* ═══════════════════ LE PIED DE PAGE ═══════════════════
+   Une courbe de niveau qui dérive en tête, l'ocre et la terre cuite au
+   fond, et « STUDIO » dans la terre cuite. */
+body[data-page='locations'] .ftr {
+  border-top-color: transparent;
+  overflow-x: clip;
+  background-image:
+    radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--dv) 9%, transparent), transparent 70%),
+    radial-gradient(40% 30% at 85% 0%, color-mix(in srgb, var(--ol-ochre) 6%, transparent), transparent 70%);
+}
+body[data-page='locations'] .ftr::before {
+  content: ''; position: absolute; top: -11px; left: 0; width: calc(100% + 240px); height: 22px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='22'%3E%3Cpath d='M0 11 C40 3 80 3 120 11 S200 19 240 11' fill='none' stroke='%2393a679' stroke-opacity='.55' stroke-width='1'/%3E%3Cpath d='M0 15 C40 9 80 8 120 15 S200 21 240 15' fill='none' stroke='%2393a679' stroke-opacity='.25' stroke-width='1'/%3E%3Cpath d='M0 7 C40 0 80 -1 120 7 S200 14 240 7' fill='none' stroke='%23dd6b3b' stroke-opacity='.35' stroke-width='1'/%3E%3C/svg%3E") repeat-x 0 0 / 240px 22px;
+  animation: ol-slide 16s linear infinite;
+  --p: 240px;
+}
+body[data-page='locations'] .ftr__wl .ln--b { color: var(--dv); }
+
+/* ═══════════════════ TABLETTE ET TÉLÉPHONE ═══════════════════ */
+@media (max-width: 72rem) {
+  .ol-prof__n { font-size: 0.8125rem; }
+}
+@media (max-width: 56rem) {
+  .ol-prof__list a { padding-inline: 0.15rem; }
+  .ol-prof__n { font-size: 0.75rem; }
+}
+@media (max-width: 48rem) {
+  body[data-page='locations'] .ol-hero { padding-bottom: var(--s-4); }
+  .ol-topo::after {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--bg) 50%, transparent) 0%, color-mix(in srgb, var(--bg) 66%, transparent) 45%, var(--bg) 66%);
+  }
+  .ol-prof { margin-top: var(--s-6); }
+  .ol-prof__chart { height: 6.25rem; }
+  .ol-prof__list { grid-template-columns: 1fr 1fr; column-gap: 1.1rem; border-top: 1px solid var(--line); }
+  .ol-prof__list a {
+    flex-direction: row; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+    min-height: 2.75rem; padding: 0.7rem 0 0.55rem; text-align: left;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .ol-prof__list a::before { display: none; }
+  .ol-prof__list a::after { left: 0; margin-left: 0; }
+  .ol-prof__n { font-size: 0.8125rem; }
+  .ol-prof__a { white-space: nowrap; }
+
+  body[data-page='locations'] .ol-atlas .loc__i { padding-top: 3.9rem; row-gap: var(--s-4); }
+  .ol-div { top: 0.2rem; }
+  .ol-vf__c { width: 1.05rem; height: 1.05rem; }
+  .ol-vf__c--tl, .ol-vf__c--tr { top: 0.6rem; } .ol-vf__c--bl, .ol-vf__c--br { bottom: 0.6rem; }
+  .ol-vf__c--tl, .ol-vf__c--bl { left: 0.6rem; } .ol-vf__c--tr, .ol-vf__c--br { right: 0.6rem; }
+  .ol-vf__fmt { right: 2.1rem; top: 0.6rem; }
+  /* La fiche : le signe de carte à droite du nom, sur la même ligne. */
+  body[data-page='locations'] .loc__t { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1rem; align-items: start; }
+  body[data-page='locations'] .loc__t > * { grid-column: 1; }
+  body[data-page='locations'] .loc__t > .ol-hill { grid-column: 2; grid-row: 1 / span 2; width: 4.25rem; margin: 0; }
+  body[data-page='locations'] .loc__credit { justify-self: start; }
+  body[data-page='locations'] .locs__cta { margin-top: var(--s-7); padding-top: 9.5rem; }
+}
+
+/* ═══════════════════ MOUVEMENT RÉDUIT ═══════════════════
+   Tout est posé, rien ne bouge : la carte est dessinée une fois, les
+   traits sont tracés, l'altimètre saute d'un lieu à l'autre. */
+@media (prefers-reduced-motion: reduce) {
+  body[data-page='locations'] #main *, body[data-page='locations'] #main *::before, body[data-page='locations'] #main *::after,
+  body[data-page='locations'] .ftr::before { animation: none !important; }
+  .ol-prof__dot { display: none; }
+  .ol-div__s .hi { display: none; }
+  .ol-div__s .walk { transform: translateX(calc(var(--w, 600px) * 0.4)); }
+  .ol-div__s .bear { transform: translateX(calc(var(--w, 600px) * 0.5)); }
+  .ol-topo__c { transition: none; }
+}

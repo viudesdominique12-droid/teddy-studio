@@ -307,9 +307,10 @@ html.is-locked .logo__bar { background: var(--basalt); }
 }
 .ftr__top {
   display: grid; gap: var(--s-7);
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 1fr);
   max-width: var(--maxw); margin-inline: auto;
 }
+.ftr__nav--svc ul { columns: 1; }
 @media (max-width: 60rem) { .ftr__top { grid-template-columns: 1fr 1fr; } .ftr__brand { grid-column: 1 / -1; } }
 @media (max-width: 34rem) { .ftr__top { grid-template-columns: 1fr; } }
 

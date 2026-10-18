@@ -11,6 +11,7 @@ import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js'
 import { initSheet } from './sheet.js';
 import { initWipe } from './wipe.js';
 import { applyPalette } from './palette.js';
+import { initBookDesk } from './pages/book-desk.js';
 
 const form = document.getElementById('bk-form');
 const rail = document.getElementById('rail');
@@ -180,6 +181,9 @@ form?.addEventListener('submit', (ev) => {
 
   note.textContent = 'Your request is ready. Opening your mail app so it reaches us directly.';
   window.setTimeout(() => {
+    // Jamais de messagerie ouverte par un navigateur de test (18/10 : des
+    // dizaines de brouillons avaient bloqué le Mac de Dominique).
+    if (navigator.webdriver) return;
     window.location.href =
       `mailto:info@ethiopianfilmoffice.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }, 420);
@@ -203,5 +207,8 @@ markReveals('.sec__h', 'lines');
 markMagnets('.btn--gold, .bar__cta', 26);
 initReveals();
 initMagnets();
+
+// Le bureau des autorisations : le tampon, la fiche, les cadrans (visuel seul).
+initBookDesk(form);
 
 applyPalette();

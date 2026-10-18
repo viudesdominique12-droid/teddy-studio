@@ -6,35 +6,62 @@
   <meta name="description" content="Tell us what you are shooting in Ethiopia. Dates, locations, services and kit — we come back with a named team and a quote.">
   <meta name="robots" content="index,follow">
   <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/pages/book.css">
 </head>
-<body class="page page--book">
+<body class="page page--book" data-page="book">
 
 <!--#include "bar" -->
 
 <main id="main">
   <section class="bk" aria-labelledby="bk-h">
 
+    <!-- Le bureau : la lampe, le sous-main, la trame d'un formulaire -->
+    <div class="bk-desk" aria-hidden="true"><i class="bk-desk__lamp"></i><i class="bk-desk__grid"></i></div>
+
     <header class="bk__head">
-      <p class="eyebrow">Production request</p>
-      <h1 class="sec__h" id="bk-h">Tell us what you&rsquo;re shooting.<br>We&rsquo;ll clear the way.</h1>
-      <p class="sec__lede">Five short steps. Everything here is optional except how to reach you &mdash; send what you have, even if the dates are still soft.</p>
+      <div class="bk__title">
+        <p class="eyebrow">Production request</p>
+        <h1 class="sec__h" id="bk-h">Tell us what you&rsquo;re shooting.<br>We&rsquo;ll clear the way.</h1>
+        <p class="sec__lede">Five short steps. Everything here is optional except how to reach you &mdash; send what you have, even if the dates are still soft.</p>
+      </div>
+
+      <!-- Le tampon dateur du bureau : la vraie date et la vraie heure d'Addis -->
+      <div class="bk-stamp" id="bk-stamp" aria-hidden="true">
+        <div class="bk-stamp__prints"></div>
+        <div class="bk-stamp__ink">
+          <svg class="bk-stamp__svg" viewBox="0 0 220 220">
+            <defs><path id="bk-ring" d="M110,110 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0"/></defs>
+            <circle cx="110" cy="110" r="104" class="bk-stamp__o"/>
+            <circle cx="110" cy="110" r="98" class="bk-stamp__o bk-stamp__o--thin"/>
+            <circle cx="110" cy="110" r="66" class="bk-stamp__o bk-stamp__o--thin"/>
+            <text class="bk-stamp__ring"><textPath href="#bk-ring" startOffset="0">ETHIOPIAN FILM OFFICE &#10022; PRODUCTION DESK &#10022; ADDIS ABABA &#10022;</textPath></text>
+          </svg>
+          <div class="bk-stamp__mid">
+            <span class="bk-stamp__k">Open 24/7</span>
+            <span class="bk-stamp__date" data-bk-date>&nbsp;</span>
+            <span class="bk-stamp__time"><span data-clock>--:--</span></span>
+            <span class="bk-stamp__k">Addis Ababa</span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="bk__rail" aria-hidden="true">
       <ol class="rail" id="rail">
-        <li class="rail__i is-on" data-step="1"><span class="rail__d"></span><span class="rail__t">Project</span></li>
-        <li class="rail__i" data-step="2"><span class="rail__d"></span><span class="rail__t">Dates</span></li>
-        <li class="rail__i" data-step="3"><span class="rail__d"></span><span class="rail__t">Locations</span></li>
-        <li class="rail__i" data-step="4"><span class="rail__d"></span><span class="rail__t">Needs</span></li>
-        <li class="rail__i" data-step="5"><span class="rail__d"></span><span class="rail__t">You</span></li>
+        <li class="rail__i is-on" data-step="1"><span class="rail__n">01</span><span class="rail__d"></span><span class="rail__t">Project</span></li>
+        <li class="rail__i" data-step="2"><span class="rail__n">02</span><span class="rail__d"></span><span class="rail__t">Dates</span></li>
+        <li class="rail__i" data-step="3"><span class="rail__n">03</span><span class="rail__d"></span><span class="rail__t">Locations</span></li>
+        <li class="rail__i" data-step="4"><span class="rail__n">04</span><span class="rail__d"></span><span class="rail__t">Needs</span></li>
+        <li class="rail__i" data-step="5"><span class="rail__n">05</span><span class="rail__d"></span><span class="rail__t">You</span></li>
       </ol>
+      <span class="rail__line"><i class="rail__perf"></i><i class="rail__fill"></i></span>
     </div>
 
     <form class="bk__form" id="bk-form" novalidate>
 
       <!-- 1 ─ PROJECT ───────────────────────────────── -->
       <fieldset class="step" data-step="1">
-        <legend class="step__h"><span class="step__k mono">Project</span> What are you making?</legend>
+        <legend class="step__h"><span class="step__no" aria-hidden="true">01</span><span class="step__k mono">Project</span> What are you making?<span class="step__box" aria-hidden="true"><span class="step__use">Office use</span><span class="step__stamp">Cleared</span></span><span class="step__rule step__rule--carriage" aria-hidden="true"><i></i></span></legend>
         <div class="chips" role="radiogroup" aria-label="Project type">
           <label class="chip"><input type="radio" name="project" value="Commercial"><span>Commercial</span></label>
           <label class="chip"><input type="radio" name="project" value="Feature film"><span>Feature film</span></label>
@@ -51,7 +78,7 @@
 
       <!-- 2 ─ DATES ─────────────────────────────────── -->
       <fieldset class="step" data-step="2">
-        <legend class="step__h"><span class="step__k mono">Dates</span> When would you shoot?</legend>
+        <legend class="step__h"><span class="step__no" aria-hidden="true">02</span><span class="step__k mono">Dates</span> When would you shoot?<span class="step__box" aria-hidden="true"><span class="step__use">Office use</span><span class="step__stamp">Cleared</span></span><span class="step__rule step__rule--ruler" aria-hidden="true"><i></i></span></legend>
         <div class="form__row">
           <p class="field"><label for="bk-from">First shooting day</label><input id="bk-from" name="from" type="date"></p>
           <p class="field"><label for="bk-to">Last shooting day</label><input id="bk-to" name="to" type="date"></p>
@@ -62,11 +89,12 @@
           <label class="chip"><input type="radio" name="firm" value="Still exploring"><span>Still exploring</span></label>
         </div>
         <p class="step__note" id="days-note" aria-live="polite"></p>
+        <div class="bk-days" id="bk-days" aria-hidden="true"></div>
       </fieldset>
 
       <!-- 3 ─ LOCATIONS ─────────────────────────────── -->
       <fieldset class="step" data-step="3">
-        <legend class="step__h"><span class="step__k mono">Locations</span> Anywhere in mind?</legend>
+        <legend class="step__h"><span class="step__no" aria-hidden="true">03</span><span class="step__k mono">Locations</span> Anywhere in mind?<span class="step__box" aria-hidden="true"><span class="step__use">Office use</span><span class="step__stamp">Cleared</span></span><span class="step__rule step__rule--route" aria-hidden="true"><i></i></span></legend>
         <p class="step__sub step__sub--say">These are the nine we work in most. Tick what interests you &mdash; or leave it blank and we&rsquo;ll propose.</p>
         <div class="chips chips--loc">
           <label class="chip"><input type="checkbox" name="loc" value="Simien Mountains"><span>Simien Mountains</span></label>
@@ -83,7 +111,7 @@
 
       <!-- 4 ─ NEEDS ─────────────────────────────────── -->
       <fieldset class="step" data-step="4">
-        <legend class="step__h"><span class="step__k mono">Needs</span> What should we handle?</legend>
+        <legend class="step__h"><span class="step__no" aria-hidden="true">04</span><span class="step__k mono">Needs</span> What should we handle?<span class="step__box" aria-hidden="true"><span class="step__use">Office use</span><span class="step__stamp">Cleared</span></span><span class="step__rule step__rule--checks" aria-hidden="true"><i></i></span></legend>
 
         <p class="step__sub">Services</p>
         <div class="chips">
@@ -115,7 +143,7 @@
 
       <!-- 5 ─ YOU ───────────────────────────────────── -->
       <fieldset class="step" data-step="5">
-        <legend class="step__h"><span class="step__k mono">You</span> Where do we reach you?</legend>
+        <legend class="step__h"><span class="step__no" aria-hidden="true">05</span><span class="step__k mono">You</span> Where do we reach you?<span class="step__box" aria-hidden="true"><span class="step__use">Office use</span><span class="step__stamp">Cleared</span></span><span class="step__rule step__rule--sign" aria-hidden="true"><i></i></span></legend>
         <div class="form__row">
           <p class="field"><label for="bk-first">First Name</label><input id="bk-first" name="first_name" type="text" autocomplete="given-name" required></p>
           <p class="field"><label for="bk-last">Last Name</label><input id="bk-last" name="last_name" type="text" autocomplete="family-name" required></p>
@@ -128,7 +156,12 @@
         <p class="field"><label for="bk-msg">Anything else we should know?</label><textarea id="bk-msg" name="message" rows="4"></textarea></p>
 
         <!-- Le détail que personne ne fait dans ce métier : le fuseau traduit -->
-        <div class="callslot">
+        <div class="callslot" data-bk-live>
+          <div class="clocks" aria-hidden="true">
+            <figure class="clock" id="clk-you"><span class="clock__face"><i class="clock__h"></i><i class="clock__m"></i><i class="clock__pin"></i></span><figcaption>Your clock</figcaption></figure>
+            <span class="clocks__arrow"></span>
+            <figure class="clock clock--addis" id="clk-addis"><span class="clock__face"><i class="clock__h"></i><i class="clock__m"></i><i class="clock__s"></i><i class="clock__pin"></i></span><figcaption>Addis Ababa</figcaption></figure>
+          </div>
           <p class="callslot__h">Prefer to talk? We&rsquo;re open <span class="go">24/7</span>.</p>
           <p class="field field--inline">
             <label for="bk-call">A good time to call you</label>
@@ -143,8 +176,38 @@
         <p class="hp" aria-hidden="true"><label>Do not fill this<input type="text" name="company_url" tabindex="-1" autocomplete="off"></label></p>
       </fieldset>
 
+      <!-- LA FICHE DE PRODUCTION, tenue à jour pendant la saisie (doublon visuel du formulaire) -->
+      <aside class="bk-slip" id="bk-slip" aria-hidden="true">
+        <div class="slip" data-bk-live>
+          <header class="slip__top">
+            <p class="slip__org">Ethiopian Film Office</p>
+            <p class="slip__t">Production slip</p>
+            <p class="slip__meta"><span data-bk-date>&nbsp;</span><span><span data-clock>--:--</span> Addis</span></p>
+          </header>
+          <div class="slip__rows">
+            <div class="slip__r" data-s="1"><span class="slip__k"><i>01</i>Project</span><span class="slip__v" data-f="project"></span></div>
+            <div class="slip__r" data-s="1"><span class="slip__k">Title</span><span class="slip__v" data-f="title"></span></div>
+            <div class="slip__r" data-s="2"><span class="slip__k"><i>02</i>Dates</span><span class="slip__v" data-f="dates"></span></div>
+            <div class="slip__r" data-s="3"><span class="slip__k"><i>03</i>Locations</span><span class="slip__v" data-f="loc"></span></div>
+            <div class="slip__r" data-s="4"><span class="slip__k"><i>04</i>Services</span><span class="slip__v" data-f="svc"></span></div>
+            <div class="slip__r" data-s="4"><span class="slip__k">Kit</span><span class="slip__v" data-f="kit"></span></div>
+            <div class="slip__r" data-s="4"><span class="slip__k">Crew</span><span class="slip__v" data-f="crew"></span></div>
+            <div class="slip__r" data-s="5"><span class="slip__k"><i>05</i>Contact</span><span class="slip__v" data-f="contact"></span></div>
+            <div class="slip__r" data-s="5"><span class="slip__k">Call at</span><span class="slip__v" data-f="call"></span></div>
+          </div>
+          <div class="slip__foot">
+            <ol class="slip__boxes">
+              <li data-s="1"><span>01</span></li><li data-s="2"><span>02</span></li><li data-s="3"><span>03</span></li><li data-s="4"><span>04</span></li><li data-s="5"><span>05</span></li>
+            </ol>
+            <p class="slip__count"><b data-bk-done>0</b>/5 cleared</p>
+          </div>
+          <p class="slip__ready"><span>Ready</span></p>
+        </div>
+      </aside>
+
       <!-- SYNTHÈSE ──────────────────────────────────── -->
       <div class="bk__end">
+        <span class="bk__perf" aria-hidden="true"><i></i></span>
         <div class="summary" id="summary" hidden>
           <h2 class="summary__h">Your request</h2>
           <dl class="summary__dl" id="summary-dl"></dl>
@@ -171,7 +234,7 @@
   </button>
   <div class="dock__body" id="dock-body" hidden>
     <ol class="dock__log mono" id="dock-log"></ol>
-    <a class="dock__go" href="/#contact"><span class="mono">Open the sheet</span></a>
+    <a class="dock__go" href="/contact.html#inquiry"><span class="mono">Open the sheet</span></a>
   </div>
 </aside>
 

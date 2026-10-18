@@ -1,0 +1,958 @@
+/* ══════════════════════════════════════════════════════════════
+   CONTACT — l'accueil du studio, le signal (17/10/2026, refait le 18/10)
+   L'appel du brief en grand et l'horloge de régie à l'heure d'Addis ; puis
+   le comptoir d'accueil (la fiche d'accueil et sa fiche de routage), le
+   standard téléphonique (sept lignes, une par division) et la carte du
+   lieu. Dominique, 18/10 : « améliore-moi les autres pages avec la même
+   logique de customisation de thème » — la page a sa couleur, sur son
+   contenu et son pied de page seulement.
+
+   LA COULEUR : le vert du standard, plus profond et plus froid que le vert
+   de la marque (un vert bouteille), et la lumière du signal en terre cuite.
+   Le papier de la fiche de routage : un crème chaud, imprimé à l'encre
+   terre cuite foncée.
+     texte crème #efe8de   14,05:1 sur #0e1f19
+     crème-2     #bdb6aa    8,49:1
+     crème-3     #9d968b    5,83:1 (4,81:1 sur #16302a)
+     signal      #ec6a3c    5,45:1 (grands textes, voyants)
+     signal clair #ff9c6f   8,33:1
+     encre / papier #2a1a12 sur #f4ede3 : 14,40:1 · encre rouge #a33d19 : 5,58:1
+   ══════════════════════════════════════════════════════════════ */
+
+body[data-page='contact'] #main,
+body[data-page='contact'] .ftr {
+  --dv: #ec6a3c; --dv-lt: #ff9c6f; --dv-dp: #b9481f; --dv-ink: #1a0c06;
+  --night: #0e1f19; --night-2: #09150f; --night-3: #16302a;
+  --cream: #efe8de; --cream-2: #bdb6aa; --cream-3: #9d968b;
+  --line: #efe8de29; --line-2: #efe8de17; --line-ui: #efe8de6b;
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --gold: var(--dv); --gold-lt: var(--dv-lt); --gold-dp: var(--dv-dp);
+  --go: var(--dv); --go-text: var(--dv-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --on-go: var(--dv-ink);
+  --g-300: var(--dv-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  /* Le papier de la fiche de routage. */
+  --slip: #f4ede3; --slip-2: #ece2d3; --slip-ink: #2a1a12; --slip-ink-2: #5e4a3e; --slip-ink-3: #74604f; --slip-red: #a33d19;
+  color-scheme: dark;
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+/* Le pied de page prend la couleur de la page : un filet de signal qui se
+   trace et se retire, et « STUDIO » dans la lumière du signal. */
+body[data-page='contact'] .ftr {
+  border-top-color: color-mix(in srgb, var(--dv) 30%, transparent);
+  background-image: radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--dv) 9%, transparent), transparent 70%);
+}
+body[data-page='contact'] .ftr::before {
+  content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--dv) 18%, var(--dv-lt) 50%, var(--dv) 82%, transparent);
+  transform: scaleX(0); transform-origin: 0 50%;
+  animation: ct-draw 8s var(--e-inout) infinite paused;
+}
+body[data-page='contact'] .ftr.is-live::before { animation-play-state: running; }
+body[data-page='contact'] .ftr__wl .ln--b { color: var(--dv); }
+@keyframes ct-draw {
+  0% { transform: scaleX(0); transform-origin: 0 50%; }
+  42% { transform: scaleX(1); transform-origin: 0 50%; }
+  58% { transform: scaleX(1); transform-origin: 100% 50%; }
+  100% { transform: scaleX(0); transform-origin: 100% 50%; }
+}
+
+/* ═══════════════════ L'OUVERTURE ═══════════════════ */
+.ct-hero { min-height: min(100svh, 58rem); justify-content: center; padding-bottom: calc(var(--s-7) + 3.5rem); }
+.ct-hero__in {
+  width: 100%;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-7) var(--s-8);
+}
+.ct-h1 { max-width: 10ch; font-size: clamp(3rem, 0.8rem + 6.6vw, 8.5rem); }
+.ct-hero__txt .dv-lede { max-width: 32rem; margin-top: var(--s-6); }
+
+/* La lumière qui se lève : un seul dégradé, animé en transformation. */
+.ct-sun {
+  position: absolute; right: -12vw; bottom: -38vh; width: 82vw; height: 82vw; max-width: 72rem; max-height: 72rem;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 30%, transparent), color-mix(in srgb, var(--dv) 8%, transparent) 55%, transparent 100%);
+  transform: translateY(14%) scale(0.92);
+  animation: ct-rise 2.6s var(--e-out) 0.2s forwards, ct-breathe 11s var(--e-inout) 2.8s infinite alternate;
+}
+@keyframes ct-rise { to { transform: translateY(0) scale(1); } }
+@keyframes ct-breathe { from { transform: translateY(0) scale(1); } to { transform: translateY(-3%) scale(1.05); } }
+.ct-hero.is-off .ct-sun, .ct-hero.is-off .ct-colon { animation-play-state: paused; }
+
+/* Le signal : la ligne du bas de l'ouverture (canevas, contact-signal.js). */
+.ct-trace {
+  position: absolute; left: 0; bottom: 0.4rem; z-index: -1;
+  display: block; width: 100%; height: 4.5rem; pointer-events: none;
+}
+
+/* ── L'horloge de studio ── */
+.ct-clock { --d: clamp(15rem, 10rem + 13vw, 27rem); display: grid; justify-items: center; gap: var(--s-4); }
+.ct-clock__dial { position: relative; width: var(--d); height: var(--d); touch-action: manipulation; }
+.ct-clock__ring { position: absolute; inset: 0; }
+/* Les anneaux qui sortent du cadran : toutes les cinq secondes, et à chaque
+   clic ou appui sur l'horloge. */
+.ct-ping {
+  position: absolute; inset: 3%; border-radius: 50%; pointer-events: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 75%, transparent), 0 0 1.4rem color-mix(in srgb, var(--dv) 18%, transparent);
+  opacity: 0;
+}
+.ct-dot {
+  position: absolute; left: 50%; top: 50%; width: 0.36rem; height: 0.36rem; margin: -0.18rem 0 0 -0.18rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--fg) 14%, transparent);
+  transform: rotate(calc(var(--i) * 6deg)) translateY(calc(var(--d) * -0.43));
+  transition: background-color 0.35s linear, box-shadow 0.35s linear;
+}
+.ct-dot.is-on { background: var(--dv); }
+.ct-dot.is-now { background: var(--dv); box-shadow: 0 0 0.6rem 0.12rem color-mix(in srgb, var(--dv) 70%, transparent); }
+.ct-clock.is-reset .ct-dot { transition-duration: 0.6s; }
+/* Les douze repères des heures, à l'extérieur, toujours allumés. */
+.ct-mark {
+  position: absolute; left: 50%; top: 50%; width: 0.5rem; height: 0.5rem; margin: -0.25rem 0 0 -0.25rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--fg) 58%, transparent);
+  transform: rotate(calc(var(--i) * 30deg)) translateY(calc(var(--d) * -0.49));
+}
+.ct-mark:first-child { background: var(--dv); }
+
+.ct-clock__face {
+  position: absolute; inset: 18%; border-radius: 50%;
+  display: grid; place-content: center; justify-items: center; gap: 0.2rem;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--fg) 5%, transparent), transparent 70%);
+}
+.ct-clock__city, .ct-clock__tz {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
+}
+.ct-clock__city { color: var(--cream-2); }
+.ct-clock__hm {
+  display: inline-flex; align-items: baseline;
+  font-family: var(--ff-p); font-size: calc(var(--d) * 0.215); line-height: 1; letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--fg);
+}
+.ct-clock__s {
+  display: inline-flex;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: calc(var(--d) * 0.05); letter-spacing: 0.08em; line-height: 1;
+  font-variant-numeric: tabular-nums; color: var(--dv);
+}
+/* Les chiffres qui roulent : une colonne par chiffre, dans un masque. */
+.ct-col { display: inline-block; height: 1em; overflow: hidden; line-height: 1; }
+.ct-col__s { display: flex; flex-direction: column; will-change: transform; }
+.ct-col__s > span { display: block; height: 1em; text-align: center; }
+.ct-colon { display: inline-block; padding-inline: 0.04em; transform: translateY(-0.06em); color: var(--dv); animation: ct-blink 2s steps(1) infinite; }
+@keyframes ct-blink { 50% { opacity: 0.35; } }
+
+.ct-clock__cap {
+  display: grid; justify-items: center; gap: 0.4rem; text-align: center;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+}
+.ct-clock__cap > span:first-child { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--fg); }
+.ct-clock__cap [data-local] span { white-space: nowrap; }
+.ct-clock__cap .ct-dt::before { content: '· '; }
+@media (max-width: 60rem) {
+  .ct-clock__cap [data-local] span { display: block; }
+  .ct-clock__cap .ct-dt::before { content: none; }
+}
+.ct-live { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--dv); box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--dv) 22%, transparent); }
+
+@media (max-width: 60rem) {
+  .ct-hero { min-height: 0; justify-content: flex-start; padding-top: calc(var(--bar-h) + var(--s-5)); padding-bottom: calc(var(--s-7) + 2.5rem); }
+  .ct-hero__in { grid-template-columns: 1fr; gap: var(--s-5); }
+  .ct-clock { order: -1; justify-self: center; --d: clamp(13.5rem, 62vw, 19rem); }
+  .ct-sun { right: -50vw; bottom: auto; top: -20vw; width: 150vw; height: 150vw; }
+  .ct-trace { height: 3.5rem; bottom: 0.2rem; }
+}
+@media (max-width: 30rem) {
+  .ct-hero__txt .dv-acts { gap: 0.6rem; }
+  .ct-hero__txt .dv-btn--xl { padding: 1rem 1.3rem 1rem 1.45rem; }
+}
+
+/* ═══════════════════ LE COMPTOIR D'ACCUEIL ═══════════════════
+   La demande générale, posée sur le comptoir : la fiche d'accueil à gauche
+   (quatre blocs numérotés), la fiche de routage à droite, qui se compose à
+   mesure et porte le bouton d'envoi (contact-desk.js). Au mur, les trous
+   d'un tableau de standard ; une lampe chaude au-dessus de la fiche. */
+.ct-ask { padding-top: var(--s-8); isolation: isolate; overflow-x: clip; }
+.ct-ask::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(42rem 34rem at 82% 46%, color-mix(in srgb, var(--dv) 9%, transparent), transparent 70%),
+    radial-gradient(circle, color-mix(in srgb, var(--cream) 7%, transparent) 0.09rem, transparent 0.11rem) 0 0 / 1.6rem 1.6rem;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 70%, transparent);
+          mask-image: linear-gradient(180deg, transparent, #000 18%, #000 70%, transparent);
+}
+
+.ct-desk__head {
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: end; gap: var(--s-6) var(--s-8);
+  margin-bottom: var(--s-8);
+}
+.ct-desk__intro { display: grid; gap: var(--s-5); justify-items: start; }
+.ct-desk__intro .dv-k { margin-bottom: 0; }
+.ct-reach { scroll-margin-top: calc(var(--bar-h) + 2rem); }
+.ct-reach .dv-reach { margin-top: 0; border-top-color: var(--line); }
+/* Les trois lignes directes : chacune a son voyant, qui s'allume tour à
+   tour, doucement (les lignes sont ouvertes), et franchement au survol. */
+.ct-reach .dv-reach a { grid-template-columns: 0.55rem 6rem minmax(0, 1fr) auto; border-bottom-color: var(--line); }
+.ct-reach .dv-reach a::before {
+  content: ''; width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--dv) 30%, transparent);
+  transition: background-color 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
+  animation: ct-line-ring 7.5s var(--e-inout) infinite paused;
+}
+.ct-reach .dv-reach a:nth-child(2)::before { animation-delay: 2.5s; }
+.ct-reach .dv-reach a:nth-child(3)::before { animation-delay: 5s; }
+.is-live .ct-reach .dv-reach a::before { animation-play-state: running; }
+.ct-reach .dv-reach a:is(:hover, :focus-visible)::before { animation: none; background: var(--dv); box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--dv) 25%, transparent), 0 0 0.8rem color-mix(in srgb, var(--dv) 70%, transparent); }
+.ct-reach .dv-reach a > span:first-child { color: var(--cream-2); }
+.ct-reach .dv-reach a:hover { color: var(--dv-lt); }
+.ct-reach .dv-reach a:hover::after { color: var(--dv-lt); }
+@keyframes ct-line-ring {
+  0%, 18%, 100% { background: color-mix(in srgb, var(--dv) 30%, transparent); box-shadow: none; }
+  6%, 12% { background: var(--dv); box-shadow: 0 0 0.7rem color-mix(in srgb, var(--dv) 60%, transparent); }
+  9% { background: color-mix(in srgb, var(--dv) 50%, transparent); box-shadow: none; }
+}
+.ct-reach .ct-office { margin-top: var(--s-4); }
+.ct-narrow { display: none; }
+.ct-office { display: grid; margin-top: var(--s-2); }
+.ct-office > div {
+  display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--s-4); align-items: baseline;
+  padding-block: 0.85rem; border-bottom: 1px solid var(--line-2);
+}
+.ct-office dt { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3); }
+.ct-office dd { color: var(--fg); line-height: 1.45; font-size: var(--fs-sm); }
+.ct-office sup { font-size: 0.7em; }
+@media (max-width: 60rem) {
+  .ct-desk__head { grid-template-columns: 1fr; margin-bottom: var(--s-6); }
+  .ct-wide { display: none; }
+  .ct-narrow { display: block; margin-top: var(--s-7); }
+  .ct-narrow .dv-k { margin-bottom: var(--s-3); }
+}
+
+/* ── Le comptoir : la fiche et la fiche de routage ── */
+@property --pick { syntax: '<color>'; inherits: true; initial-value: #ec6a3c; }
+.ct-desk { position: relative; --pick: var(--dv); transition: --pick 0.9s var(--e-out); }
+/* La lampe au-dessus de la fiche de routage prend la couleur de la dernière
+   division choisie. */
+.ct-desk::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  right: -6%; top: -8%; width: 52%; height: 80%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--pick) 16%, transparent), transparent);
+}
+.ct-intake { position: relative; }
+.ct-intake:not(.is-sent) {
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7); align-items: start;
+}
+.ct-intake.is-sent { display: none; }
+
+/* La fiche d'accueil : une carte relevée, avec sa barre de signal en tête. */
+.ct-card {
+  position: relative; isolation: isolate; min-width: 0;
+  display: grid; gap: var(--s-6);
+  padding: var(--s-6) var(--s-6) var(--s-6);
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--night-3) 80%, var(--night)) 0%, color-mix(in srgb, var(--night-3) 30%, var(--night)) 100%);
+  box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 color-mix(in srgb, var(--cream) 8%, transparent), 0 40px 80px -50px rgb(0 0 0 / 0.75);
+}
+/* La barre de signal : les couleurs des divisions choisies, ou la terre cuite
+   par défaut ; un reflet la parcourt sans cesse. */
+.ct-card__bar {
+  position: absolute; top: 0; left: 1.25rem; right: 1.25rem; height: 3px; overflow: hidden;
+  display: flex; gap: 2px; border-radius: 0 0 3px 3px;
+  background: color-mix(in srgb, var(--cream) 8%, transparent);
+}
+.ct-card__bar > * { flex: 1 1 0; background: var(--c, var(--dv)); transform-origin: 0 50%; }
+.ct-card__bar.has-pick .ct-card__seg { display: none; }
+.ct-card__bar::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 22%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.75), transparent);
+  transform: translateX(-100%);
+  animation: ct-glint 5.5s var(--e-inout) infinite paused;
+}
+.is-live .ct-card__bar::after { animation-play-state: running; }
+@keyframes ct-glint { 0% { transform: translateX(-100%); } 55%, 100% { transform: translateX(460%); } }
+
+.ct-card__top {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.4rem 1rem; margin: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums; color: var(--cream-3);
+}
+
+/* Les blocs : un numéro, un titre court, un filet de télex qui défile, et
+   le voyant qui s'allume quand le bloc est rempli. */
+.ct-blk { position: relative; display: grid; gap: var(--s-4); min-width: 0; }
+.ct-blk__h {
+  display: flex; align-items: center; gap: 0.85rem; margin: 0;
+  font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.05; letter-spacing: -0.01em;
+  font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; color: var(--fg);
+}
+.ct-blk__n {
+  display: grid; place-items: center; flex: none; width: 2.2rem; height: 2.2rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line-ui);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-variation-settings: normal; letter-spacing: 0.04em;
+  color: var(--dv-lt);
+  transition: background-color 0.5s var(--e-out), color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.ct-blk__t { flex: none; }
+.ct-blk__rule { position: relative; flex: 1 1 2rem; min-width: 1.5rem; height: 2px; overflow: hidden; }
+.ct-blk__rule::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -8px; right: 0;
+  background: radial-gradient(circle at 1px 1px, var(--line-ui) 0.9px, transparent 1.2px) 0 0 / 8px 2px repeat-x;
+  animation: ct-march8 1.6s linear infinite paused;
+}
+.ct-blk__rule::after {
+  content: ''; position: absolute; inset: 0; background: var(--dv);
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.9s var(--e-out);
+}
+.is-live .ct-blk__rule::before { animation-play-state: running; }
+.ct-blk.is-done .ct-blk__rule::after { transform: none; }
+@keyframes ct-march8 { to { transform: translateX(8px); } }
+.ct-blk__ok {
+  flex: none; width: 0.6rem; height: 0.6rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--line-ui);
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.ct-blk.is-done .ct-blk__n { background: var(--dv); color: var(--dv-ink); box-shadow: none; }
+.ct-blk.is-done .ct-blk__ok { background: var(--dv); box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--dv) 22%, transparent), 0 0 0.7rem color-mix(in srgb, var(--dv) 60%, transparent); }
+
+.ct-blk__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
+.ct-blk__grid--how { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: end; }
+
+/* Les intitulés et les champs : de l'écriture claire, un filet en pied qui
+   s'allume au focus. */
+.ct-intake .field { margin: 0; }
+.ct-intake .dv-group { margin: 0; }
+.ct-intake .field label, .ct-intake .dv-group > legend {
+  display: block; margin: 0 0 0.6rem; padding: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; line-height: 1.35;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
+}
+.ct-intake .field__opt { text-transform: none; letter-spacing: 0; opacity: 1; color: var(--cream-3); }
+.ct-intake .field :is(input, textarea) {
+  width: 100%; min-height: 3.2rem; padding: 0.8rem 0.95rem; border-radius: 0.55rem 0.55rem 0.15rem 0.15rem;
+  background-color: color-mix(in srgb, var(--cream) 5%, transparent);
+  border: 0; border-bottom: 1px solid var(--line-ui); color: var(--fg);
+  font-family: var(--ff-t); font-size: 1rem; line-height: 1.4;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 7%, transparent);
+  transition: border-color 0.3s var(--e-out), background-color 0.3s var(--e-out), box-shadow 0.3s var(--e-out);
+}
+.ct-intake .field :is(input, textarea)::placeholder { color: var(--cream-3); opacity: 1; }
+.ct-intake .field :is(input, textarea):hover { border-bottom-color: color-mix(in srgb, var(--dv) 70%, var(--line-ui)); }
+.ct-intake .field :is(input, textarea):focus {
+  border-bottom-color: var(--dv); background-color: color-mix(in srgb, var(--dv) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 30%, transparent), 0 2px 0 0 var(--dv);
+}
+.ct-intake .field :is(input, textarea):focus-visible { outline: 2px solid var(--dv); outline-offset: 3px; }
+.ct-intake .field :is(input, textarea):user-valid { border-left: 0; border-bottom-color: color-mix(in srgb, var(--dv) 55%, var(--line-ui)); }
+.ct-intake .field :is(input, textarea):user-invalid { border-left: 0; }
+.ct-intake .field textarea { min-height: 8.5rem; resize: vertical; }
+.ct-intake input[type='date'] { font-variant-numeric: tabular-nums; }
+.ct-intake input[type='date']::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.8; }
+.ct-intake .field.is-err :is(input, textarea) { border-bottom-color: #f2b8b5; background-color: color-mix(in srgb, #f2b8b5 8%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, #f2b8b5 40%, transparent); }
+.ct-intake .field__err {
+  display: flex; align-items: center; gap: 0.45rem; margin-top: 0.55rem;
+  font-family: var(--ff-m); font-size: 0.8125rem; letter-spacing: 0.04em; color: #f2b8b5;
+}
+.ct-intake .field__err::before {
+  content: '!'; display: grid; place-items: center; width: 1.1rem; height: 1.1rem; border-radius: 50%;
+  background: #f2b8b5; color: #2a0f0f; font-weight: 700; font-size: 0.75rem;
+}
+
+/* « De quoi s'agit-il ? » : les clés du standard. Chaque clé a le voyant de
+   SA division ; cochée, elle s'allume et se teinte. */
+.ct-keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 10.5rem), 1fr)); gap: 0.5rem; }
+.ct-key { position: relative; display: flex; cursor: pointer; --c: var(--cream-2); }
+.ct-key input, .ct-opt input, .ct-stop input {
+  position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer;
+}
+.ct-key span {
+  flex: 1; display: flex; align-items: center; gap: 0.7rem;
+  min-height: 3.2rem; padding: 0.55rem 0.85rem; border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--cream) 4%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; line-height: 1.2; color: var(--cream-2);
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out), color 0.3s var(--e-out), transform 0.2s var(--e-out);
+}
+.ct-key span::before {
+  content: ''; flex: none; width: 0.62rem; height: 0.62rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--c) 38%, transparent);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--c) 10%, transparent);
+  transition: background-color 0.3s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.ct-key:hover span { color: var(--fg); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 70%, transparent); }
+.ct-key:active span { transform: scale(0.975); }
+.ct-key input:checked + span { background: color-mix(in srgb, var(--c) 15%, transparent); box-shadow: inset 0 0 0 1.5px var(--c); color: var(--fg); }
+.ct-key input:checked + span::before {
+  background: var(--c);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--c) 26%, transparent), 0 0 0.9rem 0.1rem color-mix(in srgb, var(--c) 65%, transparent);
+  animation: ct-lamp 0.45s steps(2) 1;
+}
+@keyframes ct-lamp { 0% { opacity: 0.2; } 50% { opacity: 1; } 75% { opacity: 0.45; } }
+.ct-key--any { --c: var(--cream); }
+.ct-key input:focus-visible + span, .ct-opt input:focus-visible + span { outline: 2px solid var(--dv); outline-offset: 3px; }
+.ct-routeto {
+  min-height: 1.1rem; margin: 0.85rem 0 0;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; line-height: 1.5; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.ct-routeto b { font-weight: 400; color: var(--fg); }
+.ct-routeto i { display: inline-block; width: 0.45rem; height: 0.45rem; margin: 0 0.35rem 0.08rem 0.6rem; border-radius: 50%; background: var(--c); }
+
+/* La façon de répondre : trois pastilles. */
+.ct-seg { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.ct-opt { position: relative; display: inline-flex; cursor: pointer; }
+.ct-opt span {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 3.2rem; padding: 0.55rem 1rem 0.55rem 0.9rem; border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line-ui);
+  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; line-height: 1.2; color: var(--cream-2);
+  transition: background-color 0.35s var(--e-out), color 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
+}
+.ct-opt span::before {
+  content: ''; flex: none; width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px currentColor; transition: background-color 0.3s var(--e-out);
+}
+.ct-opt:hover span { color: var(--fg); box-shadow: inset 0 0 0 1px var(--dv); }
+.ct-opt input:checked + span { background: var(--dv); color: var(--dv-ink); box-shadow: none; }
+.ct-opt input:checked + span::before { background: currentColor; }
+
+/* « Quand commencer ? » : une ligne du temps à cinq arrêts. Le trait entre
+   les quatre premiers défile doucement vers l'avenir ; « Not sure yet » se
+   tient à part. Le choix allume son arrêt et remplit le trait jusqu'à lui. */
+.ct-intake .ct-when { margin-top: var(--s-5); }
+.ct-track { --kp: 0; position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ct-track__line {
+  position: absolute; left: 10%; right: 30%; top: 0.75rem; height: 2px; margin-top: -1px; overflow: hidden; pointer-events: none;
+}
+.ct-track__line::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -12px; right: 0;
+  background: repeating-linear-gradient(90deg, var(--line-ui) 0 6px, transparent 6px 12px);
+  animation: ct-march12 1.4s linear infinite paused;
+}
+.is-live .ct-track__line::before { animation-play-state: running; }
+@keyframes ct-march12 { to { transform: translateX(12px); } }
+.ct-track__line i {
+  position: absolute; inset: 0; background: var(--dv);
+  transform: scaleX(var(--kp)); transform-origin: 0 50%; transition: transform 0.7s var(--e-out);
+}
+.ct-stop { position: relative; display: flex; justify-content: center; cursor: pointer; text-align: center; }
+.ct-stop span {
+  display: grid; justify-items: center; align-content: start; gap: 0.7rem; padding: 0 0.25rem;
+  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.3; color: var(--cream-2);
+  transition: color 0.3s var(--e-out);
+}
+.ct-stop span::before {
+  content: ''; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--night-3) 55%, var(--night));
+  box-shadow: inset 0 0 0 1.5px var(--line-ui), 0 0 0 0.3rem color-mix(in srgb, var(--night-3) 55%, var(--night));
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.ct-stop--unsure span::before { box-shadow: inset 0 0 0 1.5px var(--line-ui), 0 0 0 0.3rem color-mix(in srgb, var(--night-3) 55%, var(--night)); background-image: radial-gradient(circle, var(--line-ui) 0.12rem, transparent 0.14rem); }
+.ct-stop:hover span { color: var(--fg); }
+.ct-stop:hover span::before { box-shadow: inset 0 0 0 1.5px var(--dv), 0 0 0 0.3rem color-mix(in srgb, var(--night-3) 55%, var(--night)); }
+.ct-stop.is-past span::before { background: color-mix(in srgb, var(--dv) 45%, var(--night)); box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--night-3) 55%, var(--night)); }
+.ct-stop input:checked + span { color: var(--fg); }
+.ct-stop input:checked + span::before {
+  background: var(--dv); background-image: none;
+  box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--dv) 25%, transparent), 0 0 1rem 0.15rem color-mix(in srgb, var(--dv) 55%, transparent);
+}
+.ct-stop input:focus-visible + span::before { outline: 2px solid var(--dv); outline-offset: 4px; }
+
+/* ── La fiche de routage ──
+   Du papier crème imprimé à l'encre terre cuite : le reflet de la fiche
+   d'accueil, qui se compose à mesure. Elle reste à portée sur ordinateur ;
+   s'il le faut, c'est son pied (le bouton) qui reste visible. */
+.ct-side {
+  position: sticky; top: min(calc(var(--bar-h) + 1rem), calc(100svh - var(--side-h, 0px) - 1rem));
+  min-width: 0;
+}
+.ct-slip {
+  position: relative;
+  color: var(--slip-ink); color-scheme: light;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.45; letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  border-radius: 0.35rem;
+  box-shadow: 0 30px 50px -24px rgb(0 0 0 / 0.65), 0 2px 3px rgb(0 0 0 / 0.25);
+}
+.ct-slip__paper {
+  position: relative; display: grid; gap: 0.9rem;
+  padding: 1.45rem 1.45rem 1.2rem;
+  border-radius: 0.35rem 0.35rem 0 0;
+  background: var(--slip);
+}
+.ct-slip__head { display: grid; gap: 0.3rem; padding-bottom: 0.85rem; border-bottom: 2px solid var(--slip-red); }
+.ct-slip__brand { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slip-red); }
+.ct-slip__h {
+  font-family: var(--ff-d); font-stretch: normal; font-size: clamp(1.45rem, 1.15rem + 0.7vw, 1.95rem); font-weight: 400; line-height: 1; letter-spacing: -0.01em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; color: var(--slip-ink);
+}
+.ct-slip__meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slip-ink-2); }
+.ct-slip__k { font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slip-red); }
+.ct-slip__to { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); align-items: start; gap: 0.6rem; }
+.ct-slip__to .ct-slip__k { padding-top: 0.35rem; }
+.ct-slip__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; min-height: 1.9rem; }
+.ct-slip__ph { align-self: center; font-family: var(--ff-p); font-stretch: normal; font-style: italic; font-size: 1rem; letter-spacing: 0; color: var(--slip-ink-3); }
+/* Une division choisie : un tampon dans sa couleur (l'encre reste foncée,
+   la couleur est dans le cadre et le voyant). */
+.ct-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.28rem 0.55rem 0.26rem; border-radius: 0.3rem;
+  border: 1.5px solid color-mix(in srgb, var(--c) 80%, var(--slip-ink));
+  background: color-mix(in srgb, var(--c) 18%, var(--slip));
+  font-size: 0.6875rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slip-ink);
+  transform: rotate(var(--r, 0deg));
+}
+.ct-tag::before { content: ''; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: color-mix(in srgb, var(--c) 85%, var(--slip-ink)); }
+
+.ct-slip__rows { display: grid; }
+.ct-slip__rows > div {
+  display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 0.6rem; align-items: baseline;
+  padding-block: 0.32rem; border-bottom: 1px solid color-mix(in srgb, var(--slip-red) 22%, transparent);
+}
+.ct-slip__rows dt { font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slip-red); }
+.ct-slip__rows dd { min-width: 0; color: var(--slip-ink); overflow-wrap: anywhere; }
+.ct-slip__rows .is-empty dd { color: var(--slip-ink-3); }
+.ct-slip__rows .is-need dd { color: #a3261e; font-weight: 600; }
+.ct-slip__rows .is-new dd { animation: ct-print 0.7s var(--e-out); }
+@keyframes ct-print { from { opacity: 0; transform: translateX(0.4rem); } }
+
+/* Les trois cases imprimées : la façon de répondre. */
+.ct-slip__ticks { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; padding-left: 5.1rem; }
+.ct-slip__ticks li { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slip-ink-2); }
+.ct-slip__ticks li::before {
+  content: ''; width: 0.85rem; height: 0.85rem; border-radius: 0.12rem; flex: none;
+  box-shadow: inset 0 0 0 1.5px var(--slip-red);
+  background: no-repeat center / 0.7rem url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.5l2.6 2.6L10 3' fill='none' stroke='%232a1a12' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 0 0; transition: background-size 0.3s var(--e-out);
+}
+.ct-slip__ticks li.is-on { color: var(--slip-ink); font-weight: 600; }
+.ct-slip__ticks li.is-on::before { background-size: 0.7rem 0.7rem; }
+
+/* Le message s'écrit sur les lignes de la fiche. */
+.ct-slip__msg { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 0.6rem; align-items: start; }
+.ct-slip__msg .ct-slip__k { padding-top: 0.12rem; }
+.ct-slip__msg p {
+  --lh: 1.55rem;
+  min-height: calc(var(--lh) * 4); max-height: calc(var(--lh) * 5); overflow: hidden; margin: 0;
+  font-family: var(--ff-t); font-stretch: normal; font-size: 0.875rem; line-height: var(--lh); letter-spacing: 0;
+  color: var(--slip-ink); white-space: pre-wrap; overflow-wrap: anywhere;
+  background: repeating-linear-gradient(180deg, transparent 0 calc(var(--lh) - 1px), color-mix(in srgb, var(--slip-red) 24%, transparent) calc(var(--lh) - 1px) var(--lh));
+}
+.ct-slip.is-typing .ct-slip__msg p::after {
+  content: ''; display: inline-block; width: 0.45em; height: 1em; margin-left: 1px; vertical-align: -0.12em;
+  background: var(--slip-red); animation: ct-caret 1s steps(1) infinite;
+}
+@keyframes ct-caret { 50% { opacity: 0; } }
+
+/* Le signal de la fiche : quatre barres, une par bloc rempli. */
+.ct-slip__sig { display: flex; align-items: center; gap: 0.75rem; padding-top: 0.25rem; }
+.ct-bars { display: inline-flex; align-items: flex-end; gap: 3px; height: 1.05rem; flex: none; }
+.ct-bars i { width: 0.3rem; border-radius: 1px; background: color-mix(in srgb, var(--slip-ink) 16%, transparent); transition: background-color 0.4s var(--e-out); }
+.ct-bars i:nth-child(1) { height: 30%; }
+.ct-bars i:nth-child(2) { height: 52%; }
+.ct-bars i:nth-child(3) { height: 76%; }
+.ct-bars i:nth-child(4) { height: 100%; }
+.ct-bars i.is-on { background: var(--slip-red); }
+.ct-slip__state { font-size: 0.75rem; line-height: 1.35; letter-spacing: 0.04em; color: var(--slip-ink-2); }
+.ct-slip__state.is-ready { color: var(--slip-red); font-weight: 600; }
+
+/* La ligne de détachement et le talon, qui porte l'envoi. */
+.ct-slip__tear {
+  position: relative; height: 1.2rem; background: var(--slip);
+  -webkit-mask: radial-gradient(circle 0.6rem at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.6rem at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 0.6rem at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.6rem at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat;
+}
+.ct-slip__tear::before { content: ''; position: absolute; left: 0.9rem; right: 0.9rem; top: 50%; border-top: 1.5px dashed color-mix(in srgb, var(--slip-ink) 35%, transparent); }
+.ct-slip__foot {
+  display: grid; gap: 0.75rem; margin: 0; padding: 0.7rem 1.45rem 1.35rem;
+  border-radius: 0 0 0.35rem 0.35rem; background: var(--slip-2);
+}
+.ct-send {
+  justify-content: center; width: 100%; min-height: 3.6rem;
+  background: var(--slip-ink); color: var(--slip);
+}
+.ct-send:focus-visible { outline: 2px solid var(--slip-red); outline-offset: 3px; border-radius: 999px; }
+.ct-slip__foot .dv-form__note {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.45; letter-spacing: 0.02em; text-align: center; color: var(--slip-ink-2);
+}
+.ct-slip__foot .dv-form__note.is-warn { color: #a3261e; font-weight: 600; }
+
+/* La lumière qui vole de la clé à la fiche (ordinateur). */
+.ct-fly {
+  position: absolute; left: 0; top: 0; z-index: 5; width: 0.7rem; height: 0.7rem; margin: -0.35rem 0 0 -0.35rem; border-radius: 50%;
+  background: var(--c); box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--c) 25%, transparent), 0 0 1.1rem 0.25rem color-mix(in srgb, var(--c) 70%, transparent);
+  pointer-events: none;
+}
+
+/* ── La confirmation : la fiche détachée, tamponnée ── */
+.dv-done.ct-done:not([hidden]) {
+  display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: start; gap: var(--s-6) var(--s-8);
+  margin: 0; padding: 0; border-radius: 0; background: none; box-shadow: none;
+}
+.ct-done__msg { display: grid; gap: var(--s-4); justify-items: start; }
+.ct-done h3 { max-width: 14ch; font-size: var(--fs-d2); line-height: 0.98; }
+.ct-done__msg > p { max-width: 36rem; margin: 0; font-size: var(--fs-body); line-height: 1.6; color: var(--cream-2); }
+.ct-done__slip {
+  position: relative; padding: 1.5rem 1.45rem 1.6rem; border-radius: 0.35rem;
+  background: var(--slip); color: var(--slip-ink); color-scheme: light;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-variant-numeric: tabular-nums;
+  box-shadow: 0 30px 50px -24px rgb(0 0 0 / 0.65), 0 2px 3px rgb(0 0 0 / 0.25);
+}
+.dv-done .ct-done__head { display: grid; gap: 0.3rem; margin: 0; padding-bottom: 0.85rem; border-bottom: 2px solid var(--slip-red); color: var(--slip-ink); }
+.dv-done.ct-done dl { display: grid; grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); gap: 0; margin: 0.5rem 0 0; font-size: 0.8125rem; }
+.dv-done.ct-done dt, .dv-done.ct-done dd { padding: 0.45rem 0; border-bottom: 1px solid color-mix(in srgb, var(--slip-red) 22%, transparent); }
+.dv-done.ct-done dt { padding-right: 1rem; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--slip-red); }
+.dv-done.ct-done dd { color: var(--slip-ink); overflow-wrap: anywhere; }
+.ct-stamp {
+  position: absolute; right: 1.1rem; top: 1rem;
+  display: grid; justify-items: center; gap: 0.05rem;
+  padding: 0.45rem 0.8rem 0.5rem; border: 2px solid var(--slip-red); border-radius: 0.4rem;
+  color: var(--slip-red); transform: rotate(-8deg);
+  font-family: var(--ff-m); font-size: 1rem; font-weight: 600; line-height: 1.1; letter-spacing: 0.14em; text-transform: uppercase;
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--slip-red) 16%, transparent);
+}
+.ct-stamp b { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.16em; }
+
+@media (max-width: 64rem) {
+  .ct-intake:not(.is-sent) { grid-template-columns: 1fr; gap: var(--s-6); }
+  .ct-side { position: relative; top: auto; width: 100%; max-width: 34rem; justify-self: center; }
+  .dv-done.ct-done:not([hidden]) { grid-template-columns: 1fr; }
+  .ct-done__slip { max-width: 34rem; width: 100%; }
+  .ct-desk::before { top: auto; bottom: -4%; right: -20%; width: 100%; height: 50%; }
+}
+@media (max-width: 36rem) {
+  .ct-card { padding: var(--s-5) var(--s-4) var(--s-5); margin-inline: calc(var(--s-2) * -1); border-radius: 1rem; gap: var(--s-6); }
+  .ct-card__bar { left: 1rem; right: 1rem; }
+  .ct-blk__grid { grid-template-columns: 1fr; gap: var(--s-4); }
+  .ct-blk__h { font-size: 1.2rem; gap: 0.65rem; }
+  .ct-keys { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.4rem; }
+  .ct-key span { padding: 0.5rem 0.65rem; gap: 0.55rem; font-size: 0.875rem; }
+  .ct-seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; }
+  .ct-opt span { width: 100%; justify-content: center; padding-inline: 0.5rem; font-size: 0.8125rem; gap: 0.4rem; }
+  /* La ligne du temps, debout : un arrêt par ligne. */
+  .ct-track { grid-template-columns: 1fr; gap: 0.35rem; }
+  .ct-track__line { left: 0.75rem; right: auto; top: 10%; bottom: 30%; width: 2px; height: auto; margin: 0 0 0 -1px; }
+  .ct-track__line::before { left: 0; right: 0; top: -12px; bottom: 0; background: repeating-linear-gradient(180deg, var(--line-ui) 0 6px, transparent 6px 12px); animation-name: ct-march12y; }
+  .ct-track__line i { transform: scaleY(var(--kp)); transform-origin: 50% 0; }
+  .ct-stop { justify-content: flex-start; text-align: left; }
+  .ct-stop span { grid-auto-flow: column; justify-content: start; align-items: center; gap: 0.9rem; min-height: 2.75rem; padding: 0; }
+  .ct-slip__paper { padding: 1.2rem 1.1rem 1rem; }
+  .ct-slip__to, .ct-slip__rows > div, .ct-slip__msg { grid-template-columns: 4.3rem minmax(0, 1fr); gap: 0.5rem; }
+  .ct-slip__ticks { padding-left: 4.8rem; gap: 0.35rem 0.8rem; }
+  .ct-slip__foot { padding: 0.6rem 1.1rem 1.15rem; }
+  .dv-done.ct-done dl { grid-template-columns: 1fr; }
+  .dv-done.ct-done dt { padding: 0.55rem 0 0.05rem; border: 0; }
+  .dv-done.ct-done dd { padding-top: 0; }
+  .ct-stamp { position: static; justify-self: end; margin: 1rem 0.3rem 0 0; }
+  .ct-done__slip { display: grid; }
+}
+@keyframes ct-march12y { to { transform: translateY(12px); } }
+
+/* ═══════════════════ LE STANDARD ═══════════════════
+   « Go Straight to the Right Team » : un tableau de standard, sept lignes et
+   la ligne de l'accueil. Chaque ligne a sa prise, son voyant et son câble
+   dans la couleur de SA division, avec la trame de sa page (le signal plein
+   du direct, le pointillé des particules de l'IA, l'onde de la musique, la
+   pellicule du film, la réglette de la location…) ; une impulsion la
+   parcourt sans cesse, à son rythme. Au survol, la fiche se branche : le
+   câble se remplit depuis la fiche, le voyant s'allume. */
+.ct-teams { isolation: isolate; overflow: clip; }
+.ct-teams::before, .ct-teams::after {
+  content: ''; position: absolute; top: 0; height: 1px; pointer-events: none;
+  left: calc(50% - min(calc(100% - 2 * var(--pad-x)), var(--maxw)) / 2);
+}
+.ct-teams::before { width: min(calc(100% - 2 * var(--pad-x)), var(--maxw)); background: var(--line-2); }
+/* Le filet du haut : une comète aux sept couleurs des lignes, qui le
+   parcourt d'un bout à l'autre, puis repart. */
+.ct-teams::after {
+  width: 10rem; height: 2px; top: -0.5px;
+  background: linear-gradient(90deg, transparent, #ff4a3d 14%, #f2a93b 28%, #8f7cff 42%, #ff5c8a 56%, #e8c27a 70%, #c98a52 82%, #7fb7d9 92%, transparent);
+  opacity: 0;
+  animation: ct-comet 7s var(--e-inout) infinite paused;
+}
+.ct-teams.is-live::after { animation-play-state: running; }
+@keyframes ct-comet {
+  0% { transform: translateX(0); opacity: 0; }
+  10%, 80% { opacity: 1; }
+  90%, 100% { transform: translateX(calc(min(100vw - 2 * var(--pad-x), var(--maxw)) - 10rem)); opacity: 0; }
+}
+
+.ct-board {
+  position: relative; isolation: isolate;
+  padding: 0.6rem 1.2rem 1rem; border-radius: 1.4rem;
+  background:
+    radial-gradient(70% 90% at 0% 0%, color-mix(in srgb, var(--dv) 6%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--night-3) 85%, var(--night)), var(--night-2));
+  box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 color-mix(in srgb, var(--cream) 10%, transparent), 0 50px 90px -60px rgb(0 0 0 / 0.9);
+}
+/* Les quatre vis du panneau. */
+.ct-board::before {
+  content: ''; position: absolute; inset: 0.75rem; z-index: -1; pointer-events: none;
+  --v: radial-gradient(circle, color-mix(in srgb, var(--cream) 30%, transparent) 0 0.16rem, color-mix(in srgb, var(--cream) 8%, transparent) 0.17rem 0.27rem, transparent 0.29rem);
+  background: var(--v) 0 0 / 0.6rem 0.6rem no-repeat, var(--v) 100% 0 / 0.6rem 0.6rem no-repeat, var(--v) 0 100% / 0.6rem 0.6rem no-repeat, var(--v) 100% 100% / 0.6rem 0.6rem no-repeat;
+}
+.ct-board__plate {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.4rem 1rem; margin: 0;
+  padding: 0.75rem 1.1rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
+}
+.ct-lines { display: grid; }
+.ct-line {
+  --tile: 12px; --sp: 3.2s; --dl: 0s;
+  position: relative; isolation: isolate;
+  display: grid; grid-template-columns: 2.8rem 2rem minmax(13rem, 23rem) minmax(3rem, 1fr) auto;
+  align-items: center; gap: 0 1.15rem;
+  min-height: 5.6rem; padding: 0.85rem 0.6rem;
+  border-bottom: 1px solid var(--line-2);
+}
+.ct-line:last-child { border-bottom: 0; }
+.ct-line::before {
+  content: ''; position: absolute; inset: 0.25rem 0; z-index: -1; border-radius: 0.8rem; pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--dv) 15%, transparent), color-mix(in srgb, var(--dv) 4%, transparent) 55%, transparent);
+  opacity: 0; transition: opacity 0.5s var(--e-out);
+}
+/* La prise : un trou, sa bague, et le voyant tout autour. */
+.ct-jack {
+  position: relative; width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  background: radial-gradient(circle, #040907 0 30%, color-mix(in srgb, var(--cream) 28%, #0b1612) 33% 48%, color-mix(in srgb, var(--cream) 9%, #0b1612) 51% 100%);
+  box-shadow: inset 0 0 0 1px var(--line), 0 0 0 0.3rem color-mix(in srgb, var(--cream) 6%, transparent);
+  transition: box-shadow 0.5s var(--e-out);
+}
+.ct-board.is-on .ct-jack { box-shadow: inset 0 0 0 1px var(--line), 0 0 0 0.3rem color-mix(in srgb, var(--dv) 30%, transparent); transition-delay: calc(var(--i, 0) * 90ms + 150ms); }
+.ct-line__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); transition: color 0.4s var(--e-out); }
+.ct-line__id { display: grid; gap: 0.35rem; min-width: 0; }
+.ct-line__h {
+  font-family: var(--ff-d); font-size: clamp(1.3rem, 1rem + 0.9vw, 1.9rem); line-height: 1; letter-spacing: -0.015em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; color: var(--fg);
+}
+.ct-route__f { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+
+/* Le câble : sa trame (au repos, à demi), son impulsion, et le plein qui se
+   remplit depuis la fiche quand la ligne se branche. */
+.ct-cable { position: relative; display: block; height: 1rem; overflow: hidden; container-type: inline-size; }
+.ct-cable::before {
+  content: ''; position: absolute; top: 50%; left: calc(var(--tile) * -1); right: 0; height: var(--ch, 2px); translate: 0 -50%;
+  background: var(--pat, color-mix(in srgb, var(--dv) 60%, transparent));
+  opacity: 0.5;
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.9s var(--e-out), opacity 0.4s var(--e-out);
+}
+.ct-board.is-on .ct-cable::before { transform: none; transition-delay: calc(var(--i, 0) * 90ms), 0s; }
+.ct-cable::after {
+  content: ''; position: absolute; top: 50%; left: 0; width: 3.4rem; height: 4px; margin-top: -2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--dv) 70%, #fff8);
+  transform: translateX(-3.4rem); opacity: 0;
+}
+.ct-teams.is-live .ct-board.is-on .ct-cable::after { animation: ct-pulse var(--sp) var(--e-inout) var(--dl) infinite; }
+@keyframes ct-pulse {
+  0% { transform: translateX(-3.4rem); opacity: 1; }
+  62% { transform: translateX(100cqw); opacity: 1; }
+  62.1%, 100% { transform: translateX(100cqw); opacity: 0; }
+}
+.ct-cable i {
+  position: absolute; top: 50%; left: 0; right: 0; height: 2px; margin-top: -1px;
+  background: var(--dv); box-shadow: 0 0 0.6rem color-mix(in srgb, var(--dv) 60%, transparent);
+  transform: scaleX(0); transform-origin: 100% 50%; transition: transform 0.6s var(--e-out);
+}
+/* La fiche : un appel au bout du câble, et la fiche du câble qui s'enfonce. */
+.ct-line__go {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1.35; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg); white-space: nowrap;
+}
+.ct-line__go::before { content: ''; position: absolute; inset: 0; z-index: 2; border-radius: 0.8rem; }
+.ct-line__go::after {
+  content: ''; order: -1; flex: none; width: 1.7rem; height: 0.75rem; border-radius: 0.18rem 0.4rem 0.4rem 0.18rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dv) 75%, #fff), var(--dv) 45%, color-mix(in srgb, var(--dv) 60%, #000));
+  box-shadow: -0.55rem 0 0 -0.22rem color-mix(in srgb, var(--cream) 70%, transparent);
+  transition: transform 0.5s var(--e-out);
+}
+.ct-line:is(:hover, :focus-within, .is-hot)::before { opacity: 1; }
+.ct-line:is(:hover, :focus-within, .is-hot) .ct-cable i { transform: none; }
+.ct-line:is(:hover, :focus-within, .is-hot) .ct-cable::before { opacity: 0.28; }
+.ct-line:is(:hover, :focus-within, .is-hot) .ct-line__go::after { transform: translateX(-0.45rem); }
+.ct-line:is(:hover, :focus-within, .is-hot) .ct-line__n { color: var(--dv); }
+.ct-board .ct-line:is(:hover, :focus-within, .is-hot) .ct-jack {
+  box-shadow: inset 0 0 0 1px var(--line), 0 0 0 0.3rem var(--dv), 0 0 1.3rem 0.35rem color-mix(in srgb, var(--dv) 55%, transparent);
+  transition-delay: 0.3s;
+}
+.ct-line:has(.ct-line__go:focus-visible) { outline: 2px solid var(--dv); outline-offset: -2px; border-radius: 0.8rem; }
+.ct-line__go:focus-visible { outline: none; }
+
+/* Les trames, une par division. */
+.ct-line:nth-child(1) { --sp: 1.7s; --dl: 0.2s; }                     /* Live : le signal plein, rapide */
+.ct-line:nth-child(2) { --sp: 3.6s; --dl: 1.1s; --tile: 18px;         /* Events : la guirlande */
+  --pat: repeating-linear-gradient(90deg, color-mix(in srgb, var(--dv) 70%, transparent) 0 11px, transparent 11px 18px); }
+.ct-line:nth-child(3) { --sp: 2.6s; --dl: 0.5s; --tile: 7px; --ch: 3px; /* AI : les particules */
+  --pat: radial-gradient(circle at 3px 50%, color-mix(in srgb, var(--dv) 85%, transparent) 1.2px, transparent 1.6px) 0 0 / 7px 100% repeat-x; }
+.ct-line:nth-child(4) { --sp: 2.5s; --dl: 1.6s; --tile: 16px; --ch: 8px; /* Music : l'onde */
+  --pat: color-mix(in srgb, var(--dv) 75%, transparent);
+}
+.ct-line:nth-child(4) .ct-cable::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='8' viewBox='0 0 16 8'%3E%3Cpath d='M0 4 Q4 0 8 4 T16 4' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") 0 0 / 16px 8px repeat-x;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='8' viewBox='0 0 16 8'%3E%3Cpath d='M0 4 Q4 0 8 4 T16 4' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") 0 0 / 16px 8px repeat-x;
+}
+.ct-line:nth-child(5) { --sp: 4.2s; --dl: 0.8s; --tile: 9px; --ch: 6px; /* Film : la pellicule */
+  --pat: repeating-linear-gradient(90deg, color-mix(in srgb, var(--dv) 85%, transparent) 0 4px, transparent 4px 9px); }
+.ct-line:nth-child(5) .ct-cable::before { -webkit-mask: linear-gradient(#000 0 30%, transparent 30% 70%, #000 70%); mask: linear-gradient(#000 0 30%, transparent 30% 70%, #000 70%); }
+.ct-line:nth-child(6) { --sp: 3.9s; --dl: 2s; --tile: 22px;          /* Documentary : le trait et le point */
+  --pat: repeating-linear-gradient(90deg, color-mix(in srgb, var(--dv) 75%, transparent) 0 12px, transparent 12px 16px, color-mix(in srgb, var(--dv) 75%, transparent) 16px 18px, transparent 18px 22px); }
+.ct-line:nth-child(7) { --sp: 3s; --dl: 1.4s; --tile: 40px; --ch: 7px; /* Rentals : la réglette */
+  --pat: linear-gradient(color-mix(in srgb, var(--dv) 70%, transparent), color-mix(in srgb, var(--dv) 70%, transparent)) 0 100% / 100% 1px no-repeat,
+         repeating-linear-gradient(90deg, color-mix(in srgb, var(--dv) 70%, transparent) 0 1px, transparent 1px 8px) 0 100% / 100% 45% no-repeat,
+         repeating-linear-gradient(90deg, color-mix(in srgb, var(--dv) 85%, transparent) 0 1px, transparent 1px 40px) 0 100% / 100% 100% no-repeat; }
+/* La ligne de l'accueil : crème, en pointillé, son impulsion revient vers
+   la fiche d'accueil (elle remonte la page). */
+.ct-line--any { --dv: var(--cream); --sp: 5s; --dl: 2.6s; --tile: 6px;
+  --pat: repeating-linear-gradient(90deg, color-mix(in srgb, var(--cream) 55%, transparent) 0 2px, transparent 2px 6px); }
+.ct-line--any .ct-cable::after { animation-direction: reverse; }
+.ct-line--any .ct-line__go::after { background: linear-gradient(180deg, #fff, var(--cream) 45%, var(--cream-2)); }
+
+/* Sur ordinateur, la trame défile quand la ligne est branchée. */
+@media (hover: hover) {
+  .ct-line:hover .ct-cable::before { animation: ct-flow 0.9s linear infinite; }
+}
+@keyframes ct-flow { to { transform: translateX(var(--tile)); } }
+
+@media (max-width: 60rem) {
+  .ct-line {
+    grid-template-columns: 2.6rem minmax(1.5rem, 1fr) auto;
+    grid-template-areas: 'jack id id' 'n cable go';
+    gap: 0.65rem 0.9rem; padding: 1rem 0.3rem 0.9rem;
+  }
+  .ct-jack { grid-area: jack; width: 2.3rem; height: 2.3rem; align-self: start; }
+  .ct-line__n { grid-area: n; justify-self: center; }
+  .ct-line__id { grid-area: id; }
+  .ct-cable { grid-area: cable; }
+  .ct-line__go { grid-area: go; white-space: normal; text-align: right; max-width: 15rem; text-wrap: balance; }
+}
+@media (max-width: 36rem) {
+  .ct-board { padding: 0.4rem 0.75rem 0.7rem; margin-inline: calc(var(--s-2) * -1); border-radius: 1.1rem; }
+  .ct-board__plate { padding: 0.7rem 0.6rem 0.8rem; }
+  .ct-line__go { max-width: 12.5rem; gap: 0.55rem; }
+  .ct-line { grid-template-columns: 2.6rem minmax(2.5rem, 1fr) auto; }
+  .ct-line__go::after { width: 1.3rem; height: 0.6rem; }
+}
+
+/* ═══════════════════ LE BUREAU : LA CARTE DU LIEU ═══════════════════ */
+.ct-visit {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: min(88svh, 46rem);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-block: var(--s-9) var(--s-5);
+  background: var(--night-2);
+  --bg: var(--night-2);
+}
+.ct-visit__img { position: absolute; inset: 0; z-index: -2; }
+.ct-visit__img img { width: 100%; height: 118%; margin-top: -9%; object-fit: cover; object-position: 50% 60%; filter: grayscale(0.55) contrast(1.05) brightness(0.62); }
+.ct-visit::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(0deg, var(--night-2) 4%, color-mix(in srgb, var(--night-2) 72%, transparent) 42%, color-mix(in srgb, var(--night-2) 30%, transparent) 75%, color-mix(in srgb, var(--night-2) 55%, transparent) 100%),
+    radial-gradient(60% 70% at 85% 100%, color-mix(in srgb, var(--dv) 20%, transparent), transparent 70%);
+}
+/* La lumière du signal qui balaie la ville, lentement. */
+.ct-visit__beam {
+  position: absolute; z-index: -1; left: 10%; top: 6%; width: 80%; height: 64%; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 17%, transparent), transparent);
+  transform: translateX(-28%);
+  animation: ct-beam 16s var(--e-inout) infinite alternate paused;
+}
+.ct-visit.is-live .ct-visit__beam { animation-play-state: running; }
+@keyframes ct-beam { from { transform: translateX(-28%) scaleY(0.9); } to { transform: translateX(28%) scaleY(1.05); } }
+
+.ct-visit__in { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--s-6) var(--s-8); }
+.ct-visit__h {
+  display: grid; gap: 0.05em;
+  font-family: var(--ff-p); font-size: clamp(2.1rem, 1rem + 3.6vw, 5.2rem); line-height: 1.02; letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  color: #f3efe8;
+}
+.ct-visit__h > span { display: block; }
+.ct-visit__h em { font-style: normal; color: var(--dv); }
+.ct-visit__h sup { font-size: 0.45em; vertical-align: 0.9em; }
+/* L'étage, comme sur l'afficheur d'un ascenseur : 1, 2, 3, 4… 5. Le « 5 »
+   est le seul vrai texte ; les autres chiffres sont dessinés par la feuille
+   de style et cachés aux lecteurs d'écran. */
+.ct-floor { display: inline-block; height: 1.02em; overflow: hidden; vertical-align: top; font-variant-numeric: tabular-nums lining-nums; }
+.ct-floor__s { display: block; line-height: 1.02; transform: translateY(-80%); }
+.ct-floor__s::before { content: '1\A 2\A 3\A 4\A'; content: '1\A 2\A 3\A 4\A' / ''; white-space: pre; display: block; }
+.ct-visit .dv-k { color: rgb(243 239 232 / 0.75); }
+
+/* La carte du lieu : un phare qui émet, l'heure d'Addis, un chemin qui mène
+   au bouton des cartes. Elle s'incline à peine sous le pointeur. */
+.ct-loc {
+  position: relative; display: grid; gap: var(--s-4); justify-items: start; min-width: 20rem;
+  padding: 1.15rem 1.35rem 1.35rem; border-radius: 1.1rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--night-3) 88%, transparent), color-mix(in srgb, var(--night-2) 92%, transparent));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.13), inset 0 1px 0 rgb(255 255 255 / 0.08), 0 40px 70px -40px rgb(0 0 0 / 0.9);
+}
+@media (hover: hover) and (pointer: fine) { .ct-loc { will-change: transform; } }
+.ct-loc__top { display: flex; align-items: center; gap: 0.9rem; width: 100%; padding-bottom: 0.9rem; border-bottom: 1px solid rgb(255 255 255 / 0.13); }
+.ct-loc__lab { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: rgb(243 239 232 / 0.78); }
+.ct-pin { position: relative; flex: none; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; }
+.ct-pin::before {
+  content: ''; width: 0.8rem; height: 0.8rem; border-radius: 50% 50% 50% 0; rotate: -45deg;
+  background: var(--dv); box-shadow: 0 0 0.9rem color-mix(in srgb, var(--dv) 70%, transparent);
+}
+.ct-pin i {
+  position: absolute; inset: 0; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--dv);
+  opacity: 0; transform: scale(0.3);
+  animation: ct-beacon 3.6s var(--e-out) infinite paused;
+}
+.ct-pin i:nth-child(2) { animation-delay: 1.2s; }
+.ct-pin i:nth-child(3) { animation-delay: 2.4s; }
+.ct-visit.is-live .ct-pin i { animation-play-state: running; }
+@keyframes ct-beacon { 0% { opacity: 0.9; transform: scale(0.3); } 100% { opacity: 0; transform: scale(1.6); } }
+/* Un appui sur la carte : le phare lance une onde plus large. */
+.ct-pin::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--dv-lt);
+  opacity: 0; transform: scale(0.4); pointer-events: none;
+}
+.ct-pin.is-burst::after { animation: ct-burst 1.1s var(--e-out); }
+@keyframes ct-burst { 0% { opacity: 1; transform: scale(0.4); } 100% { opacity: 0; transform: scale(3.4); } }
+.ct-office--visit { width: 100%; margin: 0; }
+.ct-office--visit > div { border-color: rgb(255 255 255 / 0.13); }
+.ct-office--visit dt { color: rgb(243 239 232 / 0.66); }
+.ct-office--visit dd { color: #f3efe8; font-variant-numeric: tabular-nums; }
+/* Le chemin : des pas qui avancent vers le bouton. */
+.ct-route { position: relative; display: block; width: 100%; height: 2px; overflow: hidden; }
+.ct-route::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -16px; right: 0;
+  background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--dv) 80%, transparent) 0 8px, transparent 8px 16px);
+  animation: ct-march16 1.1s linear infinite paused;
+}
+.ct-visit.is-live .ct-route::before { animation-play-state: running; }
+@keyframes ct-march16 { to { transform: translateX(16px); } }
+.ct-visit .dv-btn--ghost { color: #f3efe8; background: rgb(255 255 255 / 0.08); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.ct-visit__credit {
+  width: 100%; margin-top: var(--s-7);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgb(243 239 232 / 0.62);
+}
+@media (max-width: 64rem) {
+  .ct-visit__in { grid-template-columns: 1fr; }
+  .ct-loc { min-width: 0; width: 100%; max-width: 30rem; }
+}
+@media (max-width: 52rem) { .ct-visit { min-height: 34rem; } }
+
+/* ═══════════════════ SANS MOUVEMENT ═══════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .ct-sun { animation: none; transform: none; }
+  .ct-colon { animation: none; }
+  .ct-dot { transition: none; }
+  body[data-page='contact'] .ftr::before { animation: none; transform: none; opacity: 0.6; }
+  .ct-reach .dv-reach a::before, .ct-card__bar::after, .ct-blk__rule::before, .ct-track__line::before,
+  .ct-teams::after, .ct-visit__beam, .ct-pin i, .ct-route::before, .ct-slip.is-typing .ct-slip__msg p::after { animation: none !important; }
+  .ct-card__bar::after { opacity: 0; }
+  .ct-visit__beam { transform: none; }
+  .ct-pin i:first-child { opacity: 0.6; transform: scale(1.1); }
+  .ct-board .ct-jack, .ct-cable::before, .ct-cable i, .ct-line::before, .ct-line__go::after, .ct-blk__rule::after,
+  .ct-key span, .ct-key span::before, .ct-opt span, .ct-stop span::before, .ct-track__line i { transition: none !important; }
+  .ct-key input:checked + span::before { animation: none; }
+  .ct-teams.is-live .ct-board.is-on .ct-cable::after, .ct-line:hover .ct-cable::before { animation: none; }
+  .ct-slip__rows .is-new dd { animation: none; }
+}

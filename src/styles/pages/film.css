@@ -1,0 +1,1309 @@
+/* ══════════════════════════════════════════════════════════════
+   FEATURE FILM — la salle de projection (17/10/2026)
+   L'ouverture est un écran de cinéma au format 2,39:1 dans une salle noire :
+   un trait de lumière s'allume, s'ouvre sur une vraie image de nos films, et
+   le titre arrive comme un carton de générique. Les services défilent comme
+   un générique de fin ; les affiches réelles sont « à l'affiche ».
+
+   L'IMMERSION (18/10/2026) — « change même la couleur de la page ». Toute la
+   page vit dans la palette de la division (division.css, `--D-*` la nuit de
+   cinéma, `--L-*` l'ivoire) : un noir chaud, une crème de pellicule, l'or
+   d'une lampe de projecteur. Le rythme :
+     · la salle, le générique, l'affiche : la nuit la plus profonde
+       (`.fi-dark.dv-night` — sur Papier aussi, avec la nuit DE LA DIVISION) ;
+     · « Where we come in » : la lumière de l'écran qui retombe sur la salle ;
+     · « Who this is for » : une bande relevée, grain de pellicule ;
+     · la demande : le plateau, une lumière de face sur la claquette.
+   La barre, le menu, le pied de page et la barre d'appel ne changent pas.
+   ══════════════════════════════════════════════════════════════ */
+
+/* La lampe : un blanc chaud, le même dans les trois thèmes. Et un réglage de
+   la palette de la division (division.css) : le gris le plus clair du jour
+   (`--L-cream-3`) passe de #6c6353 à #655c4c, pour lire à 5:1 au moins sur
+   le parchemin de la bande relevée (4,6:1 avant) — 5,9:1 sur l'ivoire. */
+body[data-dv='film'] { --fi-light: color-mix(in srgb, #fff 58%, var(--D-dv-lt)); --L-cream-3: #655c4c; }
+
+/* Les jetons de la page, recalculés là où la palette change (le contenu, et
+   chaque section noire) : déclarés plus haut, ils garderaient les couleurs
+   de la marque — le vert du thème Vert se glissait dans le noir de la salle. */
+body[data-dv='film'] #main,
+body[data-dv='film'] #main .dv-night {
+  --fi-room: color-mix(in srgb, var(--night-2) 70%, #000);   /* la salle */
+  --fi-void: color-mix(in srgb, var(--night-2) 40%, #000);   /* l'écran éteint */
+  --fi-gold: var(--dv);                                      /* l'or, en texte */
+  --fi-rule: color-mix(in srgb, var(--fg) 50%, transparent); /* le trait d'un champ : 3:1 au moins */
+  --fi-chalk: color-mix(in srgb, var(--cream) 24%, transparent);
+  --fi-band: color-mix(in srgb, var(--night) 40%, var(--night-3));
+  --fi-err: #f2b8b5;
+  --fi-grain-soft: var(--fi-grain-dark, none);   /* tuiles posées par film.js */
+}
+/* L'ivoire : l'or clair ne se lit pas sur le papier, c'est l'or brun de la
+   division (`--dv-lt`) qui écrit ; la bande relevée est le parchemin. */
+html[data-palette='papier'] body[data-dv='film'] #main {
+  --fi-gold: var(--dv-lt);
+  --fi-band: var(--night-2);
+  --fi-err: #b3261e;
+  --fi-grain-soft: var(--fi-grain-light, none);
+}
+
+/* Les sections noires. Le fond passe par une image : sur Papier, la règle
+   commune des sections noires (plus forte) pose déjà `background-color`. */
+.fi-dark {
+  background-color: var(--fi-room);
+  background-image: linear-gradient(var(--fi-room), var(--fi-room));
+  color: var(--fg);
+}
+
+/* ═══════════════════ L'OUVERTURE ═══════════════════ */
+.fi-hero {
+  justify-content: center;
+  padding: calc(var(--bar-h) + var(--s-3)) 0 var(--s-6);
+}
+/* La lumière de l'écran sur la salle : elle naît avec l'image. */
+.fi-hero::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(55% 42% at 50% 50%, color-mix(in srgb, var(--dv) 13%, transparent), transparent 72%),
+    radial-gradient(40% 18% at 50% 92%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 70%);
+  opacity: var(--fi-spill, 1);
+}
+.fi-hero__wrap { max-width: 120rem; width: 100%; }
+/* L'écran garde son format ; si la fenêtre est basse, il se resserre en
+   largeur plutôt que de pousser le texte hors de l'écran. Le haut, l'écran et
+   le pied partagent la même largeur. */
+.fi-hero__in {
+  width: min(100%, calc((100svh - 19rem) * 2.39));
+  min-width: min(100%, 40rem);
+  margin-inline: auto;
+  display: grid; gap: var(--s-4);
+}
+.fi-hero__top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-5); }
+.fi-hero__top .dv-k { margin: 0; }
+.fi-hero__meta {
+  display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+}
+.fi-hero__meta b { color: var(--fg); font-weight: 400; }
+
+/* ── L'écran ── */
+.fi-screen {
+  position: relative; isolation: isolate; overflow: hidden;
+  container-type: inline-size;
+  aspect-ratio: 2.39 / 1;
+  background: var(--fi-void);
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.05),
+    0 40px 120px -48px color-mix(in srgb, var(--dv) calc(42% * var(--fi-spill, 1)), transparent);
+}
+.fi-screen__stage { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.fi-par { position: absolute; inset: -6% 0; will-change: transform; }
+.fi-weave { position: absolute; inset: 0; }
+.fi-shot { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+.fi-shot.is-on { opacity: 1; visibility: inherit; }
+.fi-shot picture, .fi-shot img { display: block; width: 100%; height: 100%; }
+.fi-shot img { object-fit: cover; transform: scale(1.04); transform-origin: 50% 58%; }
+
+/* La projection : le vignettage de l'objectif, le grain, le scintillement. */
+.fi-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 95% at 50% 45%, transparent 52%, rgb(0 0 0 / 0.55) 100%),
+    linear-gradient(0deg, rgb(4 4 4 / 0.9) 0%, rgb(4 4 4 / 0.55) 30%, rgb(4 4 4 / 0.08) 62%, transparent 75%);
+}
+.fi-grain {
+  position: absolute; inset: -60%; pointer-events: none;
+  background-size: 128px 128px; opacity: 0.9;
+}
+.fi-flicker { position: absolute; inset: 0; pointer-events: none; background: var(--fi-light); opacity: 0; }
+.fi-screen.is-run .fi-grain { animation: fi-grain 0.6s steps(6) infinite; }
+.fi-screen.is-run .fi-weave { animation: fi-weave 2.8s steps(1) infinite; }
+.fi-screen.is-run .fi-flicker { animation: fi-flicker 4.2s steps(1) infinite; }
+@keyframes fi-grain {
+  0% { transform: translate(0, 0); } 17% { transform: translate(-7%, 4%); }
+  33% { transform: translate(5%, -6%); } 50% { transform: translate(-3%, -9%); }
+  67% { transform: translate(8%, 6%); } 83% { transform: translate(-6%, 9%); }
+}
+@keyframes fi-weave {
+  0% { transform: translate(0, 0); } 12% { transform: translate(0.4px, -0.5px); }
+  25% { transform: translate(-0.3px, 0.4px); } 37% { transform: translate(0.2px, 0.7px); }
+  50% { transform: translate(-0.5px, -0.2px); } 62% { transform: translate(0.3px, 0.3px); }
+  75% { transform: translate(-0.2px, -0.6px); } 87% { transform: translate(0.5px, 0.1px); }
+}
+@keyframes fi-flicker {
+  0% { opacity: 0; } 8% { opacity: 0.025; } 10% { opacity: 0; } 41% { opacity: 0.018; }
+  43% { opacity: 0; } 70% { opacity: 0.03; } 71% { opacity: 0.008; } 73% { opacity: 0; }
+}
+
+/* Le repère de fin de bobine : un rond qui clignote avant chaque fondu. */
+.fi-cue {
+  position: absolute; top: 7%; right: 4.5%; z-index: 2;
+  width: clamp(1rem, 2.6cqw, 2.2rem); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 250 235 / 0.95) 0 38%, rgb(255 250 235 / 0.35) 40% 58%, transparent 60%);
+  opacity: 0; visibility: hidden;
+}
+
+/* Les caches : fermés, ils font l'écran noir ; ils s'écartent depuis le trait
+   de lumière. Sans script, ou passé le filet de 3 s, ils sont ouverts. */
+.fi-matte {
+  position: absolute; left: -1px; right: -1px; z-index: 3; height: 50.6%;
+  background: var(--fi-void);
+}
+.fi-matte--t { top: 0; transform: translateY(-101%); }
+.fi-matte--b { bottom: 0; transform: translateY(101%); }
+.fi-matte i {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--fi-light) 14%, #fff 50%, var(--fi-light) 86%, transparent);
+  box-shadow: 0 0 22px 3px color-mix(in srgb, var(--dv) 70%, transparent);
+  opacity: 0; visibility: hidden;
+}
+.fi-matte--t i { bottom: 0; }
+.fi-matte--b i { top: 0; }
+html.js:not(.dv-in) .fi-matte { transform: none; }
+html.js:not(.dv-in) .fi-matte--t { animation: fi-open-t 0s 3s forwards; }
+html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
+@keyframes fi-open-t { to { transform: translateY(-101%); } }
+@keyframes fi-open-b { to { transform: translateY(101%); } }
+
+/* Le trait de la lampe, avant que l'écran ne s'ouvre. */
+.fi-line {
+  position: absolute; left: 0; right: 0; top: 50%; z-index: 4; height: 2px; margin-top: -1px;
+  background: linear-gradient(90deg, transparent, var(--fi-light) 12%, #fff 50%, var(--fi-light) 88%, transparent);
+  box-shadow: 0 0 26px 4px color-mix(in srgb, var(--dv) 75%, transparent), 0 0 80px 10px color-mix(in srgb, var(--dv) 25%, transparent);
+  transform: scaleX(0); opacity: 0; visibility: hidden;
+}
+
+/* Le carton-titre. */
+.fi-title.dv-h1 {
+  position: absolute; left: 0; right: 0; bottom: 13%; z-index: 5;
+  max-width: 17ch; margin-inline: auto; padding-inline: 4%;
+  font-size: clamp(2.3rem, 8.3cqw, 8.25rem);
+  line-height: 0.98; text-align: center;
+  color: var(--cream);
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.45);
+}
+.fi-title em { color: var(--dv); }
+.fi-cap, .fi-ratio {
+  position: absolute; bottom: 4.6%; z-index: 5; margin: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--cream) 80%, transparent);
+}
+.fi-cap { left: 2.6%; display: flex; gap: 0.7em; align-items: center; }
+.fi-cap__k { padding: 0.15rem 0.4rem; border-radius: 2px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 38%, transparent); }
+.fi-ratio { right: 2.6%; }
+.fi-ratio::before { content: '2.39 : 1'; }
+/* Tablette en portrait : l'autre format du cinéma, 1,85:1, plus haut ; la
+   mention suit le format réel de l'écran. */
+@media (min-width: 40.01rem) and (max-width: 64rem) and (orientation: portrait) {
+  .fi-screen { aspect-ratio: 1.85 / 1; }
+  .fi-hero__in { width: 100%; }
+  .fi-ratio::before { content: '1.85 : 1'; }
+}
+
+/* Le pied : la phrase d'appui et les deux appels. */
+.fi-hero__foot {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: var(--s-4) var(--s-6); margin-top: var(--s-2);
+}
+.fi-hero__foot .dv-lede { max-width: 36rem; }
+.fi-hero__foot .dv-acts { margin-top: 0; }
+
+@media (max-width: 40rem) {
+  .fi-hero { justify-content: flex-start; padding-top: calc(var(--bar-h) + var(--s-4)); }
+  .fi-hero__in { width: 100%; min-width: 0; gap: var(--s-4); }
+  .fi-hero__meta li:first-child { display: none; }
+  /* Sur téléphone, l'écran va d'un bord à l'autre et se fait carré : une
+     bande de 2,39:1 n'y ferait que 160 px de haut. */
+  .fi-screen { aspect-ratio: 1 / 1; margin-inline: calc(-1 * var(--pad-x)); border-radius: 0; }
+  .fi-title.dv-h1 { font-size: 12.6cqw; bottom: 10%; max-width: 12ch; }
+  .fi-cap { top: 4.5%; bottom: auto; left: var(--pad-x); color: var(--cream); text-shadow: 0 1px 10px rgb(0 0 0 / 0.6); }
+  /* La légende passe en haut : un voile sous elle, sur le ciel clair — assez
+     dense pour que la légende se lise à 4,5:1 sur le ciel le plus pâle. */
+  .fi-vignette {
+    background:
+      linear-gradient(180deg, rgb(4 4 4 / 0.74) 0%, rgb(4 4 4 / 0.6) 11%, transparent 28%),
+      radial-gradient(120% 95% at 50% 45%, transparent 52%, rgb(0 0 0 / 0.55) 100%),
+      linear-gradient(0deg, rgb(4 4 4 / 0.9) 0%, rgb(4 4 4 / 0.55) 30%, rgb(4 4 4 / 0.08) 62%, transparent 75%);
+  }
+  .fi-ratio { display: none; }
+  .fi-cue { top: 4.5%; right: var(--pad-x); }
+  .fi-hero__foot { margin-top: var(--s-3); }
+  .fi-hero__foot .dv-acts { width: 100%; }
+}
+
+/* ═══════════════════ LE GÉNÉRIQUE (SERVICES) ═══════════════════
+   La cabine de projection (19/10) : derrière le générique, collé à l'écran
+   le temps de la section (`position: sticky` dans un calque qui couvre la
+   section), le faisceau du projecteur descend du haut, sa poussière flotte
+   dans la lumière (canevas, film-credits.js), il vacille à peine. Le
+   générique passe devant ; chaque étape s'allume (or) au milieu de l'écran,
+   et ses métiers passent du gris à la crème. */
+.fi-credits { padding-block: var(--s-8) var(--s-7); isolation: isolate; }
+.fi-credits > .dv-wrap { position: relative; z-index: 1; }
+.fi-booth { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.fi-booth__in { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
+/* Le faisceau : un cône doux depuis la lucarne, au-dessus de l'écran ; il
+   s'éteint vers le bas avant les fondus du générique. */
+.fi-booth__beam {
+  position: absolute; left: 50%; top: 0; width: min(150vw, 140rem); height: 100%;
+  translate: -50% 0;
+  background:
+    radial-gradient(26% 12% at 50% 0%, color-mix(in srgb, var(--fi-light) 12%, transparent), transparent 75%),
+    conic-gradient(from 165deg at 50% -22%,
+      transparent 0deg,
+      color-mix(in srgb, var(--dv) 5%, transparent) 7deg,
+      color-mix(in srgb, var(--fi-light) 12%, transparent) 15deg,
+      color-mix(in srgb, var(--dv) 5%, transparent) 23deg,
+      transparent 30deg);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 90%);
+          mask-image: linear-gradient(180deg, #000 0%, #000 52%, transparent 90%);
+}
+.fi-credits.is-run .fi-booth__beam { animation: fi-beam 3.8s steps(1) infinite; }
+@keyframes fi-beam {
+  0% { opacity: 1; } 9% { opacity: 0.86; } 11% { opacity: 1; } 47% { opacity: 0.93; }
+  49% { opacity: 1; } 76% { opacity: 0.88; } 77% { opacity: 0.97; } 79% { opacity: 1; }
+}
+.fi-booth__dust {
+  position: absolute; left: 50%; top: 0; width: min(76vw, 70rem); height: 100%;
+  translate: -50% 0; display: block;
+}
+/* Le repère de fin de bobine : il clignote deux fois quand le générique finit. */
+.fi-booth__cue {
+  position: absolute; top: calc(var(--bar-h) + 1.4rem); right: 6vw;
+  width: 1.9rem; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 250 235 / 0.95) 0 38%, rgb(255 250 235 / 0.35) 40% 58%, transparent 60%);
+  opacity: 0;
+}
+/* Les repères de la cabine, dans les coins (grands écrans seulement). */
+.fi-booth__tc {
+  position: absolute; bottom: 1.7rem; display: none; align-items: center; gap: 0.6rem; margin: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.fi-booth__tc--l { left: var(--pad-x); }
+.fi-booth__tc--r { right: var(--pad-x); }
+.fi-booth__tc b { font-weight: 400; color: var(--cream-2); font-variant-numeric: tabular-nums; }
+.fi-booth__tc i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--dv); box-shadow: 0 0 10px var(--dv); }
+@media (min-width: 75rem) { .fi-booth__tc { display: flex; } }
+
+.fi-credits__head { display: grid; justify-items: center; gap: var(--s-5); text-align: center; }
+.fi-credits__head .dv-k { margin: 0; }
+.fi-credits__head .dv-h2 { max-width: 15ch; margin-inline: auto; }
+.fi-credits__head .dv-lede { max-width: 34rem; }
+
+.fi-roll { position: relative; max-width: 64rem; margin-inline: auto; }
+/* Les deux fondus collent au haut et au bas de l'écran le temps du
+   générique : les lignes naissent du noir et s'y éteignent. */
+.fi-roll__fade { position: sticky; z-index: 2; display: block; height: 13vh; pointer-events: none; }
+.fi-roll__fade--t { top: 0; background: linear-gradient(180deg, var(--fi-room) 12%, transparent); }
+.fi-roll__fade--b { bottom: 0; background: linear-gradient(0deg, var(--fi-room) 12%, transparent); }
+
+.fi-roll__g {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  column-gap: clamp(1.75rem, 4vw, 4.5rem);
+  padding-block: clamp(1.4rem, 1rem + 1.4vw, 2.6rem);
+}
+.fi-roll__k {
+  justify-self: end; align-self: start; text-align: right;
+  display: flex; align-items: center; gap: 0.9em; padding-top: 0.85em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-size: var(--fs-micro); letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cream-2);
+  transition: color 0.6s var(--e-out);
+}
+.fi-roll__k span { color: var(--cream-3); }
+.fi-roll__k::after {
+  content: ''; width: 0.42rem; height: 0.42rem; border-radius: 50%; flex: none;
+  background: var(--line-ui); transition: background-color 0.6s var(--e-out), box-shadow 0.6s var(--e-out);
+}
+.fi-roll__g.is-lit .fi-roll__k { color: var(--fi-gold); }
+.fi-roll__g.is-lit .fi-roll__k::after { background: var(--dv); box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--dv) 22%, transparent), 0 0 18px color-mix(in srgb, var(--dv) 60%, transparent); }
+.fi-roll__l { display: grid; gap: 0.15em; }
+.fi-roll__l li {
+  font-family: var(--ff-p);
+  font-size: clamp(1.35rem, 0.95rem + 1.25vw, 2.2rem);
+  font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 340;
+  line-height: 1.24; letter-spacing: -0.012em;
+  color: var(--cream-2); text-wrap: balance;
+  transition: color 0.7s var(--e-out);
+}
+.fi-roll__g.is-lit .fi-roll__l li { color: var(--fg); }
+.fi-roll__end { display: grid; justify-items: center; gap: var(--s-5); margin-top: var(--s-3); text-align: center; }
+.fi-roll__end .dv-mono { max-width: 34rem; line-height: 1.6; }
+
+@media (max-width: 44rem) {
+  .fi-roll__fade { height: 10vh; }
+  .fi-roll__g { grid-template-columns: 1fr; row-gap: var(--s-3); text-align: center; }
+  .fi-roll__k { justify-self: center; padding-top: 0; }
+  .fi-roll__l li { font-size: clamp(1.3rem, 1rem + 1.6vw, 1.7rem); }
+  .fi-booth__cue { right: var(--pad-x); width: 1.4rem; }
+}
+
+/* ═══════════════════ À L'AFFICHE : LE HALL ═══════════════════ */
+.fi-films { padding-top: var(--s-8); padding-bottom: var(--s-8); }
+.fi-films .dv-head { margin-bottom: var(--s-6); }
+
+/* ── Les ampoules ──
+   Un rectangle SVG, son trait en pointillés ronds : un pointillé de
+   longueur nulle à bout rond dessine une ampoule. film-lobby.js règle
+   `pathLength` pour qu'elles tombent juste, tous les ~17 px. Éteintes, elles
+   restent visibles ; allumées, une sur deux, elles courent. */
+.fi-bulbs {
+  position: absolute; left: var(--bi, 0.45rem); top: var(--bi, 0.45rem);
+  width: calc(100% - 2 * var(--bi, 0.45rem)); height: calc(100% - 2 * var(--bi, 0.45rem));
+  overflow: visible; pointer-events: none;
+}
+.fi-bulbs rect { fill: none; stroke-linecap: round; }
+.fi-bulbs__off { stroke: color-mix(in srgb, var(--cream) 13%, transparent); stroke-width: 4; stroke-dasharray: 0 2; }
+.fi-marq .fi-bulbs__off { stroke: color-mix(in srgb, var(--cream) 22%, transparent); stroke-width: 5; }
+.fi-bulbs__halo { stroke: color-mix(in srgb, var(--dv) 42%, transparent); stroke-width: 13; stroke-dasharray: 0 4; opacity: 0; }
+.fi-bulbs__on { stroke: #fff3d8; stroke-width: 5.5; stroke-dasharray: 0 4; opacity: 0; }
+.fi-bulbs :is(.fi-bulbs__on, .fi-bulbs__halo) { transition: opacity 0.35s var(--e-out); }
+@keyframes fi-chase { 0% { stroke-dashoffset: 0; } 50% { stroke-dashoffset: -2; } }
+@keyframes fi-flick {
+  0% { opacity: 0; } 12% { opacity: 1; } 22% { opacity: 0.15; } 34% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
+}
+
+/* ── L'enseigne : un panneau lumineux, ses lettres posées à la main ── */
+.fi-marq {
+  --bi: 0.5rem;
+  position: relative; margin-bottom: var(--s-4); padding: 1rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #221d17, #0d0b09);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.06), 0 40px 80px -40px rgb(0 0 0 / 0.9), 0 0 70px -24px color-mix(in srgb, var(--dv) var(--marq-glow, 55%), transparent);
+}
+.fi-marq.is-dark { --marq-glow: 0%; }
+.fi-marq.is-run .fi-bulbs__on, .fi-marq.is-run .fi-bulbs__halo { opacity: 1; animation: fi-chase 1.3s steps(1) infinite; }
+.fi-marq.is-lit:not(.is-run) .fi-bulbs__on, .fi-marq.is-lit:not(.is-run) .fi-bulbs__halo { opacity: 1; }
+.fi-marq__board {
+  position: relative; overflow: hidden; isolation: isolate;
+  padding-block: clamp(0.6rem, 0.4rem + 0.5vw, 0.95rem);
+  border-radius: 0.3rem;
+  background:
+    linear-gradient(rgb(40 30 18 / 0.16), rgb(40 30 18 / 0.16)) 0 18% / 100% 1px no-repeat,
+    linear-gradient(rgb(40 30 18 / 0.16), rgb(40 30 18 / 0.16)) 0 82% / 100% 1px no-repeat,
+    radial-gradient(120% 140% at 50% 50%, #fff9ec, #f1e3c5 70%, #e4cfa4);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.35), inset 0 0 30px rgb(255 205 120 / 0.55);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+/* Le tube qui s'allume en grésillant (film-lobby.js ajoute `is-dark`, puis
+   `is-on`). Sans script : allumé. */
+.fi-marq__board::after { content: ''; position: absolute; inset: 0; z-index: 2; background: #0d0b09; opacity: 0; pointer-events: none; }
+.fi-marq.is-dark .fi-marq__board::after { opacity: 0.86; }
+.fi-marq.is-on .fi-marq__board::after { animation: fi-tube 1.1s steps(1) both; }
+@keyframes fi-tube {
+  0% { opacity: 0.86; } 8% { opacity: 0.25; } 13% { opacity: 0.86; } 24% { opacity: 0.1; }
+  29% { opacity: 0.6; } 38% { opacity: 0; } 100% { opacity: 0; }
+}
+.fi-marq__track { display: flex; width: max-content; will-change: transform; }
+.fi-marq.is-run .fi-marq__track { animation: fi-marq var(--marq-dur, 80s) linear infinite; }
+@keyframes fi-marq { to { transform: translateX(-50%); } }
+.fi-marq__seq { display: flex; align-items: center; flex: none; }
+.fi-marq__w { display: inline-flex; margin-right: 0.55em; white-space: nowrap; }
+.fi-marq__l {
+  display: inline-block;
+  font-family: var(--ff-d); font-size: clamp(1.5rem, 1rem + 1.7vw, 2.75rem); line-height: 1;
+  font-variation-settings: 'wdth' 72, 'wght' 820; letter-spacing: 0.02em; text-transform: uppercase;
+  color: #17120c;
+  transform: translateY(var(--y, 0)) rotate(var(--r, 0deg));
+}
+.fi-marq__sep { display: inline-block; width: 0.5rem; height: 0.5rem; margin: 0 1.6rem 0 1.05rem; border-radius: 50%; background: #9a6f22; flex: none; }
+
+/* ── La rangée ── La rangée sort à droite jusqu'au bord de l'écran ; elle
+   commence alignée sur la colonne du texte. */
+.fi-rail {
+  --fi-gut: max(var(--pad-x), calc((100vw - var(--maxw)) / 2 + var(--pad-x)));
+  overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  padding-inline: var(--fi-gut); scroll-padding-inline: var(--fi-gut);
+  outline-offset: -4px;
+}
+.fi-rail::-webkit-scrollbar { display: none; }
+.fi-rail:focus-visible { outline: 2px solid var(--dv); }
+.fi-rail__track { display: flex; gap: clamp(1.25rem, 0.8rem + 1.4vw, 2.25rem); width: max-content; padding-block: var(--s-4) var(--s-5); }
+.fi-rail__track::after { content: ''; flex: none; width: 1px; }
+@media (hover: hover) and (pointer: fine) {
+  .fi-rail { cursor: grab; -webkit-user-select: none; user-select: none; }
+  .fi-rail.is-drag { cursor: grabbing; }
+  .fi-rail.is-drag .fi-film { pointer-events: none; }
+}
+@media (pointer: coarse) {
+  .fi-rail { scroll-snap-type: x mandatory; }
+  .fi-film { scroll-snap-align: start; }
+}
+
+.fi-film {
+  position: relative; flex: none; width: clamp(17rem, 14rem + 9vw, 25rem);
+  display: grid; align-content: start; gap: var(--s-4);
+  transition: opacity 0.6s var(--e-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .fi-rail:not(.is-drag) .fi-rail__track:has(.fi-film:hover) .fi-film:not(:hover) { opacity: 0.5; }
+}
+/* La vitrine : un cadre laqué, ses ampoules ; la lumière tombe d'en haut
+   sur l'affiche quand elle s'allume. */
+.fi-film__case {
+  --bi: 0.46rem;
+  position: relative; padding: 0.92rem; border-radius: 0.6rem;
+  background: linear-gradient(180deg, #211c16, #0c0a08);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.05), 0 30px 60px -36px rgb(0 0 0 / 0.9);
+  transition: box-shadow 0.6s var(--e-out), transform 0.8s var(--e-out);
+}
+.fi-film__case::after {
+  content: ''; position: absolute; inset: 0.92rem; z-index: 3; border-radius: 0.25rem; pointer-events: none;
+  background: radial-gradient(90% 60% at 50% 0%, rgb(255 238 205 / 0.2), transparent 70%);
+  opacity: 0; transition: opacity 0.6s var(--e-out);
+}
+.fi-film.is-lit .fi-film__case,
+.fi-film:has(.fi-film__fig:focus-visible) .fi-film__case {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--dv) 40%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 70px -18px color-mix(in srgb, var(--dv) 60%, transparent);
+}
+.fi-film.is-lit .fi-film__case::after, .fi-film:has(.fi-film__fig:focus-visible) .fi-film__case::after { opacity: 1; }
+.fi-film.is-lit :is(.fi-bulbs__on, .fi-bulbs__halo),
+.fi-film:has(.fi-film__fig:focus-visible) :is(.fi-bulbs__on, .fi-bulbs__halo) { opacity: 1; animation: fi-chase 0.9s steps(1) infinite; }
+.fi-film:not(.is-lit) .fi-film__case.is-flick:not(:hover) :is(.fi-bulbs__on, .fi-bulbs__halo) { animation: fi-flick 1s steps(1) both; animation-delay: var(--d, 0s); }
+@media (hover: hover) and (pointer: fine) {
+  .fi-film__case:hover { transform: translateY(-6px); box-shadow: 0 0 0 1px color-mix(in srgb, var(--dv) 40%, transparent), inset 0 1px 0 rgb(255 255 255 / 0.06), 0 0 70px -18px color-mix(in srgb, var(--dv) 60%, transparent); }
+  .fi-film__case:hover::after { opacity: 1; }
+  .fi-film__case:hover :is(.fi-bulbs__on, .fi-bulbs__halo) { opacity: 1; animation: fi-chase 0.9s steps(1) infinite; }
+}
+.fi-film__fig {
+  position: relative; z-index: 1; display: block; width: 100%; overflow: hidden;
+  aspect-ratio: 4 / 3; border-radius: 0.25rem;
+  background: var(--fi-void);
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.6);
+}
+.fi-film__fig img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
+.fi-film__fig > img:first-child { transition: transform 1.2s var(--e-out), filter 0.6s var(--e-out); filter: brightness(0.86); }
+.fi-film.is-lit .fi-film__fig > img:first-child, .fi-film__case:hover .fi-film__fig > img:first-child, .fi-film__fig:focus-visible > img:first-child { filter: none; }
+.fi-film__pv { opacity: 0; transition: opacity 0.8s var(--e-inout); }
+.fi-film__pv.is-on { opacity: 1; }
+.fi-film__fig::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(0deg, rgb(0 0 0 / 0.55), transparent 42%);
+}
+.fi-film__fig:hover > img:first-child { transform: scale(1.045); }
+.fi-film__fig:focus-visible { outline: 2px solid var(--dv); outline-offset: 3px; }
+.fi-film__st {
+  position: absolute; left: 0.7rem; top: 0.7rem; z-index: 2;
+  padding: 0.32rem 0.6rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--night-2) 78%, transparent); color: var(--cream);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.fi-film__open {
+  position: absolute; right: 0.8rem; bottom: 0.7rem; z-index: 2;
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cream);
+}
+.fi-film__open::before {
+  content: '+'; display: grid; place-items: center; width: 1.4rem; height: 1.4rem; border-radius: 50%;
+  font-size: 0.95rem; letter-spacing: 0; line-height: 1;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.5);
+  transition: background-color 0.4s var(--e-out), color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.fi-film__fig:hover .fi-film__open::before, .fi-film__fig:focus-visible .fi-film__open::before { background: var(--dv); color: var(--night-2); box-shadow: none; }
+
+.fi-film__body { display: grid; gap: 0.55rem; padding-inline: 0.15rem; }
+.fi-film__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
+.fi-film.is-lit .fi-film__n { color: var(--fi-gold); }
+.fi-film__h {
+  font-family: var(--ff-d); font-size: clamp(1.45rem, 1.15rem + 0.9vw, 2.1rem); line-height: 0.98;
+  font-variation-settings: 'wdth' 84, 'wght' 720; letter-spacing: -0.015em; text-transform: uppercase;
+}
+.fi-film__aka { font-size: var(--fs-sm); color: var(--cream-2); }
+.fi-film__aka b { font-weight: 500; color: var(--fg); }
+.fi-film__dl { display: grid; gap: 0.3rem; margin-top: 0.3rem; padding-top: 0.7rem; border-top: 1px solid var(--line-2); font-size: var(--fs-sm); }
+.fi-film__dl div { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.8rem; align-items: baseline; }
+.fi-film__dl dt { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+.fi-film__dl dd { color: var(--fg); }
+.fi-film__stills { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.35rem; }
+.fi-film__stills .dv-mono { margin-right: 0.35rem; }
+.fi-film__stills button {
+  position: relative; overflow: hidden; width: 4.6rem; aspect-ratio: 16 / 9; border-radius: 0.2rem;
+  background: var(--fi-void); box-shadow: 0 0 0 1px var(--line);
+  transition: box-shadow 0.4s var(--e-out), transform 0.5s var(--e-out);
+}
+.fi-film__stills button:hover, .fi-film__stills button:focus-visible { box-shadow: 0 0 0 1px var(--dv); transform: translateY(-2px); }
+.fi-film__stills img { width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
+.fi-film__go {
+  justify-self: start; margin-top: 0.2rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-2); transition: color 0.3s var(--e-out);
+}
+.fi-film__go::after { content: ' →'; }
+.fi-film__go:hover { color: var(--fi-gold); }
+
+/* Le pied de la rangée : où l'on en est, et les deux flèches. */
+.fi-rail__foot { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--s-5); margin-top: var(--s-2); }
+.fi-rail__bar { position: relative; height: 1px; background: var(--line); overflow: hidden; }
+.fi-rail__bar i { position: absolute; top: 0; bottom: 0; left: 0; width: var(--w, 40%); background: var(--dv); transform: translateX(var(--x, 0%)); }
+.fi-rail__count { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; color: var(--cream-3); font-variant-numeric: tabular-nums; }
+.fi-rail__count b { color: var(--fg); font-weight: 400; }
+.fi-rail__nav { display: flex; gap: 0.5rem; }
+.fi-rail__nav button {
+  display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: 50%;
+  color: var(--fg); box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 0.4s var(--e-out), color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.fi-rail__nav button:hover, .fi-rail__nav button:focus-visible { background: var(--dv); color: var(--night-2); box-shadow: none; }
+.fi-rail__nav button:disabled { opacity: 0.35; pointer-events: none; }
+.fi-rail__nav svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* La note honnête : ce qui manque encore (bandes-annonces, génériques) —
+   un avis du hall, bord perforé comme un billet. */
+.fi-soon {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-4) var(--s-7);
+  margin-top: var(--s-7); padding: var(--s-5) var(--s-6) var(--s-5) calc(var(--s-6) + 0.6rem); border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--fg) 3%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+.fi-soon::before {
+  content: ''; position: absolute; left: 1.15rem; top: 0.9rem; bottom: 0.9rem; width: 0;
+  border-left: 1.5px dashed color-mix(in srgb, var(--fi-gold) 45%, transparent);
+}
+.fi-soon__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.04; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; }
+.fi-soon p { margin-top: var(--s-2); max-width: 44rem; color: var(--cream-2); font-size: var(--fs-sm); line-height: 1.6; }
+@media (max-width: 44rem) {
+  .fi-soon { grid-template-columns: 1fr; padding: var(--s-5) var(--s-5) var(--s-5) calc(var(--s-5) + 0.8rem); }
+  .fi-rail__foot { grid-template-columns: minmax(0, 1fr) auto; }
+  .fi-rail__count { display: none; }
+  .fi-film { width: min(78vw, 22rem); }
+  .fi-marq { padding: 0.8rem; --bi: 0.4rem; }
+  .fi-marq__sep { margin: 0 1.1rem 0 0.7rem; }
+}
+
+/* De la salle à la lumière : sur Vert et Nuit, le noir de la salle se fond
+   dans le fond de la page ; sur Papier, la coupe reste franche. */
+html:not([data-palette='papier']) .fi-films {
+  background: linear-gradient(180deg, var(--fi-room) calc(100% - 16rem), var(--bg));
+}
+
+/* ═══════════════════ NOTRE RÔLE : LES BILLETS ═══════════════════
+   Quatre billets de cinéma : le talon (« Admit one », la place), la ligne
+   perforée et ses deux encoches, la mention au générique. Un faisceau de
+   poursuite descend du haut de la salle et va d'un billet à l'autre au fil
+   du défilement, ou vers celui qu'on survole (film-seats.js). Le billet
+   choisi est poinçonné. Sur Papier : des billets d'ivoire, un faisceau d'or. */
+.fi-seats { overflow: clip; isolation: isolate; }
+.fi-seats > .dv-wrap { position: relative; z-index: 1; }
+.fi-follow {
+  position: absolute; left: 50%; top: -45vh; z-index: 0; width: 0; height: 0; pointer-events: none;
+  transform-origin: 0 0;
+}
+/* Le cône : son sommet loin au-dessus de la salle (la cabine), il entre par
+   le haut de la section, s'élargit, et finit en flaque sur le billet. */
+.fi-follow i {
+  position: absolute; left: -40rem; top: 0; width: 80rem; height: var(--len, 60rem);
+  background:
+    conic-gradient(from 168deg at 50% 0%,
+      transparent 0deg,
+      color-mix(in srgb, var(--dv) 5%, transparent) 5deg,
+      color-mix(in srgb, var(--fi-light) 9%, color-mix(in srgb, var(--dv) 9%, transparent)) 12deg,
+      color-mix(in srgb, var(--dv) 5%, transparent) 19deg,
+      transparent 24deg);
+  -webkit-mask-image: linear-gradient(180deg, transparent var(--m0, 45%), #000 calc(var(--m0, 45%) + 26%), #000 92%, transparent 100%);
+          mask-image: linear-gradient(180deg, transparent var(--m0, 45%), #000 calc(var(--m0, 45%) + 26%), #000 92%, transparent 100%);
+}
+/* La flaque de lumière au bout du faisceau. */
+.fi-follow i::after {
+  content: ''; position: absolute; left: 50%; bottom: 0; width: 30rem; height: 20rem; translate: -50% 42%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 20%, transparent), color-mix(in srgb, var(--dv) 7%, transparent) 55%, transparent);
+}
+html[data-palette='papier'] .fi-follow i { filter: saturate(1.2); opacity: 0.95; }
+
+.fi-tix { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
+@media (max-width: 64rem) { .fi-tix { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 40rem) { .fi-tix { grid-template-columns: minmax(0, 1fr); } }
+
+.fi-tick { position: relative; display: flex; border-radius: 0.9rem; transition: transform 0.7s var(--e-out); }
+/* La lueur derrière le billet éclairé. */
+.fi-tick::before {
+  content: ''; position: absolute; inset: -2.2rem -1.4rem; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 20%, transparent), transparent);
+  opacity: 0; transition: opacity 0.7s var(--e-out);
+}
+.fi-tick.is-lit { transform: translateY(-6px); }
+.fi-tick.is-lit::before { opacity: 1; }
+.fi-tick__paper {
+  --cut: 3.3rem;   /* la hauteur du talon, où tombent les encoches */
+  position: relative; flex: 1; min-width: 0;
+  display: flex; flex-direction: column;
+  border-radius: 0.9rem;
+  background-color: var(--night-3);
+  background-image: var(--fi-grain-soft, none);
+  background-size: 160px 160px;
+  box-shadow: inset 0 0 0 1px var(--line);
+  -webkit-mask:
+    radial-gradient(circle at 0 var(--cut), #0000 0.6rem, #000 0.64rem) 0 0 / 51% 100% no-repeat,
+    radial-gradient(circle at 100% var(--cut), #0000 0.6rem, #000 0.64rem) 100% 0 / 51% 100% no-repeat;
+          mask:
+    radial-gradient(circle at 0 var(--cut), #0000 0.6rem, #000 0.64rem) 0 0 / 51% 100% no-repeat,
+    radial-gradient(circle at 100% var(--cut), #0000 0.6rem, #000 0.64rem) 100% 0 / 51% 100% no-repeat;
+  transition: background-color 0.6s var(--e-out);
+}
+/* La lumière du faisceau sur le papier. */
+.fi-tick__paper::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 75% at 50% 0%, color-mix(in srgb, var(--dv) 17%, transparent), transparent 72%);
+  opacity: 0; transition: opacity 0.7s var(--e-out);
+}
+.fi-tick.is-lit .fi-tick__paper::before { opacity: 1; }
+.fi-tick__stub {
+  position: relative; flex: none; height: var(--cut);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0 1.35rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cream-3);
+  background: color-mix(in srgb, var(--fg) 3%, transparent);
+}
+/* La ligne perforée, d'une encoche à l'autre. */
+.fi-tick__stub::after {
+  content: ''; position: absolute; left: 0.95rem; right: 0.95rem; bottom: -1px; height: 0;
+  border-bottom: 2px dotted color-mix(in srgb, var(--fg) 30%, transparent);
+}
+.fi-tick__stub b { font-weight: 400; color: var(--fg); letter-spacing: 0.1em; font-variant-numeric: tabular-nums; transition: color 0.5s var(--e-out); }
+.fi-tick.is-lit .fi-tick__stub b { color: var(--fi-gold); }
+/* Le poinçon : un trou rond, le fond de la salle au travers. */
+.fi-tick__punch {
+  position: absolute; left: 50%; top: 50%; width: 0.85rem; height: 0.85rem; margin: -0.425rem;
+  border-radius: 50%; background: var(--bg);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.45), 0 0 0 1px color-mix(in srgb, var(--fg) 10%, transparent);
+  transform: scale(0); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.fi-tick.is-punched .fi-tick__punch { transform: scale(1); }
+.fi-tick__body { position: relative; flex: 1; display: flex; flex-direction: column; gap: var(--s-4); padding: 1.5rem 1.35rem 1.35rem; }
+.fi-role__credit {
+  display: grid; gap: 0.5rem; padding-bottom: var(--s-4);
+  border-bottom: 1px solid var(--line-2);
+}
+.fi-role__credit span {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+}
+.fi-role__credit b {
+  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 360;
+  font-size: clamp(1.45rem, 1.05rem + 1vw, 2.05rem); line-height: 1.05; letter-spacing: -0.015em;
+  color: var(--fi-gold);
+}
+/* Les mentions tiennent sur deux lignes au plus : les quatre billets
+   restent alignés, titre contre titre. */
+@media (min-width: 64.01rem) { .fi-role__credit b { min-height: 2.1em; } }
+.fi-tick__p { font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
+.fi-tick__go {
+  margin-top: auto; padding-top: var(--s-2);
+  display: inline-flex; align-items: center; gap: 0.5em; align-self: flex-start;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg);
+}
+.fi-tick__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
+.fi-tick.is-lit .fi-tick__go::after { transform: translateX(0.4em); }
+.fi-tick__go::before { content: ''; position: absolute; inset: calc(-1 * var(--cut)) 0 0; }   /* tout le billet est cliquable */
+.fi-tick__go:focus-visible { outline: 2px solid var(--fi-gold); outline-offset: 3px; border-radius: 2px; }
+@supports selector(:has(*)) {
+  .fi-tick__go:focus-visible { outline: none; }
+  .fi-tick:has(.fi-tick__go:focus-visible) { outline: 2px solid var(--fi-gold); outline-offset: 4px; }
+}
+@media (max-width: 40rem) {
+  .fi-tick__paper { --cut: 3rem; }
+  .fi-tick__body { padding: 1.3rem 1.2rem 1.2rem; gap: var(--s-3); }
+}
+
+/* ═══════════════════ LES PUBLICS : LA PELLICULE ═══════════════════
+   Une bande relevée (la nuit levée d'un ton, ou le parchemin sur Papier),
+   grain de pellicule ; dessus, une bande de 35 mm, noire dans les trois
+   thèmes (`.dv-night`). Ses perforations laissent passer la lumière : une
+   table lumineuse sur Vert et Nuit, le parchemin sur Papier. */
+.fi-band { --bg: var(--fi-band); --fi-hole: color-mix(in srgb, var(--fi-light) 13%, var(--fi-band)); background-color: var(--fi-band); background-image: var(--fi-grain-soft, none); background-size: 160px 160px; overflow: clip; }
+html[data-palette='papier'] .fi-band { --fi-hole: var(--fi-band); }
+
+.fi-strip {
+  --fi-gut: max(var(--pad-x), calc((100vw - var(--maxw)) / 2 + var(--pad-x)));
+  position: relative;
+  overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  padding: var(--s-3) var(--fi-gut) var(--s-4); scroll-padding-inline: var(--fi-gut);
+  outline-offset: -4px;
+}
+.fi-strip::-webkit-scrollbar { display: none; }
+.fi-strip:focus-visible { outline: 2px solid var(--fi-gold); }
+.fi-strip.is-drift { overflow-x: clip; }
+@media (pointer: coarse) { .fi-strip { scroll-snap-type: x mandatory; } .fi-frame { scroll-snap-align: start; } }
+
+body[data-dv='film'] #main .fi-strip__film {
+  --perf: 2.6rem;
+  position: relative; display: flex; width: max-content;
+  padding: var(--perf) 0.4rem;
+  border-radius: 3px;
+  background-color: color-mix(in srgb, var(--night-3) 42%, #000);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.035), transparent 30%, transparent 70%, rgb(255 255 255 / 0.03));
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.05), 0 40px 70px -40px rgb(0 0 0 / 0.75);
+  color: var(--fg);
+}
+/* Les perforations : un masque répété (SVG écrit ici), la couleur de la
+   lumière derrière la bande. */
+.fi-strip__film::before, .fi-strip__film::after {
+  content: ''; position: absolute; left: 0; right: 0; top: calc(var(--perf) * 0.2); height: calc(var(--perf) * 0.38);
+  background: var(--fi-hole);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10'%3E%3Crect x='5' width='14' height='10' rx='2.4'/%3E%3C/svg%3E") 0 0 / auto 100% repeat-x;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10'%3E%3Crect x='5' width='14' height='10' rx='2.4'/%3E%3C/svg%3E") 0 0 / auto 100% repeat-x;
+}
+.fi-strip__film::after { top: auto; bottom: calc(var(--perf) * 0.2); }
+
+.fi-frame { position: relative; flex: none; display: flex; width: clamp(17rem, 21vw, 28rem); padding: 0 0.4rem; }
+.fi-frame__pic {
+  --lx: 12%; --ly: 8%;
+  position: relative; isolation: isolate; flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: var(--s-3);
+  min-height: 17.5rem; padding: var(--s-5) var(--s-5) var(--s-4);
+  border-radius: 0.5rem; overflow: hidden;
+  background-color: var(--night-3);
+  background-image:
+    radial-gradient(65% 75% at var(--lx) var(--ly), color-mix(in srgb, var(--dv) 13%, transparent), transparent 72%),
+    var(--fi-grain-soft, none);
+  background-size: auto, 160px 160px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.05);
+  transition: background-color 0.6s var(--e-out);
+}
+.fi-frame:nth-child(2) .fi-frame__pic { --lx: 92%; --ly: 10%; }
+.fi-frame:nth-child(3) .fi-frame__pic { --lx: 85%; --ly: 95%; }
+.fi-frame:nth-child(4) .fi-frame__pic { --lx: 10%; --ly: 92%; }
+.fi-frame:nth-child(5) .fi-frame__pic { --lx: 50%; --ly: 0%; }
+.fi-frame:nth-child(6) .fi-frame__pic { --lx: 100%; --ly: 50%; }
+/* La lampe à travers l'image : au survol, au clavier, ou au milieu de
+   l'écran sur téléphone. */
+.fi-frame__pic::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(95% 85% at 50% 42%, color-mix(in srgb, var(--fi-light) 15%, transparent), color-mix(in srgb, var(--dv) 7%, transparent) 55%, transparent 80%);
+  opacity: 0; transition: opacity 0.6s var(--e-out);
+}
+.fi-frame.is-lit .fi-frame__pic::before, .fi-frame:has(.fi-frame__go:focus-visible) .fi-frame__pic::before { opacity: 1; }
+@media (hover: hover) and (pointer: fine) { .fi-frame:hover .fi-frame__pic::before { opacity: 1; } }
+.fi-frame__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); transition: color 0.5s var(--e-out); }
+.fi-frame.is-lit .fi-frame__n { color: var(--fi-gold); }
+@media (hover: hover) and (pointer: fine) { .fi-frame:hover .fi-frame__n { color: var(--fi-gold); } }
+.fi-frame__h {
+  margin-top: auto;
+  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 360;
+  font-size: clamp(1.6rem, 1.2rem + 1vw, 2.3rem); line-height: 1; letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.fi-frame__p { font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
+.fi-frame__go {
+  padding-top: var(--s-2);
+  display: inline-flex; align-items: center; gap: 0.5em; align-self: flex-start;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg);
+}
+.fi-frame__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
+.fi-frame__go::before { content: ''; position: absolute; inset: 0; }   /* toute l'image est cliquable */
+.fi-frame.is-lit .fi-frame__go::after { transform: translateX(0.4em); }
+@media (hover: hover) and (pointer: fine) { .fi-frame:hover .fi-frame__go::after { transform: translateX(0.4em); } }
+.fi-frame__go:focus-visible { outline: 2px solid var(--fi-gold); outline-offset: 3px; border-radius: 2px; }
+@supports selector(:has(*)) {
+  .fi-frame__go:focus-visible { outline: none; }
+  .fi-frame:has(.fi-frame__go:focus-visible) .fi-frame__pic { box-shadow: inset 0 0 0 2px var(--fi-gold); }
+}
+/* Le numéro de l'image, sur le bord de la pellicule. */
+.fi-frame__edge {
+  position: absolute; left: 1.1rem; top: calc(100% + var(--perf) * 0.05);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1; letter-spacing: 0.14em;
+  color: var(--cream-3);
+}
+.fi-frame__edge::before { content: '▸ '; color: var(--dv); }
+
+/* Sur téléphone, la bande se tient debout : les perforations à gauche et à
+   droite, les images l'une sous l'autre. */
+@media (max-width: 40rem) {
+  .fi-strip { overflow: visible; padding: var(--s-2) var(--pad-x) var(--s-3); }
+  body[data-dv='film'] #main .fi-strip__film { --perf: 2.1rem; flex-direction: column; width: auto; padding: 0.4rem var(--perf); }
+  .fi-strip__film::before, .fi-strip__film::after {
+    top: 0; bottom: 0; left: calc(var(--perf) * 0.2); right: auto; width: calc(var(--perf) * 0.42); height: auto;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='24'%3E%3Crect y='5' width='10' height='14' rx='2.4'/%3E%3C/svg%3E") 0 0 / 100% auto repeat-y;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='24'%3E%3Crect y='5' width='10' height='14' rx='2.4'/%3E%3C/svg%3E") 0 0 / 100% auto repeat-y;
+  }
+  .fi-strip__film::after { left: auto; bottom: 0; right: calc(var(--perf) * 0.2); }
+  .fi-frame { width: auto; padding: 0.4rem 0; }
+  .fi-frame__pic { min-height: 0; padding: var(--s-5) var(--s-4) var(--s-4); }
+  .fi-frame__h { margin-top: var(--s-2); }
+  .fi-frame__edge { display: none; }
+}
+
+/* ── L'amorce : le compte à rebours avant la demande ──
+   Un disque d'amorce (les deux cercles, la croix, l'aiguille qui balaie),
+   noir dans les trois thèmes ; 3, 2, 1, puis « Action ». */
+.fi-leader {
+  position: relative; display: grid; place-items: center;
+  max-width: var(--maxw); margin: var(--s-8) auto 0; padding-inline: var(--pad-x);
+}
+.fi-leader::before {
+  content: ''; position: absolute; left: var(--pad-x); right: var(--pad-x); top: 50%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line) 18%, var(--line) 82%, transparent);
+}
+.fi-leader::after {
+  content: ''; position: absolute; left: var(--pad-x); right: var(--pad-x); top: 50%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dv) 30%, var(--dv) 70%, transparent);
+  transform: scaleX(0); opacity: 0;
+}
+.fi-leader.is-done::after { animation: fi-lead-line 1.4s var(--e-out) both; }
+@keyframes fi-lead-line { 0% { transform: scaleX(0); opacity: 1; } 60% { opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+.fi-leader__ring {
+  --a: 0deg;
+  position: relative; z-index: 1; display: grid; place-items: center; overflow: hidden;
+  width: clamp(5.75rem, 4.75rem + 3vw, 7.75rem); aspect-ratio: 1; border-radius: 50%;
+  background: color-mix(in srgb, var(--D-night-3) 60%, #000);
+  color: var(--D-cream);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 0 0 0.45rem var(--fi-band),
+    0 0 0 calc(0.45rem + 1px) var(--line),
+    0 26px 50px -26px rgb(0 0 0 / 0.7);
+}
+.fi-leader__ring::before, .fi-leader__ring::after {
+  content: ''; position: absolute; border-radius: 50%; pointer-events: none;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--D-cream) 55%, transparent);
+}
+.fi-leader__ring::before { inset: 0.5rem; }
+.fi-leader__ring::after { inset: 1.35rem; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--D-cream) 32%, transparent); }
+.fi-leader__sweep {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(color-mix(in srgb, var(--D-cream) 20%, transparent) var(--a), transparent 0);
+}
+.fi-leader__cross {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(color-mix(in srgb, var(--D-cream) 30%, transparent), color-mix(in srgb, var(--D-cream) 30%, transparent)) 50% 0 / 1px 100% no-repeat,
+    linear-gradient(color-mix(in srgb, var(--D-cream) 30%, transparent), color-mix(in srgb, var(--D-cream) 30%, transparent)) 0 50% / 100% 1px no-repeat;
+}
+.fi-leader__n {
+  position: relative; z-index: 1;
+  font-family: var(--ff-d); font-weight: 400; font-size: clamp(2.3rem, 1.9rem + 1.3vw, 3.2rem); line-height: 1;
+  font-variation-settings: 'wdth' 80, 'wght' 760; font-variant-numeric: tabular-nums;
+  color: var(--D-cream); text-shadow: 0 0 18px rgb(0 0 0 / 0.8);
+}
+.fi-leader.is-done .fi-leader__n {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--D-dv);
+}
+.fi-leader.is-done .fi-leader__cross { opacity: 0.4; }
+
+/* ═══════════════════ LA DEMANDE : LE PLATEAU ═══════════════════
+   Une lumière de face sur la claquette, un sol qui s'assombrit, le grain. */
+.fi-ask {
+  background-image:
+    radial-gradient(38% 46% at 22% 58%, color-mix(in srgb, var(--dv) 13%, transparent), transparent 74%),
+    linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--night-2) 70%, transparent)),
+    var(--fi-grain-soft, none);
+  background-size: auto, auto, 160px 160px;
+}
+.fi-ask__head { margin-bottom: var(--s-7); }
+.fi-ask__grid {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-6) var(--s-8); align-items: start;
+}
+/* La claquette et les trois portes restent en vue pendant qu'on remplit. */
+.fi-ask__side { position: sticky; top: calc(var(--bar-h) + var(--s-3)); display: grid; gap: var(--s-6); }
+.fi-ask__reach { display: grid; gap: var(--s-3); }
+.fi-ask__reach .dv-mono { color: var(--cream-2); }
+.fi-ask__reach .dv-reach { margin-top: 0; }
+
+/* ─────────────── La claquette ───────────────
+   Un objet noir dans les trois thèmes (`.dv-night` : sur Papier, la nuit de
+   la division). Les deux bâtons rayés ; le bâton du haut s'ouvre depuis la
+   charnière (repos −8°, prêt −14°, clap 0°). L'espace au-dessus est réservé
+   en unités de conteneur : la pointe du bâton monte de L × sin(angle). */
+.fi-slate {
+  --sl-stick: clamp(1.5rem, 1.15rem + 0.9vw, 2rem);
+  --sl-stripe: clamp(0.95rem, 0.8rem + 0.5vw, 1.25rem);
+  position: relative; container-type: inline-size;
+  width: 100%; max-width: 36rem;
+  color: var(--cream);
+}
+/* Sur Papier, la règle commune des sections noires peint le fond de tout
+   `.dv-night` : la claquette n'est noire que sur ses bâtons et son ardoise. */
+html[data-palette='papier'] body[data-dv='film'] #main #inquiry .fi-slate.dv-night { background-color: transparent; }
+.fi-slate__sticks { position: relative; height: calc(var(--sl-stick) * 2); margin-top: 17cqw; }
+.fi-slate__bar, .fi-slate__arm {
+  position: absolute; left: 0; right: 0; height: var(--sl-stick);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.5), inset 0 -2px 0 rgb(0 0 0 / 0.35);
+}
+.fi-slate__bar {
+  bottom: 0; border-radius: 3px 3px 0 0;
+  background: repeating-linear-gradient(-58deg, var(--cream) 0 var(--sl-stripe), var(--fi-void) var(--sl-stripe) calc(var(--sl-stripe) * 2));
+}
+.fi-slate__arm {
+  top: 0; border-radius: 3px;
+  background: repeating-linear-gradient(58deg, var(--cream) 0 var(--sl-stripe), var(--fi-void) var(--sl-stripe) calc(var(--sl-stripe) * 2));
+  transform-origin: 0 100%; transform: rotate(-8deg);
+  transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.fi-slate.is-ready .fi-slate__arm { transform: rotate(-14deg); }
+.fi-slate.is-shut .fi-slate__arm, .fi-slate.is-clapped .fi-slate__arm { transform: none; }
+.fi-slate.is-shut .fi-slate__arm { transition: none; }
+/* La charnière, dans l'or de la division. */
+.fi-slate__pin {
+  position: absolute; z-index: 2; left: calc(var(--sl-stick) * 0.3); top: calc(var(--sl-stick) * 0.72);
+  width: calc(var(--sl-stick) * 0.56); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--fi-light), var(--dv) 45%, var(--dv-dp));
+  box-shadow: 0 0 0 2px var(--fi-void), 0 0 14px color-mix(in srgb, var(--dv) 50%, transparent);
+}
+
+.fi-slate__board {
+  position: relative; overflow: hidden;
+  padding: clamp(0.85rem, 0.6rem + 0.9vw, 1.3rem);
+  border-radius: 0 0 0.55rem 0.55rem;
+  background-color: var(--night-3);
+  background-image:
+    radial-gradient(90% 70% at 20% 0%, color-mix(in srgb, var(--cream) 6%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 100% 100%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 70%),
+    var(--fi-grain-soft, none);
+  background-size: auto, auto, 160px 160px;
+  box-shadow: 0 46px 80px -44px rgb(0 0 0 / 0.75), inset 0 0 0 1px color-mix(in srgb, var(--cream) 9%, transparent);
+}
+/* L'éclair du clap. */
+.fi-slate__flash {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0; visibility: hidden;
+  background: radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, var(--fi-light) 45%, transparent), transparent 70%);
+}
+.fi-slate__top {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.3rem 1rem; margin-bottom: 0.8rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.fi-slate__top span:first-child { color: var(--cream); }
+
+/* La grille à la craie. */
+.fi-slate__grid {
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+  border-top: 1px solid var(--fi-chalk); border-left: 1px solid var(--fi-chalk);
+}
+.fi-cell {
+  --hit: 0;
+  position: relative; grid-column: span 2; min-width: 0;
+  display: grid; align-content: start; gap: 0.32rem;
+  padding: 0.6rem 0.75rem 0.7rem;
+  border-right: 1px solid var(--fi-chalk); border-bottom: 1px solid var(--fi-chalk);
+}
+.fi-cell::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: var(--hit);
+  background: radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--dv) 22%, transparent), transparent 70%);
+}
+.fi-cell--prod, .fi-cell--log { grid-column: 1 / -1; }
+.fi-cell--half { grid-column: span 3; }
+.fi-cell__k {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-3); transition: color 0.5s var(--e-out);
+}
+.fi-cell__v {
+  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 48, 'wght' 380;
+  font-size: clamp(1.02rem, 0.92rem + 0.35vw, 1.25rem); line-height: 1.18; letter-spacing: -0.005em;
+  color: var(--cream-3); overflow-wrap: anywhere;
+  transition: color 0.5s var(--e-out);
+}
+.fi-cell--prod .fi-cell__v { font-size: clamp(1.45rem, 1.05rem + 1.25vw, 2.15rem); line-height: 1.04; letter-spacing: -0.015em; }
+.fi-cell--log .fi-cell__v {
+  font-style: italic; line-height: 1.38;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+}
+.fi-cell.is-set .fi-cell__k { color: var(--fi-gold); }
+.fi-cell.is-set .fi-cell__v { color: var(--cream); }
+
+/* Où en est le film : six étapes, la jauge se remplit jusqu'à celle choisie. */
+.fi-gauge { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 3px; margin-top: 0.25rem; }
+.fi-gauge i { height: 3px; border-radius: 2px; background: var(--fi-chalk); transition: background-color 0.45s var(--e-out), box-shadow 0.45s var(--e-out); }
+.fi-gauge i:nth-child(2) { transition-delay: 40ms; } .fi-gauge i:nth-child(3) { transition-delay: 80ms; }
+.fi-gauge i:nth-child(4) { transition-delay: 120ms; } .fi-gauge i:nth-child(5) { transition-delay: 160ms; }
+.fi-gauge i:nth-child(6) { transition-delay: 200ms; }
+.fi-gauge i.is-on { background: color-mix(in srgb, var(--dv) 70%, transparent); }
+.fi-gauge i.is-at { background: var(--dv); box-shadow: 0 0 10px color-mix(in srgb, var(--dv) 80%, transparent); }
+
+.fi-slate__foot {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.4rem 1.2rem;
+  margin-top: 0.85rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.fi-slate__foot b { font-weight: 400; color: var(--cream); margin-left: 0.35em; font-variant-numeric: tabular-nums; }
+/* Le témoin : éteint (« Standby »), allumé quand nom, téléphone et email
+   sont là (« Ready »). */
+.fi-slate__lamp { display: inline-flex; align-items: center; gap: 0.55em; transition: color 0.4s var(--e-out); }
+.fi-slate__lamp::before {
+  content: ''; width: 0.6rem; height: 0.6rem; border-radius: 50%; flex: none;
+  box-shadow: inset 0 0 0 1.5px var(--cream-3);
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.fi-slate.is-ready .fi-slate__lamp { color: var(--fi-gold); }
+.fi-slate.is-ready .fi-slate__lamp::before {
+  background: var(--dv);
+  box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--dv) 26%, transparent), 0 0 14px var(--dv);
+}
+
+/* ─────────────── Le formulaire : trois scènes ─────────────── */
+.fi-form { display: grid; gap: var(--s-7); }
+.fi-sc { min-width: 0; margin: 0; padding: 0; border: 0; }
+/* Une légende flottante se range comme un bloc ordinaire. */
+.fi-sc__h {
+  float: left; width: 100%; padding: 0; margin: 0 0 var(--s-5);
+  display: flex; align-items: center; gap: 0.9rem;
+}
+.fi-sc__h + * { clear: both; }
+.fi-sc__h::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.fi-sc__n {
+  flex: none; padding: 0.32rem 0.6rem; border-radius: 3px;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--fi-gold);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fi-gold) 60%, transparent);
+}
+.fi-sc__t {
+  flex: none;
+  font-family: var(--ff-p); font-weight: 400; font-variation-settings: 'opsz' 72, 'wght' 360;
+  font-size: clamp(1.45rem, 1.15rem + 0.8vw, 1.95rem); line-height: 1; letter-spacing: -0.015em;
+  color: var(--fg);
+}
+
+.fi-form .dv-fields { gap: 0 var(--s-5); }
+.fi-form .dv-group { margin-bottom: var(--s-5); }
+.fi-form .dv-group > legend,
+.fi-form .field label {
+  display: block; margin-bottom: 0.6rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cream-2); transition: color 0.35s var(--e-out);
+}
+.fi-form .field__opt { text-transform: none; letter-spacing: 0.02em; opacity: 1; color: var(--cream-3); }
+.fi-form .field { margin-bottom: var(--s-5); }
+.fi-form .field:focus-within label { color: var(--fi-gold); }
+
+/* Les champs : un fond à peine levé, un trait dessous ; au focus, un trait
+   d'or s'étire depuis la gauche. Assez hauts pour le pouce (52 px). */
+body[data-dv='film'] .fi-form .field :is(input, select, textarea) {
+  min-height: 3.25rem; padding: 0.85rem 1rem;
+  border: 0; border-bottom: 1px solid var(--fi-rule); border-radius: 0.4rem 0.4rem 0 0;
+  background-color: color-mix(in srgb, var(--fg) 5%, transparent);
+  background-image: linear-gradient(var(--fi-gold), var(--fi-gold));
+  background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 2px;
+  color: var(--fg); font-family: var(--ff-t); font-size: 1.0625rem; line-height: 1.4;
+  transition: background-size 0.55s var(--e-out), background-color 0.3s var(--e-out), border-color 0.3s var(--e-out);
+}
+body[data-dv='film'] .fi-form .field :is(input, select, textarea):hover { border-bottom-color: var(--fg); }
+body[data-dv='film'] .fi-form .field :is(input, select, textarea):focus {
+  outline: 2px solid transparent;
+  background-size: 100% 2px;
+  background-color: color-mix(in srgb, var(--fg) 8%, transparent);
+  border-bottom-color: var(--fi-gold);
+}
+.fi-form .field ::placeholder { color: var(--cream-3); opacity: 1; }
+body[data-dv='film'] .fi-form .field textarea { min-height: 8rem; resize: vertical; }
+body[data-dv='film'] .fi-form .field select { padding-right: 2.6rem; cursor: pointer; }
+.fi-form .field:has(> select)::after {
+  content: ''; position: absolute; right: 1.1rem; bottom: 1.45rem; pointer-events: none;
+  width: 0.5rem; height: 0.5rem;
+  border-right: 2px solid var(--fi-gold); border-bottom: 2px solid var(--fi-gold);
+  transform: rotate(45deg);
+}
+.fi-form .field select option { color: #17130c; background: #fffcf5; }
+/* Erreurs : le rouge du thème, un fond teinté, le message lisible. */
+body[data-dv='film'] .fi-form .field.is-err :is(input, textarea) {
+  border-bottom: 2px solid var(--fi-err);
+  background-color: color-mix(in srgb, var(--fi-err) 9%, transparent);
+}
+body[data-dv='film'] .fi-form .field__err {
+  display: flex; align-items: center; gap: 0.45em; margin-top: 0.5rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.04em;
+  color: var(--fi-err);
+}
+body[data-dv='film'] .fi-form .field__err::before { content: '!'; display: grid; place-items: center; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--fi-err); color: var(--night-2); font-weight: 700; font-size: 0.75rem; }
+html[data-palette='papier'] body[data-dv='film'] .fi-form .field__err::before { color: #fff; }
+/* Un champ rempli : la marque de gauche commune est remplacée par le trait. */
+body[data-dv='film'] .fi-form .field :is(input, textarea):is(:user-valid, :user-invalid, :valid) { border-left: 0; }
+
+/* « You are » : des pastilles larges, au doigt. */
+.fi-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+body[data-dv='film'] .fi-chips .chip span {
+  display: inline-flex; align-items: center; gap: 0.5em; min-height: 2.85rem; padding: 0.55rem 1.05rem;
+  border: 1px solid var(--fi-rule); border-radius: 999px;
+  font-family: var(--ff-t); font-size: 0.9375rem; letter-spacing: 0; color: var(--fg);
+  transition: border-color 0.3s var(--e-out), background-color 0.35s var(--e-out), color 0.3s var(--e-out);
+}
+body[data-dv='film'] .fi-chips .chip:hover span { border-color: var(--fi-gold); }
+body[data-dv='film'] .fi-chips .chip input:checked + span { background: var(--dv); border-color: var(--dv); color: var(--D-night); }
+body[data-dv='film'] .fi-chips .chip input:checked + span::before {
+  content: ''; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: currentColor;
+}
+
+/* Le rôle voulu : une mention de générique sous chaque choix. Le texte du
+   mail reste le nom du rôle (`data-text`). */
+.fi-pick__l { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr)); gap: 0.6rem; }
+.fi-cr { display: flex; }
+body[data-dv='film'] .fi-pick .fi-cr span {
+  position: relative; flex: 1;
+  display: grid; align-content: start; gap: 0.3rem;
+  min-height: 4.6rem; padding: 0.85rem 2.6rem 0.9rem 1rem;
+  border: 1px solid var(--fi-rule); border-radius: 0.55rem;
+  font-family: var(--ff-t); letter-spacing: 0; color: var(--fg);
+  transition: border-color 0.3s var(--e-out), background-color 0.4s var(--e-out);
+}
+.fi-cr b { font-size: 1rem; font-weight: 600; line-height: 1.2; }
+.fi-cr i {
+  font-family: var(--ff-p); font-style: normal; font-weight: 400; font-variation-settings: 'opsz' 48, 'wght' 380;
+  font-size: 1.02rem; line-height: 1.15; color: var(--fi-gold); text-wrap: balance;
+}
+/* La case : un rond qu'on coche. */
+body[data-dv='film'] .fi-pick .fi-cr span::after {
+  content: ''; position: absolute; top: 0.95rem; right: 0.95rem;
+  width: 1.05rem; height: 1.05rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--fi-rule);
+  transition: box-shadow 0.35s var(--e-out), background-color 0.35s var(--e-out);
+}
+body[data-dv='film'] .fi-pick .fi-cr:hover span { border-color: var(--fi-gold); }
+body[data-dv='film'] .fi-pick .fi-cr input:checked + span {
+  background: color-mix(in srgb, var(--dv) 13%, transparent); border-color: var(--fi-gold); color: var(--fg);
+}
+body[data-dv='film'] .fi-pick .fi-cr input:checked + span::after {
+  background: var(--fi-gold); box-shadow: inset 0 0 0 3px var(--bg), 0 0 0 1.5px var(--fi-gold);
+}
+/* Le focus au clavier : un anneau d'or (l'or brun sur Papier). */
+body[data-dv='film'] .fi-form .chip input:focus-visible + span { outline: 2px solid var(--fi-gold); outline-offset: 3px; }
+/* Le choix qu'une carte vient d'orienter s'éclaire un instant. */
+body[data-dv='film'] .fi-form [data-group].is-picked { box-shadow: none; }
+body[data-dv='film'] .fi-form [data-group].is-picked input:checked + span {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--dv) 35%, transparent), 0 0 28px color-mix(in srgb, var(--dv) 40%, transparent);
+}
+
+/* L'envoi : le bouton d'or ; sa petite claquette claque au survol. */
+.fi-form__foot { margin-top: 0; gap: var(--s-4) var(--s-5); }
+body[data-dv='film'] .fi-go {
+  gap: 0.85rem; padding-left: 1.4rem;
+  background: var(--dv); color: var(--D-night);
+}
+body[data-dv='film'] .fi-go::before { background: color-mix(in srgb, var(--dv) 50%, #fff); }
+/* Sur l'ivoire, l'or clair se détache trop peu du papier (2,3:1) : un filet
+   d'or brun dessine le bouton (4,7:1). */
+html[data-palette='papier'] body[data-dv='film'] .fi-go { border: 1.5px solid var(--dv-dp); }
+body[data-dv='film'] .fi-go:hover, body[data-dv='film'] .fi-go:focus-visible { color: var(--D-night); }
+.fi-go:focus-visible { outline: 2px solid var(--fi-gold); outline-offset: 4px; }
+.fi-go__clap { position: relative; flex: none; width: 1.35rem; height: 1.15rem; }
+.fi-go__clap i {
+  position: absolute; left: 0; right: 0; height: 0.3rem; border-radius: 1px;
+  background: repeating-linear-gradient(-55deg, currentColor 0 0.2rem, transparent 0.2rem 0.4rem);
+  box-shadow: inset 0 0 0 1.25px currentColor;
+}
+.fi-go__clap i:first-child { top: 0; transform-origin: 0 100%; transform: rotate(-20deg); transition: transform 0.35s cubic-bezier(0.5, 0, 0.75, 0); }
+.fi-go__clap i:last-child { top: 0.32rem; }
+.fi-go__clap::after { content: ''; position: absolute; left: 0; right: 0; top: 0.66rem; bottom: 0; border-radius: 0 0 2px 2px; background: currentColor; }
+.fi-go:hover .fi-go__clap i:first-child, .fi-go:focus-visible .fi-go__clap i:first-child { transform: none; }
+body[data-dv='film'] .fi-form .dv-form__note { font-size: 0.8125rem; color: var(--cream-2); }
+
+/* ─────────────── La feuille de service (la confirmation) ───────────────
+   Une feuille d'ivoire dans les trois thèmes : le jeu « jour » de la division. */
+body[data-dv='film'] .fi-sheet {
+  --fg: var(--L-cream); --cream: var(--L-cream); --cream-2: var(--L-cream-2); --cream-3: var(--L-cream-3);
+  --dv: var(--L-dv-lt); --fi-gold: var(--L-dv-lt);
+  --line: #00000024; --line-2: #00000014;
+  position: relative; overflow: hidden;
+  padding: clamp(1.4rem, 0.9rem + 1.8vw, 2.5rem);
+  border-radius: 0.5rem;
+  background: var(--L-night-3); color: var(--fg);
+  box-shadow: 0 50px 90px -50px rgb(0 0 0 / 0.7), 0 0 0 1px rgb(0 0 0 / 0.08);
+  color-scheme: light;
+}
+body[data-dv='film'] .fi-sheet[hidden], body[data-dv='film'] .fi-sheet [hidden] { display: none; }
+.fi-sheet::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--L-dv); }
+.fi-sheet__head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  padding-bottom: 0.9rem; margin-bottom: 1.1rem; border-bottom: 2px solid var(--fg);
+}
+.fi-sheet__k {
+  display: flex; flex-wrap: wrap; gap: 0.3rem 1.1rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.fi-sheet__k span:first-child { color: var(--fg); font-weight: 600; }
+.fi-sheet__stamp {
+  flex: none; display: grid; place-content: center; gap: 0.15rem; text-align: center;
+  width: 5.4rem; aspect-ratio: 1; margin: -0.4rem -0.2rem 0 0; border-radius: 50%;
+  border: 2px solid var(--fi-gold); outline: 1px solid var(--fi-gold); outline-offset: -6px;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.1;
+  color: var(--fi-gold); transform: rotate(-10deg);
+}
+.fi-sheet__stamp span:first-child { font-weight: 700; }
+body[data-dv='film'] .fi-sheet h3 {
+  font-family: var(--ff-p); text-transform: none; font-weight: 400; font-variation-settings: 'opsz' 96, 'wght' 380;
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.7rem); line-height: 1.02; letter-spacing: -0.02em;
+}
+.fi-sheet h3:focus { outline: none; }
+body[data-dv='film'] .fi-sheet p { margin-top: var(--s-3); max-width: 40rem; color: var(--cream-2); line-height: 1.55; }
+body[data-dv='film'] .fi-sheet dl {
+  grid-template-columns: minmax(7.5rem, 13rem) minmax(0, 1fr); gap: 0; margin-top: var(--s-5);
+  border-top: 1px solid var(--line);
+}
+body[data-dv='film'] .fi-sheet :is(dt, dd) { padding: 0.6rem 0; border-bottom: 1px dashed var(--line); }
+body[data-dv='film'] .fi-sheet dt { padding-right: 1rem; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--cream-3); padding-top: 0.75rem; }
+body[data-dv='film'] .fi-sheet dd { font-size: var(--fs-sm); color: var(--fg); overflow-wrap: anywhere; }
+body[data-dv='film'] .fi-sheet .fi-sheet__foot {
+  display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; margin-top: var(--s-5); max-width: none;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+
+/* ─────────────── Tablette et téléphone ───────────────
+   Une colonne : le titre, la claquette, le formulaire, puis les trois portes. */
+@media (max-width: 60rem) {
+  .fi-ask { background-image:
+      radial-gradient(70% 30% at 50% 22%, color-mix(in srgb, var(--dv) 12%, transparent), transparent 74%),
+      linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--night-2) 70%, transparent)),
+      var(--fi-grain-soft, none); }
+  .fi-ask__grid { grid-template-columns: minmax(0, 1fr); }
+  .fi-ask__side { display: contents; }
+  .fi-slate { order: 1; }
+  .fi-ask__main { order: 2; }
+  .fi-ask__reach { order: 3; }
+}
+@media (max-width: 36rem) {
+  .fi-ask__head { margin-bottom: var(--s-5); }
+  .fi-slate__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fi-cell, .fi-cell--half { grid-column: span 1; }
+  .fi-cell--prod, .fi-cell--log { grid-column: 1 / -1; }
+  .fi-cell--time { display: none; }
+  .fi-cell--log .fi-cell__v { -webkit-line-clamp: 2; }
+  .fi-slate__top { margin-bottom: 0.6rem; }
+  .fi-form { gap: var(--s-6); }
+  .fi-form .dv-fields { grid-template-columns: minmax(0, 1fr); }
+  .fi-form__foot .fi-go { width: 100%; justify-content: center; }
+  body[data-dv='film'] .fi-sheet dl { grid-template-columns: minmax(0, 1fr); }
+  body[data-dv='film'] .fi-sheet dt { padding-bottom: 0; border-bottom: 0; }
+  .fi-sheet__stamp { width: 4.6rem; }
+}
+/* Un écran d'ordinateur bas : la claquette se resserre pour que les trois
+   portes tiennent sous elle, en vue. */
+@media (min-width: 60.01rem) and (max-height: 50rem) {
+  .fi-cell--time { display: none; }
+  .fi-cell--log .fi-cell__v { -webkit-line-clamp: 2; }
+  .fi-slate__top { display: none; }
+  .fi-ask__side { gap: var(--s-5); }
+}
+
+/* ═══════════════════ PAPIER : LA BARRE SUR L'OUVERTURE ═══════════════════
+   La partie commune ne change pas (Dominique, 18/10). Seul cas prévu, comme
+   sur les pages de synthèse (hub.css) et Event Organizing : tant qu'elle
+   survole l'ouverture noire (`is-paper` absent, motion.js), la barre prend
+   l'encre claire, pour rester lisible. Plus bas, elle garde son verre blanc
+   et son encre noire, comme sur l'accueil au-dessus des sections noires. */
+html[data-palette='papier'] body[data-dv='film'] .bar:not(.is-paper) {
+  --bar-ink: #f2f0eb; --bar-inv: #111110; color: #f2f0eb;
+}
+
+/* ─────────────── Sans mouvement ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fi-screen.is-run .fi-grain, .fi-screen.is-run .fi-weave, .fi-screen.is-run .fi-flicker { animation: none; }
+  .fi-film, .fi-film__fig, .fi-film__fig > img:first-child, .fi-film__pv { transition: none; }
+  .fi-slate__arm, .fi-gauge i, .fi-go__clap i:first-child { transition: none; }
+  /* La cabine, le hall, les billets, la pellicule : la lumière sans le
+     mouvement — les ampoules allumées restent fixes. */
+  .fi-booth__beam, .fi-marq__track, .fi-marq__board::after, .fi-leader::after,
+  .fi-bulbs__on, .fi-bulbs__halo, .fi-film__case, .fi-film__case.is-flick .fi-bulbs__on { animation: none !important; }
+  .fi-film__case, .fi-tick, .fi-tick__punch, .fi-frame__go::after, .fi-tick__go::after { transition: none; }
+  .fi-film__case:hover, .fi-tick.is-lit { transform: none; }
+}

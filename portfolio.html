@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!--#include "head" -->
+  <title>Portfolio — Films, Events &amp; Productions | Teddy Studio</title>
+  <meta name="description" content="Work from Teddy Studio's divisions in Ethiopia — films, live streaming, events, music, AI and documentaries — each labelled for what it is.">
+  <link rel="canonical" href="https://ethiopianfilmoffice.com/portfolio.html">
+  <meta property="og:url" content="https://ethiopianfilmoffice.com/portfolio.html">
+  <meta property="og:image" content="/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:site_name" content="Teddy Studio — Ethiopian Film Office">
+  <meta property="og:title" content="Selected work — Teddy Studio Portfolio">
+  <meta property="og:description" content="Feature films and productions from Teddy Studio in Addis Ababa, Ethiopia, each clearly labelled.">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/division.css">
+  <link rel="stylesheet" href="/src/styles/pages/portfolio.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Portfolio — Teddy Studio",
+    "description": "Selected projects by Teddy Studio in Ethiopia, filterable by division: live streaming, events, AI production, music, feature films, documentaries and equipment and technical production.",
+    "about": { "@type": "Thing", "name": "Film, media and event production in Ethiopia" },
+    "provider": { "@type": "Organization", "name": "Teddy Studio — Ethiopian Film Office", "telephone": "+251911204388", "email": "info@ethiopianfilmoffice.com" }
+  }
+  </script>
+</head>
+<body class="page page--dv" data-dv="hub" data-page="portfolio">
+
+<!--#include "bar" -->
+
+<main id="main">
+
+  <!-- ══════════ L'OUVERTURE ══════════
+       La salle de projection : un écran où passent, l'une après l'autre, les
+       images des projets mis en avant (affiches et photos de tournage tirées
+       de src/data/portfolio.js). La légende dit de quel projet il s'agit et
+       ce qu'il est (production maison, projet client…) ; « Open project »
+       ouvre sa fiche. Les traits sous l'écran permettent de choisir l'image.
+       Depuis le 18/10 : le faisceau du projecteur traverse la salle jusqu'à
+       l'écran, la poussière y danse (canevas, portfolio-beam.js). -->
+  <section class="dv-hero pf-hero" id="top" aria-labelledby="hero-h" data-bar-clear data-live>
+    <div class="pf-booth" aria-hidden="true">
+      <canvas class="pf-beam" data-beam></canvas>
+    </div>
+    <div class="dv-wrap pf-hero__in">
+      <div class="pf-hero__txt">
+        <p class="dv-k" data-in>Portfolio</p>
+        <h1 class="dv-h1" id="hero-h">Selected <em>work</em></h1>
+        <!-- À VALIDER : client -->
+        <p class="dv-lede" data-in>Projects from our divisions, each labelled for what it is: a client project, our own production, a concept or a third-party production. Filter by division to find the work that matters to you.</p>
+        <div class="dv-acts" data-in>
+          <a class="dv-btn dv-btn--xl" href="#work">Browse the Work<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m5 12 7 7 7-7"/></svg></a>
+          <a class="dv-btn dv-btn--ghost dv-btn--xl" href="/contact.html#inquiry">Start a Project</a>
+        </div>
+      </div>
+
+      <figure class="pf-screen" data-in data-screen>
+        <div class="pf-screen__frame" data-screen-frame>
+          <img class="pf-screen__img is-on" src="/film/triangle-card-w1280.webp" alt="" width="1280" height="720" decoding="async" fetchpriority="high">
+          <button class="pf-screen__hit" type="button" data-screen-open aria-label="Open the featured project"></button>
+        </div>
+        <figcaption class="pf-screen__cap">
+          <span class="pf-screen__k">Featured <span class="pf-screen__n"><span data-screen-n>01</span> / <span data-screen-total>01</span></span></span>
+          <span class="pf-screen__t" data-screen-title>Sost Maezen 2</span>
+          <span class="pf-screen__st" data-screen-st>Worked on · Feature Films</span>
+          <button class="pf-screen__open" type="button" data-screen-open>Open project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></button>
+        </figcaption>
+        <div class="pf-screen__ticks" data-screen-ticks role="group" aria-label="Featured images"></div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ══════════ LE PORTFOLIO : L'ARCHIVE ══════════
+       Les filtres (Tout + les sept catégories du brief) réorganisent la grille
+       en douceur (GSAP Flip) et s'écrivent dans l'adresse (?cat=film). Chaque
+       carte porte son statut (légende ci-dessous), si bien qu'on distingue un
+       projet client d'une production maison, d'une démonstration ou d'un
+       travail de tiers. Une catégorie sans projet affiche un panneau honnête
+       « en préparation » qui mène à sa division. Tout vient de
+       src/data/portfolio.js : ajouter une fiche suffit.
+       Depuis le 18/10, c'est la salle d'archives : la légende est un jeu
+       d'étiquettes suspendues à une tringle (survol ou toucher : elles
+       éclairent les tirages qui les portent), les filtres sont les tiroirs
+       d'un meuble à fiches, et les projets des tirages montés posés sur une
+       table lumineuse, qu'on lit à la loupe. Une catégorie vide est un tiroir
+       ouvert sur une boîte de bobine encore scellée. -->
+  <section class="dv-sec pf-work" id="work" aria-labelledby="work-h" data-live>
+    <div class="dv-wrap">
+      <header class="pf-head">
+        <div class="pf-head__t">
+          <p class="dv-k">The work</p>
+          <h2 class="dv-h2" id="work-h">Browse by division</h2>
+        </div>
+        <div class="pf-legend" data-legend>
+          <p class="pf-legend__k dv-mono" id="legend-h">How to read the labels</p>
+          <span class="pf-legend__rail" aria-hidden="true"><i></i></span>
+          <ul class="pf-tags" aria-labelledby="legend-h">
+            <li data-st="client"><button class="pf-tag" type="button" aria-pressed="false"><span class="pf-tag__t"><span class="pf-mark pf-mark--client" aria-hidden="true"></span><b>Client project</b></span><span class="pf-tag__d">Made for a client.</span></button></li>
+            <li data-st="own"><button class="pf-tag" type="button" aria-pressed="false"><span class="pf-tag__t"><span class="pf-mark pf-mark--own" aria-hidden="true"></span><b>Teddy Studio production</b></span><span class="pf-tag__d">Produced by us.</span></button></li>
+            <li data-st="demo"><button class="pf-tag" type="button" aria-pressed="false"><span class="pf-tag__t"><span class="pf-mark pf-mark--demo" aria-hidden="true"></span><b>Concept / demonstration</b></span><span class="pf-tag__d">Made to show an idea or a capability, not for a client.</span></button></li>
+            <li data-st="worked"><button class="pf-tag" type="button" aria-pressed="false"><span class="pf-tag__t"><span class="pf-mark pf-mark--worked" aria-hidden="true"></span><b>Worked on</b></span><span class="pf-tag__d">A production we have worked on.</span></button></li>
+            <li data-st="third"><button class="pf-tag" type="button" aria-pressed="false"><span class="pf-tag__t"><span class="pf-mark pf-mark--third" aria-hidden="true"></span><b>Third-party production</b></span><span class="pf-tag__d">Another company’s production that we contributed to.</span></button></li>
+          </ul>
+        </div>
+      </header>
+
+      <div class="pf-bar">
+        <div class="pf-filters" role="group" aria-label="Filter projects by category" data-filters></div>
+        <p class="pf-count dv-mono" data-count aria-live="polite"></p>
+        <span class="pf-bar__rule" aria-hidden="true"></span>
+      </div>
+
+      <div class="pf-table" data-table>
+        <span class="pf-table__glow" aria-hidden="true"></span>
+        <span class="pf-table__scan" aria-hidden="true"></span>
+        <div class="pf-grid" data-grid></div>
+        <div class="pf-prep" data-prep hidden></div>
+      </div>
+
+      <noscript>
+        <p class="dv-lede">Our portfolio needs JavaScript to display. You can also <a class="dv-link" href="/contact.html#inquiry">ask our team for references</a>.</p>
+      </noscript>
+    </div>
+  </section>
+
+  <!-- ══════════ L'APPEL FINAL ══════════
+       La bobine réceptrice tourne, vide : la suivante est la vôtre. -->
+  <section class="dv-final pf-final" id="start" aria-labelledby="final-h" data-live>
+    <div class="pf-final__reel" aria-hidden="true" data-reel></div>
+    <span class="pf-final__streak" aria-hidden="true"></span>
+    <p class="dv-k">Start a project</p>
+    <h2 class="dv-h2" id="final-h">Have a Project in Mind?</h2>
+    <p class="dv-lede">Tell us what you are planning, and let’s explore how we can bring it to life.</p>
+    <div class="dv-acts">
+      <a class="dv-btn dv-btn--xl" href="/contact.html#inquiry">Discuss Your Project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <a class="dv-btn dv-btn--ghost dv-btn--xl" href="/contact.html">Contact Our Team</a>
+    </div>
+  </section>
+
+  <section class="dv-sec dv-sec--rule pf-index" aria-label="Our divisions" data-live>
+    <!--#include "dv-next" -->
+  </section>
+</main>
+
+<!-- LA FICHE D'UN PROJET : s'ouvre depuis une carte, depuis l'écran de
+     l'ouverture ou depuis une adresse /portfolio.html#<slug> (les cartes des
+     pages de division y mènent). Remplie par src/js/pages/portfolio.js.
+     Depuis le 18/10, une projection : l'image s'ouvre comme l'iris d'un
+     objectif, l'obturateur bat entre deux images, les vignettes sont une
+     bande de pellicule et la fiche une carte d'archive. -->
+<dialog class="pf-dlg" data-dlg aria-labelledby="pf-dlg-h">
+  <div class="pf-dlg__scrim" data-dlg-close></div>
+  <div class="pf-dlg__panel" data-lenis-prevent>
+    <button class="pf-dlg__x" type="button" data-dlg-close aria-label="Close project"><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+    <div class="pf-dlg__media">
+      <span class="pf-dlg__beam" aria-hidden="true"></span>
+      <div class="pf-dlg__main" data-dlg-main></div>
+      <span class="pf-dlg__shutter" aria-hidden="true" data-dlg-shutter></span>
+      <div class="pf-dlg__thumbs" data-dlg-thumbs role="group" aria-label="Images of this project"></div>
+    </div>
+    <div class="pf-dlg__info">
+      <p class="pf-dlg__no dv-mono" aria-hidden="true" data-dlg-no></p>
+      <p class="dv-k" data-dlg-cat></p>
+      <h2 class="pf-dlg__h" id="pf-dlg-h" data-dlg-title></h2>
+      <p class="pf-dlg__aka" data-dlg-aka></p>
+      <dl class="pf-dlg__dl" data-dlg-dl></dl>
+      <div class="pf-dlg__acts" data-dlg-acts></div>
+      <nav class="pf-dlg__nav" aria-label="Other projects" data-dlg-nav></nav>
+    </div>
+  </div>
+</dialog>
+
+<!--#include "footer" -->
+<!--#include "dv-quick" -->
+
+<div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">View</i></div>
+<script type="module" src="/src/js/pages/portfolio.js"></script>
+</body>
+</html>

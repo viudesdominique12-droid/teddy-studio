@@ -5,25 +5,72 @@
   <title>Not cleared — Ethiopian Film Office</title>
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/pages/notfound.css">
 </head>
-<body class="page page--404">
+<body class="page page--404" data-page="notfound">
 
 <!--#include "bar" -->
 
 <main id="main">
-  <!-- La seule page du site où le vert est absent : rien n'est dégagé ici.
-       Le seul vert de l'écran est le lien de retour. -->
-  <section class="nf">
-    <p class="nf__k mono">404</p>
-    <h1 class="nf__h">Not cleared.</h1>
-    <p class="nf__p">No permit for this address. It may have moved, or it never existed.</p>
-    <p class="nf__a"><a class="btn btn--go btn--lg" href="/"><span>Back to the office</span></a></p>
-    <ul class="nf__links">
-      <li><a href="/#services">Services</a></li>
-      <li><a href="/locations.html">Locations</a></li>
-      <li><a href="/works.html">Our Works</a></li>
-      <li><a href="/#contact">Contact</a></li>
-    </ul>
+  <!-- « NOT CLEARED » (18/10/2026) — hors de la carte. Un relevé de terrain
+       dans le brouillard (courbes de niveau tracées une fois sur un canvas),
+       un repère qui cherche son signal sans le trouver, et le permis de
+       tournage de l'adresse demandée, frappé du tampon « Not cleared ».
+       Tout ce qui est ajouté est décoratif (aria-hidden) ; le texte et les
+       liens sont ceux de la page d'origine. Gestes : notfound-map.js. -->
+  <section class="nf" data-nf>
+    <div class="nf-map" aria-hidden="true">
+      <div class="nf-map__drift" data-nf-drift>
+        <canvas class="nf-map__c" data-nf-map></canvas>
+      </div>
+      <div class="nf-seek" data-nf-seek>
+        <i class="nf-seek__ring"></i><i class="nf-seek__ring"></i>
+        <i class="nf-seek__x"></i>
+      </div>
+    </div>
+
+    <div class="nf__in">
+      <div class="nf__txt">
+        <div class="nf-top">
+          <p class="nf__k mono">404</p>
+          <p class="nf-gps mono" aria-hidden="true">
+            <span class="nf-gps__bars"><i></i><i></i><i></i><i></i></span>
+            <span class="nf-gps__fix" data-nf-fix>N --°--′ · E --°--′</span>
+            <span class="nf-gps__no">No fix</span>
+          </p>
+        </div>
+        <h1 class="nf__h">Not cleared.</h1>
+        <p class="nf__p">No permit for this address. It may have moved, or it never existed.</p>
+        <p class="nf__a"><a class="btn btn--go btn--lg" href="/"><span>Back to the office</span></a></p>
+      </div>
+
+      <!-- Le permis de l'adresse demandée : il porte le chemin réel de la
+           page introuvable, et le tampon vient le frapper. -->
+      <div class="nf-permit" aria-hidden="true" data-nf-permit>
+        <div class="nf-permit__paper" data-nf-paper>
+          <p class="nf-permit__head"><span>Filming permit</span><span>No. 404</span></p>
+          <p class="nf-permit__org">Ethiopian Film Office</p>
+          <dl class="nf-permit__f">
+            <div><dt>Location</dt><dd data-nf-path>/</dd></div>
+            <div><dt>Requested</dt><dd data-nf-date>—</dd></div>
+            <div><dt>Coordinates</dt><dd>— · —</dd></div>
+            <div><dt>Status</dt><dd>—</dd></div>
+          </dl>
+          <p class="nf-permit__sign"><i></i><span>Signature</span></p>
+          <span class="nf-stamp" data-nf-stamp><b>Not cleared</b></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nf-routes">
+      <div class="nf-route" aria-hidden="true"><i></i></div>
+      <ul class="nf__links">
+        <li><a href="/services.html">Services</a></li>
+        <li><a href="/portfolio.html">Portfolio</a></li>
+        <li><a href="/equipment-rentals.html">Equipment Rentals</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+      </ul>
+    </div>
   </section>
 </main>
 
@@ -36,11 +83,12 @@
   </button>
   <div class="dock__body" id="dock-body" hidden>
     <ol class="dock__log mono" id="dock-log"></ol>
-    <a class="dock__go" href="/#contact"><span class="mono">Open the sheet</span></a>
+    <a class="dock__go" href="/contact.html#inquiry"><span class="mono">Open the sheet</span></a>
   </div>
 </aside>
 
 <div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">Drag</i></div>
 <script type="module" src="/src/js/page.js"></script>
+<script type="module" src="/src/js/pages/notfound-map.js"></script>
 </body>
 </html>

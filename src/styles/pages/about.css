@@ -1,0 +1,1031 @@
+/* ══════════════════════════════════════════════════════════════
+   ABOUT US — le dossier d'archives du bureau (17/10/2026, refait le 18/10)
+   Dominique : « améliore les autres pages avec la même logique de
+   customisation de thème ». La page raconte l'entreprise comme un dossier
+   d'archives : le grand titre en serif, la photo du bureau sous un
+   passe-partout gravé et le sceau du bureau (le vrai logo, le mortier de
+   Sébastopol), le texte d'origine imprimé comme un manifeste, la mission et
+   la vision en plaques gravées, le tambour des sept divisions (la pièce
+   signature, gardée), la charte de travail, le cabinet du matériel, les
+   films sur un rail de laiton, la bande des clients, le fichier de l'équipe
+   et le cachet de cire de l'appel final.
+   La matière : de fines tailles de graveur (hachures, guilloches tracées en
+   code), le grain d'un papier d'archive, le laiton et la terre cuite.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════ LA PALETTE : LE REGISTRE ═══════════════════
+   La famille de la marque (le vert nuit et la terre cuite), dans une
+   nuance à elle : le vert profond d'une reliure de registre, une crème de
+   parchemin plus chaude, la terre cuite d'un cachet de cire, et le laiton
+   des filets gravés. Comme pour les divisions (division.css,
+   « L'immersion ») : sur le contenu (#main) et sur le pied de page
+   seulement ; la barre, le menu et la barre d'appel gardent la marque.
+   Contrastes mesurés sur --night (#12231a) :
+     crème 13,1:1 · crème-2 8,3:1 · crème-3 6,2:1 (5,2:1 sur --night-3)
+     terre cuite 5,2:1 · terre cuite claire 7,5:1 · laiton 6,9:1 */
+body[data-page='about'] #main,
+body[data-page='about'] .ftr {
+  --dv: #e2703f; --dv-lt: #f29a6c; --dv-dp: #a8492a;
+  --night: #12231a; --night-2: #0b1611; --night-3: #1a3023;
+  --cream: #efe5d3; --cream-2: #c2b7a2; --cream-3: #a89e86;
+  --line: #efe5d326; --line-2: #efe5d314; --line-ui: #efe5d35c;
+  --gold-lt: var(--dv-lt);
+  --ab-brass: #c3a467; --ab-brass-lt: #dcc391;
+  --ab-brass-line: color-mix(in srgb, #c3a467 42%, transparent);
+  --ab-brass-soft: color-mix(in srgb, #c3a467 16%, transparent);
+  --ab-paper: #efe5d3;
+  --ab-ink: #3d3426;
+  /* Le grain du papier : un bruit fractal (SVG), posé une fois, jamais animé. */
+  --ab-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .94 0 0 0 0 .9 0 0 0 0 .8 0 0 0 .2 -.07'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --ab-grain-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .24 0 0 0 0 .16 0 0 0 .5 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+/* Les rôles, recalculés là où le jeu change (déclarés sur :root, ils y ont
+   été calculés avec les couleurs de la marque). */
+body[data-page='about'] #main,
+body[data-page='about'] .ftr {
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --gold: var(--dv); --gold-dp: var(--dv-dp);
+  --go: var(--dv); --go-text: var(--dv-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --g-300: var(--gold-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  background-color: var(--bg);
+  color: var(--fg);
+}
+/* Le papier d'archive sous toute la page : un grain fixe, peint une fois. */
+body[data-page='about'] #main { background-image: var(--ab-grain); }
+
+/* Le pied de page : un filet de laiton en tête, où glisse une perle de cire,
+   et le même grain. */
+body[data-page='about'] .ftr {
+  border-top-color: var(--ab-brass-line);
+  background-image:
+    radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--dv) 9%, transparent), transparent 70%),
+    var(--ab-grain);
+  overflow-x: clip;
+}
+body[data-page='about'] .ftr::before {
+  content: ''; position: absolute; top: -3px; left: 0; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--dv); box-shadow: 0 0 10px color-mix(in srgb, var(--dv) 70%, transparent);
+  animation: ab-bead 18s linear infinite;
+}
+@keyframes ab-bead { from { transform: translateX(-10px); } to { transform: translateX(100vw); } }
+
+/* ═══════════════════ LES BOUCLES ═══════════════════
+   Tout ce qui tourne en continu (filets, rosaces, bandes) ne tourne que dans
+   une section visible (`.is-live`, posée par about-heritage.js) et quand
+   l'onglet est affiché. */
+html.ab-js [data-live]:not(.is-live) *,
+html.ab-js [data-live]:not(.is-live) *::before,
+html.ab-js [data-live]:not(.is-live) *::after,
+html.ab-js [data-live]:not(.is-live)::before,
+html.ab-js [data-live]:not(.is-live)::after,
+html.ab-js body[data-page='about'] .ftr:not(.is-live)::before,
+html.ab-hidden #main *, html.ab-hidden #main *::before, html.ab-hidden #main *::after,
+html.ab-hidden body[data-page='about'] .ftr::before { animation-play-state: paused !important; }
+
+@keyframes ab-spin { to { transform: rotate(1turn); } }
+@keyframes ab-spin-r { to { transform: rotate(-1turn); } }
+
+/* Les rosaces de graveur (guilloches tracées par about-heritage.js). */
+.ab-rose svg, [data-rose] svg { display: block; width: 100%; height: 100%; overflow: visible; }
+[data-rose] path { fill: none; stroke: var(--ab-brass); stroke-width: 0.7; vector-effect: non-scaling-stroke; }
+
+/* ═══════════════════ L'OUVERTURE ═══════════════════ */
+.ab-hero { padding-bottom: var(--s-8); }
+.ab-glow {
+  position: absolute; inset: -10% -20% auto auto; width: 80vw; height: 90vh;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 13%, transparent), transparent 75%);
+}
+/* La taille-douce : des tailles fines et serrées, comme sur un billet. */
+.ab-hatch {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(-58deg, color-mix(in srgb, var(--ab-brass) 10%, transparent) 0 1px, transparent 1px 7px);
+  -webkit-mask-image: radial-gradient(ellipse 42% 58% at 76% 50%, #000 10%, transparent 72%);
+          mask-image: radial-gradient(ellipse 42% 58% at 76% 50%, #000 10%, transparent 72%);
+}
+.ab-rose--hero {
+  position: absolute; top: 50%; right: max(-16vw, -15rem);
+  width: min(66vw, 62rem); aspect-ratio: 1;
+  margin-top: calc(min(66vw, 62rem) / -2);
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 60%, transparent 100%);
+}
+.ab-rose--hero path { stroke-width: 0.6; }
+.ab-rose--hero svg { animation: ab-spin 220s linear infinite; }
+
+.ab-hero__in {
+  width: 100%;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
+  align-items: end; gap: var(--s-7) var(--s-8);
+}
+.ab-h1 { max-width: 11ch; font-size: clamp(3rem, 0.9rem + 6.3vw, 8.25rem); }
+.ab-hero__txt .dv-lede { max-width: 34rem; margin-top: var(--s-6); }
+
+.ab-hero__media { justify-self: end; width: min(100%, 35rem); }
+.ab-hero__frames { position: relative; padding-left: 14%; }
+.ab-frame { position: relative; overflow: hidden; border-radius: 0.2rem; background: var(--night-2); margin: 0; }
+.ab-frame__in { position: absolute; inset: 0; overflow: hidden; }
+.ab-frame img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
+.ab-frame--office {
+  aspect-ratio: 4 / 5; max-height: calc(100svh - var(--bar-h) - 9rem);
+  box-shadow: 0 0 0 1px var(--ab-brass-line), 0 50px 90px -40px rgb(0 0 0 / 0.65);
+}
+/* De la marge haute et basse pour que l'image glisse dans son cadre. */
+.ab-frame--office img { position: absolute; top: -9%; left: 0; height: 118%; object-position: 50% 50%; }
+/* Le plan du film déborde du cadre du bureau, en bas à gauche, monté comme
+   une épreuve : un liseré de papier, un filet de laiton. */
+.ab-frame--still {
+  position: absolute; left: 0; bottom: 9%; width: 52%; aspect-ratio: 1280 / 650; z-index: 2;
+  border-radius: 0.15rem;
+  box-shadow: 0 0 0 4px var(--ab-paper), 0 0 0 5px var(--ab-brass-line), 0 30px 60px -18px rgb(0 0 0 / 0.75);
+}
+/* Le passe-partout gravé : un filet de laiton et quatre équerres. */
+.ab-mount {
+  position: absolute; z-index: 0; pointer-events: none;
+  top: -0.85rem; right: -0.85rem; bottom: -0.85rem; left: calc(14% - 0.85rem);
+  box-shadow: inset 0 0 0 1px var(--ab-brass-soft);
+}
+.ab-mount i { position: absolute; width: 1.15rem; height: 1.15rem; border: 0 solid var(--ab-brass); }
+.ab-mount i:nth-child(1) { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.ab-mount i:nth-child(2) { top: 0; right: 0; border-width: 1px 1px 0 0; }
+.ab-mount i:nth-child(3) { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+.ab-mount i:nth-child(4) { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+.ab-frame--office { z-index: 1; }
+
+/* Le sceau du bureau : le vrai logo (le mortier) dans un médaillon de
+   laiton ; son nom tourne en anneau. */
+.ab-seal {
+  position: absolute; z-index: 3; top: -2.6rem; left: calc(14% - 3.3rem);
+  width: clamp(5.4rem, 3.6rem + 3.4vw, 7.6rem); aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, var(--night-3), var(--night-2) 70%);
+  box-shadow: 0 0 0 1px var(--ab-brass-line), 0 18px 36px -14px rgb(0 0 0 / 0.75);
+  will-change: transform;
+}
+.ab-seal__ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: ab-spin 48s linear infinite; }
+.ab-seal__o { fill: none; stroke: var(--ab-brass); stroke-width: 1; }
+.ab-seal__i { fill: none; stroke: var(--ab-brass-line); stroke-width: 1; stroke-dasharray: 1.5 3; }
+.ab-seal text {
+  fill: var(--ab-brass-lt); font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.ab-seal__core {
+  position: absolute; inset: 21%; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--ab-paper) 92%, transparent), color-mix(in srgb, var(--ab-paper) 78%, var(--ab-brass)));
+  box-shadow: inset 0 0 0 1px var(--ab-brass), inset 0 2px 8px rgb(0 0 0 / 0.25);
+}
+/* Le logo fait 960 × 338 : le mortier occupe le premier tiers. On n'en
+   garde que lui, centré. */
+.ab-seal__core img {
+  position: absolute; top: 17%; left: 13%; height: 64%; width: auto; max-width: none;
+  clip-path: inset(0 61% 0 0);
+}
+
+.ab-hero__cap {
+  display: grid; gap: 0.35rem; margin-top: var(--s-5); padding-left: 14%;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.ab-hero__cap b { color: var(--fg); font-weight: 400; font-variant-numeric: tabular-nums; }
+.ab-hero__cap sup { font-size: 0.7em; }
+/* Avant le script, les cadres et le sceau attendent (le même filet de 3 s
+   que le titre). */
+html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animation: dv-failsafe 0s 3s forwards; }
+
+@media (max-width: 52rem) {
+  .ab-hero { justify-content: flex-start; padding-top: calc(var(--bar-h) + var(--s-5)); padding-bottom: var(--s-7); }
+  .ab-hero__in { grid-template-columns: 1fr; gap: var(--s-5); }
+  .ab-hero__media { order: -1; justify-self: stretch; width: 100%; }
+  .ab-hero__frames { padding-left: 24%; padding-bottom: 7%; margin-top: 1.4rem; }
+  .ab-mount { left: calc(24% - 0.6rem); top: -0.6rem; right: -0.6rem; bottom: calc(7% - 0.6rem); }
+  .ab-mount i { width: 0.8rem; height: 0.8rem; }
+  .ab-frame--office { aspect-ratio: 16 / 10.5; max-height: none; }
+  .ab-frame--still { width: 46%; bottom: 0; box-shadow: 0 0 0 3px var(--ab-paper), 0 0 0 4px var(--ab-brass-line), 0 20px 40px -14px rgb(0 0 0 / 0.75); }
+  .ab-seal { top: -1.5rem; left: calc(24% - 2.9rem); width: 4.9rem; }
+  .ab-seal text { font-size: 14px; }
+  .ab-rose--hero { top: 2rem; right: -40vw; width: 120vw; margin-top: 0; opacity: 0.4; }
+  .ab-hatch { -webkit-mask-image: radial-gradient(ellipse 70% 30% at 70% 22%, #000 10%, transparent 72%); mask-image: radial-gradient(ellipse 70% 30% at 70% 22%, #000 10%, transparent 72%); }
+  .ab-hero__txt .dv-lede { margin-top: var(--s-4); }
+  .ab-hero__cap { margin-top: var(--s-4); padding-left: 24%; }
+  .ab-hero__cap > span:first-child { display: none; }
+  .ab-hero .dv-acts { margin-top: var(--s-5); }
+}
+
+/* ═══════════════════ QUI NOUS SOMMES : LE MANIFESTE ═══════════════════ */
+.ab-who { padding-top: var(--s-8); }
+/* La manchette : le sur-titre, un double filet (épais, fin) où passe un
+   éclat de lumière, et le nom du bureau. */
+.ab-mast { display: flex; align-items: center; gap: var(--s-4); margin-bottom: var(--s-6); }
+.ab-mast .dv-k { margin: 0; flex: none; }
+.ab-mast__rule {
+  position: relative; flex: 1; min-width: 2rem; height: 6px; overflow: hidden;
+  border-top: 2px solid var(--ab-brass-line); border-bottom: 1px solid var(--ab-brass-line);
+}
+.ab-mast__rule i {
+  position: absolute; top: -2px; bottom: -1px; left: 0; width: 18%;
+  background: linear-gradient(90deg, transparent, var(--ab-brass-lt) 50%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, #000 0 2px, transparent 2px 5px, #000 5px);
+          mask-image: linear-gradient(180deg, #000 0 2px, transparent 2px 5px, #000 5px);
+  transform: translateX(-110%);
+  animation: ab-glint 7.5s var(--e-inout) infinite;
+}
+@keyframes ab-glint { 0% { transform: translateX(-110%); } 55%, 100% { transform: translateX(560%); } }
+.ab-mast__side {
+  flex: none; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano);
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--cream-3);
+}
+
+.ab-press { position: relative; }
+.ab-stmt {
+  position: relative; z-index: 1;
+  max-width: 21em; margin-top: var(--s-2);
+  font-family: var(--ff-p);
+  font-size: clamp(1.75rem, 0.95rem + 2.55vw, 3.65rem);
+  line-height: 1.14; letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 96, 'wght' 360, 'SOFT' 0, 'WONK' 0;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+/* La lettrine : une capitale de fonte, terre cuite, sur trois lignes. */
+.ab-stmt::first-letter {
+  float: left; margin: 0.06em 0.09em 0 -0.02em;
+  font-size: 3.32em; line-height: 0.8;
+  font-variation-settings: 'opsz' 144, 'wght' 480, 'SOFT' 0, 'WONK' 1;
+  color: var(--dv);
+  text-shadow: 0.025em 0.025em 0 color-mix(in srgb, var(--ab-brass) 45%, transparent);
+}
+.ab-stmt em { font-style: italic; color: var(--dv-lt); }
+.ab-stmt .ab-w { will-change: opacity; }
+/* Le rouleau encreur : il descend avec l'encre, au défilement. */
+.ab-roller {
+  position: absolute; z-index: 0; left: -1.2rem; right: -1.2rem; top: 0; height: 2.2rem;
+  pointer-events: none; opacity: 0; will-change: transform, opacity;
+}
+.ab-roller::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--dv) 9%, transparent));
+}
+.ab-roller i {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ab-brass) 12%, var(--ab-brass-lt) 50%, var(--ab-brass) 88%, transparent);
+}
+
+.ab-who__foot {
+  display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: var(--s-6) var(--s-8);
+  margin-top: var(--s-8); padding-top: var(--s-6); border-top: 1px solid var(--line-2);
+}
+.ab-who__txt { display: grid; gap: var(--s-4); align-content: start; }
+/* Le registre : une fiche de papier sombre, des points de conduite entre
+   l'intitulé et la valeur ; une lueur passe d'une ligne à l'autre, comme un
+   doigt qui vérifie le registre. */
+.ab-facts {
+  position: relative; display: grid; align-content: start;
+  padding: var(--s-4) var(--s-5) var(--s-2);
+  border-radius: 0.2rem;
+  background: linear-gradient(170deg, color-mix(in srgb, var(--night-3) 85%, transparent), color-mix(in srgb, var(--night-2) 60%, transparent));
+  box-shadow: inset 0 0 0 1px var(--line-2), 0 0 0 1px color-mix(in srgb, var(--night-2) 80%, transparent), 0 24px 40px -30px rgb(0 0 0 / 0.7);
+}
+.ab-facts::before {
+  content: ''; position: absolute; inset: 0.4rem; border: 1px solid var(--ab-brass-soft); border-radius: 0.1rem; pointer-events: none;
+}
+.ab-facts > div {
+  display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--s-3); align-items: baseline;
+  padding-block: 0.95rem; border-bottom: 1px solid var(--line-2);
+}
+.ab-facts > div:last-child { border-bottom: 0; }
+.ab-facts dt {
+  display: flex; align-items: baseline; gap: 0.5rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+}
+.ab-facts dt::after {
+  content: ''; flex: 1; min-width: 1.2rem; height: 2px; translate: 0 -0.2em;
+  background: radial-gradient(circle, var(--ab-brass) 0 0.75px, transparent 1.1px) 0 50% / 6px 2px repeat-x;
+  opacity: 0.35;
+  animation: ab-check-row 5.6s var(--e-inout) infinite;
+  animation-delay: calc(var(--k, 0) * 1.4s);
+}
+@keyframes ab-check-row { 0%, 30%, 100% { opacity: 0.35; } 10% { opacity: 1; } }
+.ab-facts dd { color: var(--fg); line-height: 1.45; }
+.ab-facts sup { font-size: 0.7em; }
+@media (max-width: 52rem) {
+  .ab-who__foot { grid-template-columns: 1fr; }
+  .ab-mast__side { display: none; }
+  .ab-facts { padding: var(--s-3) var(--s-4) var(--s-1); }
+  .ab-facts > div { grid-template-columns: 1fr; gap: 0.35rem; }
+  .ab-facts dt::after { max-width: 6rem; }
+}
+
+/* ═══════════════════ LE PLAN EN SCOPE ═══════════════════
+   2,39:1 comme au cinéma ; l'image, plus haute que la fenêtre, glisse
+   dedans au défilement. Tirée comme une épreuve : quatre repères de coupe en
+   laiton, un reflet qui passe au défilement, et une réglette de graveur qui
+   défile entre les deux légendes. */
+.ab-scope { margin: 0; padding-block: var(--s-6) var(--s-8); }
+.ab-scope__win {
+  position: relative; overflow: hidden;
+  width: 100%; aspect-ratio: 2.39 / 1; background: var(--night-2);
+}
+.ab-scope__win img {
+  position: absolute; left: 0; top: -14%; width: 100%; height: 128%; object-fit: cover; object-position: 50% 62%;
+  /* Un étalonnage chaud et retenu : le ciel lavande de la vidéo tire vers
+     l'ocre, l'image s'accorde à la page. */
+  filter: sepia(0.26) saturate(0.88) contrast(1.06) brightness(0.84);
+}
+.ab-scope__win::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 55%, transparent) 0%, transparent 22%, transparent 74%, color-mix(in srgb, var(--bg) 70%, transparent) 100%),
+    radial-gradient(120% 90% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.35) 100%);
+}
+.ab-scope__sheen {
+  position: absolute; top: 0; bottom: 0; left: 0; width: 34%; z-index: 1; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgb(255 236 205 / 0.09) 45%, rgb(255 236 205 / 0.13) 50%, transparent);
+  transform: translateX(-110%); will-change: transform;
+}
+.ab-scope__marks { position: absolute; inset: clamp(0.8rem, 2vw, 1.6rem) var(--pad-x); z-index: 2; pointer-events: none; }
+.ab-scope__marks i { position: absolute; width: 1.4rem; height: 1.4rem; border: 0 solid color-mix(in srgb, var(--ab-brass-lt) 70%, transparent); }
+.ab-scope__marks i:nth-child(1) { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.ab-scope__marks i:nth-child(2) { top: 0; right: 0; border-width: 1px 1px 0 0; }
+.ab-scope__marks i:nth-child(3) { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+.ab-scope__marks i:nth-child(4) { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+.ab-scope__cap {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s-4);
+  margin-top: var(--s-3);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+}
+.ab-scope__scale {
+  position: relative; height: 0.6rem; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.ab-scope__scale i {
+  position: absolute; top: 0; bottom: 0; left: 0; right: -40px;
+  background:
+    repeating-linear-gradient(90deg, var(--ab-brass-line) 0 1px, transparent 1px 8px) 0 100% / 100% 45% no-repeat,
+    repeating-linear-gradient(90deg, var(--ab-brass) 0 1px, transparent 1px 40px) 0 100% / 100% 100% no-repeat;
+  animation: ab-slide 7s linear infinite;
+}
+@keyframes ab-slide { to { transform: translateX(-40px); } }
+@media (max-width: 44rem) {
+  .ab-scope__win { aspect-ratio: 16 / 10; }
+  .ab-scope__cap { grid-template-columns: 1fr auto; gap: 0.5rem var(--s-3); }
+  .ab-scope__scale { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* ═══════════════════ MISSION ET VISION : LES PLAQUES ═══════════════════ */
+.ab-mv { padding-top: var(--s-6); }
+.ab-mv__in { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); }
+.ab-plate {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: var(--s-2);
+  padding: var(--s-7) var(--s-7) calc(var(--s-7) + 2.6rem);
+  border-radius: 0.3rem;
+  background:
+    var(--ab-grain),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--ab-brass) 4%, transparent) 0 1px, transparent 1px 4px),
+    linear-gradient(158deg, var(--night-3), color-mix(in srgb, var(--night-2) 70%, var(--night-3)));
+  box-shadow: 0 34px 60px -40px rgb(0 0 0 / 0.8), inset 0 1px 0 rgb(255 255 255 / 0.04), inset 0 -1px 0 rgb(0 0 0 / 0.3);
+}
+/* Le double filet : l'extérieur se trace à l'arrivée ; l'intérieur, fixe. */
+.ab-plate__frame { position: absolute; inset: 0.75rem; z-index: -1; pointer-events: none; }
+.ab-plate__frame::before { content: ''; position: absolute; inset: 0.32rem; border: 1px solid var(--ab-brass-soft); }
+.ab-plate__frame i { position: absolute; background: var(--ab-brass-line); }
+.ab-plate__frame i:nth-child(1) { top: 0; left: 0; right: 0; height: 1px; transform-origin: 0 50%; }
+.ab-plate__frame i:nth-child(2) { top: 0; right: 0; bottom: 0; width: 1px; transform-origin: 50% 0; }
+.ab-plate__frame i:nth-child(3) { bottom: 0; left: 0; right: 0; height: 1px; transform-origin: 100% 50%; }
+.ab-plate__frame i:nth-child(4) { top: 0; left: 0; bottom: 0; width: 1px; transform-origin: 50% 100%; }
+.ab-plate__num {
+  position: absolute; top: var(--s-5); right: var(--s-6);
+  font-family: var(--ff-p); font-size: clamp(3rem, 2rem + 3vw, 5.6rem); line-height: 1;
+  font-variation-settings: 'opsz' 144, 'wght' 300, 'SOFT' 0, 'WONK' 0;
+  color: transparent; -webkit-text-stroke: 1px var(--ab-brass-line);
+  transition: color 0.8s var(--e-out);
+}
+.ab-plate:hover .ab-plate__num { color: color-mix(in srgb, var(--ab-brass) 14%, transparent); }
+.ab-plate .dv-k { margin-bottom: var(--s-4); color: var(--ab-brass-lt); }
+.ab-mv__t {
+  max-width: 24ch;
+  font-family: var(--ff-p);
+  font-size: clamp(1.45rem, 1rem + 1.25vw, 2.35rem);
+  line-height: 1.2; letter-spacing: -0.014em;
+  font-variation-settings: 'opsz' 72, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  color: var(--fg);
+}
+/* La bande de guilloche : des sinusoïdes entrelacées qui défilent, vers la
+   gauche pour la mission, vers la droite pour la vision. */
+.ab-plate__wave {
+  position: absolute; left: 1.07rem; right: 1.07rem; bottom: 1.07rem; height: 2.3rem; overflow: hidden;
+  border-top: 1px solid var(--ab-brass-soft);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.ab-plate__wave svg { display: block; width: 200%; max-width: none; height: 100%; animation: ab-wave 30s linear infinite; }
+.ab-plate__wave--rev svg { animation-duration: 41s; animation-direction: reverse; }
+.ab-plate__wave path { fill: none; stroke: var(--ab-brass); stroke-width: 0.7; vector-effect: non-scaling-stroke; opacity: 0.55; }
+@keyframes ab-wave { to { transform: translateX(-50%); } }
+/* La lumière sur le métal : elle suit la souris ; au doigt, un reflet
+   traverse la plaque à l'appui. */
+.ab-plate__sheen {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(24rem circle at var(--mx, 70%) var(--my, 0%), rgb(255 232 196 / 0.075), transparent 62%);
+  opacity: 0; transition: opacity 0.6s var(--e-out);
+}
+.ab-plate:hover .ab-plate__sheen { opacity: 1; }
+.ab-plate::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 232 196 / 0.1) 50%, transparent 65%);
+  transform: translateX(-100%);
+}
+.ab-plate.is-shine::after { animation: ab-shine 1.2s var(--e-inout) both; }
+@keyframes ab-shine { to { transform: translateX(100%); } }
+@media (max-width: 52rem) {
+  .ab-mv__in { grid-template-columns: 1fr; gap: var(--s-4); }
+  .ab-plate { padding: var(--s-6) var(--s-5) calc(var(--s-6) + 2.4rem); }
+  .ab-plate__num { top: var(--s-4); right: var(--s-5); }
+}
+
+/* ═══════════════════ NOS SERVICES : LE TAMBOUR ═══════════════════
+   Sans script (ou en mouvement réduit) : une liste des sept fiches. Avec
+   (`.is-drum`, posée par about.js) : une scène collée à l'écran pendant que
+   la piste défile ; une demi-hauteur d'écran par division. Le tambour est
+   le cylindre d'une presse : une fenêtre de lecture en laiton, une
+   graduation qui défile avec la rotation. */
+.ab-svc { position: relative; isolation: isolate; }
+.ab-svc__stage { position: relative; padding-block: var(--s-9); }
+.ab-svc__in { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-6); }
+.ab-svc__head .dv-k { margin-bottom: var(--s-4); }
+.ab-svc__head .dv-h2 { max-width: 14ch; }
+.ab-svc__lede { max-width: 30rem; margin-top: var(--s-4); color: var(--cream-2); line-height: 1.55; }
+.ab-svc__glow, .ab-drum, .ab-tabs { display: none; }
+
+.ab-pans { display: grid; border-top: 1px solid var(--line-2); }
+.ab-pan {
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 3fr); align-items: baseline; gap: var(--s-3) var(--s-6);
+  padding-block: var(--s-5); border-bottom: 1px solid var(--line-2);
+}
+.ab-pan__h {
+  display: flex; align-items: baseline; gap: 0.8rem;
+  font-family: var(--ff-d); font-size: clamp(1.3rem, 1rem + 0.9vw, 1.9rem); line-height: 1; letter-spacing: -0.012em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+}
+.ab-pan__h span { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; font-weight: 400; color: var(--c, var(--dv)); }
+.ab-pan__t { font-family: var(--ff-p); font-size: clamp(1.2rem, 1rem + 0.6vw, 1.6rem); line-height: 1.2; font-variation-settings: 'opsz' 48, 'wght' 400; color: var(--fg); }
+.ab-pan__p { grid-column: 2; color: var(--cream-2); font-size: var(--fs-sm); line-height: 1.55; }
+.ab-pan__go {
+  grid-column: 3; grid-row: 1; justify-self: end;
+  display: inline-flex; align-items: center; gap: 0.5em; white-space: nowrap;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
+}
+.ab-pan__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
+.ab-pan__go:hover::after { transform: translateX(0.35em); }
+.ab-pan__go:hover { color: var(--c, var(--dv)); }
+@media (max-width: 52rem) {
+  .ab-pan { grid-template-columns: 1fr; }
+  .ab-pan__p, .ab-pan__go { grid-column: 1; grid-row: auto; justify-self: start; }
+}
+
+/* ── Le mode tambour ── */
+.ab-svc.is-drum .ab-svc__track { height: calc(100svh + 6 * 46svh); }
+.ab-svc.is-drum .ab-svc__stage {
+  position: sticky; top: 0; height: 100svh; overflow: hidden;
+  display: flex; align-items: center;
+  padding-block: calc(var(--bar-h) + var(--s-3)) var(--s-6);
+}
+.ab-svc.is-drum .ab-svc__in {
+  width: 100%;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-areas: 'head head' 'drum side';
+  align-items: center; gap: var(--s-6) var(--s-8);
+}
+.ab-svc.is-drum .ab-svc__head { grid-area: head; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 24rem); align-items: end; gap: var(--s-4) var(--s-8); }
+.ab-svc.is-drum .ab-svc__head .dv-k { grid-column: 1 / -1; margin: 0; }
+.ab-svc.is-drum .ab-svc__lede { margin: 0; }
+
+/* La lumière de la division en cours, derrière le tambour. */
+.ab-svc.is-drum .ab-svc__glow {
+  display: block; position: absolute; z-index: -1; left: -10vw; top: 18%; width: 80vw; height: 80%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--c, var(--dv)) 20%, transparent), transparent 72%);
+  pointer-events: none;
+}
+
+.ab-svc.is-drum .ab-drum {
+  display: block; grid-area: drum; position: relative;
+  font-size: clamp(2.15rem, 0.6rem + 4.6vw, 6.25rem);
+  height: 5.6em;
+  perspective: 13em; perspective-origin: 50% 50%;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+          mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+/* La graduation du cylindre, à gauche : elle défile quand il tourne. */
+.ab-drum__ticks { position: absolute; left: 0; top: 0; bottom: 0; width: 0.9rem; overflow: hidden; }
+.ab-drum__ticks i {
+  position: absolute; left: 0; right: 0; top: -60px; bottom: -60px;
+  background:
+    repeating-linear-gradient(180deg, var(--ab-brass) 0 1px, transparent 1px 60px) 0 0 / 100% 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--ab-brass-line) 0 1px, transparent 1px 12px) 0 0 / 55% 100% no-repeat;
+  will-change: transform;
+}
+/* La fenêtre de lecture : deux filets de laiton autour de la face avant. */
+.ab-drum__win { position: absolute; left: 1.2rem; right: 0; top: 50%; height: 1.3em; margin-top: -0.65em; pointer-events: none; }
+.ab-drum__win::before, .ab-drum__win::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--ab-brass-line), var(--ab-brass-soft) 60%, transparent);
+}
+.ab-drum__win::before { top: 0; }
+.ab-drum__win::after { bottom: 0; }
+.ab-drum__z { position: absolute; inset: 0 0 0 1.9rem; transform-style: preserve-3d; transform: translateZ(-2.25em); }
+.ab-drum__rot { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+.ab-drum__f {
+  position: absolute; left: 0; right: 0; top: 50%; height: 1.2em; margin-top: -0.6em;
+  display: flex; align-items: center; gap: 0.32em;
+  transform: rotateX(calc(var(--i) * -51.4286deg)) translateZ(2.25em);
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  font-family: var(--ff-p); line-height: 1.2; white-space: nowrap;
+  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  transition: color 0.6s var(--e-out);
+}
+.ab-drum__f i {
+  align-self: flex-start; margin-top: 0.32em;
+  font-style: normal; font-family: var(--ff-m); font-stretch: 87.5%; font-size: max(0.15em, 0.6875rem); letter-spacing: 0.1em;
+  color: var(--cream-3); transition: color 0.6s var(--e-out);
+}
+.ab-drum__f.is-front { color: var(--c); }
+.ab-drum__f.is-front i { color: var(--c); }
+
+.ab-svc.is-drum .ab-svc__side { grid-area: side; display: grid; gap: var(--s-5); align-content: center; }
+.ab-svc.is-drum .ab-tabs { display: flex; gap: 0.3rem; }
+.ab-tabs button {
+  position: relative; overflow: hidden;
+  flex: 1; display: grid; gap: 0.5rem; padding: 0 0 0.25rem; border: 0; background: none; cursor: pointer;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--cream-3);
+  text-align: left; transition: color 0.4s var(--e-out);
+}
+.ab-tabs button::before {
+  content: ''; height: 2px; border-radius: 2px; background: var(--line);
+  transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+/* L'onglet choisi : un reflet court sur son filet. */
+.ab-tabs button[aria-selected='true']::after {
+  content: ''; position: absolute; top: 0; left: 0; width: 45%; height: 2px;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.75), transparent);
+  animation: ab-shim 2.6s var(--e-inout) infinite;
+}
+@keyframes ab-shim { 0% { transform: translateX(-100%); } 70%, 100% { transform: translateX(240%); } }
+.ab-tabs button:hover { color: var(--fg); }
+.ab-tabs button[aria-selected='true'] { color: var(--fg); }
+.ab-tabs button[aria-selected='true']::before { background: var(--c); box-shadow: 0 0 12px color-mix(in srgb, var(--c) 60%, transparent); }
+.ab-tabs button:focus-visible { outline-offset: 4px; overflow: visible; }
+
+.ab-svc.is-drum .ab-pans { display: grid; border: 0; min-height: 15rem; }
+.ab-svc.is-drum .ab-pan {
+  grid-area: 1 / 1; display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4);
+  padding: 0; border: 0;
+}
+.ab-svc.is-drum .ab-pan__h { font-size: var(--fs-nano); font-family: var(--ff-m); font-stretch: 87.5%; font-variation-settings: normal; font-weight: 400; letter-spacing: 0.14em; color: var(--cream-2); gap: 0.7rem; }
+.ab-svc.is-drum .ab-pan__h span { color: var(--c); }
+.ab-svc.is-drum .ab-pan__t { font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.6rem); line-height: 1.1; letter-spacing: -0.015em; font-variation-settings: 'opsz' 96, 'wght' 380; max-width: 16ch; }
+.ab-svc.is-drum .ab-pan__p { font-size: var(--fs-body); max-width: 30rem; }
+.ab-svc.is-drum .ab-pan__go {
+  margin-top: var(--s-2); padding: 0.85rem 1.2rem 0.85rem 1.35rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--fg) 7%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 55%, transparent);
+  transition: background-color 0.45s var(--e-out), color 0.45s var(--e-out);
+}
+.ab-svc.is-drum .ab-pan__go:hover { background: var(--c); color: #111; }
+
+@media (max-width: 52rem) {
+  .ab-svc.is-drum .ab-svc__track { height: calc(100svh + 6 * 44svh); }
+  .ab-svc.is-drum .ab-svc__stage { align-items: center; padding-block: calc(var(--bar-h) + var(--s-2)) var(--s-5); }
+  .ab-svc.is-drum .ab-svc__in { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'drum' 'side'; gap: var(--s-4); }
+  .ab-svc.is-drum .ab-svc__head { grid-template-columns: 1fr; gap: var(--s-3); }
+  .ab-svc.is-drum .ab-svc__lede { display: none; }
+  .ab-svc.is-drum .ab-svc__head .dv-h2 { font-size: clamp(2rem, 8.4vw, 2.8rem); }
+  .ab-svc.is-drum .ab-drum { font-size: clamp(1.75rem, 7.9vw, 3.2rem); height: 4.6em; }
+  .ab-drum__ticks { width: 0.6rem; }
+  .ab-drum__win { left: 0.8rem; }
+  .ab-drum__z { left: 1.25rem; }
+  .ab-svc.is-drum .ab-svc__glow { left: -40vw; top: 12%; width: 150vw; height: 60%; }
+  .ab-svc.is-drum .ab-pans { min-height: 13.5rem; }
+  .ab-svc.is-drum .ab-pan { gap: var(--s-3); }
+  .ab-svc.is-drum .ab-pan__t { font-size: clamp(1.4rem, 5.6vw, 1.9rem); }
+  .ab-svc.is-drum .ab-pan__p { font-size: var(--fs-sm); }
+  .ab-svc.is-drum .ab-svc__side { order: 2; }
+  .ab-svc.is-drum .ab-tabs { order: 2; }
+}
+@media (max-width: 52rem) and (max-height: 44rem) {
+  .ab-svc.is-drum .ab-svc__head .dv-k { display: none; }
+  .ab-svc.is-drum .ab-drum { height: 4em; }
+}
+
+/* ═══════════════════ NOTRE APPROCHE : LA CHARTE ═══════════════════
+   Cinq articles. Le chiffre est gravé au trait ; sous chaque article, un
+   burin repasse le filet à son propre rythme (`--b`, `--bd` posés dans le
+   HTML). Au survol, ou au doigt quand l'article passe au milieu de l'écran
+   (`.is-on`) : la hachure se pose, le chiffre s'encre de terre cuite. */
+.ab-appr__list { border-top: 1px solid var(--line-2); }
+.ab-appr__i {
+  position: relative; isolation: isolate;
+  display: grid; grid-template-columns: 6.5rem minmax(0, 5fr) minmax(0, 6fr); align-items: baseline; gap: var(--s-3) var(--s-6);
+  padding-block: var(--s-6); border-bottom: 1px solid var(--line-2);
+}
+.ab-appr__i::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background:
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--ab-brass) 9%, transparent) 0 1px, transparent 1px 6px),
+    linear-gradient(90deg, color-mix(in srgb, var(--dv) 9%, transparent), transparent 75%);
+  -webkit-mask-image: linear-gradient(90deg, #000 30%, transparent);
+          mask-image: linear-gradient(90deg, #000 30%, transparent);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 0.8s var(--e-out);
+}
+.ab-appr__i:hover::before, .ab-appr__i.is-on::before { transform: none; }
+.ab-appr__n {
+  font-family: var(--ff-p); font-size: clamp(2.5rem, 1.7rem + 2.2vw, 4.2rem); line-height: 0.9;
+  font-variation-settings: 'opsz' 144, 'wght' 420, 'SOFT' 0, 'WONK' 0; letter-spacing: -0.02em;
+  color: transparent; -webkit-text-stroke: 1px var(--ab-brass);
+  transition: color 0.6s var(--e-out), -webkit-text-stroke-color 0.6s var(--e-out);
+}
+.ab-appr__i:hover .ab-appr__n, .ab-appr__i.is-on .ab-appr__n { color: var(--dv); -webkit-text-stroke-color: var(--dv); }
+.ab-appr__h {
+  font-family: var(--ff-p); font-size: clamp(1.5rem, 1.05rem + 1.3vw, 2.45rem); line-height: 1.08; letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 96, 'wght' 400, 'SOFT' 0, 'WONK' 0;
+  transition: transform 0.7s var(--e-out);
+}
+.ab-appr__i:hover .ab-appr__h, .ab-appr__i.is-on .ab-appr__h { transform: translateX(0.5rem); }
+.ab-appr__p { color: var(--cream-2); line-height: 1.6; max-width: 34rem; }
+/* Le burin : une trace qui s'éclaire et sa pointe, sur le filet. */
+.ab-appr__burin { position: absolute; left: 0; right: 0; bottom: -2px; height: 3px; overflow: hidden; pointer-events: none; }
+.ab-appr__burin::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 99% 50%, #fff3dc 0 1.2px, transparent 2px),
+    linear-gradient(90deg, transparent 55%, color-mix(in srgb, var(--ab-brass-lt) 85%, transparent) 99%, transparent 99%) 0 50% / 100% 1px no-repeat;
+  transform: translateX(-100%);
+  animation: ab-burin var(--b, 8s) var(--e-inout) var(--bd, 0s) infinite;
+}
+@keyframes ab-burin { 0% { transform: translateX(-100%); } 62%, 100% { transform: translateX(100%); } }
+@media (max-width: 52rem) {
+  .ab-appr__i { grid-template-columns: 3.6rem minmax(0, 1fr); }
+  .ab-appr__p { grid-column: 2; }
+  .ab-appr__n { font-size: 2.3rem; }
+}
+
+/* ═══════════════════ NOS MOYENS : LE CABINET ═══════════════════
+   Les photos de matériel (fonds blancs de catalogue) posées sur des fiches
+   de papier ivoire : le blanc se fond dans le papier (multiplication), un
+   numéro d'inventaire au coin, un filet de laiton. Au survol (ou au
+   clavier), la fiche se soulève et ses équerres se posent. */
+.ab-kit { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s-4) var(--s-3); }
+.ab-kit__i {
+  width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.4rem;
+  padding: 0; border: 0; background: none; color: var(--fg); text-align: left; cursor: zoom-in;
+}
+.ab-kit__plate {
+  position: relative; isolation: isolate; overflow: hidden; margin-bottom: 0.5rem;
+  aspect-ratio: 4 / 3; border-radius: 0.15rem;
+  background: var(--ab-grain-ink), var(--ab-paper);
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 1px var(--ab-brass-line), 0 0 0 4px color-mix(in srgb, var(--night-2) 70%, transparent), 0 0 0 5px var(--ab-brass-soft), 0 22px 30px -22px rgb(0 0 0 / 0.8);
+  transition: transform 0.7s var(--e-out), box-shadow 0.7s var(--e-out);
+}
+.ab-kit__plate img {
+  width: 86%; height: 80%; object-fit: contain; mix-blend-mode: multiply;
+  transition: transform 1s var(--e-out);
+}
+.ab-kit__i--photo .ab-kit__plate img { width: 100%; height: 100%; object-fit: cover; }
+.ab-kit__i--full .ab-kit__plate img { width: 100%; height: 100%; }
+.ab-kit__cat {
+  position: absolute; left: 0.45rem; top: 0.45rem; z-index: 2;
+  padding: 0.18rem 0.38rem 0.14rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ab-ink); background: color-mix(in srgb, var(--ab-paper) 88%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ab-ink) 30%, transparent);
+}
+.ab-kit__plate::after {
+  content: ''; position: absolute; inset: 0.4rem; z-index: 1; pointer-events: none;
+  border: 1px solid color-mix(in srgb, var(--ab-brass) 70%, transparent);
+  opacity: 0; transform: scale(1.06); transition: opacity 0.5s var(--e-out), transform 0.7s var(--e-out);
+}
+.ab-kit__i:is(:hover, :focus-visible) .ab-kit__plate { transform: translateY(-6px) rotate(-0.6deg); }
+.ab-kit__i:is(:hover, :focus-visible) .ab-kit__plate::after { opacity: 1; transform: none; }
+.ab-kit__i:hover .ab-kit__plate img { transform: scale(1.05); }
+.ab-kit__n {
+  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.3rem); line-height: 1.05;
+  font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase;
+}
+.ab-kit__t { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3); }
+.ab-kit__i:focus-visible { outline-offset: 8px; border-radius: 0.2rem; }
+
+/* La règle de section du cabinet respire lentement. */
+.ab-cap.dv-sec--rule::before { background: var(--ab-brass-line); animation: ab-breathe-o 6.5s var(--e-inout) infinite alternate; }
+@keyframes ab-breathe-o { from { opacity: 0.25; } to { opacity: 0.8; } }
+
+.ab-cap__foot {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-6) var(--s-8);
+  margin-top: var(--s-8);
+}
+.ab-cap__txt { display: grid; gap: var(--s-4); align-content: start; }
+.ab-cap__links { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); margin-top: var(--s-2); }
+.ab-cap__caps { columns: 2 14rem; }
+/* « What we handle » : les huit services sont cochés l'un après l'autre,
+   un trait terre cuite repasse chaque filet, puis s'efface. */
+.ab-cap__caps li { position: relative; }
+.ab-cap__caps li::after {
+  content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, var(--dv), color-mix(in srgb, var(--dv) 30%, transparent));
+  transform: scaleX(0); transform-origin: 0 50%;
+  animation: ab-tick 11.2s var(--e-inout) infinite;
+  animation-delay: calc(var(--k, 0) * 1.4s);
+}
+@keyframes ab-tick {
+  0% { transform: scaleX(0); opacity: 1; }
+  7% { transform: scaleX(1); opacity: 1; }
+  13% { transform: scaleX(1); opacity: 0; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+@media (max-width: 72rem) and (min-width: 52.01rem) { .ab-kit { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 52rem) {
+  .ab-kit { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5) var(--s-4); }
+  .ab-cap__foot { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════ NOS FILMS ═══════════════════
+   Les cinq titres sur une seule rangée, sous passe-partout (un liseré de
+   papier, un filet de laiton) ; au survol, l'épreuve se soulève et un reflet
+   la traverse. Dessous, un rail de laiton dont la lumière respire depuis le
+   milieu. */
+.ab-films .dv-port { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
+.ab-films .dv-proj { align-content: start; }
+.ab-films .dv-proj__fig {
+  aspect-ratio: 4 / 3; border-radius: 0.12rem; overflow: hidden;
+  box-shadow: 0 0 0 3px var(--ab-paper), 0 0 0 4px var(--ab-brass-line), 0 26px 40px -26px rgb(0 0 0 / 0.85);
+  transition: transform 0.7s var(--e-out);
+}
+.ab-films .dv-proj__fig::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgb(255 240 215 / 0.22) 50%, transparent 65%);
+  transform: translateX(-110%);
+}
+.ab-films .dv-proj:hover .dv-proj__fig { transform: translateY(-6px); }
+.ab-films .dv-proj:hover .dv-proj__fig::after { transform: translateX(110%); transition: transform 0.9s var(--e-inout); }
+.ab-films .dv-proj__fig img { filter: sepia(0.12) saturate(0.95); }
+.ab-films .dv-proj__st { background: color-mix(in srgb, var(--night-2) 86%, transparent); color: var(--ab-brass-lt); box-shadow: inset 0 0 0 1px var(--ab-brass-soft); }
+.ab-films .dv-proj__h a:hover { color: var(--dv-lt); }
+.ab-films.dv-sec--rule::before { background: var(--ab-brass-soft); }
+.ab-rail {
+  position: relative; display: block; height: 6px; margin-top: var(--s-7);
+  border-top: 1px solid var(--ab-brass-line); border-bottom: 1px solid var(--ab-brass-soft);
+}
+.ab-rail i {
+  position: absolute; left: 0; right: 0; top: 2px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ab-brass-lt) 50%, transparent);
+  transform: scaleX(0.12);
+  animation: ab-breathe 5.8s var(--e-inout) infinite alternate;
+}
+@keyframes ab-breathe { from { transform: scaleX(0.12); opacity: 1; } to { transform: scaleX(1); opacity: 0.3; } }
+@media (max-width: 72rem) { .ab-films .dv-port { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 44rem) {
+  .ab-films .dv-port { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
+  .ab-films .dv-proj__h { font-size: 1.05rem; }
+  .ab-films .dv-proj__st { left: 0.4rem; top: 0.4rem; padding: 0.25rem 0.45rem; font-size: 0.5rem; }
+}
+
+/* ═══════════════════ NOS CLIENTS ═══════════════════
+   La bande de l'accueil (home.css, « LES CLIENTS ») : la terre cuite, les
+   logos à l'encre. Ici, gravée d'une hachure fine, et bordée en haut et en
+   bas d'un double filet dont la chaînette défile à contre-sens. */
+.ab-cli {
+  position: relative; isolation: isolate;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: stretch;
+  margin-block: var(--s-6) 0;
+  background-color: var(--gold);
+  background-image:
+    repeating-linear-gradient(-62deg, rgb(20 18 17 / 0.07) 0 1px, transparent 1px 6px),
+    linear-gradient(180deg, rgb(255 255 255 / 0.06), transparent 40%, rgb(0 0 0 / 0.08));
+  color: var(--basalt);
+}
+.ab-cli__edge { position: absolute; left: 0; right: 0; height: 4px; overflow: hidden; pointer-events: none; z-index: 1; }
+.ab-cli__edge--t { top: 7px; border-top: 1px solid rgb(20 18 17 / 0.3); }
+.ab-cli__edge--b { bottom: 7px; border-bottom: 1px solid rgb(20 18 17 / 0.3); }
+.ab-cli__edge i {
+  position: absolute; left: 0; right: -24px; height: 1px;
+  background: repeating-linear-gradient(90deg, rgb(20 18 17 / 0.5) 0 9px, transparent 9px 13px, rgb(20 18 17 / 0.5) 13px 15px, transparent 15px 24px);
+  animation: ab-chain 3.4s linear infinite;
+}
+.ab-cli__edge--t i { bottom: 0; }
+.ab-cli__edge--b i { top: 0; animation-duration: 4.6s; animation-direction: reverse; }
+@keyframes ab-chain { to { transform: translateX(-24px); } }
+.ab-cli__k {
+  display: flex; align-items: center; gap: 0.75em;
+  padding: 0 clamp(1.25rem, 0.4rem + 2.2vw, 2.75rem) 0 var(--pad-x);
+  border-right: 1px solid color-mix(in srgb, var(--basalt) 26%, transparent);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-size: var(--fs-nano); line-height: 1.3; letter-spacing: 0.14em;
+  text-transform: uppercase; white-space: nowrap;
+  color: var(--basalt);
+}
+.ab-cli__k::before { content: ''; flex: none; width: 0.55em; height: 0.55em; border-radius: 50%; background: currentColor; }
+.ab-mq {
+  --mq-gap: clamp(3rem, 1.6rem + 3.8vw, 6.5rem);
+  display: flex; overflow: hidden;
+  padding-block: clamp(1.5rem, 0.95rem + 1.4vw, 2.4rem);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.ab-mq__row {
+  flex: none; min-width: 100%;
+  display: flex; align-items: center; justify-content: space-around; gap: var(--mq-gap);
+  padding-right: var(--mq-gap);
+  animation: ab-mq 44s linear infinite;
+}
+.ab-mq:hover .ab-mq__row, .ab-cli.is-off .ab-mq__row { animation-play-state: paused; }
+@keyframes ab-mq { to { transform: translateX(-100%); } }
+.ab-mq__i { flex: none; display: flex; align-items: center; opacity: 0.9; transition: opacity 0.3s var(--e-out); }
+.ab-mq__i:hover { opacity: 1; }
+.ab-mq__i img { display: block; width: auto; height: clamp(3.4rem, 2.5rem + 2.4vw, 5.4rem); filter: brightness(0); }
+.ab-mq__t {
+  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.8rem + 0.7vw, 1.5rem); line-height: 1.02;
+  font-variation-settings: 'wdth' 86, 'wght' 700;
+  letter-spacing: 0.005em; text-transform: uppercase;
+  color: var(--basalt); white-space: nowrap;
+}
+@media (max-width: 40rem) {
+  .ab-cli { grid-template-columns: 1fr; }
+  .ab-cli__k { justify-content: center; padding: 1.25rem var(--pad-x) 0; border-right: 0; }
+}
+
+/* ═══════════════════ L'ÉQUIPE : LE FICHIER ═══════════════════ */
+.ab-team__grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 4fr) minmax(0, 4fr); gap: var(--s-4); }
+.ab-founder, .ab-team__soon, .ab-team__join {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: var(--s-4);
+  padding: var(--s-6) var(--s-5); border-radius: 0.3rem;
+  box-shadow: inset 0 0 0 1px var(--line-2), 0 26px 44px -34px rgb(0 0 0 / 0.75);
+}
+/* La fiche du fondateur : une carte d'archives réglée, sa marge terre cuite
+   où l'encre descend, et une rosace de graveur au coin. */
+.ab-founder {
+  min-height: 20rem; justify-content: flex-end;
+  padding-left: calc(var(--s-5) + 2.4rem);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(2rem - 1px), color-mix(in srgb, var(--ab-brass) 11%, transparent) calc(2rem - 1px) 2rem),
+    color-mix(in srgb, var(--fg) 4%, transparent);
+}
+.ab-founder::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(28rem circle at var(--mx, 85%) var(--my, 0%), color-mix(in srgb, var(--dv) 16%, transparent), transparent 62%);
+}
+.ab-founder__margin { position: absolute; top: 0; bottom: 0; left: 1.9rem; width: 1px; overflow: hidden; background: color-mix(in srgb, var(--dv) 42%, transparent); }
+.ab-founder__margin i {
+  position: absolute; left: 0; top: 0; width: 1px; height: 32%;
+  background: linear-gradient(180deg, transparent, var(--dv-lt), transparent);
+  transform: translateY(-100%);
+  animation: ab-ink 6.4s var(--e-inout) infinite;
+}
+@keyframes ab-ink { to { transform: translateY(320%); } }
+.ab-founder__rose {
+  position: absolute; z-index: -1; top: -5rem; right: -5rem; width: 19rem; aspect-ratio: 1; opacity: 0.5;
+  -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent);
+          mask-image: radial-gradient(closest-side, #000 55%, transparent);
+}
+.ab-founder__rose svg { animation: ab-spin-r 140s linear infinite; }
+.ab-founder .dv-mono { color: var(--ab-brass-lt); }
+.ab-founder__n {
+  font-family: var(--ff-p); font-size: clamp(2.2rem, 1.3rem + 2.6vw, 4.2rem); line-height: 0.98; letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+}
+.ab-founder__p { max-width: 32rem; color: var(--cream-2); line-height: 1.6; }
+
+/* Les fiches de l'équipe : un tiroir de fiches encore vierges, qui
+   s'éventaillent au survol (au doigt, quand le tiroir est au milieu de
+   l'écran). */
+.ab-team__soon {
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--fg) 3%, transparent) 0 1px, transparent 1px 14px),
+    color-mix(in srgb, var(--fg) 2%, transparent);
+}
+.ab-drawer { position: relative; display: block; height: 4.6rem; margin-bottom: var(--s-1); }
+.ab-drawer i {
+  position: absolute; left: 0; right: 18%; bottom: 0; height: 3.3rem;
+  border-radius: 0.2rem;
+  background: var(--ab-grain-ink), color-mix(in srgb, var(--ab-paper) 92%, var(--ab-brass));
+  box-shadow: 0 6px 14px -8px rgb(0 0 0 / 0.7);
+  transform-origin: 10% 100%;
+  transition: transform 0.7s var(--e-out);
+}
+.ab-drawer i::before {
+  content: ''; position: absolute; top: -0.5rem; width: 32%; height: 0.6rem;
+  border-radius: 0.2rem 0.2rem 0 0; background: inherit; box-shadow: none;
+}
+.ab-drawer i::after {
+  content: ''; position: absolute; left: 0.8rem; right: 0.8rem; top: 0.9rem; bottom: 0.6rem;
+  background: repeating-linear-gradient(180deg, transparent 0 0.6rem, color-mix(in srgb, var(--ab-ink) 22%, transparent) 0.6rem calc(0.6rem + 1px));
+}
+.ab-drawer i:nth-child(1) { transform: translate(0, -1.1rem); filter: brightness(0.82); }
+.ab-drawer i:nth-child(1)::before { left: 60%; }
+.ab-drawer i:nth-child(2) { transform: translate(0.5rem, -0.55rem); filter: brightness(0.9); }
+.ab-drawer i:nth-child(2)::before { left: 34%; }
+.ab-drawer i:nth-child(3) { transform: translate(1rem, 0); }
+.ab-drawer i:nth-child(3)::before { left: 6%; }
+.ab-team__soon:hover .ab-drawer i:nth-child(1), .ab-team__soon.is-open .ab-drawer i:nth-child(1) { transform: translate(-0.2rem, -1.5rem) rotate(-5deg); }
+.ab-team__soon:hover .ab-drawer i:nth-child(2), .ab-team__soon.is-open .ab-drawer i:nth-child(2) { transform: translate(0.9rem, -0.8rem) rotate(-1.5deg); }
+.ab-team__soon:hover .ab-drawer i:nth-child(3), .ab-team__soon.is-open .ab-drawer i:nth-child(3) { transform: translate(2rem, 0) rotate(2.5deg); }
+
+/* « Join the team » : un avis à détacher, son pointillé et ses deux encoches. */
+.ab-team__join {
+  padding-top: calc(var(--s-6) + 1.4rem);
+  background: linear-gradient(170deg, color-mix(in srgb, var(--night-3) 80%, transparent), transparent);
+}
+.ab-perf { position: absolute; left: 0; right: 0; top: 1.5rem; height: 0; border-top: 1px dashed var(--line-ui); }
+.ab-perf::before, .ab-perf::after {
+  content: ''; position: absolute; top: -0.55rem; width: 1.1rem; height: 1.1rem; border-radius: 50%;
+  background: var(--bg); box-shadow: inset 0 0 0 1px var(--line-2);
+}
+.ab-perf::before { left: -0.55rem; }
+.ab-perf::after { right: -0.55rem; }
+.ab-team__join:hover .ab-perf { border-top-color: var(--dv); }
+
+.ab-team__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.04; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; }
+.ab-team__soon p, .ab-team__join p { color: var(--cream-2); font-size: var(--fs-sm); line-height: 1.6; }
+.ab-team__soon .dv-link, .ab-team__join .dv-link { margin-top: auto; align-self: flex-start; }
+@media (max-width: 60rem) {
+  .ab-team__grid { grid-template-columns: 1fr 1fr; }
+  .ab-founder { grid-column: 1 / -1; min-height: 0; }
+}
+@media (max-width: 36rem) {
+  .ab-team__grid { grid-template-columns: 1fr; }
+  .ab-founder { padding-left: calc(var(--s-4) + 2rem); }
+  .ab-founder__margin { left: 1.5rem; }
+  .ab-founder__rose { width: 14rem; top: -4rem; right: -4.5rem; }
+}
+
+/* ═══════════════════ L'APPEL : LE CACHET DE CIRE ═══════════════════ */
+.ab-final { padding-top: var(--s-8); }
+/* Le filet du haut : une lumière qui se balance d'un bord à l'autre. */
+.ab-final__rule {
+  position: absolute; top: 0; left: 50%; translate: -50% 0;
+  width: min(calc(100% - 2 * var(--pad-x)), var(--maxw)); height: 1px; overflow: hidden;
+  background: var(--line-2);
+}
+.ab-final__rule i {
+  position: absolute; top: 0; left: 40%; width: 20%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dv-lt), transparent);
+  animation: ab-sway 7s var(--e-inout) infinite alternate;
+}
+@keyframes ab-sway { from { transform: translateX(-200%); } to { transform: translateX(200%); } }
+.ab-wax { position: relative; width: clamp(5.6rem, 4.6rem + 2.4vw, 7.4rem); aspect-ratio: 1; margin: 0 auto var(--s-6); }
+.ab-wax__ring { position: absolute; inset: -1.3rem; animation: ab-spin 70s linear infinite; opacity: 0.8; }
+.ab-wax__ring path { stroke-width: 0.6; }
+.ab-wax__blob { position: absolute; inset: 0; will-change: transform; }
+/* Le bord de cire (tracé par about-heritage.js), et son ombre portée. */
+.ab-wax__shape {
+  position: absolute; inset: -8%; width: 116%; height: 116%; max-width: none;
+  filter: drop-shadow(0 10px 12px rgb(0 0 0 / 0.5));
+}
+/* L'empreinte : un disque creusé, la rosace en relief. */
+.ab-wax__rose {
+  position: absolute; inset: 13%; border-radius: 50%;
+  background: radial-gradient(circle at 42% 38%, #e47a49, #c45b2d 62%, #a9481f);
+  box-shadow:
+    inset 3px 4px 7px rgb(70 18 4 / 0.6),
+    inset -2px -3px 6px rgb(255 205 175 / 0.3),
+    0 0 0 1px rgb(255 205 175 / 0.18);
+}
+.ab-wax__rose svg { position: absolute; inset: 5%; width: 90%; height: 90%; filter: drop-shadow(0.6px 0.8px 0 rgb(255 210 180 / 0.45)); }
+.ab-wax__rose path { stroke: rgb(80 20 4 / 0.75); stroke-width: 0.9; }
+.ab-wax__ripple {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--dv-lt) 70%, transparent);
+  opacity: 0;
+}
+
+/* ═══════════════════ AU DOIGT ═══════════════════
+   Sur téléphone et tablette, les deux grandes rosaces restent immobiles
+   (de grands calques qui tourneraient pour presque rien) ; le sceau, la
+   cire et les filets gardent leur mouvement, tout petits. */
+@media (pointer: coarse) {
+  .ab-rose--hero svg, .ab-founder__rose svg { animation: none; }
+}
+
+/* ═══════════════════ SANS MOUVEMENT ═══════════════════
+   Rien ne tourne, rien ne défile : les filets sont posés, l'encre est sèche,
+   le cachet est frappé. */
+@media (prefers-reduced-motion: reduce) {
+  .ab-mq { -webkit-mask-image: none; mask-image: none; padding-inline: var(--pad-x); }
+  .ab-mq__row { flex: 1 1 auto; min-width: 0; animation: none; flex-wrap: wrap; justify-content: center; row-gap: 1.25rem; padding-right: 0; }
+  .ab-mq__row[aria-hidden] { display: none; }
+  #main *, #main *::before, #main *::after, body[data-page='about'] .ftr::before { animation: none !important; }
+  html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 1; }
+  .ab-appr__i::before, .ab-appr__h, .ab-appr__n, .ab-kit__plate, .ab-kit__plate img, .ab-kit__plate::after,
+  .ab-drawer i, .ab-films .dv-proj__fig, .ab-plate__sheen { transition: none; }
+  .ab-mast__rule i, .ab-appr__burin, .ab-tabs button::after, .ab-founder__margin i, .ab-final__rule i, body[data-page='about'] .ftr::before { display: none; }
+  .ab-rail i { transform: none; opacity: 0.5; }
+  .ab-cap__caps li::after { display: none; }
+  .ab-roller { display: none; }
+}

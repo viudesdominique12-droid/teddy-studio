@@ -456,6 +456,150 @@ Ce qui ne change pas :
 
 Le test sur un vrai iPhone reste à faire par Dominique : il n'y a ni Xcode ni simulateur sur ce Mac.
 
+## Vague 16 — le brief du client : sept divisions (17–18/10/2026)
+
+Le client a envoyé un long brief (18 sections) : le site devient celui d'une société média,
+événements et production, en **sept divisions** qui ont chacune leur page, leur formulaire et
+leur portfolio — Live Streaming et Event Organizing en tête d'affiche, **jamais fusionnées**.
+Dominique : « tout ce qu'ils ont dit qu'ils font, on va le faire » ; « rien inventer », c'est
+« au niveau des chiffres ou des activités » ; « fais quelque chose de très beau, très attirant,
+très dans le thème. N'hésite pas à faire du motion, n'hésite pas vraiment à te lâcher ».
+
+**Les pages.** `live-streaming.html` (la référence, écrite à la main), puis huit agents en
+parallèle, chacun propriétaire de ses fichiers (`<page>.html`, `src/styles/pages/<id>.css`,
+`src/js/pages/<id>.js`), et un neuvième pour la revue croisée. Chaque page a sa pièce
+signature :
+
+| Page | Pièce signature |
+|---|---|
+| Live Streaming | un mur de régie : le programme, cinq caméras, les témoins, le timecode d'Addis |
+| Event Organizing | « la salle » : des projecteurs dans la brume qui éclairent le titre puis le bouton |
+| AI Production | « du bruit à la vision » : un anneau violet qui sort d'un grain de télévision |
+| Music Production | « l'horizon du son » : un spectre qui recule comme un paysage, à 96 BPM, muet |
+| Feature Film | une vraie ouverture de cinéma : un trait de lumière qui s'ouvre en 2,39:1 |
+| Documentary | une projection de lieux réels d'Éthiopie, grain, sous-titres tapés, planche-contact |
+| Equipment Rentals | la caméra 3D sur sa planche technique, qu'on tourne à la main |
+| Services | une lumière blanche qui se sépare en sept rayons, un par division |
+| Portfolio | une salle de projection, puis une galerie filtrable (GSAP Flip) et des fiches |
+| About | les sept divisions sur un tambour qui tourne au défilement |
+| Contact | une horloge de studio à l'heure d'Addis |
+
+**L'accueil** suit le §10 du brief : le titre « Bringing Ideas to Life / Through Media,
+Production & Events. » (mots qui montent, badge qui fait défiler les sept divisions), les
+boutons « Explore Our Services » / « Start a Project », la bande des clients (inchangée), **la
+grille des sept divisions** (Live et Events en grand ; chaque vignette est une petite scène :
+régie, faisceaux, champ génératif, égaliseur, cadre large, terrain, caméra — animées seulement
+visibles), les projets à la une, le kit 3D (vitrine de la location), « Why work with us? » (les
+sept forces du brief, en liste qu'on déplie), la bobine des lieux, les services du bureau du film
+(déplacés sous les lieux, sous « Filming in Ethiopia »), la galerie et sa caméra, et l'appel final
+« Have a Project in Mind? ». Le bloc About est parti sur sa page. Les épinglages restent créés
+dans l'ordre de la page (kit, bobine, galerie) : `pinalign.mjs` → 0 px partout.
+
+**La fondation commune** (à réutiliser pour toute nouvelle division) :
+- `src/data/divisions.js`, `portfolio.js`, `equipment.js` : les sources uniques. Un projet, un
+  appareil = une fiche. `portfolio.js` porte `status` (`client`, `own`, `demo`, `third`,
+  `worked`) et, pour l'IA, `ai: 'assisted' | 'generated'`.
+- `src/styles/division.css` (le vocabulaire `dv-`), `src/js/division.js` (`bootDivision`),
+  `src/js/inquiry.js` (tous les formulaires : préfixe de division dans l'objet, champ piège,
+  envoi vers `inquiry.endpoints` ou repli par la messagerie, préremplissage par l'adresse **et**
+  au clic sur une carte de la même page).
+- `src/partials/dv-next.html`, `dv-quick.html` (la barre Appeler / WhatsApp / Demander sur
+  téléphone), `dv-reach.html`.
+
+**La revue croisée (18/10)** a corrigé : un délai de réponse inventé (« usually the same
+day »), le bouton « Book a Live Stream » qui cochait « Wedding » pour tout le monde, un champ
+manquant au formulaire documentaire, une phrase promettant des extraits audio qui n'existent
+pas. Puis, côté fondation : les cartes d'une même page orientent enfin le formulaire, le
+statut des cinq films est revenu à « Worked on » (le site d'origine ne dit pas plus), le texte
+coloré se lit en thème Papier, les cartes ne laissent plus voir de plaque grise en entrant, le
+crédit CC BY du modèle 3D est affiché sur la page Location, titres et descriptions sont
+raccourcis pour Google, chaque page a sa balise canonical et son image de partage.
+`scripts/rebase.mjs` rebase aussi les liens de pages écrits dans le JS (GitHub Pages).
+
+**Contrôles.** Les 12 pages × ordinateur et téléphone : aucune erreur, aucun débordement ;
+trois thèmes vérifiés par page ; 81 liens de cartes testés (préremplissage) ; la version
+construite pour GitHub Pages ne garde aucun lien racine. Captures : `pagecap.mjs` (une page,
+section par section) et `elcap.mjs` (des éléments précis), dans `docs/outils/`.
+
+**À faire valider par le client** : `docs/A-VALIDER-CLIENT.md` (adresses de réception, rôle
+de l'entreprise sur chaque film, photos d'événements, extraits audio, inventaire, textes
+marqués `À VALIDER : client`).
+
+### Vague 16 bis — l'immersion et les formulaires sur mesure (18/10/2026)
+
+Dominique : « le form d'info il peut être personnalisé à chaque page… prend vraiment le thème
+pour chaque service, change même la couleur de la page pour une immersion totale » — puis,
+quand la barre et le pied de page ont pris la couleur aussi : « non, la partie commune change
+pas, le client il aime comme ça ».
+
+- **La couleur de page** : `division.css`, « L'IMMERSION ». Chaque division a un jeu de nuit
+  (`--D-*`, thèmes Vert et Nuit) et un jeu de jour (`--L-*`, Papier), recopiés dans les jetons de
+  rôle **sur `#main` seulement** : la barre, le menu, le pied de page et la barre d'appel du
+  téléphone gardent la marque. En Papier, `.dv-night` donne à une section la nuit de la division.
+  Live : noir de régie ; Events : velours bordeaux ; AI : indigo ; Music : prune ; Film : noir
+  cinéma ; Documentary : terre rouge ; Rentals : bleu de plan.
+- **Les formulaires** (même champs, mêmes valeurs, vérifié par `docs/outils/formfields.mjs`
+  avant/après) : un pupitre de régie (Live), une carte d'invitation et son billet (Events), un
+  « studio du brief » qui met en page les réponses (AI), une feuille de séance et ses vumètres
+  (Music), un clap qui se remplit et claque à l'envoi (Film), un carnet de terrain et sa fiche
+  tamponnée (Documentary), une fiche de sortie de matériel en ticket (Rentals).
+- **`inquiry.js`** : la note d'erreur revient à son texte quand tout est corrigé ; la
+  confirmation défile par Lenis et prend le focus ; **un navigateur de test
+  (`navigator.webdriver`) n'ouvre jamais la messagerie** — le 18/10, les essais d'envoi de huit
+  agents en parallèle ont ouvert des dizaines de brouillons dans Mail et bloqué le Mac.
+  Leçon : pas plus de deux ou trois agents de capture à la fois.
+- **`division.js`** : `watchHeight()` remesure les déclencheurs quand `#main` change de hauteur
+  (une police qui arrive tard, un formulaire qui laisse place à sa confirmation).
+
+### Vague 16 ter — chaque page vit son métier, un seul thème (18/10/2026, nuit)
+
+- **Toutes les sections** des sept pages de division parlent maintenant leur métier, pas
+  seulement l'ouverture et le formulaire (Dominique : « que chaque page vive de son thème à
+  travers visuel et interaction, effets »). Live : multiviewer, mélangeur, encodeur, conduite,
+  mire « no signal ». Events : projecteur qui suit, programme de soirée, badges suspendus,
+  coulisses, enseigne à ampoules. AI : titres qui se décodent, trames qui se mettent au point,
+  particules, filets de points qui vivent chacun à leur façon (balayage, onde, débruitage,
+  flux). Music : la piste de studio sous « Who we work with » (`music-track.js`), console,
+  arrangement façon logiciel, platine ; le spectre de l'ouverture vibre plus fort. Film :
+  générique dans le faisceau, hall et enseigne, billets, pellicule, compte à rebours.
+  Documentary : machine à écrire, chemises de terrain, carnet tamponné, feuille de tournage,
+  mise au point, table de montage. Rentals : planches techniques cotées, schéma de câblage,
+  conditions tamponnées, réticule.
+- **Un seul thème : le Vert** (« on reste que sur le vert de base, enlève les options »).
+  `themes.css` est archivé dans `docs/archive/`, `palette.js` ne fait plus rien, `head.html`
+  efface un ancien choix. Les règles `html[data-palette=…]` restantes sont inertes (à nettoyer).
+- **Le pied de page** des pages de division prend leur couleur (« le pied de page peut être
+  changé pour matcher les styles »). La barre, le menu et la barre d'appel restent ceux de la
+  marque.
+- **Le rond du menu** disparaît sur ordinateur (≥ 66 rem), où la barre porte tous les liens ; il
+  reste sur tablette et téléphone.
+- Contrôles : 7 pages × ordinateur et téléphone sans erreur ni débordement, formulaires
+  identiques (`formfields.mjs`), 81 liens de cartes OK, version GitHub Pages construite.
+
+### Vague 16 quater — les autres pages vivent aussi leur monde (18/10/2026, matin)
+
+Dominique : « j'adore tout ce qu'on a mis en place dans services, maintenant améliore-moi les
+autres pages avec la même logique ». Chaque page de l'entreprise a sa nuance dans la famille de
+la marque (posée sur `body[data-page='<id>'] #main` et `.ftr`), ses sections vivantes et ses
+filets animés, chacun différent :
+- **Services** « le prisme » (`hub-prism.js`, `hub-spectrum.js`) ; **Portfolio** « la salle
+  d'archives » (`portfolio-beam.js`, `portfolio-archive.js`) ; **About** « l'héritage » ;
+  **Contact** « l'accueil du studio » (fiche d'acheminement, standard des sept lignes, étage
+  qui défile) ; **Locations** « les hauts plateaux » (carte en courbes de niveau, altimètre,
+  viseurs) ; **Book** « le bureau des autorisations » (tampon dateur, fiche de production) ;
+  **Careers** « le tableau de feutre » (badge CREW, punaises) ; **404** « Not cleared ».
+- **L'accueil**, en touche légère : rien des pièces aimées n'a bougé (pins vérifiés, écart 0) ;
+  seuls les films (mur d'affiches éclairé), « Why work with us? » (diaphragme à sept lames),
+  « Filming in Ethiopia » (carte qui dérive), l'appel final (équerres de viseur) et les filets
+  (`home-lines.js`, `home-lobby.js`, `home-iris.js`, `home-scout.js`, `home-frame.js`).
+- **Music** : l'ouverture est désormais « le mur de LEDs » (`music-hero-leds.js`), choisi parmi
+  trois idées, « avec le son moins haut » ; « l'horizon du son » est retiré.
+- **Le menu** : Equipment Rentals n'a plus de lien à part dans la barre, le menu et les liens
+  rapides du pied (« c'est un service comme les autres ») ; il reste dans Services. La pilule
+  tient dès 60 rem.
+- Contrôles : formulaires Contact et Book identiques, 0 erreur, pas de débordement, pins de
+  l'accueil alignés.
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).

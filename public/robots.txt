@@ -1,0 +1,5 @@
+# Teddy Studio — Ethiopian Film Office
+User-agent: *
+Allow: /
+
+Sitemap: https://ethiopianfilmoffice.com/sitemap.xml

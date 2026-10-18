@@ -3,7 +3,9 @@
  * Chaque chaîne provient de ethiopianfilmoffice.com (relevé le 18/09/2026),
  * cf. content/source-verbatim.md. Seules les corrections orthographiques
  * listées au §15 du verbatim ont été appliquées.
- * RÈGLE : ne jamais ajouter ici un fait absent de la source.
+ * RÈGLE : ne jamais ajouter ici un fait absent de la source. Depuis le brief
+ * du 17/10/2026, les textes du brief valent comme textes du client (voir
+ * src/data/divisions.js) ; chiffres et faits restent ceux du client.
  */
 
 export const identity = {
@@ -28,6 +30,32 @@ export const identity = {
     { label: 'Facebook', href: '#' },
     { label: 'YouTube',  href: '#' }
   ]
+};
+
+/**
+ * LES DEMANDES (brief §13, 17/10/2026). Chaque division a sa propre adresse
+ * de réception : tant que le client ne les a pas données, tout arrive à
+ * l'adresse générale, mais l'objet de chaque message porte le préfixe de la
+ * division ([LIVE], [EVENT]…) pour que l'équipe trie sans confusion.
+ *
+ * `endpoint` : l'adresse d'un service de formulaires (Formspree, Web3Forms,
+ * Basin…) une fois le compte créé par le client. Vide = repli par la
+ * messagerie du visiteur (mailto). `whatsapp` : numéro au format international
+ * sans « + » (lien wa.me) — À CONFIRMER par le client.
+ */
+export const inquiry = {
+  whatsapp: '251911204388',
+  endpoints: { general: '', live: '', events: '', ai: '', music: '', film: '', doc: '', rentals: '' },
+  emails: {
+    general: 'info@ethiopianfilmoffice.com',
+    live: 'info@ethiopianfilmoffice.com',
+    events: 'info@ethiopianfilmoffice.com',
+    ai: 'info@ethiopianfilmoffice.com',
+    music: 'info@ethiopianfilmoffice.com',
+    film: 'info@ethiopianfilmoffice.com',
+    doc: 'info@ethiopianfilmoffice.com',
+    rentals: 'info@ethiopianfilmoffice.com'
+  }
 };
 
 /** Meta description du site source — reprise mot pour mot. */

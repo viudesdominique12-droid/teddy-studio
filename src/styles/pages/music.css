@@ -1,0 +1,1457 @@
+/* ══════════════════════════════════════════════════════════════
+   MUSIC PRODUCTION — l'horizon du son, la console et la feuille de séance
+   (17–18/10/2026)
+
+   Une ambiance de studio la nuit, toute la page dans la couleur de la
+   division (`division.css`, « L'immersion ») : la nuit prune et le rose en
+   Vert et en Nuit ; le rose poudré, l'encre prune et deux grandes sections
+   prune (la console, l'écoute) en Papier.
+
+   L'ouverture est un spectre sonore dessiné en direct (`music.js`).
+   « Pour qui » est une prise : la phrase s'enregistre sous un curseur, les
+   publics deviennent des régions de piste. Les services sont les tranches
+   d'une table de mixage (solo au survol). Le processus est une session vue
+   en arrangement, avec sa tête de lecture. L'écoute a sa platine. Entre
+   les sections, un fil qui ne vibre que quand on défile. La demande est
+   une feuille de séance : le pont des vumètres, des pistes numérotées, des
+   touches de console, la touche REC (18/10/2026).
+
+   Le rythme des sections (Vert et Nuit) : l'ouverture et « pour qui » sur la
+   nuit, la console plus profonde (`--night-2`) sous une lumière de scène, le
+   processus sur la nuit avec la fenêtre de la session, l'écoute plus
+   profonde avec la platine, la demande sur la nuit devant des lattes de
+   studio. En Papier, la console et l'écoute (`.dv-night`) prennent la nuit
+   prune de la division ; la demande est une feuille rose pâle.
+
+   Les fonds de section passent par `background-image` (une couche pleine
+   en dernier) : en Papier, `division.css` pose la couleur des sections
+   `.dv-night` avec une priorité plus forte, et la couche la recouvre.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Le réglage de la palette pour cette page : le gris rosé le plus clair
+   du jour (`--L-cream-3`, les petites étiquettes) fonce d'un cran, pour
+   rester au-dessus de 4,5:1 sur le rose plus soutenu de la demande et sur
+   les lattes du mur. Les `--L-*` ne servent que dans le contenu (`#main`). */
+body[data-dv='music'] { --L-cream-3: #74505f; }
+
+/* L'encre posée sur le rose (le survol des boutons) : la nuit prune de la
+   division plutôt que le basalte neutre — dans le contenu seulement. */
+body[data-dv='music'] #main { --dv-ink: var(--D-night); }
+
+/* ═══════════════════ L'OUVERTURE ═══════════════════ */
+.mu-hero { justify-content: flex-end; padding-bottom: var(--s-6); }
+
+.mu-stage { overflow: hidden; }
+/* Sans canevas : la lueur derrière l'horizon et des lignes fines, fixes,
+   qui gardent l'idée. (Avec le canevas, la lueur est peinte par le script,
+   derrière les crêtes.) */
+.mu-stage.is-static::before {
+  content: ''; position: absolute; left: 50%; top: 34%;
+  width: min(92vw, 78rem); height: 62%;
+  translate: -50% -50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 16%, transparent), transparent);
+  pointer-events: none;
+}
+.mu-stage canvas { position: absolute; top: 0; left: 0; width: 100%; height: 60%; will-change: transform; }
+.mu-stage.is-static canvas { display: none; }
+.mu-stage.is-static::after {
+  content: ''; position: absolute; left: 8%; right: 8%; top: calc(var(--bar-h) + 2rem); height: 38%;
+  background: repeating-linear-gradient(180deg, color-mix(in srgb, var(--fg) 22%, transparent) 0 1px, transparent 1px 9px);
+  -webkit-mask-image: radial-gradient(60% 90% at 50% 100%, #000, transparent);
+          mask-image: radial-gradient(60% 90% at 50% 100%, #000, transparent);
+}
+
+.mu-hero .dv-hero__veil {
+  background: linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 86%, transparent) 26%, color-mix(in srgb, var(--bg) 40%, transparent) 46%, transparent 60%);
+}
+
+.mu-hero__in { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: var(--s-5); }
+.mu-hero__main { display: grid; justify-items: center; }
+.mu-hero .dv-h1 { max-width: none; }
+.mu-hero .dv-lede { max-width: 41rem; margin-top: var(--s-4); }
+.mu-hero .dv-acts { justify-content: center; }
+.mu-hero__meta.dv-hero__meta {
+  grid-auto-flow: column; justify-content: center; justify-items: center; text-align: center;
+  gap: 0 clamp(1rem, 3vw, 2.6rem);
+}
+.mu-hero__meta li + li { position: relative; }
+
+/* Le temps fort : une lueur derrière « Your Identity. », réglée par le script
+   sur le même battement que le spectre. Seule l'opacité bouge. */
+.mu-hero .dv-h1 em { position: relative; }
+.mu-pulse {
+  position: absolute; inset: -0.32em -0.4em -0.22em; z-index: -1;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 34%, transparent), transparent);
+  opacity: 0; pointer-events: none;
+}
+
+/* ═══════════════════ POUR QUI : LA PRISE ═══════════════════
+   La phrase s'enregistre mot à mot sous un curseur ; les publics prennent
+   le rose et deviennent des régions de piste, chacune avec sa forme d'onde
+   (`initSay`). À droite du repère, le transport du studio. Le bas de la
+   section descend déjà vers la nuit plus profonde de la console. */
+.mu-for {
+  --mu-hl: var(--dv);
+  background-image:
+    radial-gradient(42% 60% at 92% 8%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 70%),
+    linear-gradient(180deg, transparent 50%, var(--night-2));
+}
+/* Sur le papier, le rose vif fonce dans l'encre pour rester lisible. */
+html[data-palette='papier'] .mu-for { --mu-hl: color-mix(in oklab, var(--dv) 62%, var(--fg)); }
+
+.mu-for__top {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--s-3) var(--s-5); margin-bottom: var(--s-5);
+}
+.mu-for__top .dv-k { margin: 0; }
+
+/* Le transport : la lampe REC (allumée tant que la prise avance), la
+   position en mesures et temps, le métronome (le premier temps en rose), le
+   tempo. Un décor : tout est `aria-hidden`. */
+.mu-tp {
+  display: inline-flex; align-items: stretch; gap: 0.3rem;
+  padding: 0.3rem; border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--night-2) 75%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line-2), inset 0 1px 0 color-mix(in srgb, var(--fg) 5%, transparent);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-3); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.mu-tp > span {
+  display: inline-flex; align-items: center; gap: 0.55em;
+  padding: 0.5rem 0.72rem; border-radius: 0.48rem;
+  background: color-mix(in srgb, var(--night) 72%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+html[data-palette='papier'] .mu-tp > span { background: var(--night-3); }
+.mu-tp b { font-weight: 400; color: var(--fg); letter-spacing: 0.08em; }
+.mu-tp__rec { transition: color 0.3s var(--e-out); }
+.mu-tp__rec i {
+  width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--dv) 24%, transparent);
+  transition: background-color 0.3s var(--e-out), box-shadow 0.3s var(--e-out);
+}
+.mu-for.is-rolling .mu-tp__rec { color: var(--fg); }
+.mu-for.is-rolling .mu-tp__rec i { background: var(--dv); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 22%, transparent), 0 0 10px var(--dv); }
+.mu-tp__clk { gap: 0.3rem !important; }
+.mu-tp__clk i { width: 0.42rem; height: 0.42rem; border-radius: 2px; background: color-mix(in srgb, var(--fg) 16%, transparent); }
+.mu-tp__clk i:first-child { background: color-mix(in srgb, var(--dv) 30%, transparent); }
+.mu-for.is-live .mu-tp__clk i { animation: mu-click 2.5s step-end infinite; }
+.mu-for.is-live .mu-tp__clk i:first-child { animation-name: mu-click-1; }
+.mu-for.is-live .mu-tp__clk i:nth-child(2) { animation-delay: 0.625s; }
+.mu-for.is-live .mu-tp__clk i:nth-child(3) { animation-delay: 1.25s; }
+.mu-for.is-live .mu-tp__clk i:nth-child(4) { animation-delay: 1.875s; }
+@keyframes mu-click { 0% { background: var(--fg); } 25%, 100% { background: color-mix(in srgb, var(--fg) 16%, transparent); } }
+@keyframes mu-click-1 { 0% { background: var(--dv); box-shadow: 0 0 8px var(--dv); } 25%, 100% { background: color-mix(in srgb, var(--dv) 30%, transparent); box-shadow: none; } }
+
+/* La phrase. Elle forme son propre empilement : les régions passent
+   derrière les lettres, mais devant le fond de la section. */
+.mu-say {
+  position: relative; isolation: isolate;
+  max-width: 26ch; margin-top: var(--s-2);
+  font-family: var(--ff-p);
+  font-size: clamp(2.1rem, 1rem + 3.7vw, 4.6rem);
+  font-weight: 400; font-variation-settings: 'opsz' 144, 'wght' 360, 'SOFT' 0, 'WONK' 0;
+  line-height: 1.06; letter-spacing: -0.025em;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.mu-say em { color: var(--mu-hl); }
+.js .mu-say .mu-w { color: color-mix(in srgb, var(--fg) 20%, transparent); transition: color 0.7s var(--e-out); }
+.js .mu-say .mu-w.is-lit { color: var(--fg); }
+.js .mu-say em .mu-w.is-lit { color: var(--mu-hl); }
+
+/* Une région de piste derrière un public : un cadre teinté, sa barre de
+   titre, la forme d'onde. Elle s'ouvre de gauche à droite quand le curseur
+   atteint le mot. */
+.mu-say .mu-w--clip { position: relative; white-space: nowrap; }
+.mu-clip {
+  position: absolute; z-index: -1; pointer-events: none;
+  left: -0.05em; right: -0.05em; top: 0.22em; bottom: 0.04em;
+  border-radius: 0.1em;
+  background: color-mix(in srgb, var(--dv) 7%, transparent);
+  box-shadow: inset 0 0 0 1px transparent;
+  transform-origin: 0 50%;
+  transition: transform 0.75s var(--e-out), background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.mu-clip::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: max(2px, 0.05em);
+  border-radius: 0.1em 0.1em 0 0;
+  background: color-mix(in srgb, var(--dv) 42%, transparent);
+}
+.js .mu-say .mu-w--clip:not(.is-lit) .mu-clip { transform: scaleX(0); }
+.mu-clip__draw { position: absolute; inset: 20% 4% 6%; clip-path: inset(0 0 0 0); }
+.mu-clip__wave { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 50%; }
+.mu-clip__wave path {
+  fill: none; stroke: var(--mu-hl); stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke;
+  opacity: 0.24; transition: opacity 0.4s var(--e-out);
+}
+/* Le trait de lecture qui passe quand on rejoue la région. */
+.mu-clip::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 100%;
+  border-left: 2px solid var(--mu-hl);
+  opacity: 0; pointer-events: none;
+}
+/* Rejouer : la région s'éclaire, l'onde se redessine sous le trait, puis
+   bat deux fois plus vite tant qu'on reste dessus. */
+.mu-w--clip.is-solo .mu-clip { background: color-mix(in srgb, var(--dv) 15%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 58%, transparent); }
+.mu-w--clip.is-solo .mu-clip__wave path { opacity: 0.9; }
+.mu-w--clip.is-solo .mu-clip__draw { animation: mu-draw 0.85s linear both; }
+.mu-w--clip.is-solo .mu-clip::after { animation: mu-sweep 0.85s linear both; }
+@keyframes mu-draw { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes mu-sweep { 0% { transform: translateX(0); opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
+/* La respiration : chaque temps (96 BPM), l'onde se gonfle et retombe. */
+.mu-for.is-live .mu-w--clip.is-lit .mu-clip__wave { animation: mu-breath 0.625s cubic-bezier(0.2, 0.7, 0.3, 1) infinite; }
+.mu-for.is-live .mu-w--clip.is-solo .mu-clip__wave { animation-duration: 0.3125s; }
+@keyframes mu-breath { 0% { transform: scaleY(calc(1 + var(--k, 0.2))); } 100% { transform: scaleY(0.88); } }
+
+/* Le curseur d'enregistrement : un trait rose et sa tête, qui avance de mot
+   en mot ; la prise finie, il clignote sur le temps. */
+.mu-caret {
+  position: absolute; left: 0; top: 0; z-index: 1;
+  width: 2px; height: 0.84em; border-radius: 1px;
+  background: var(--mu-hl);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--dv) 70%, transparent);
+  pointer-events: none; will-change: transform;
+}
+.mu-caret::before {
+  content: ''; position: absolute; left: 50%; top: -0.1em;
+  width: 0.24em; height: 0.15em; translate: -50% 0;
+  background: inherit; clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.mu-for.is-done .mu-caret { animation: mu-blink 1.25s step-end infinite; }
+@keyframes mu-blink { 0% { opacity: 1; } 50%, 100% { opacity: 0.15; } }
+html:not(.js) .mu-caret { display: none; }
+
+.mu-for__foot {
+  display: grid; grid-template-columns: minmax(0, 36rem) auto; align-items: end; justify-content: space-between;
+  gap: var(--s-5) var(--s-8); margin-top: var(--s-7); padding-top: var(--s-5);
+  border-top: 1px solid var(--line-2);
+}
+.mu-for__foot .dv-lede { max-width: 36rem; }
+
+/* ═══════════════════ LE FIL ═══════════════════
+   Une forme d'onde dans le haut d'une section, qui ne vibre que quand la
+   page défile (`initWires`). */
+.mu-wire {
+  position: absolute; left: 50%; top: calc(var(--s-9) / 2 - 2.25rem);
+  width: min(calc(100% - 2 * var(--pad-x)), calc(var(--maxw) - 2 * var(--pad-x)));
+  height: 4.5rem; translate: -50% 0;
+  pointer-events: none;
+}
+.mu-wire canvas { display: block; width: 100%; height: 100%; }
+html:not(.js) .mu-wire { display: none; }
+
+/* ═══════════════════ LA PISTE (18/10) ═══════════════════
+   Au bas de « Who we work with » : une piste de studio, pleine largeur, avec
+   son en-tête (nom, position, compteur) et sa forme d'onde vivante
+   (`music-track.js`). La section se resserre en bas : la piste tient le
+   passage vers la console. */
+.mu-for { padding-bottom: var(--s-8); }
+.mu-lane {
+  margin-top: var(--s-8);
+  border-radius: 1rem; overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--night-3) 70%, transparent), color-mix(in srgb, var(--night-2) 90%, transparent));
+  box-shadow: inset 0 0 0 1px var(--line-2), 0 40px 80px -50px color-mix(in srgb, var(--dv) 45%, transparent);
+}
+.mu-lane__bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.4rem;
+  padding: 0.7rem 1rem; border-bottom: 1px solid var(--line-2);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-3); font-variant-numeric: tabular-nums;
+}
+.mu-lane__bar b { font-weight: 400; color: var(--fg); }
+.mu-lane__name { display: inline-flex; align-items: center; gap: 0.55em; margin-right: auto; color: var(--fg); }
+.mu-lane__name i { width: 0.6rem; height: 0.6rem; border-radius: 2px; background: var(--dv); box-shadow: 0 0 10px var(--dv); }
+.mu-lane__wave { position: relative; height: clamp(9rem, 6rem + 9vw, 15rem); cursor: crosshair; }
+.mu-lane__wave canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+@media (max-width: 40rem) {
+  .mu-lane { margin-top: var(--s-7); margin-inline: calc(-0.4 * var(--pad-x)); }
+  .mu-lane__bar { padding: 0.6rem 0.8rem; gap: 0.4rem 1rem; }
+}
+
+/* ═══════════════════ LA CONSOLE ═══════════════════
+   La section : la nuit profonde, et une lumière de scène rose qui monte
+   sous la table. Le châssis est toujours sombre (c'est un objet) : en
+   Papier, la section est `.dv-night` et garde la nuit prune. Chaque tranche :
+   numéro et diode, deux boutons, le groupe en clair, la liste, le lien,
+   puis le fader (vumètre, glissière, échelle) et l'écran. */
+.mu-desk-sec {
+  background-image:
+    radial-gradient(56% 40% at 50% 100%, color-mix(in srgb, var(--dv) 13%, transparent), transparent 72%),
+    radial-gradient(70% 30% at 50% 0%, color-mix(in srgb, var(--night-3) 70%, transparent), transparent 80%),
+    linear-gradient(var(--night-2), var(--night-2));
+}
+.mu-desk {
+  --hw: color-mix(in srgb, var(--night-2) 55%, #000);
+  --travel: 9rem;
+  position: relative;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(0, 1.22fr);
+  gap: 0.5rem; padding: 0.5rem;
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--cream) 6%, transparent), transparent 18%),
+    var(--hw);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--cream) 9%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--cream) 6%, transparent),
+    0 70px 120px -60px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(0 0 0 / 0.35),
+    0 40px 140px -50px color-mix(in srgb, var(--dv) 22%, transparent);
+  color: var(--cream);
+}
+.mu-ch {
+  --f: 0;
+  position: relative; isolation: isolate;
+  display: flex; flex-direction: column; gap: 0.95rem;
+  min-width: 0; padding: 1rem 1.05rem 0.85rem;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cream) 6%, transparent), color-mix(in srgb, var(--cream) 2.5%, transparent) 40%, color-mix(in srgb, var(--cream) 1.5%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 7%, transparent), inset 0 1px 0 color-mix(in srgb, var(--cream) 8%, transparent);
+  transition: box-shadow 0.7s var(--e-out), background-color 0.7s var(--e-out);
+}
+.mu-ch::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 60% at 50% 100%, color-mix(in srgb, var(--dv) 20%, transparent), transparent 70%);
+  opacity: 0; transition: opacity 0.8s var(--e-out);
+}
+.mu-ch.is-on { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 50%, transparent), inset 0 1px 0 color-mix(in srgb, var(--cream) 9%, transparent); }
+.mu-ch.is-on::before { opacity: 1; }
+
+.mu-ch__top {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--cream) 58%, transparent);
+}
+.mu-led {
+  width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--cream) 13%, transparent); box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.6);
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.mu-ch.is-on .mu-led { background: var(--dv); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 22%, transparent), 0 0 14px var(--dv); }
+
+/* Deux boutons rotatifs, gravés d'un trait ; ils tournent d'un cran quand
+   la tranche s'allume. Le métal prend la teinte prune de la salle. */
+.mu-ch__knobs { display: flex; gap: 1.1rem; padding-bottom: 0.2rem; }
+.mu-knob {
+  --knob: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--cream) 26%, var(--night-3)), var(--night-3) 62%, var(--night-2));
+  display: grid; justify-items: center; gap: 0.35rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--cream) 50%, transparent);
+}
+.mu-knob b { font-weight: 400; }
+.mu-knob::before {
+  content: ''; width: 2rem; height: 2rem; border-radius: 50%;
+  background:
+    linear-gradient(color-mix(in srgb, var(--cream) 85%, transparent), color-mix(in srgb, var(--cream) 85%, transparent)) 50% 0.2rem / 2px 0.62rem no-repeat,
+    var(--knob);
+  box-shadow: 0 0 0 3px rgb(0 0 0 / 0.35), 0 4px 8px rgb(0 0 0 / 0.6), inset 0 1px 0 color-mix(in srgb, var(--cream) 16%, transparent);
+  transform: rotate(calc(var(--a, 0deg) + var(--t, 0deg)));
+  transition: transform 0.6s var(--e-out), background 0.6s;
+}
+.mu-ch.is-on .mu-knob::before {
+  transform: rotate(calc(var(--a, 0deg) + 28deg + var(--t, 0deg)));
+  background:
+    linear-gradient(var(--dv), var(--dv)) 50% 0.2rem / 2px 0.62rem no-repeat,
+    var(--knob);
+}
+
+.mu-ch__h {
+  font-family: var(--ff-d);
+  font-size: clamp(1.2rem, 0.9rem + 0.75vw, 1.6rem); line-height: 1; letter-spacing: -0.012em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  color: var(--cream);
+}
+.mu-ch__list { display: grid; gap: 0.5rem; flex: 1; align-content: start; font-size: var(--fs-sm); line-height: 1.32; color: color-mix(in srgb, var(--cream) 74%, transparent); }
+.mu-ch__list li { display: flex; gap: 0.6em; transition: color 0.6s var(--e-out); }
+.mu-ch__list li::before {
+  content: ''; flex: none; width: 0.32em; height: 0.32em; margin-top: 0.52em; border-radius: 50%;
+  background: color-mix(in srgb, var(--cream) 32%, transparent); transition: background-color 0.6s var(--e-out);
+}
+.mu-ch.is-on .mu-ch__list li { color: var(--cream); }
+.mu-ch.is-on .mu-ch__list li::before { background: var(--dv); }
+.mu-ch__p { flex: 1; font-size: var(--fs-sm); line-height: 1.45; color: color-mix(in srgb, var(--cream) 78%, transparent); }
+
+.mu-ch__go {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.35;
+  color: var(--cream);
+}
+.mu-ch__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
+.mu-ch:hover .mu-ch__go::after, .mu-ch__go:focus-visible::after { transform: translateX(0.35em); }
+.mu-ch__go::before { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: 1rem; }   /* toute la tranche est cliquable */
+.mu-ch__btn { align-self: start; padding: 0.85rem 1.1rem 0.85rem 1.25rem; font-size: 0.875rem; white-space: nowrap; }
+
+/* Le fader : vumètre, glissière et échelle. Le capuchon est porté par un
+   « rail » de la hauteur de la glissière, déplacé en `transform` (une
+   fraction de sa propre hauteur) : aucune mise en page à chaque image. */
+.mu-fader {
+  position: relative;
+  display: flex; justify-content: center; align-items: stretch; gap: 0.75rem;
+  height: calc(var(--travel) + 2.2rem); padding-block: 1.1rem;
+  border-top: 1px solid color-mix(in srgb, var(--cream) 7%, transparent);
+}
+.mu-meter {
+  position: relative; width: 0.4rem; border-radius: 2px; overflow: hidden;
+  background: repeating-linear-gradient(0deg, color-mix(in srgb, var(--cream) 9%, transparent) 0 0.28rem, transparent 0.28rem 0.4rem);
+}
+.mu-meter i {
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, var(--dv-dp) 0%, var(--dv) 70%, var(--dv-lt) 100%);
+  -webkit-mask-image: repeating-linear-gradient(0deg, #000 0 0.28rem, transparent 0.28rem 0.4rem);
+          mask-image: repeating-linear-gradient(0deg, #000 0 0.28rem, transparent 0.28rem 0.4rem);
+  clip-path: inset(calc((1 - var(--m, 0)) * 100%) 0 0 0);
+  opacity: 0.55; transition: opacity 0.6s var(--e-out);
+}
+.mu-ch.is-on .mu-meter i { opacity: 1; }
+.mu-slot {
+  position: relative; width: 0.36rem; margin-inline: 1rem;
+  border-radius: 99px; background: color-mix(in srgb, var(--night-2) 35%, #000);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.9), 0 1px 0 color-mix(in srgb, var(--cream) 8%, transparent);
+}
+.mu-cap {
+  position: absolute; inset: 0;
+  transform: translateY(calc((1 - var(--f, 0)) * 100%));
+  will-change: transform;
+}
+/* Le capuchon : un métal brossé, teinté de la crème rosée de la division. */
+.mu-cap::before {
+  content: ''; position: absolute; left: 50%; top: 0;
+  width: 2.5rem; height: 1.45rem; translate: -50% -50%;
+  border-radius: 0.28rem;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--cream) 92%, #000) 0%, color-mix(in srgb, var(--cream) 74%, #000) 22%,
+    color-mix(in srgb, var(--cream) 55%, #000) 47%, color-mix(in srgb, var(--cream) 36%, #000) 50%,
+    color-mix(in srgb, var(--cream) 56%, #000) 53%, color-mix(in srgb, var(--cream) 78%, #000) 100%);
+  box-shadow: 0 8px 12px -3px rgb(0 0 0 / 0.75), 0 2px 3px rgb(0 0 0 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+.mu-cap::after {
+  content: ''; position: absolute; left: 50%; top: 0;
+  width: 1.9rem; height: 2px; translate: -50% -50%;
+  background: var(--night-2); transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.mu-ch.is-on .mu-cap::after, .mu-ch--main .mu-cap::after { background: var(--dv); box-shadow: 0 0 8px var(--dv); }
+.mu-scale {
+  display: flex; flex-direction: column; justify-content: space-between;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5rem; line-height: 1; letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--cream) 44%, transparent); font-variant-numeric: tabular-nums;
+}
+.mu-scale i { display: flex; align-items: center; gap: 0.3rem; translate: 0 -0.25rem; font-style: normal; }
+.mu-scale i::before { content: ''; width: 0.45rem; height: 1px; background: color-mix(in srgb, var(--cream) 30%, transparent); }
+.mu-scale i:nth-child(2)::before { width: 0.7rem; background: color-mix(in srgb, var(--cream) 52%, transparent); }
+
+/* L'écran de la tranche (les consoles numériques ont le leur). */
+.mu-lcd {
+  margin: 0; padding: 0.5rem 0.4rem; border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--night-2) 45%, #000);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 7%, transparent), inset 0 2px 6px rgb(0 0 0 / 0.8);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: color-mix(in srgb, var(--dv) 38%, var(--cream-3));
+  transition: color 0.5s var(--e-out), background-color 0.5s var(--e-out), text-shadow 0.5s var(--e-out);
+}
+.mu-ch.is-on .mu-lcd { color: #fff; background: color-mix(in srgb, var(--dv) 26%, var(--night-2)); text-shadow: 0 0 10px var(--dv); }
+
+/* La tranche MAIN : un peu plus large, la lumière de la division en fond. */
+.mu-ch--main { background: linear-gradient(180deg, color-mix(in srgb, var(--dv) 11%, transparent), color-mix(in srgb, var(--cream) 1.5%, transparent) 55%); }
+.mu-ch--main .mu-ch__top { color: color-mix(in srgb, var(--dv) 70%, var(--cream)); }
+
+
+/* Les touches M et S de la tranche. Au survol, la tranche passe en SOLO :
+   sa touche S s'allume, le matériel des autres s'efface un peu (jamais leur
+   texte) et leurs vumètres tombent (`initDesk`). */
+.mu-ms { display: inline-flex; gap: 0.22rem; margin: 0 0.55rem 0 auto; }
+.mu-ms i {
+  display: grid; place-items: center; width: 1.05rem; height: 0.92rem; border-radius: 0.2rem;
+  font-style: normal; font-size: 0.5rem; letter-spacing: 0; line-height: 1;
+  color: color-mix(in srgb, var(--cream) 50%, transparent);
+  background: color-mix(in srgb, var(--cream) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 11%, transparent), 0 1px 0 rgb(0 0 0 / 0.5);
+  transition: background-color 0.3s var(--e-out), color 0.3s var(--e-out), box-shadow 0.3s var(--e-out);
+}
+.mu-desk.is-solo .mu-ch.is-on .mu-ms__s {
+  background: var(--dv-lt); color: var(--D-night);
+  box-shadow: 0 0 0 1px var(--dv-lt), 0 0 12px color-mix(in srgb, var(--dv) 70%, transparent);
+}
+.mu-ch__knobs, .mu-fader .mu-meter, .mu-lcd { transition: opacity 0.45s var(--e-out); }
+.mu-desk.is-solo .mu-ch:not(.is-on) :is(.mu-ch__knobs, .mu-lcd) { opacity: 0.5; }
+
+/* Les boutons tournent avec la souris (`--tw`, `--te`, posés par le script). */
+.mu-knob:nth-child(1) { --t: var(--tw, 0deg); }
+.mu-knob:nth-child(2) { --t: var(--te, 0deg); }
+
+/* Le service survolé : sa puce s'allume (l'écran de la tranche l'affiche). */
+.mu-ch__list li.is-hot { color: var(--cream); }
+.mu-ch__list li.is-hot::before { background: var(--dv); box-shadow: 0 0 8px var(--dv); }
+
+/* La mise sous tension : avant, les écrans sont presque éteints ; à
+   l'arrivée, les diodes balaient la table de gauche à droite et chaque
+   écran clignote en s'allumant (`--i` : le rang de la tranche). */
+.mu-desk.is-cold .mu-lcd { color: color-mix(in srgb, var(--cream) 22%, transparent); text-shadow: none; }
+.mu-desk.is-powered .mu-lcd { animation: mu-lcd-on 0.7s step-end calc(var(--i, 0) * 70ms) backwards; }
+.mu-desk.is-powered .mu-led { animation: mu-led-scan 0.6s var(--e-out) calc(var(--i, 0) * 70ms) backwards; }
+@keyframes mu-lcd-on { 0% { opacity: 0.15; } 18% { opacity: 1; } 30% { opacity: 0.3; } 46% { opacity: 1; } 100% { opacity: 1; } }
+@keyframes mu-led-scan {
+  0% { background: color-mix(in srgb, var(--cream) 13%, transparent); box-shadow: none; }
+  20% { background: var(--dv); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 22%, transparent), 0 0 14px var(--dv); }
+  100% { background: color-mix(in srgb, var(--cream) 13%, transparent); box-shadow: none; }
+}
+
+/* ═══════════════════ LE PROCESSUS : LA SESSION ═══════════════════
+   La vue « arrangement » d'un logiciel de studio (`initDaw`) : le
+   transport, la règle des mesures, puis cinq pistes. À gauche, le nom de
+   la piste (l'étape, en texte) ; à droite, sa région sur la ligne de
+   temps, en escalier. La fenêtre suit le thème de la section (sombre en
+   Vert et Nuit, claire en Papier). `--ph` (0 → 1) place la tête de
+   lecture ; `--f` (0 → 1) dit quelle part d'une région est enregistrée. */
+.mu-proc { background-image: linear-gradient(180deg, var(--night-2), transparent 14rem); }
+html[data-palette='papier'] .mu-proc { background-image: none; }
+
+.mu-daw {
+  --head: clamp(16rem, 27vw, 24rem);
+  --ph: 0;
+  --win: color-mix(in srgb, var(--night-3) 42%, var(--night));
+  --bay: color-mix(in srgb, var(--night-2) 55%, var(--win));
+  position: relative;
+  border-radius: 1.25rem; overflow: hidden;
+  background: var(--win);
+  box-shadow:
+    inset 0 0 0 1px var(--line-2), inset 0 1px 0 color-mix(in srgb, var(--fg) 6%, transparent),
+    0 60px 110px -60px rgb(0 0 0 / 0.85), 0 30px 120px -60px color-mix(in srgb, var(--dv) 18%, transparent);
+}
+html[data-palette='papier'] .mu-daw {
+  --win: var(--night-3);
+  --bay: color-mix(in srgb, var(--night-2) 45%, var(--night-3));
+  box-shadow: inset 0 0 0 1px var(--line), 0 50px 90px -55px color-mix(in srgb, var(--dv-dp) 40%, transparent);
+}
+
+/* Le transport. */
+.mu-daw__top {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem;
+  padding: 0.55rem; border-bottom: 1px solid var(--line-2);
+  background: var(--bay);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-3); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.mu-daw__tr { display: inline-flex; gap: 0.25rem; padding: 0.25rem; border-radius: 0.55rem; background: color-mix(in srgb, var(--fg) 5%, transparent); box-shadow: inset 0 0 0 1px var(--line-2); }
+.mu-daw__tr i {
+  position: relative; display: grid; place-items: center; width: 2rem; height: 1.7rem; border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  transition: background-color 0.25s var(--e-out);
+}
+.mu-daw__tr i::before { content: ''; background: color-mix(in srgb, var(--fg) 45%, transparent); transition: background-color 0.25s var(--e-out); }
+.mu-daw__play::before { width: 0.6rem; height: 0.66rem; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.mu-daw__stop::before { width: 0.56rem; height: 0.56rem; border-radius: 1px; }
+.mu-daw__rec::before { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: color-mix(in srgb, var(--dv) 45%, transparent) !important; }
+.mu-daw.is-rolling .mu-daw__play { background: color-mix(in srgb, var(--dv) 22%, transparent); }
+.mu-daw.is-rolling .mu-daw__play::before { background: var(--dv); }
+.mu-daw:not(.is-rolling) .mu-daw__stop::before { background: var(--fg); }
+.mu-daw__lcd {
+  display: inline-flex; align-items: baseline; gap: 0.55em;
+  padding: 0.48rem 0.75rem; border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--night-2) 80%, #000);
+  box-shadow: inset 0 0 0 1px var(--line-2), inset 0 2px 6px rgb(0 0 0 / 0.5);
+}
+html[data-palette='papier'] .mu-daw__lcd { background: var(--night); box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 3px rgb(0 0 0 / 0.08); }
+.mu-daw__lcd b { min-width: 2.6em; font-size: 0.875rem; font-weight: 400; letter-spacing: 0.06em; color: var(--go-text); }
+.mu-daw__lcd small { font-size: 0.5625rem; color: var(--cream-3); }
+.mu-daw__meta { padding-inline: 0.5rem; }
+.mu-daw__meta--end { margin-left: auto; }
+
+/* La règle des mesures et le coin « Tracks ». */
+.mu-daw__ruler {
+  display: grid; grid-template-columns: var(--head) minmax(0, 1fr);
+  height: 2rem; border-bottom: 1px solid var(--line-2);
+  background: var(--bay);
+}
+.mu-daw__corner {
+  display: flex; align-items: center; padding-inline: 1.25rem; border-right: 1px solid var(--line-2);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+}
+.mu-daw__marks { position: relative; overflow: hidden; }
+.mu-daw__bar {
+  position: absolute; bottom: 0; left: calc(var(--b) * 100%); height: 28%;
+  border-left: 1px solid var(--line);
+}
+.mu-daw__bar.is-major {
+  height: 100%; padding: 0.42rem 0 0 0.35rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1; color: var(--cream-3);
+  border-left-color: var(--line-ui);
+}
+
+/* Les pistes. */
+.mu-daw__tracks { counter-reset: none; }
+.mu-trk {
+  position: relative;
+  display: grid; grid-template-columns: var(--head) minmax(0, 1fr);
+}
+.mu-trk + .mu-trk { border-top: 1px solid var(--line-2); }
+.mu-trk__head {
+  position: relative;
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: start; column-gap: 0.8rem;
+  padding: 1.15rem 1.25rem 1.25rem;
+  border-right: 1px solid var(--line-2);
+  background: color-mix(in srgb, var(--bay) 70%, transparent);
+  transition: background-color 0.5s var(--e-out);
+}
+.mu-trk__head::before {   /* la couleur de la piste */
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: color-mix(in srgb, var(--dv) 22%, transparent);
+  transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.mu-trk.is-on .mu-trk__head::before { background: var(--dv); }
+.mu-trk.is-cur .mu-trk__head::before { box-shadow: 0 0 12px var(--dv); }
+.mu-trk.is-cur .mu-trk__head { background: color-mix(in srgb, var(--dv) 7%, var(--bay)); }
+.mu-trk__n {
+  grid-row: span 2; display: inline-flex; align-items: center; gap: 0.45rem; height: 1.3rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--cream-3);
+  font-variant-numeric: tabular-nums;
+}
+.mu-trk__arm {   /* l'armement de la piste : rose pendant la prise */
+  width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--fg) 14%, transparent); box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.35);
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.mu-trk.is-done .mu-trk__arm { background: color-mix(in srgb, var(--dv) 55%, transparent); }
+.mu-trk.is-cur .mu-trk__arm { background: var(--dv); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 22%, transparent), 0 0 10px var(--dv); }
+.mu-trk__h {
+  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.9rem + 0.45vw, 1.32rem); line-height: 1.06; letter-spacing: -0.01em;
+  font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase;
+  color: var(--cream-2); transition: color 0.5s var(--e-out);
+}
+.mu-trk.is-on .mu-trk__h { color: var(--fg); }
+.mu-trk__p { margin-top: 0.45rem; font-size: var(--fs-sm); line-height: 1.5; color: var(--cream-3); transition: color 0.5s var(--e-out); }
+.mu-trk.is-on .mu-trk__p { color: var(--cream-2); }
+
+/* La voie : la grille des mesures (une ligne par mesure, plus marquée
+   toutes les quatre). */
+.mu-trk__lane {
+  position: relative; overflow: hidden; min-height: 6.6rem;
+  background:
+    repeating-linear-gradient(90deg, var(--line-2) 0 1px, transparent 1px calc(100% / 4)),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--fg) 3.5%, transparent) 0 1px, transparent 1px calc(100% / 16));
+  transition: background-color 0.4s var(--e-out);
+}
+.mu-trk:hover .mu-trk__lane { background-color: color-mix(in srgb, var(--fg) 2.5%, transparent); }
+
+/* Une région : prévue (pointillés, onde pâle), puis enregistrée derrière
+   la tête de lecture (le cadre plein, la barre de titre, l'onde nette). */
+.mu-rgn {
+  --f: 0;
+  position: absolute; top: 0.8rem; bottom: 0.8rem;
+  left: calc(var(--x) * 100%); width: calc(var(--w) * 100%);
+  border-radius: 0.45rem;
+}
+.mu-rgn__ghost, .mu-rgn__rec { position: absolute; inset: 0; border-radius: inherit; }
+.mu-rgn__ghost { border: 1px dashed color-mix(in srgb, var(--fg) 26%, transparent); }
+.mu-rgn__rec {
+  clip-path: inset(0 calc((1 - var(--f)) * 100%) 0 0);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--dv) 34%, transparent) 0 1.15rem, color-mix(in srgb, var(--dv) 13%, transparent) 1.15rem);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 60%, transparent);
+}
+.mu-rgn svg { position: absolute; left: 0.45rem; right: 0.45rem; top: 1.45rem; bottom: 0.4rem; width: calc(100% - 0.9rem); height: calc(100% - 1.85rem); overflow: visible; }
+.mu-rgn .mu-wv { fill: none; stroke-width: 1.2; }
+.mu-rgn .mu-au { fill: none; stroke-width: 1.5; stroke-linejoin: round; }
+.mu-rgn__ghost .mu-wv, .mu-rgn__ghost .mu-au { stroke: color-mix(in srgb, var(--fg) 17%, transparent); }
+.mu-rgn__ghost .mu-nt { fill: color-mix(in srgb, var(--fg) 13%, transparent); }
+.mu-rgn__rec .mu-wv { stroke: color-mix(in srgb, var(--fg) 80%, var(--dv)); }
+.mu-rgn__rec .mu-nt { fill: color-mix(in srgb, var(--fg) 70%, var(--dv)); }
+.mu-rgn__rec .mu-au { stroke: var(--go-text); }
+.mu-rgn__name {
+  position: absolute; z-index: 2; left: 0.5rem; top: 0.3rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; line-height: 1; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-3); white-space: nowrap;
+  transition: color 0.4s var(--e-out);
+}
+.mu-trk.is-on .mu-rgn__name { color: var(--fg); }
+/* Écouter la piste : un trait passe sur la région, l'onde s'éclaire. */
+.mu-rgn::after {
+  content: ''; position: absolute; z-index: 3; top: -0.3rem; bottom: -0.3rem; left: 0; width: 100%;
+  border-left: 2px solid var(--fg); opacity: 0; pointer-events: none;
+}
+.mu-rgn.is-aud::after { animation: mu-aud 1.05s linear; }
+.mu-rgn.is-aud .mu-rgn__ghost .mu-wv, .mu-rgn.is-aud .mu-rgn__ghost .mu-au { stroke: color-mix(in srgb, var(--fg) 34%, transparent); }
+@keyframes mu-aud { 0% { transform: translateX(0); opacity: 1; } 92% { opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
+
+/* La tête de lecture : une par voie (et sa tête dans la règle), toutes au
+   même endroit ; elles forment une seule ligne sur ordinateur. */
+.mu-daw__ph {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  transform: translateX(calc(var(--ph) * 100%)); will-change: transform;
+}
+.mu-daw__ph::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -1px; width: 2px;
+  background: var(--dv); box-shadow: 0 0 10px color-mix(in srgb, var(--dv) 70%, transparent);
+}
+.mu-daw__ph--head::after {
+  content: ''; position: absolute; left: -0.45rem; bottom: 0; width: 0.9rem; height: 0.75rem;
+  background: var(--dv); clip-path: polygon(0 0, 100% 0, 100% 55%, 50% 100%, 0 55%);
+}
+.mu-daw.is-still .mu-daw__ph { display: none; }
+html:not(.js) .mu-rgn { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 55%, transparent); background: color-mix(in srgb, var(--dv) 12%, transparent); }
+html:not(.js) .mu-daw__ph { display: none; }
+
+/* ═══════════════════ L'ÉCOUTE ═══════════════════
+   La nuit profonde. Les catégories sont des touches de console (une bande
+   lumineuse s'allume sur la touche enfoncée) ; à gauche, une platine ; à
+   droite, la liste des plages, comme le dos d'une pochette ; une catégorie
+   sans extrait est une session vide, une voie en pointillés. */
+.mu-listen {
+  isolation: isolate; overflow: clip;
+  background-image:
+    radial-gradient(36% 46% at 100% 14%, color-mix(in srgb, var(--dv) 10%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 18% 78%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--night) 0, var(--night-2) 12rem);
+}
+html[data-palette='papier'] .mu-listen {
+  background-image:
+    radial-gradient(36% 46% at 100% 14%, color-mix(in srgb, var(--dv) 10%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 18% 78%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 70%),
+    linear-gradient(var(--night-2), var(--night-2));
+}
+
+/* Les touches de console. */
+.mu-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: var(--s-6); }
+.mu-filter button {
+  position: relative; display: inline-flex; align-items: center; gap: 0.65rem;
+  padding: 0.74rem 1.05rem 0.74rem 0.8rem; border-radius: 0.6rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--fg) 8%, var(--night-2)), color-mix(in srgb, var(--fg) 3%, var(--night-2)));
+  box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent), 0 2px 0 rgb(0 0 0 / 0.5);
+  font-family: var(--ff-t); font-size: var(--fs-sm); font-weight: 500; line-height: 1.1;
+  color: var(--cream-2);
+  transition: color 0.3s var(--e-out), background-color 0.3s var(--e-out), box-shadow 0.3s var(--e-out), transform 0.15s var(--e-out);
+}
+.mu-filter button::before {   /* la bande lumineuse */
+  content: ''; flex: none; width: 0.28rem; height: 1rem; border-radius: 99px;
+  background: color-mix(in srgb, var(--fg) 16%, transparent);
+  transition: background-color 0.3s var(--e-out), box-shadow 0.3s var(--e-out);
+}
+.mu-filter button:hover { color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-ui), inset 0 1px 0 color-mix(in srgb, var(--fg) 12%, transparent), 0 2px 0 rgb(0 0 0 / 0.5); }
+.mu-filter button:hover::before { background: color-mix(in srgb, var(--dv) 55%, transparent); }
+.mu-filter button:active { transform: translateY(2px); }
+.mu-filter button[aria-pressed='true'] {
+  color: var(--fg);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dv) 26%, var(--night-2)), color-mix(in srgb, var(--dv) 11%, var(--night-2)));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 62%, transparent), 0 0 26px -10px var(--dv), 0 1px 0 rgb(0 0 0 / 0.5);
+  transform: translateY(1px);
+}
+.mu-filter button[aria-pressed='true']::before { background: var(--dv); box-shadow: 0 0 8px var(--dv), 0 0 2px var(--dv); }
+.mu-filter button:focus-visible { outline: 2px solid var(--dv); outline-offset: 3px; }
+
+/* La liste étroite (à côté de la platine, sur une tablette) : la voie
+   vide passe sous le titre. */
+.mu-tracks { container-type: inline-size; }
+@container (max-width: 42rem) {
+  .mu-side { grid-template-columns: 2.6rem minmax(0, 1fr) auto; row-gap: 0.55rem; }
+  .mu-side__w { grid-column: 2 / -1; grid-row: 2; justify-content: flex-start; padding-left: 0.6rem; }
+}
+
+/* La platine à gauche, la liste à droite. */
+.mu-deck {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-6) var(--s-7); align-items: start;
+}
+.mu-tt { position: relative; }
+html:not(.js) .mu-tt { display: none; }
+html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
+
+/* Le socle : 100 × 80. Tout est placé en proportions du socle. */
+.mu-tt__plinth {
+  --metal: color-mix(in srgb, var(--cream) 72%, #000);
+  position: relative; aspect-ratio: 100 / 80; border-radius: 1.35rem;
+  background:
+    radial-gradient(70% 60% at 30% 20%, color-mix(in srgb, var(--cream) 7%, transparent), transparent 70%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--cream) 1.6%, transparent) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, color-mix(in srgb, var(--night-3) 70%, #000), color-mix(in srgb, var(--night-2) 60%, #000));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--cream) 9%, transparent), inset 0 1px 0 color-mix(in srgb, var(--cream) 14%, transparent),
+    0 50px 90px -40px rgb(0 0 0 / 0.9), 0 30px 110px -40px color-mix(in srgb, var(--dv) 26%, transparent);
+}
+.mu-tt__brand {
+  position: absolute; left: 4%; top: 5.2%;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; line-height: 1; letter-spacing: 0.22em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--cream) 46%, transparent);
+}
+
+/* Le plateau : son bord de métal, le disque (qui tourne), les plages, le
+   reflet (qui, lui, ne tourne pas : c'est la lumière de la pièce). */
+.mu-tt__platter {
+  position: absolute; left: 6%; top: 7.5%; width: 68%; aspect-ratio: 1; border-radius: 50%;
+  background: conic-gradient(from 20deg,
+    color-mix(in srgb, var(--cream) 30%, #000), color-mix(in srgb, var(--cream) 62%, #000) 10%, color-mix(in srgb, var(--cream) 24%, #000) 24%,
+    color-mix(in srgb, var(--cream) 55%, #000) 41%, color-mix(in srgb, var(--cream) 22%, #000) 57%, color-mix(in srgb, var(--cream) 60%, #000) 74%,
+    color-mix(in srgb, var(--cream) 26%, #000) 88%, color-mix(in srgb, var(--cream) 30%, #000));
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.6), 0 14px 28px -8px rgb(0 0 0 / 0.75);
+}
+.mu-tt__disc {
+  position: absolute; inset: 3%; border-radius: 50%; overflow: hidden;
+  background:
+    repeating-radial-gradient(circle at 50% 50%, rgb(255 255 255 / 0.045) 0 0.6px, transparent 1px 2.6px),
+    radial-gradient(circle at 50% 50%, #120c10 0 60%, #0b080a 100%);
+  box-shadow: inset 0 0 0 2px #050304, inset 0 0 0 4px rgb(255 255 255 / 0.04);
+  will-change: transform;
+}
+.mu-tt__label { position: absolute; left: 31.9%; top: 31.9%; width: 36.2%; height: 36.2%; overflow: visible; }
+.mu-tt__paper { fill: var(--dv); }
+.mu-tt__inner { fill: none; stroke: color-mix(in srgb, var(--D-night) 35%, transparent); stroke-width: 0.6; }
+.mu-tt__ring, .mu-tt__side, .mu-tt__rpm {
+  fill: var(--D-night); font-family: var(--ff-m); text-transform: uppercase; letter-spacing: 0.14em;
+}
+.mu-tt__ring { font-size: 6.4px; letter-spacing: 0.1em; }
+.mu-tt__side { font-size: 8.5px; text-anchor: middle; font-family: var(--ff-d); font-weight: 700; letter-spacing: 0.06em; }
+.mu-tt__rpm { font-size: 7px; text-anchor: middle; }
+.mu-tt__hole { fill: color-mix(in srgb, var(--cream) 78%, #000); stroke: rgb(0 0 0 / 0.5); stroke-width: 0.8; }
+.mu-tt__bands { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.mu-tt__gap { fill: none; stroke: rgb(255 255 255 / 0.075); stroke-width: 0.45; }
+.mu-tt__gap--in { stroke: rgb(255 255 255 / 0.05); stroke-width: 0.8; }
+.mu-tt__band { fill: none; stroke: var(--dv); opacity: 0; transition: opacity 0.6s var(--e-out); }
+.mu-tt__band.is-on { opacity: 0.2; }
+.mu-tt.is-playing .mu-tt__band.is-on { opacity: 0.3; }
+.mu-tt__sheen {
+  position: absolute; inset: 3%; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from 200deg,
+    transparent 0 6%, rgb(255 255 255 / 0.1) 11%, transparent 17% 50%, rgb(255 255 255 / 0.07) 61%, transparent 67%);
+  -webkit-mask-image: radial-gradient(circle, transparent 0 18.5%, #000 19.5%);
+          mask-image: radial-gradient(circle, transparent 0 18.5%, #000 19.5%);
+}
+
+/* Le bras : son pivot, son contrepoids, le tube, la tête de lecture et
+   leur ombre (plus lointaine quand le bras est levé, en attente). */
+.mu-tt__arm { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.mu-tt__armg {
+  transform: rotate(var(--arm, 0deg)); transform-box: view-box; transform-origin: 86px 14px;
+  transition: transform 1.25s var(--e-inout);
+}
+.mu-tt__rest { fill: color-mix(in srgb, var(--cream) 30%, #000); stroke: color-mix(in srgb, var(--cream) 50%, #000); stroke-width: 0.5; }
+.mu-tt__shadow { transform: translate(0.9px, 1.3px); transition: transform 1.25s var(--e-inout), opacity 1.25s; opacity: 0.55; }
+.mu-tt.is-cued .mu-tt__shadow { transform: translate(2.6px, 3.4px); opacity: 0.32; }
+.mu-tt__shadow path { fill: none; stroke: #000; stroke-width: 1.7; stroke-linecap: round; }
+.mu-tt__shadow .mu-tt__shell-s { fill: #000; stroke: none; }
+.mu-tt__weight { fill: color-mix(in srgb, var(--cream) 34%, #000); stroke: color-mix(in srgb, var(--cream) 58%, #000); stroke-width: 0.4; }
+.mu-tt__tube { fill: none; stroke: var(--metal); stroke-width: 1.5; stroke-linecap: round; }
+.mu-tt__shell { fill: color-mix(in srgb, var(--cream) 55%, #000); stroke: var(--metal); stroke-width: 0.4; stroke-linejoin: round; }
+.mu-tt__lift { fill: none; stroke: var(--metal); stroke-width: 0.6; stroke-linecap: round; }
+.mu-tt__tip { fill: var(--dv); opacity: 0; transition: opacity 0.6s var(--e-out); }
+.mu-tt.is-cued .mu-tt__tip, .mu-tt.is-playing .mu-tt__tip { opacity: 1; }
+.mu-tt.is-cued .mu-tt__shell, .mu-tt.is-playing .mu-tt__shell { fill: color-mix(in srgb, var(--dv) 70%, #000); }
+.mu-tt__pivot { fill: color-mix(in srgb, var(--night-2) 45%, #000); stroke: color-mix(in srgb, var(--cream) 30%, transparent); stroke-width: 0.5; }
+.mu-tt__pivot-in { fill: var(--metal); }
+
+/* Les commandes et l'écran, dans les coins libres du socle. */
+.mu-tt__ctl { position: absolute; left: 4%; bottom: 5%; display: flex; align-items: center; gap: 0.4rem; }
+.mu-tt__start, .mu-tt__spd i, .mu-tt__lcd {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.5625rem; line-height: 1; letter-spacing: 0.14em; text-transform: uppercase; font-style: normal;
+}
+.mu-tt__start, .mu-tt__spd i {
+  display: grid; place-items: center; padding: 0.5rem 0.6rem; border-radius: 0.35rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--cream) 10%, #0b0709), color-mix(in srgb, var(--cream) 4%, #0b0709));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 12%, transparent), 0 2px 0 rgb(0 0 0 / 0.6);
+  color: color-mix(in srgb, var(--cream) 62%, transparent);
+}
+.mu-tt__spd { display: inline-flex; gap: 0.25rem; }
+.mu-tt__spd i { padding-inline: 0.45rem; }
+.mu-tt__spd i.is-on { color: var(--cream); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 55%, transparent), 0 2px 0 rgb(0 0 0 / 0.6); }
+.mu-tt__lcd {
+  position: absolute; right: 4%; bottom: 5%; margin: 0;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-width: 6.6rem; padding: 0.5rem 0.65rem; border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--night-2) 30%, #000);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 8%, transparent), inset 0 2px 6px rgb(0 0 0 / 0.8);
+  color: var(--dv-lt); text-shadow: 0 0 10px color-mix(in srgb, var(--dv) 55%, transparent);
+  white-space: nowrap;
+}
+.mu-tt__lcd i { width: 0.42rem; height: 0.42rem; border-radius: 50%; flex: none; background: color-mix(in srgb, var(--dv) 25%, #000); transition: background-color 0.4s, box-shadow 0.4s; }
+.mu-tt.is-cued .mu-tt__lcd i { background: var(--dv-lt); box-shadow: 0 0 8px var(--dv); }
+.mu-tt.is-playing .mu-tt__lcd i { background: var(--dv); box-shadow: 0 0 10px var(--dv); }
+
+/* La liste et la session vide. */
+.mu-listen .dv-empty {
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--fg) 3%, transparent) 0 1px, transparent 1px calc(100% / 16)),
+    color-mix(in srgb, var(--night) 72%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line-2), inset 0 1px 0 color-mix(in srgb, var(--fg) 5%, transparent);
+}
+.mu-empty { padding: var(--s-6) var(--s-6) var(--s-5); }
+.mu-empty .dv-mono { display: inline-flex; align-items: center; gap: 0.6em; margin-bottom: var(--s-3); color: var(--cream-2); }
+.mu-empty .dv-mono::before { content: ''; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--dv); box-shadow: 0 0 8px var(--dv); }
+/* Une catégorie seule : la voie vide d'une session, en pointillés, une
+   ligne plate au milieu, la tête de lecture au départ. */
+.mu-empty:not(.mu-empty--all) { padding-bottom: calc(var(--s-5) + 4.2rem); }
+.mu-empty:not(.mu-empty--all)::before {
+  content: ''; position: absolute; left: var(--s-6); right: var(--s-6); bottom: var(--s-5); height: 3rem;
+  border: 1px dashed color-mix(in srgb, var(--fg) 24%, transparent); border-radius: 0.45rem;
+  background: linear-gradient(color-mix(in srgb, var(--fg) 22%, transparent), color-mix(in srgb, var(--fg) 22%, transparent)) 0 50% / 100% 1px no-repeat;
+}
+.mu-empty:not(.mu-empty--all)::after {
+  content: ''; position: absolute; left: var(--s-6); bottom: calc(var(--s-5) - 0.35rem); width: 2px; height: 3.7rem;
+  background: var(--dv); box-shadow: 0 0 10px color-mix(in srgb, var(--dv) 70%, transparent);
+}
+
+/* « All » sans extrait : les cinq catégories comme les plages d'un disque,
+   chacune avec sa voie encore vide. Survoler une plage y amène le bras. */
+.mu-sides { grid-column: 1 / -1; margin-top: var(--s-3); border-top: 1px solid var(--line-2); }
+.mu-side {
+  position: relative;
+  display: grid; grid-template-columns: 2.6rem minmax(0, auto) minmax(9rem, 1fr) auto; align-items: center;
+  gap: var(--s-4); padding-block: 0.9rem; border-bottom: 1px solid var(--line-2);
+}
+.mu-side:last-child { border-bottom: 0; padding-bottom: 0; }
+.mu-side__n {
+  display: grid; place-items: center; height: 1.7rem; border-radius: 0.35rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--go-text);
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 0.35s var(--e-out), color 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
+}
+.mu-side__t {
+  font-family: var(--ff-d); font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.35rem); line-height: 1.05;
+  font-variation-settings: 'wdth' 84, 'wght' 700; text-transform: uppercase; color: var(--fg);
+}
+.mu-side__w {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  height: 1.9rem; border-radius: 0.3rem;
+  border: 1px dashed color-mix(in srgb, var(--fg) 18%, transparent);
+  background: linear-gradient(color-mix(in srgb, var(--fg) 20%, transparent), color-mix(in srgb, var(--fg) 20%, transparent)) 0 50% / 100% 1px no-repeat;
+  transition: border-color 0.35s var(--e-out), background-color 0.35s var(--e-out);
+}
+.mu-side__w::before {   /* le repère de départ, rose quand le bras attend la plage */
+  content: ''; position: absolute; left: -1px; top: -0.3rem; bottom: -0.3rem; width: 2px;
+  background: var(--dv); opacity: 0; transition: opacity 0.35s var(--e-out);
+}
+/* « Being prepared », posé au milieu de la voie vide, sur un fond qui
+   coupe la ligne plate. */
+.mu-side__s {
+  display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0.6rem; border-radius: 99px;
+  background: var(--night-2);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; line-height: 1.2; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+  color: var(--cream-3);
+}
+.mu-side__s::before { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%; background: color-mix(in srgb, var(--dv) 40%, transparent); }
+.mu-side__go {
+  display: inline-flex; align-items: center; gap: 0.5em; position: relative; white-space: nowrap;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg);
+  transition: color 0.3s var(--e-out);
+}
+.mu-side__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
+.mu-side__go:hover, .mu-side__go:focus-visible { color: var(--go-text); }
+.mu-side__go:hover::after, .mu-side__go:focus-visible::after { transform: translateX(0.35em); }
+.mu-side:hover .mu-side__n, .mu-side:focus-within .mu-side__n { background: var(--dv); color: var(--D-night); box-shadow: none; }
+.mu-side:hover .mu-side__w, .mu-side:focus-within .mu-side__w { border-color: color-mix(in srgb, var(--dv) 60%, transparent); background-color: color-mix(in srgb, var(--dv) 7%, transparent); }
+.mu-side:hover .mu-side__w::before, .mu-side:focus-within .mu-side__w::before { opacity: 1; }
+
+/* Le lecteur — prêt pour le jour où les extraits arrivent. */
+.mu-list { border-top: 1px solid var(--line-2); }
+.mu-track {
+  position: relative;
+  display: grid; grid-template-columns: auto 3.6rem minmax(0, 1fr) minmax(12rem, 1.15fr) auto; align-items: center;
+  gap: var(--s-4); padding-block: 1rem;
+  border-bottom: 1px solid var(--line-2);
+}
+.mu-play {
+  display: grid; place-items: center; width: 3.2rem; height: 3.2rem; border-radius: 50%;
+  background: var(--fg); color: var(--bg);
+  transition: background-color 0.35s var(--e-out), color 0.35s var(--e-out), transform 0.35s var(--e-out);
+}
+.mu-play:hover { transform: scale(1.06); }
+.mu-play svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
+.mu-play .i-pause, .mu-track.is-playing .mu-play .i-play { display: none; }
+.mu-track.is-playing .mu-play .i-pause { display: block; }
+.mu-track.is-playing .mu-play { background: var(--dv); color: var(--dv-ink); }
+.mu-cover { width: 3.6rem; aspect-ratio: 1; border-radius: 0.45rem; overflow: hidden; background: var(--night-3); }
+.mu-cover img { width: 100%; height: 100%; object-fit: cover; }
+.mu-cover--none { background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--dv) 45%, transparent) 0 14%, transparent 15%), repeating-radial-gradient(circle at 50% 50%, var(--night-2) 0 2px, var(--night-3) 2px 3px); }
+.mu-track__t { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1.02; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.mu-track__m { margin-top: 0.3rem; font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); }
+.mu-track__bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-3); }
+.mu-time { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); color: var(--cream-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mu-track__vid { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg); white-space: nowrap; }
+.mu-track__vid:hover { color: var(--go-text); }
+.mu-track__err { grid-column: 3 / -1; font-family: var(--ff-m); font-size: var(--fs-micro); color: var(--cream-3); }
+
+.mu-seek {
+  --p: 0%;
+  width: 100%; height: 1.6rem; margin: 0; background: transparent; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+.mu-seek:disabled { cursor: default; opacity: 0.45; }
+.mu-seek::-webkit-slider-runnable-track { height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--dv) var(--p), var(--line) var(--p)); }
+.mu-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 0.85rem; height: 0.85rem; margin-top: calc(1.5px - 0.425rem); border-radius: 50%; background: var(--fg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--bg) 60%, transparent); }
+.mu-seek::-moz-range-track { height: 3px; border-radius: 3px; background: var(--line); }
+.mu-seek::-moz-range-progress { height: 3px; border-radius: 3px; background: var(--dv); }
+.mu-seek::-moz-range-thumb { width: 0.85rem; height: 0.85rem; border: 0; border-radius: 50%; background: var(--fg); }
+.mu-seek:focus-visible { outline: 2px solid var(--dv); outline-offset: 4px; }
+
+/* ═══════════════════ LA DEMANDE : LA FEUILLE DE SÉANCE ═══════════════════
+   La section : la nuit, une lueur rose derrière la feuille, et à gauche
+   les lattes de bois d'un mur de studio (un diffuseur), à peine visibles.
+   En Papier : le rose poudré, un peu plus soutenu que la page. */
+.mu-ask {
+  --mu-slat: color-mix(in srgb, var(--fg) 2.2%, transparent);
+  --mu-gap: rgb(0 0 0 / 0.12);
+  isolation: isolate; overflow-x: clip;
+  background-image:
+    radial-gradient(46% 44% at 74% 30%, color-mix(in srgb, var(--dv) 11%, transparent), transparent 72%),
+    linear-gradient(180deg, var(--night-2) 0, var(--night) 14rem, var(--night) 70%, color-mix(in srgb, var(--night) 50%, var(--night-2)) 100%);
+}
+html[data-palette='papier'] .mu-ask {
+  --mu-slat: rgb(255 255 255 / 0.22);
+  --mu-gap: color-mix(in srgb, var(--dv-dp) 4%, transparent);
+  background-image:
+    radial-gradient(46% 44% at 74% 30%, color-mix(in srgb, var(--dv) 12%, transparent), transparent 72%),
+    linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+}
+.mu-ask::before {
+  content: ''; position: absolute; z-index: -1; inset: 0 auto 0 0; width: 48%; pointer-events: none;
+  background: repeating-linear-gradient(90deg, var(--mu-slat) 0 2.3rem, var(--mu-gap) 2.3rem 2.75rem);
+  -webkit-mask-image: linear-gradient(90deg, #000, transparent 92%), linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+          mask-image: linear-gradient(90deg, #000, transparent 92%), linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent);
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+}
+
+/* Les trois portes, juste sous l'introduction. */
+.mu-reach-k {
+  display: flex; align-items: center; gap: 0.7rem; margin-top: var(--s-3);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.mu-reach-k::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+.mu-reach-k + .dv-reach { margin-top: calc(0.4rem - var(--s-5)); }
+.mu-ask .dv-reach a > span:first-child { display: inline-flex; align-items: center; gap: 0.55rem; }
+.mu-ask .dv-reach a > span:first-child::before {
+  content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%;
+  background: var(--line-ui); transition: background-color 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
+}
+.mu-ask .dv-reach a:hover > span:first-child::before,
+.mu-ask .dv-reach a:focus-visible > span:first-child::before { background: var(--dv); box-shadow: 0 0 8px var(--dv); }
+
+/* ─────────────── La feuille ───────────────
+   Une carte (la feuille), le pont des vumètres en haut, les pistes en
+   grille aux filets d'un pixel, la touche REC au pied. */
+.mu-sheet {
+  --mu-edge: color-mix(in srgb, var(--fg) 46%, transparent);
+  --mu-card: color-mix(in srgb, var(--night-3) 64%, var(--night));
+  --mu-band: color-mix(in srgb, var(--night-3) 30%, var(--night-2));
+  --mu-well: color-mix(in srgb, var(--night-2) 80%, var(--night));
+  --mu-focus: var(--dv);
+  --mu-err: #f2b8b5;
+  --mu-hot: color-mix(in oklab, var(--D-dv) 58%, #ff1f3d);
+  position: relative; container-type: inline-size;
+  padding: 0.5rem; border-radius: 1.5rem;
+  background: var(--mu-card);
+  box-shadow:
+    inset 0 0 0 1px var(--line-2), inset 0 1px 0 color-mix(in srgb, var(--fg) 9%, transparent),
+    0 60px 120px -60px rgb(0 0 0 / 0.85), 0 30px 120px -50px color-mix(in srgb, var(--dv) 20%, transparent);
+}
+html[data-palette='papier'] .mu-sheet {
+  --mu-edge: color-mix(in srgb, var(--fg) 58%, transparent);
+  --mu-card: var(--night-3);
+  --mu-band: color-mix(in srgb, var(--night-2) 55%, var(--night-3));
+  --mu-well: color-mix(in srgb, var(--night) 70%, var(--night-3));
+  --mu-focus: var(--dv-dp);
+  --mu-err: #b3261e;
+  box-shadow: inset 0 0 0 1px var(--line), 0 50px 90px -50px color-mix(in srgb, var(--dv-dp) 45%, transparent);
+}
+
+/* Le pont : du matériel, donc toujours sombre (`.dv-night` en Papier). */
+.mu-bridge {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr); gap: 0.45rem;
+  padding: 0.45rem; border-radius: 1.05rem;
+  background-color: color-mix(in srgb, var(--night-2) 55%, #000);
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--cream) 6%, transparent), transparent 40%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 7%, transparent), 0 14px 30px -18px rgb(0 0 0 / 0.7);
+  color: var(--cream);
+}
+html:not(.js) .mu-bridge { display: none; }
+
+/* Un vumètre à aiguille : le cadran rétroéclairé (la crème rosée), l'échelle
+   de −20 à +3, la zone rouge, l'aiguille et son cache. Le dessin vient du
+   script (`vuSVG`) ; les couleurs, d'ici. */
+.mu-vu {
+  position: relative; overflow: hidden; aspect-ratio: 200 / 118;
+  border-radius: 0.7rem; background: var(--cream);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 0 3px color-mix(in srgb, var(--night-2) 40%, #000);
+}
+.mu-vu svg { display: block; width: 100%; height: 100%; }
+.mu-vu::after {   /* le verre */
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(162deg, rgb(255 255 255 / 0.32), rgb(255 255 255 / 0.06) 38%, transparent 40%),
+              radial-gradient(120% 90% at 50% 120%, rgb(0 0 0 / 0.22), transparent 60%);
+  box-shadow: inset 0 2px 8px rgb(0 0 0 / 0.45);
+}
+.mu-vu__s0 { stop-color: var(--cream); }
+.mu-vu__s1 { stop-color: color-mix(in srgb, var(--cream) 84%, var(--dv)); }
+.mu-vu__arc { fill: none; stroke: var(--night); stroke-width: 1.2; }
+.mu-vu__red { fill: none; stroke: var(--dv-dp); stroke-width: 5; }
+.mu-vu__ticks line { stroke: var(--night); stroke-width: 1.2; }
+.mu-vu__ticks .is-hot { stroke: var(--dv-dp); }
+.mu-vu__nums text { fill: var(--night); font-family: var(--ff-m); font-size: 9px; text-anchor: middle; }
+.mu-vu__nums .is-hot { fill: var(--dv-dp); }
+.mu-vu__vu { fill: var(--night); font-family: var(--ff-d); font-size: 15px; font-weight: 700; letter-spacing: 0.04em; text-anchor: middle; }
+.mu-vu__hand { stroke: var(--night); stroke-width: 1.5; stroke-linecap: round; }
+.mu-vu__shade { stroke: rgb(0 0 0 / 0.16); stroke-width: 2; stroke-linecap: round; }
+.mu-vu__shroud { fill: color-mix(in srgb, var(--night-2) 60%, #000); stroke: color-mix(in srgb, var(--cream) 14%, transparent); stroke-width: 0.8; }
+.mu-vu__ch { fill: var(--cream-3); font-family: var(--ff-m); font-size: 9px; letter-spacing: 0.12em; }
+.mu-bridge.is-ready .mu-vu { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 0 3px color-mix(in srgb, var(--night-2) 40%, #000), 0 0 26px -6px color-mix(in srgb, var(--dv) 70%, transparent); }
+
+/* L'écran de la séance. */
+.mu-disp {
+  display: grid; align-content: start; min-width: 0;
+  padding: 0.65rem 0.85rem 0.7rem; border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--night-2) 35%, #000);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cream) 7%, transparent), inset 0 2px 10px rgb(0 0 0 / 0.8);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.mu-disp p { margin: 0; }
+.mu-disp__top {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding-bottom: 0.5rem; margin-bottom: 0.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--cream) 9%, transparent);
+  color: var(--cream-2);
+}
+.mu-disp__lamp {
+  width: 0.55rem; height: 0.55rem; border-radius: 50%; flex: none;
+  background: color-mix(in srgb, var(--mu-hot) 26%, #12060c);
+  transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.mu-bridge.is-ready .mu-disp__lamp, .mu-bridge.is-done .mu-disp__lamp { background: var(--mu-hot); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mu-hot) 25%, transparent), 0 0 12px var(--mu-hot); }
+.mu-bridge.is-clip .mu-disp__lamp { background: var(--mu-err); box-shadow: 0 0 10px var(--mu-err); }
+.mu-disp__req { margin-left: auto; color: var(--cream-3); white-space: nowrap; }
+.mu-disp__req b { font-weight: 400; color: var(--dv-lt); }
+.mu-disp__row { display: grid; grid-template-columns: 4.4rem minmax(0, 1fr); align-items: baseline; gap: 0.5rem; padding-block: 0.24rem; }
+.mu-disp__row > span { color: var(--cream-3); }
+.mu-disp__row > b {
+  font-weight: 400; color: var(--dv-lt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--dv) 55%, transparent);
+}
+
+/* ─────────────── Les pistes ─────────────── */
+.mu-form { margin-top: 0.5rem; }
+.mu-form .dv-fields {
+  counter-reset: mu-tk;
+  gap: 1px; overflow: hidden;
+  border-radius: 1rem;
+  background: var(--line-2);
+  box-shadow: 0 0 0 1px var(--line-2);
+}
+html[data-palette='papier'] .mu-form .dv-fields { background: var(--line); box-shadow: 0 0 0 1px var(--line); }
+
+/* L'en-tête d'une partie de la feuille : A, B, C, comme les faces. */
+.mu-part {
+  display: flex; align-items: center; gap: 0.7rem; margin: 0;
+  padding: 0.75rem 1.1rem;
+  background: var(--mu-band);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 400; line-height: 1.2; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.mu-part span {
+  display: grid; place-items: center; width: 1.45rem; height: 1.45rem; border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--dv) 16%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 40%, transparent);
+  color: var(--go-text); letter-spacing: 0;
+}
+
+/* Une piste : son numéro, son nom, sa diode ; le champ dessous. La diode
+   s'allume quand la piste est remplie (`is-filled`, posée par le script),
+   s'entoure de rose quand on y écrit, vire au rouge en cas d'erreur. */
+.mu-cell {
+  counter-increment: mu-tk;
+  position: relative; min-width: 0; margin: 0;
+  display: flex; flex-direction: column;
+  padding: 1rem 1.1rem 1.15rem;
+  background: var(--mu-card);
+  transition: background-color 0.5s var(--e-out);
+}
+.mu-cell::before {
+  content: counter(mu-tk, decimal-leading-zero);
+  position: absolute; left: 1.1rem; top: 1.06rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; line-height: 1.3; letter-spacing: 0.06em;
+  color: var(--cream-3); font-variant-numeric: tabular-nums;
+  transition: color 0.4s var(--e-out);
+}
+.mu-cell::after {
+  content: ''; position: absolute; right: 1.15rem; top: 1.22rem;
+  width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--fg) 14%, transparent);
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.35);
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.mu-cell > label, .mu-cell > legend {
+  display: block; margin: 0 0 0.7rem; padding: 0 1.6rem 0 2.05rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.3; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.mu-cell:has(.mu-req) > label { padding-right: 6.2rem; }
+.mu-cell .field__opt { opacity: 1; color: var(--cream-3); letter-spacing: 0.02em; text-transform: none; }
+.mu-req {
+  position: absolute; right: 2.2rem; top: 1.06rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; line-height: 1.3; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cream-3);
+}
+.mu-cell:focus-within { background: color-mix(in srgb, var(--dv) 5%, var(--mu-card)); }
+.mu-cell:focus-within::before { color: var(--go-text); }
+.mu-cell:focus-within::after { background: transparent; box-shadow: inset 0 0 0 2px var(--dv), 0 0 10px color-mix(in srgb, var(--dv) 60%, transparent); }
+.mu-cell.is-filled::before { color: var(--fg); }
+.mu-cell.is-filled::after { background: var(--dv); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 22%, transparent), 0 0 12px var(--dv); }
+.mu-cell.is-err::after { background: var(--mu-err); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mu-err) 25%, transparent); }
+.mu-cell.is-err > label { color: var(--mu-err); }
+
+/* Les champs : un puits un peu plus sombre que la feuille, le texte du
+   corps à 17 px (jamais de zoom forcé sur téléphone). */
+.mu-cell input, .mu-cell select, .mu-cell textarea {
+  display: block; width: 100%; min-height: 3.2rem; margin: auto 0 0;
+  padding: 0.82rem 1rem;
+  border: 1px solid var(--mu-edge); border-radius: 0.7rem;
+  background-color: var(--mu-well); color: var(--fg);
+  font-family: var(--ff-t); font-size: 1.0625rem; line-height: 1.35;
+  transition: border-color 0.35s var(--e-out), box-shadow 0.35s var(--e-out), background-color 0.35s var(--e-out);
+}
+.mu-cell textarea { min-height: 8rem; resize: vertical; }
+.mu-cell :is(input, textarea)::placeholder { color: var(--cream-3); opacity: 1; }
+.mu-cell :is(input, select, textarea):hover { border-color: color-mix(in srgb, var(--fg) 72%, transparent); }
+/* Les états « dégagé » des formulaires du site (un filet épais à gauche) ne
+   vont pas aux puits arrondis : la diode de la piste dit déjà tout. */
+.mu-form .mu-cell :is(input, textarea):is(:user-valid, :user-invalid, :valid) { border-left: 1px solid var(--mu-edge); }
+.mu-form .mu-cell :is(input, select, textarea):focus,
+.mu-form .mu-cell :is(input, select, textarea):focus:is(:user-valid, :user-invalid, :valid) {
+  outline: none; border-color: var(--mu-focus); background-color: var(--mu-well);
+  box-shadow: 0 0 0 1px var(--mu-focus), 0 0 0 6px color-mix(in srgb, var(--mu-focus) 16%, transparent);
+}
+.mu-form .mu-cell.is-err :is(input, textarea):not(:focus) { border-color: var(--mu-err); box-shadow: 0 0 0 1px var(--mu-err); }
+.mu-cell select {
+  padding-right: 3rem; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--cream-2) 50%),
+    linear-gradient(135deg, var(--cream-2) 50%, transparent 50%);
+  background-size: 0.42rem 0.42rem, 0.42rem 0.42rem;
+  background-position: calc(100% - 1.45rem) 52%, calc(100% - 1.03rem) 52%;
+  background-repeat: no-repeat;
+}
+.mu-cell select option { color: var(--fg); background-color: var(--mu-card); }
+.mu-cell .field__err {
+  display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.04em;
+  color: var(--mu-err);
+}
+.mu-cell .field__err::before { content: ''; flex: none; width: 0.5rem; height: 0.5rem; border-radius: 1px; background: currentColor; }
+
+/* Les étapes du projet : des touches de console, avec leur bande lumineuse. */
+.mu-cell--keys { border: 0; }
+.mu-cell--keys > legend { float: left; width: 100%; }
+.mu-keys { clear: both; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+.mu-key { display: flex; min-width: 0; }
+.mu-key span {
+  position: relative; flex: 1; min-width: 0;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 0.7rem;
+  min-height: 4.6rem; padding: 0.75rem 0.85rem 0.8rem;
+  border: 1px solid var(--mu-edge); border-radius: 0.65rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--fg) 7%, var(--mu-card)), color-mix(in srgb, var(--fg) 2%, var(--mu-card)));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent), 0 2px 0 rgb(0 0 0 / 0.28);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; line-height: 1.25; letter-spacing: 0.03em;
+  color: var(--cream-2);
+  transition: color 0.35s var(--e-out), border-color 0.35s var(--e-out), background-color 0.35s var(--e-out), box-shadow 0.35s var(--e-out), transform 0.2s var(--e-out);
+}
+html[data-palette='papier'] .mu-key span { box-shadow: inset 0 1px 0 #fff, 0 2px 0 color-mix(in srgb, var(--dv-dp) 14%, transparent); }
+.mu-key span::before {
+  content: ''; width: 1.7rem; height: 0.28rem; border-radius: 99px;
+  background: color-mix(in srgb, var(--fg) 16%, transparent);
+  transition: background-color 0.35s var(--e-out), box-shadow 0.35s var(--e-out);
+}
+.mu-key:hover span { color: var(--fg); border-color: color-mix(in srgb, var(--fg) 72%, transparent); }
+.mu-key input:checked + span {
+  color: var(--fg); border-color: var(--mu-focus);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dv) 22%, var(--mu-card)), color-mix(in srgb, var(--dv) 9%, var(--mu-card)));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mu-focus) 60%, transparent), 0 0 26px -10px var(--dv);
+  transform: translateY(1px);
+}
+.mu-key input:checked + span::before { background: var(--dv); box-shadow: 0 0 10px var(--dv), 0 0 2px var(--dv); }
+.mu-key input:focus-visible + span { outline: 2px solid var(--mu-focus); outline-offset: 3px; }
+
+/* ─────────────── Le pied : la touche REC ─────────────── */
+.mu-foot { gap: 0.9rem 1.5rem; margin: 0; padding: 1.1rem 0.6rem 0.6rem; }
+.mu-rec { gap: 0.95rem; min-height: 4.2rem; padding: 0.55rem 1.8rem 0.55rem 0.55rem; font-size: 1.0625rem; }
+.mu-rec__disc {
+  position: relative; display: grid; place-items: center; flex: none;
+  width: 3.1rem; height: 3.1rem; border-radius: 50%;
+  background: radial-gradient(circle at 50% 38%, #2c1420, #0a0307 72%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14), inset 0 2px 6px rgb(0 0 0 / 0.85);
+}
+.mu-rec__disc i {
+  position: relative; width: 1.2rem; height: 1.2rem; border-radius: 50%;
+  background: color-mix(in srgb, var(--mu-hot) 28%, #1a0710);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.6);
+  transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.mu-rec__disc i::after {
+  content: ''; position: absolute; inset: -0.55rem; border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--mu-hot) 70%, transparent), transparent);
+  opacity: 0; transition: opacity 0.5s var(--e-out);
+}
+.mu-rec.is-ready .mu-rec__disc i {
+  background: radial-gradient(circle at 38% 34%, #fff 0 9%, color-mix(in srgb, var(--mu-hot) 70%, #fff) 22%, var(--mu-hot) 55%);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mu-hot) 30%, transparent), 0 0 16px 1px var(--mu-hot);
+}
+.mu-rec.is-ready .mu-rec__disc i::after { opacity: 1; animation: mu-rec 2.6s var(--e-inout, ease-in-out) infinite alternate; }
+@keyframes mu-rec { from { opacity: 0.35; } to { opacity: 1; } }
+.mu-foot .dv-form__note { font-size: 0.8125rem; letter-spacing: 0.02em; color: var(--cream-3); }
+
+/* ─────────────── La séance envoyée : la liste des pistes ─────────────── */
+.mu-done {
+  margin-top: 0.5rem; padding: clamp(1.4rem, 1rem + 2vw, 2.3rem);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dv) 10%, var(--mu-card)), var(--mu-card) 55%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 34%, transparent);
+}
+.mu-done .mu-done__k {
+  display: flex; align-items: center; gap: 0.6rem; margin: 0 0 var(--s-4);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.mu-done__stop { width: 0.6rem; height: 0.6rem; border-radius: 1px; background: var(--dv); box-shadow: 0 0 10px color-mix(in srgb, var(--dv) 60%, transparent); }
+.mu-done h3 { max-width: 22ch; }
+.mu-done p { max-width: 38rem; }
+.mu-done .mu-done__list {
+  display: flex; align-items: center; gap: 0.9rem; max-width: none; margin-top: var(--s-6);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.mu-done__bar { position: relative; flex: 1; height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.mu-done__bar b { position: absolute; inset: 0; background: linear-gradient(90deg, var(--dv-dp), var(--dv)); transform-origin: 0 50%; }
+.mu-done dl {
+  counter-reset: mu-tl;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 0; margin-top: 0.6rem;
+  font-size: var(--fs-sm);
+}
+.mu-done dt, .mu-done dd { padding-block: 0.72rem; border-top: 1px solid var(--line-2); }
+.mu-done dt {
+  counter-increment: mu-tl;
+  display: flex; gap: 0.8rem; padding-right: 1rem; padding-top: 0.86rem;
+  font-size: 0.75rem; letter-spacing: 0.08em; color: var(--cream-2);
+}
+.mu-done dt::before { content: counter(mu-tl, decimal-leading-zero); color: var(--go-text); font-variant-numeric: tabular-nums; }
+.mu-done dd { color: var(--fg); white-space: pre-line; overflow-wrap: anywhere; }
+
+/* Un champ prérempli par un lien de la page : la piste s'allume un instant. */
+.mu-flash { animation: mu-flash 1.6s var(--e-out); }
+@keyframes mu-flash {
+  0%, 30% { box-shadow: inset 0 0 0 2px var(--dv); background-color: color-mix(in srgb, var(--dv) 13%, var(--mu-card, transparent)); }
+  100% { box-shadow: inset 0 0 0 2px transparent; }
+}
+
+/* Pour les lecteurs d'écran seulement. */
+.mu-vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ═══════════════════ LES TAILLES ═══════════════════ */
+@media (max-width: 75rem) {
+  .mu-desk { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 60rem) {
+  .mu-for__foot { grid-template-columns: 1fr; justify-items: start; }
+  /* La session sur une colonne : le nom de chaque piste, puis sa voie ;
+     la règle se retire, chaque voie garde sa tête de lecture. */
+  .mu-daw__ruler { display: none; }
+  .mu-trk { grid-template-columns: minmax(0, 1fr); }
+  .mu-trk__head { border-right: 0; padding: 1rem 1.1rem 0.85rem; }
+  .mu-trk__lane { min-height: 4.4rem; border-top: 1px solid var(--line-2); }
+  .mu-rgn { top: 0.55rem; bottom: 0.55rem; }
+  .mu-rgn svg { top: 1.3rem; height: calc(100% - 1.7rem); }
+  .mu-rgn .mu-wv { stroke-width: 0.9; }
+  /* La platine au-dessus de la liste. */
+  .mu-deck { grid-template-columns: minmax(0, 1fr); }
+  .mu-tt { width: min(100%, 30rem); justify-self: center; }
+  .mu-track { grid-template-columns: auto 3.2rem minmax(0, 1fr) auto; }
+  .mu-track__bar { grid-column: 1 / -1; }
+  .mu-ask::before { width: 100%; height: 40rem; bottom: auto; }
+}
+/* La feuille étroite (une colonne de formulaire, ou un téléphone) : les deux
+   vumètres côte à côte, l'écran dessous, les pistes l'une sous l'autre. */
+@container (max-width: 36rem) {
+  .mu-bridge { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mu-disp { grid-column: 1 / -1; }
+  .mu-form .dv-fields { grid-template-columns: minmax(0, 1fr); }
+  .mu-keys { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Sur téléphone : chaque tranche devient une rangée, le texte à gauche, le
+   fader à droite sur toute la hauteur ; les boutons et l'écran se retirent. */
+@media (max-width: 40rem) {
+  .mu-hero__meta.dv-hero__meta { grid-auto-flow: row; gap: 0.4rem; }
+  .mu-hero__meta li:nth-child(2) { display: none; }
+  .mu-tp > span { padding: 0.45rem 0.6rem; }
+  .mu-tp__bpm { display: none !important; }
+  .mu-wire { height: 3.5rem; top: calc(var(--s-9) / 2 - 1.75rem); }
+  .mu-daw { border-radius: 1rem; margin-inline: calc(-0.4 * var(--pad-x)); }
+  .mu-daw__top { gap: 0.35rem; padding: 0.45rem; }
+  .mu-daw__tr i { width: 1.7rem; }
+  .mu-daw__meta { display: none; }
+  .mu-daw__lcd { padding: 0.45rem 0.6rem; }
+  .mu-trk__head { padding-inline: 0.95rem; }
+  .mu-tt__spd { display: none; }
+  .mu-tt__plinth { border-radius: 1.1rem; }
+  .mu-tt__lcd { min-width: 0; padding: 0.42rem 0.55rem; }
+  .mu-desk { grid-template-columns: minmax(0, 1fr); border-radius: 1.2rem; }
+  .mu-ch {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start;
+    grid-template-areas: 'top fader' 'head fader' 'list fader' 'go fader';
+    gap: 0.7rem 0.9rem; padding: 1rem 0.9rem 1rem 1.1rem;
+  }
+  .mu-ch__top { grid-area: top; }
+  .mu-ch__h { grid-area: head; }
+  .mu-ch__list, .mu-ch__p { grid-area: list; }
+  .mu-ch__go, .mu-ch__btn { grid-area: go; }
+  .mu-ch__knobs, .mu-lcd, .mu-scale { display: none; }
+  .mu-fader {
+    grid-area: fader; align-self: stretch;
+    height: auto; min-height: 8.5rem; gap: 0.35rem; padding: 0.9rem 0.1rem 0.9rem 0.85rem;
+    border-top: 0; border-left: 1px solid color-mix(in srgb, var(--cream) 7%, transparent);
+  }
+  .mu-slot { margin-inline: 0.9rem 0.85rem; }
+  .mu-cap::before { width: 2.1rem; height: 1.2rem; }
+  .mu-cap::after { width: 1.5rem; }
+  /* Les catégories défilent sur une ligne, au doigt, plutôt que sur quatre. */
+  .mu-filter {
+    flex-wrap: nowrap; gap: 0.4rem; overflow-x: auto; overscroll-behavior-x: contain;
+    margin-inline: calc(-1 * var(--pad-x)); padding: 0.2rem var(--pad-x);
+    scroll-snap-type: x proximity; scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--pad-x), #000 calc(100% - var(--pad-x)), transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 var(--pad-x), #000 calc(100% - var(--pad-x)), transparent);
+  }
+  .mu-filter::-webkit-scrollbar { display: none; }
+  .mu-filter button { flex: none; scroll-snap-align: start; scroll-margin-inline: var(--pad-x); padding: 0.62rem 0.95rem; font-size: var(--fs-xs); white-space: nowrap; }
+  .mu-track { grid-template-columns: auto minmax(0, 1fr); }
+  .mu-side { grid-template-columns: 2.2rem minmax(0, 1fr); gap: 0.5rem 0.7rem; }
+  .mu-side__w { grid-column: 2; height: 1.7rem; }
+  .mu-side__go { grid-column: 2; justify-self: start; }
+  .mu-cover { display: none; }
+  .mu-track__vid { grid-column: 2; }
+
+  /* La feuille sur téléphone : la carte s'élargit, la touche REC prend la
+     largeur, la liste des pistes passe sur une colonne. */
+  .mu-sheet { margin-inline: calc(-0.5 * var(--pad-x)); border-radius: 1.25rem; }
+  .mu-cell { padding: 0.95rem 0.95rem 1.05rem; }
+  .mu-cell input, .mu-cell select, .mu-cell textarea { padding-inline: 0.85rem; font-size: 1rem; }
+  .mu-cell::before { left: 0.95rem; }
+  .mu-cell::after { right: 1rem; }
+  .mu-req { right: 2rem; }
+  .mu-cell:has(.mu-req) > label { padding-right: 5.8rem; }
+  .mu-foot { padding: 0.9rem 0.25rem 0.35rem; }
+  .mu-rec { width: 100%; }
+  .mu-foot .dv-form__note { width: 100%; text-align: center; }
+  .mu-done dl { grid-template-columns: minmax(0, 1fr); }
+  .mu-done dd { padding-top: 0; border-top: 0; }
+}
+
+/* ═══════════════════ SANS MOUVEMENT ═══════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .mu-clip, .mu-clip__wave path, .mu-tp__rec, .mu-tp__rec i, .mu-ms i, .mu-trk__head, .mu-trk__head::before, .mu-trk__arm,
+  .mu-trk__h, .mu-trk__p, .mu-rgn__name, .mu-tt__armg, .mu-tt__shadow, .mu-tt__band, .mu-tt__lcd i,
+  .mu-filter button, .mu-filter button::before, .mu-side__n, .mu-side__w, .mu-side__w::before { transition: none; }
+  .mu-w--clip.is-solo .mu-clip__draw, .mu-w--clip.is-solo .mu-clip::after, .mu-for .mu-clip__wave,
+  .mu-for .mu-tp__clk i, .mu-for .mu-caret, .mu-desk .mu-lcd, .mu-desk .mu-led, .mu-rgn::after { animation: none !important; }
+  .mu-caret { display: none; }
+  .mu-ch, .mu-ch::before, .mu-knob::before, .mu-led, .mu-lcd, .mu-meter i, .mu-cap::after,
+  .js .mu-say .mu-w, .mu-cell, .mu-cell::before, .mu-cell::after, .mu-key span, .mu-key span::before,
+  .mu-rec__disc i, .mu-rec__disc i::after, .mu-disp__lamp { transition: none; }
+  .mu-flash { animation: none; }
+  .mu-rec.is-ready .mu-rec__disc i::after { animation: none; opacity: 0.8; }
+}
+/* Au doigt (`LITE`) : la lueur de la touche REC reste fixe. */
+@media (pointer: coarse) {
+  .mu-rec.is-ready .mu-rec__disc i::after { animation: none; opacity: 0.8; }
+}

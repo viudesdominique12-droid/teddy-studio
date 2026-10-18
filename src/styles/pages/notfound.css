@@ -1,0 +1,247 @@
+/* ══════════════════════════════════════════════════════════════
+   404 — « Not cleared » (18/10/2026)
+   Dominique : « améliore-moi les autres pages avec la même logique de
+   customisation de thème ». La page introuvable est hors de la carte :
+   un relevé de terrain dans le brouillard (courbes de niveau), un repère
+   qui cherche son signal sans le trouver (« No fix »), et le permis de
+   tournage de l'adresse demandée, frappé du tampon « Not cleared ». Les
+   quatre liens sont les seules routes dégagées : un signal les parcourt.
+
+   LA COULEUR : le vert de brume, un vert gris et pâle (le brouillard sur un
+   terrain qu'aucune carte ne couvre), plus clair et plus éteint que les
+   verts des autres pages ; l'encre rouge du tampon, une terre cuite plus
+   vive ; le papier du permis.
+     crème        #ece8df  13,17:1 sur #1a231f
+     crème-2      #bdbab0   8,29:1
+     crème-3      #a2a097   6,14:1
+     terre cuite  #ea6040   4,79:1 (grands textes, tampon, voyants)
+     terre claire #ff9673   7,56:1
+     encre / permis #2b1d14 sur #f1ebdf : 13,73:1 · tampon #b23a1c : 5,03:1
+   ══════════════════════════════════════════════════════════════ */
+
+body[data-page='notfound'] #main,
+body[data-page='notfound'] .ftr {
+  --dv: #ea6040; --dv-lt: #ff9673; --dv-dp: #b8452a; --dv-ink: #141211;
+  --night: #1a231f; --night-2: #121915; --night-3: #232e2a;
+  --cream: #ece8df; --cream-2: #bdbab0; --cream-3: #a2a097;
+  --line: #ece8df26; --line-2: #ece8df14; --line-ui: #ece8df6b;
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --gold: var(--dv); --gold-lt: var(--dv-lt); --gold-dp: var(--dv-dp);
+  --go: var(--dv); --go-text: var(--dv-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --on-go: var(--dv-ink);
+  --g-300: var(--dv-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  /* Le permis et son encre. */
+  --permit: #f1ebdf; --permit-2: #e6dece; --p-ink: #2b1d14; --p-ink-2: #5a4a3c; --p-ink-3: #6e5e50; --stamp: #b23a1c;
+  --p-line: #2b1d1424;
+  color-scheme: dark;
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
+/* Les boucles s'arrêtent hors de l'écran (`data-nf-off`, notfound-map.js). */
+[data-nf-off], [data-nf-off] *, [data-nf-off]::before, [data-nf-off]::after,
+[data-nf-off] *::before, [data-nf-off] *::after { animation-play-state: paused !important; }
+
+/* ═══════════════════ LA SCÈNE ═══════════════════ */
+.nf.nf {
+  position: relative; isolation: isolate; overflow: hidden;
+  max-width: none;
+  min-height: min(100svh, 64rem);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: calc(var(--hdr-h) + clamp(2rem, 5vw, 4.5rem)) var(--pad-x) var(--s-6);
+}
+.nf__in, .nf-routes { position: relative; z-index: 1; width: 100%; max-width: calc(var(--maxw) - 2 * var(--pad-x)); margin-inline: auto; }
+
+/* La carte : les courbes de niveau, qui dérivent à peine, et s'effacent du
+   côté du texte. */
+.nf-map {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(100deg, rgb(0 0 0 / 0.32) 8%, #000 58%), linear-gradient(180deg, #000 70%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(100deg, rgb(0 0 0 / 0.32) 8%, #000 58%), linear-gradient(180deg, #000 70%, transparent);
+  mask-composite: intersect;
+}
+.nf-map__drift { position: absolute; inset: -5%; animation: nf-drift 48s var(--e-inout) infinite alternate; }
+.nf-map__c { display: block; width: 100%; height: 100%; }
+@keyframes nf-drift { from { transform: translate3d(-1.2%, 0.8%, 0) scale(1); } to { transform: translate3d(1.2%, -0.8%, 0) scale(1.035); } }
+
+/* Le repère qui cherche : deux ondes, une croix. Déplacé par le script. */
+.nf-seek { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; transition: opacity 0.8s var(--e-settle); }
+.nf-seek.is-on { opacity: 1; }
+.nf-seek__ring {
+  position: absolute; left: -2.2rem; top: -2.2rem; width: 4.4rem; height: 4.4rem; border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--dv-lt) 70%, transparent);
+  animation: nf-ping 2.6s var(--e-out) infinite;
+}
+.nf-seek__ring + .nf-seek__ring { animation-delay: 1.3s; }
+@keyframes nf-ping { from { transform: scale(0.15); opacity: 0.95; } to { transform: scale(1.5); opacity: 0; } }
+.nf-seek__x { position: absolute; left: -0.7rem; top: -0.7rem; width: 1.4rem; height: 1.4rem; }
+.nf-seek__x::before, .nf-seek__x::after { content: ''; position: absolute; background: var(--dv-lt); }
+.nf-seek__x::before { left: 50%; top: 0; bottom: 0; width: 1px; }
+.nf-seek__x::after { top: 50%; left: 0; right: 0; height: 1px; }
+
+/* ═══════════════════ LE TEXTE ═══════════════════ */
+.nf__in {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 25rem);
+  align-items: center; gap: var(--s-7) clamp(2rem, 6vw, 7rem);
+}
+.nf-top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem; margin-bottom: var(--s-5); }
+.nf__k.nf__k {
+  margin: 0; padding: 0.3rem 0.6rem 0.25rem;
+  border: 1px solid var(--line-ui); border-radius: 0.2rem;
+  color: var(--fg); font-size: 0.72rem; letter-spacing: 0.12em;
+}
+/* Le récepteur : aucune barre ne tient, les coordonnées ne se fixent pas. */
+.nf-gps { display: inline-flex; align-items: center; gap: 0.75rem; margin: 0; color: var(--fg-3); font-size: 0.66rem; letter-spacing: 0.08em; }
+.nf-gps__bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 0.8rem; }
+.nf-gps__bars i { width: 3px; background: var(--line-ui); border-radius: 1px; }
+.nf-gps__bars i:nth-child(1) { height: 25%; background: var(--dv-lt); animation: nf-blink 1.6s steps(2, jump-none) infinite; }
+.nf-gps__bars i:nth-child(2) { height: 50%; }
+.nf-gps__bars i:nth-child(3) { height: 75%; }
+.nf-gps__bars i:nth-child(4) { height: 100%; }
+@keyframes nf-blink { 0% { opacity: 1; } 100% { opacity: 0.2; } }
+.nf-gps__fix { min-width: 15ch; font-variant-numeric: tabular-nums; }
+.nf-gps__no { color: var(--dv-lt); text-transform: uppercase; letter-spacing: 0.16em; }
+
+.nf__h.nf__h {
+  max-width: 7ch;
+  font-size: clamp(3.4rem, 1.3rem + 7.8vw, 8.75rem);
+  line-height: 0.88; letter-spacing: -0.035em;
+  font-variation-settings: 'wdth' 80, 'wght' 790;
+  color: var(--fg);
+}
+.nf__p.nf__p { max-width: 34ch; margin: var(--s-5) 0 var(--s-6); color: var(--fg-2); }
+.nf__a.nf__a { margin-top: 0; }
+.nf__a .btn::after { content: '↩' / ''; position: relative; z-index: 1; font-family: var(--ff-t); font-size: 1.1em; letter-spacing: 0; transition: transform 0.45s var(--e-out); }
+.nf__a .btn:hover::after, .nf__a .btn:focus-visible::after { transform: translateX(-0.25em); }
+
+/* ═══════════════════ LE PERMIS ═══════════════════ */
+.nf-permit { position: relative; perspective: 900px; }
+.nf-permit__paper {
+  position: relative; overflow: hidden;
+  padding: 1.5rem 1.6rem 1.4rem;
+  background: linear-gradient(170deg, rgb(255 255 255 / 0.5), transparent 35%), var(--permit);
+  color: var(--p-ink);
+  rotate: 2.5deg; transform-origin: 50% 0;
+  box-shadow: 0 1.6rem 2.6rem -1.2rem rgb(0 0 0 / 0.6), 0 0.2rem 0.5rem rgb(0 0 0 / 0.25);
+  cursor: crosshair; user-select: none; -webkit-user-select: none;
+}
+/* La garde du document : un filet guilloché, comme un papier officiel. */
+.nf-permit__paper::before {
+  content: ''; position: absolute; inset: 0.5rem; pointer-events: none;
+  border: 1px solid var(--p-line);
+  background: repeating-radial-gradient(circle at 100% 0%, transparent 0 9px, rgb(43 29 20 / 0.035) 9px 10px);
+}
+.nf-permit__head {
+  position: relative; display: flex; justify-content: space-between; gap: 1rem;
+  padding-bottom: 0.55rem; border-bottom: 3px double var(--p-line);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--p-ink-3);
+}
+.nf-permit__org {
+  position: relative; margin: 0.8rem 0 0.9rem;
+  font-family: var(--ff-p); font-size: 1.45rem; line-height: 1.05; letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 48, 'wght' 460;
+  color: var(--p-ink);
+}
+.nf-permit__f { position: relative; display: grid; }
+.nf-permit__f div { display: grid; grid-template-columns: 6.6rem minmax(0, 1fr); align-items: baseline; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px dotted color-mix(in srgb, var(--p-ink) 30%, transparent); }
+.nf-permit__f dt { font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--p-ink-3); }
+.nf-permit__f dd { min-width: 0; font-size: 0.9rem; line-height: 1.3; color: var(--p-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nf-permit__f dd[data-nf-path] { font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.72rem; }
+.nf-permit__sign { position: relative; display: grid; justify-items: end; gap: 0.25rem; margin-top: 1.6rem; }
+.nf-permit__sign i { display: block; width: 55%; height: 1px; background: var(--p-ink-3); }
+.nf-permit__sign span { font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.56rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--p-ink-3); }
+
+/* Le tampon : l'encre rouge, à bords doubles, grainée par un masque tissé
+   au chargement (`--nf-ink`). */
+.nf-stamp {
+  position: absolute; z-index: 2; right: 1.1rem; bottom: 3.6rem;
+  display: block; padding: 0.4rem 0.85rem 0.35rem;
+  border: 3px solid var(--stamp); border-radius: 0.3rem;
+  outline: 1.5px solid var(--stamp); outline-offset: 3px;
+  color: var(--stamp);
+  font-family: var(--ff-d); font-size: 1.85rem; line-height: 1; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+  font-variation-settings: 'wdth' 78, 'wght' 820;
+  rotate: -11deg;
+  -webkit-mask-image: var(--nf-ink, none); mask-image: var(--nf-ink, none);
+  -webkit-mask-size: 120px 120px; mask-size: 120px 120px;
+  pointer-events: none;
+}
+.nf-stamp b { font-weight: inherit; }
+.nf-stamp--echo { right: auto; bottom: auto; font-size: 1.15rem; border-width: 2px; outline-width: 1px; }
+
+/* ═══════════════════ LES ROUTES DÉGAGÉES ═══════════════════
+   Une piste en pointillé, un signal la parcourt ; chaque lien se coche au
+   survol. */
+.nf-routes { margin-top: var(--s-8); }
+.nf-route { position: relative; height: 9px; overflow: hidden; }
+.nf-route::before { content: ''; position: absolute; left: 0; right: 0; top: 4px; height: 1px; background: repeating-linear-gradient(90deg, var(--line-ui) 0 8px, transparent 8px 14px); }
+.nf-route i {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at calc(100% - 4.5px) 50%, var(--dv-lt) 0 3px, transparent 3.6px),
+    linear-gradient(90deg, transparent calc(100% - 9rem), color-mix(in srgb, var(--dv-lt) 65%, transparent) calc(100% - 4px), transparent calc(100% - 4px)) 0 4px / 100% 1px no-repeat;
+  transform: translateX(-100%);
+  animation: nf-route 7.5s cubic-bezier(0.45, 0.05, 0.4, 1) infinite;
+}
+@keyframes nf-route { 0% { transform: translateX(-100%); } 78% { transform: translateX(0); opacity: 1; } 86%, 100% { transform: translateX(0); opacity: 0; } }
+.nf__links.nf__links {
+  display: flex; flex-wrap: wrap; gap: 0.25rem var(--s-6);
+  margin: 0; padding: var(--s-4) 0 0; border-top: 0;
+  font-size: 0.75rem;
+}
+.nf__links.nf__links a {
+  display: inline-flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0;
+  color: var(--fg-2);
+  transition: color 0.3s var(--e-settle);
+}
+.nf__links a::before {
+  content: ''; width: 0.75rem; height: 0.75rem; flex: none; border: 1px solid var(--line-ui); border-radius: 0.15rem;
+  background: transparent; transition: background-color 0.35s var(--e-settle), border-color 0.35s var(--e-settle), box-shadow 0.35s var(--e-settle);
+}
+.nf__links a::after { content: '→' / ''; opacity: 0; transform: translateX(-0.4rem); transition: opacity 0.35s var(--e-settle), transform 0.45s var(--e-out); }
+.nf__links.nf__links a:hover, .nf__links.nf__links a:focus-visible { color: var(--fg); }
+.nf__links a:hover::before, .nf__links a:focus-visible::before { background: var(--dv); border-color: var(--dv); box-shadow: inset 0 0 0 2px var(--bg); }
+.nf__links a:hover::after, .nf__links a:focus-visible::after { opacity: 1; transform: none; }
+
+/* ═══════════════════ LE PIED DE PAGE ═══════════════════
+   La couleur de la page, et un balayage de radar en tête : un trait clair
+   passe, s'éteint, repasse. « Studio » prend l'encre du tampon. */
+body[data-page='notfound'] .ftr { position: relative; overflow-x: clip; border-top-color: var(--line); }
+body[data-page='notfound'] .ftr::before {
+  content: ''; position: absolute; top: -1px; left: 0; width: 18rem; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--dv-lt) 40%, transparent) 70%, var(--dv-lt));
+  transform: translateX(-18rem);
+  animation: nf-sweep 6s cubic-bezier(0.6, 0, 0.4, 1) infinite;
+}
+body[data-page='notfound'] .ftr.is-off::before { animation-play-state: paused; }
+@keyframes nf-sweep { 0% { transform: translateX(-18rem); opacity: 1; } 55% { transform: translateX(100vw); opacity: 1; } 56%, 100% { transform: translateX(100vw); opacity: 0; } }
+body[data-page='notfound'] .ftr__wl .ln--b { color: var(--dv); }
+
+/* ═══════════════════ TÉLÉPHONE ═══════════════════ */
+@media (max-width: 56rem) {
+  .nf.nf { min-height: 0; justify-content: flex-start; }
+  .nf__in { grid-template-columns: 1fr; }
+  .nf-permit { width: min(100%, 24rem); justify-self: end; margin-right: 0.4rem; }
+  .nf-map { -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.5) 0%, #000 45%, transparent 98%); mask-image: linear-gradient(180deg, rgb(0 0 0 / 0.5) 0%, #000 45%, transparent 98%); }
+}
+@media (max-width: 34rem) {
+  .nf-permit__paper { rotate: 1.5deg; padding: 1.3rem 1.25rem 1.2rem; }
+  .nf-permit__f div { grid-template-columns: 5.6rem minmax(0, 1fr); }
+  .nf-stamp { font-size: 1.55rem; right: 0.8rem; }
+  .nf__links.nf__links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.2rem 1rem; }
+}
+
+/* ─────────────── Sans mouvement ───────────────
+   La carte est posée, le repère tient à sa place, le tampon est frappé. */
+@media (prefers-reduced-motion: reduce) {
+  .nf-map__drift, .nf-seek__ring, .nf-gps__bars i, .nf-route i, body[data-page='notfound'] .ftr::before { animation: none !important; }
+  .nf-seek__ring { transform: scale(0.7); opacity: 0.6; }
+  .nf-seek__ring + .nf-seek__ring { transform: scale(1.2); opacity: 0.3; }
+  .nf-route i { transform: translateX(-38%); }
+  body[data-page='notfound'] .ftr::before { transform: translateX(30vw); }
+}

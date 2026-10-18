@@ -24,7 +24,7 @@ const info = (label) => page.evaluate((label) => {
 await page.waitForTimeout(300);  console.log(await info('0.3s après load'));
 await page.waitForTimeout(2200); console.log(await info('2.5s après load'));
 // ouvrir un service (au milieu de la liste), sans défiler dans la scène
-const y = await page.evaluate(() => document.querySelector('#services').getBoundingClientRect().top + scrollY);
+const y = await page.evaluate(() => document.querySelector('#filming').getBoundingClientRect().top + scrollY);
 await page.evaluate(y => window.__lenis.scrollTo(y, { immediate: true }), y);
 await page.waitForTimeout(600);
 const q = await page.$$('.sv__q');

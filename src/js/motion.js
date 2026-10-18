@@ -137,6 +137,12 @@ export function indexPanel() {
   });
   for (const a of links) a.addEventListener('click', hide);
 
+  // Sur ordinateur, la barre porte tous les liens : le rond de l'index n'y
+  // est plus (Dominique, 18/10). Une fenêtre qu'on élargit index ouvert le
+  // referme, sinon il resterait sans bouton pour le fermer.
+  const wide = matchMedia('(min-width: 60rem)');
+  wide.addEventListener?.('change', (e) => { if (e.matches && !wrap.hidden) hide(); });
+
   document.addEventListener('keydown', (e) => {
     if (wrap.hidden) return;
     if (e.key === 'Escape') { e.preventDefault(); hide(); return; }
@@ -160,10 +166,41 @@ export function bar() {
   // La pilule marque la page en cours. Les ancres de l'accueil (#services,
   // #contact) ne sont pas des pages : seul « Home » (#top) y compte.
   const here = location.pathname.replace(/index\.html$/, '');
-  for (const a of el.querySelectorAll('.bar__pill a:not(.bar__pill-cta)')) {
+  for (const a of el.querySelectorAll('.bar__pill > a:not(.bar__pill-cta)')) {
     const u = new URL(a.href, location.href);
     if (u.pathname.replace(/index\.html$/, '') === here && (!u.hash || u.hash === '#top')) {
       a.setAttribute('aria-current', 'page');
+    }
+  }
+
+  // Le menu des services (brief du 17/10) : il s'ouvre au clic, au clavier
+  // et, à la souris, au survol ; Échap, un clic dehors ou la sortie du focus
+  // le referment. Sur une page de division, « Services » reste allumé.
+  const dd = el.querySelector('.bar__dd');
+  if (dd) {
+    const btn = dd.querySelector('.bar__ddb');
+    const menu = dd.querySelector('.bar__menu');
+    const links = [...menu.querySelectorAll('a')];
+    let timer = 0;
+    const set = (on) => {
+      clearTimeout(timer);
+      btn.setAttribute('aria-expanded', String(on));
+      menu.hidden = !on;
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      dd.addEventListener('pointerenter', () => { clearTimeout(timer); timer = setTimeout(() => set(true), 90); });
+      dd.addEventListener('pointerleave', () => { clearTimeout(timer); timer = setTimeout(() => set(false), 220); });
+    }
+    dd.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) { e.stopPropagation(); set(false); btn.focus(); }
+      if (e.key === 'ArrowDown' && menu.hidden && e.target === btn) { e.preventDefault(); set(true); links[0]?.focus(); }
+    });
+    dd.addEventListener('focusout', (e) => { if (!dd.contains(e.relatedTarget)) set(false); });
+    document.addEventListener('pointerdown', (e) => { if (!dd.contains(e.target)) set(false); });
+    for (const a of links) {
+      const u = new URL(a.href, location.href);
+      if (u.pathname === location.pathname) { a.setAttribute('aria-current', 'page'); btn.classList.add('is-current'); }
     }
   }
 

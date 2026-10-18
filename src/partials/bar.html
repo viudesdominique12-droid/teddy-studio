@@ -21,19 +21,34 @@
     <span class="burger__b" aria-hidden="true"></span>
   </button>
 
-  <!-- La pilule (modèle 21st.dev choisi par Dominique, 27/09), sur toutes
-       les pages : cinq liens et l'appel en blanc. Le lien de la page en cours
-       reçoit `aria-current` au chargement (`bar()` dans motion.js).
-       L'horloge, le téléphone et l'ancien bouton terre cuite ont quitté la
-       barre : l'heure est dans le badge de l'accueil, le téléphone au contact
-       et au pied de page. -->
+  <!-- LE MENU (brief du client §9, 17/10/2026) : Home, Services (les sept
+       divisions, Live Streaming et Event Organizing en tête), Portfolio, About
+       Us, Contact, et l'appel « Start a Project ». Equipment Rentals n'a plus
+       de lien à part (Dominique, 18/10 : « c'est un service comme les
+       autres ») : il est dans le menu des services. La page
+       en cours reçoit `aria-current` (`bar()` dans motion.js), le menu des
+       services s'ouvre au clic, au clavier ou au survol. -->
   <nav class="bar__pill" aria-label="Main">
-    <a href="/#top">Home</a>
-    <a href="/#services">Services</a>
-    <a href="/locations.html">Locations</a>
-    <a href="/works.html">Our Works</a>
-    <a href="/#contact">Contact</a>
-    <a class="bar__pill-cta" href="/book.html" data-cursor="book">Start a production<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+    <a href="/">Home</a>
+    <div class="bar__dd">
+      <button class="bar__ddb" type="button" aria-expanded="false" aria-controls="dd-services">Services<svg class="bar__chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="bar__menu" id="dd-services" hidden>
+        <div class="bar__menu-in">
+          <a class="bar__svc bar__svc--feat" href="/live-streaming.html" style="--c:#ff4a3d"><span class="bar__svc-n">01</span><span class="bar__svc-t">Live Streaming</span><span class="bar__svc-d">Weddings, conferences, concerts — broadcast live.</span></a>
+          <a class="bar__svc bar__svc--feat" href="/event-organizing.html" style="--c:#f2a93b"><span class="bar__svc-n">02</span><span class="bar__svc-t">Event Organizing</span><span class="bar__svc-d">From intimate celebrations to major gatherings.</span></a>
+          <a class="bar__svc" href="/ai-production.html" style="--c:#8f7cff"><span class="bar__svc-n">03</span><span class="bar__svc-t">AI Production</span><span class="bar__svc-d">Creative vision, powered by AI.</span></a>
+          <a class="bar__svc" href="/music-production.html" style="--c:#ff5c8a"><span class="bar__svc-n">04</span><span class="bar__svc-t">Music Production</span><span class="bar__svc-d">Recording, mixing and mastering.</span></a>
+          <a class="bar__svc" href="/feature-film.html" style="--c:#e8c27a"><span class="bar__svc-n">05</span><span class="bar__svc-t">Feature Film</span><span class="bar__svc-d">Stories made for the big screen.</span></a>
+          <a class="bar__svc" href="/documentary.html" style="--c:#c98a52"><span class="bar__svc-n">06</span><span class="bar__svc-t">Documentary</span><span class="bar__svc-d">Real stories, lasting impact.</span></a>
+          <a class="bar__svc" href="/equipment-rentals.html" style="--c:#7fb7d9"><span class="bar__svc-n">07</span><span class="bar__svc-t">Equipment Rentals</span><span class="bar__svc-d">Camera, audio, light and streaming kit.</span></a>
+          <a class="bar__all" href="/services.html">All services <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+        </div>
+      </div>
+    </div>
+    <a href="/portfolio.html">Portfolio</a>
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
+    <a class="bar__pill-cta" href="/contact.html#inquiry" data-cursor="book">Start a Project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
   </nav>
 </header>
 
@@ -43,15 +58,22 @@
   <div class="index__in" role="dialog" aria-modal="true" aria-label="Index">
 
     <nav class="index__nav" aria-label="All sections">
-      <a href="/#top"><span class="index__n" data-roll><span>Home</span></span><span class="index__v mono">open</span></a>
-      <a href="/#services"><span class="index__n" data-roll><span>Services</span></span><span class="index__v mono">8 &middot; 2 permits</span></a>
-      <a href="/#about"><span class="index__n" data-roll><span>About Us</span></span><span class="index__v mono">since Tewodros Teshome</span></a>
-      <a href="/locations.html"><span class="index__n" data-roll><span>Locations</span></span><span class="index__v mono">9 &middot; +4,550 m &rarr; &minus;125 m</span></a>
-      <a href="/#clients"><span class="index__n" data-roll><span>Our Clients</span></span><span class="index__v mono">7</span></a>
-      <a href="/#resources"><span class="index__n" data-roll><span>Resources</span></span><span class="index__v mono">6</span></a>
-      <a href="/works.html"><span class="index__n" data-roll><span>Our Works</span></span><span class="index__v mono">5</span></a>
-      <a href="/#contact"><span class="index__n" data-roll><span>Contact</span></span><span class="index__v mono">open now &middot; 24/7</span></a>
-      <a href="/vacancy.html"><span class="index__n" data-roll><span>Vacancy</span></span><span class="index__v mono">closed &middot; Feb 2025</span></a>
+      <a href="/"><span class="index__n" data-roll><span>Home</span></span><span class="index__v mono">open</span></a>
+      <a href="/services.html"><span class="index__n" data-roll><span>Services</span></span><span class="index__v mono">7 divisions</span></a>
+      <a href="/portfolio.html"><span class="index__n" data-roll><span>Portfolio</span></span><span class="index__v mono">selected work</span></a>
+      <a href="/about.html"><span class="index__n" data-roll><span>About Us</span></span><span class="index__v mono">since Tewodros Teshome</span></a>
+      <a href="/contact.html"><span class="index__n" data-roll><span>Contact</span></span><span class="index__v mono">open now &middot; 24/7</span></a>
+      <div class="index__sub" aria-label="Our divisions">
+        <a class="index__sl" href="/live-streaming.html" style="--c:#ff4a3d"><span>01</span>Live Streaming</a>
+        <a class="index__sl" href="/event-organizing.html" style="--c:#f2a93b"><span>02</span>Event Organizing</a>
+        <a class="index__sl" href="/ai-production.html" style="--c:#8f7cff"><span>03</span>AI Production</a>
+        <a class="index__sl" href="/music-production.html" style="--c:#ff5c8a"><span>04</span>Music Production</a>
+        <a class="index__sl" href="/feature-film.html" style="--c:#e8c27a"><span>05</span>Feature Film</a>
+        <a class="index__sl" href="/documentary.html" style="--c:#c98a52"><span>06</span>Documentary</a>
+        <a class="index__sl" href="/equipment-rentals.html" style="--c:#7fb7d9"><span>07</span>Equipment Rentals</a>
+        <a class="index__sl index__sl--x" href="/locations.html">Filming locations</a>
+        <a class="index__sl index__sl--x" href="/vacancy.html">Careers</a>
+      </div>
     </nav>
 
     <div class="index__foot">
@@ -59,7 +81,7 @@
         <span class="go-dot" aria-hidden="true"></span>
         <span>Addis Ababa &middot; 24/7</span>
       </p>
-      <a class="btn btn--go" href="/book.html"><span>Start a production</span></a>
+      <a class="btn btn--go" href="/contact.html#inquiry"><span>Start a Project</span></a>
     </div>
   </div>
 </div>

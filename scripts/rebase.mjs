@@ -78,9 +78,17 @@ function rebaseHtml(s) {
 const rebaseCss = (s) =>
   s.replace(/url\(\s*(['"]?)(\/[^'")]*)\1\s*\)/g, (_, q, u) => `url(${q}${put(u)}${q})`);
 
-const rebaseJs = (s) =>
-  s.replace(new RegExp(`(['"\`])(/(?:${ASSET_DIRS.join('|')})/[^'"\`]*)\\1`, 'g'),
-            (_, q, u) => `${q}${put(u)}${q}`);
+/* Trois formes dans le JS :
+   • un littéral d'asset entier (`'/loc/afar-1200.webp'`) ;
+   • un littéral de page entier (`'/live-streaming.html'`, `'/contact.html#inquiry'`),
+     depuis les pages de division (17/10/2026) : leurs données portent les liens ;
+   • un attribut dans un gabarit (`href="/portfolio.html#${slug}"`) : le
+     portfolio et les cartes sont écrits en JS. */
+const rebaseJs = (s) => s
+  .replace(new RegExp(`(['"\`])(/(?:${ASSET_DIRS.join('|')})/[^'"\`]*)\\1`, 'g'),
+           (_, q, u) => `${q}${put(u)}${q}`)
+  .replace(/(['"`])(\/[\w-]+\.html(?:[?#][^'"`]*)?)\1/g, (_, q, u) => `${q}${put(u)}${q}`)
+  .replace(/(\b(?:href|src|poster|data-src)=\\?["'])(\/(?!\/)[^"'\\$]*)/g, (_, p, u) => `${p}${put(u)}`);
 
 const handlers = { '.html': rebaseHtml, '.css': rebaseCss, '.js': rebaseJs };
 let touched = 0;

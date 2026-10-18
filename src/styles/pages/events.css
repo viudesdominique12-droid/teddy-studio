@@ -1,0 +1,1398 @@
+/* ══════════════════════════════════════════════════════════════
+   EVENT ORGANIZING — la salle (17/10/2026), puis l'immersion (18/10)
+   L'ouverture est une salle plongée dans le noir, vue depuis le parterre :
+   des lyres accrochées au-dessus du cadre balaient la brume, le titre prend
+   la lumière quand un faisceau le traverse, puis les faisceaux se posent sur
+   l'appel. Le reste de la page parle la langue d'une régie de spectacle :
+   un programme (les familles d'événements), une feuille de conduite (le
+   processus, « Standby » puis « Go »), et une invitation (la demande).
+
+   Depuis le 18/10, toute la page prend la couleur de la division, « velvet
+   venue » : une nuit bordeaux-brun et l'ambre des projecteurs (Vert, Nuit),
+   un jour champagne (Papier). Les jeux de couleurs sont dans division.css
+   (`--D-*`, `--L-*`) ; ici, seulement leur mise en scène : des sections qui
+   alternent la salle et les coulisses, des halos d'ambre, un grain de
+   velours. En Papier, l'ouverture et la feuille de conduite restent dans la
+   nuit (`dv-night`). La barre, le menu, le pied de page, la barre d'appel
+   et le sélecteur de thème ne sont pas touchés.
+
+   18/10, l'immersion : entre l'ouverture et la demande, chaque section est
+   un objet de la soirée — la poursuite sur le programme des familles (qui
+   s'ouvrent comme un rideau), le programme imprimé posé sur la table, les
+   badges d'accès suspendus, la scène (rideau, perche, cinq projecteurs) et
+   l'enseigne lumineuse du portfolio. Voir « LE RYTHME DES SECTIONS » et
+   src/js/pages/events-scenes.js.
+
+   Le texte en couleur prend `--dv-lt` : l'ambre clair sur la nuit (12:1),
+   l'ambre brûlé sur le champagne (4,9 à 6:1). L'ambre plein (`--dv`) reste
+   aux lumières, aux pastilles et aux aplats.
+   Pas de photo d'événement : nous n'en avons pas encore, et nous n'en
+   inventons pas. La lumière, la typographie et la couleur portent la page.
+   ══════════════════════════════════════════════════════════════ */
+
+/* L'encre posée sur l'ambre : la nuit de la division, plutôt que le basalte
+   neutre de la marque. Seulement dans le contenu de la page. */
+body[data-dv='events'] #main { --dv-ink: var(--D-night-2); }
+
+/* Le grain du velours, en deux encres : clair sur la nuit, sombre sur le jour. */
+body[data-dv='events'] #main {
+  --ev-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html[data-palette='papier'] body[data-dv='events'] #main {
+  --ev-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ═══════════════════ L'OUVERTURE ═══════════════════ */
+.ev-hero {
+  /* La salle : la nuit de la division, plongée vers le noir. */
+  --ev-dark: color-mix(in srgb, var(--bg) 42%, #000);
+  --ev-ink: color-mix(in srgb, var(--fg) 86%, var(--bg));
+  --ev-hot: #fff3dd;
+}
+.ev-stage {
+  background:
+    radial-gradient(90% 60% at 50% 0%, color-mix(in srgb, var(--night-3) 70%, #000) 0%, transparent 70%),
+    radial-gradient(70% 45% at 50% 100%, color-mix(in srgb, var(--dv-dp) 14%, transparent), transparent 75%),
+    var(--ev-dark);
+}
+.ev-rig { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* Si le canevas manque : trois faisceaux fixes, en CSS. */
+.ev-stage::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    conic-gradient(from 151deg at 14% -3%, transparent 0deg, color-mix(in srgb, var(--dv) 26%, transparent) 8deg, transparent 16deg),
+    conic-gradient(from 172deg at 50% -3%, transparent 0deg, color-mix(in srgb, var(--ev-hot) 20%, transparent) 8deg, transparent 16deg),
+    conic-gradient(from 193deg at 86% -3%, transparent 0deg, color-mix(in srgb, var(--dv) 26%, transparent) 8deg, transparent 16deg);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.5) 60%, transparent 96%);
+          mask-image: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.5) 60%, transparent 96%);
+}
+.ev-hero.has-rig .ev-stage::before { display: none; }
+
+/* Le grain de la brume : il casse aussi les paliers des dégradés sombres. */
+.ev-grain { position: absolute; inset: 0; pointer-events: none; opacity: 0.07; background-image: var(--ev-noise); }
+
+.ev-hero .dv-hero__veil {
+  background: linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 60%, transparent) 7%, transparent 22%);
+}
+
+/* La composition : centrée, comme une scène vue de face. */
+.ev-hero__in { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: var(--s-7); }
+.ev-hero__copy { display: grid; justify-items: center; }
+.ev-hero .dv-h1 { margin-inline: auto; max-width: 12ch; color: var(--ev-ink); }
+.ev-hero .dv-lede {
+  margin: var(--s-5) auto 0; max-width: 40rem;
+  color: color-mix(in srgb, var(--fg) 80%, var(--bg));
+  text-shadow: 0 1px 16px var(--ev-dark), 0 0 2px var(--ev-dark);
+}
+.ev-hero .dv-hero__meta { text-shadow: 0 1px 10px var(--ev-dark); }
+.ev-hero .dv-acts { justify-content: center; }
+.ev-hero__meta.dv-hero__meta {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem 2.6rem; text-align: center;
+}
+
+/* Les mots prennent la lumière. `--lit` (0 → 1) est posé par events.js
+   quand un faisceau traverse le mot. */
+.ev-hero .dv-h1 .dv-w > span {
+  color: color-mix(in srgb, var(--ev-hot) calc(var(--lit, 0) * 100%), var(--ev-ink));
+  text-shadow: 0 0 calc(var(--lit, 0) * 0.42em) color-mix(in srgb, var(--dv) calc(var(--lit, 0) * 78%), transparent);
+}
+.ev-hero .dv-h1 em .dv-w > span { color: color-mix(in srgb, var(--ev-hot) calc(var(--lit, 0) * 55%), var(--dv)); }
+/* Une fois les mots montés, leur masque s'ouvre : le halo ne bute plus sur ses bords. */
+.ev-hero.is-lit .dv-h1 .dv-w { overflow: visible !important; }
+
+/* Papier : la salle reste une salle — la nuit DE LA DIVISION (`dv-night`,
+   division.css). La barre passe à l'encre claire tant qu'elle la survole,
+   pour rester lisible ; elle ne change pas autrement. */
+html[data-palette='papier'] body[data-dv='events'] .bar:not(.is-paper) {
+  --bar-ink: #f2f0eb; --bar-inv: #111110; color: #f2f0eb;
+}
+
+/* ═══════════════════ LE RYTHME DES SECTIONS ═══════════════════
+   La salle (`--night`) alterne avec les coulisses (`--night-2`, plus
+   profondes), en fondu : aucune bande nette, un seul lieu. Des halos d'ambre
+   tombent là où la lumière a une raison d'être (au-dessus des options, sur
+   la feuille de conduite, sur l'invitation).
+
+   18/10 (Dominique : « pas juste un changement de couleur… que chaque page
+   vive de son thème ») : chaque section entre dans la soirée par un objet
+   et un geste qui lui sont propres —
+     · le programme des familles : une poursuite suit la souris et se pose
+       sur la famille ouverte ; une famille s'ouvre comme un rideau ;
+     · ce que comprend le service : le programme imprimé de la soirée, posé
+       sur la table, et la lueur d'une bougie ;
+     · les options : des badges d'accès suspendus à leur cordon ;
+     · le processus : une scène, son rideau et ses cinq projecteurs ;
+     · le portfolio : l'enseigne lumineuse de la salle, honnête (« being
+       prepared »).
+   Le velours (`--ev-velvet`) est le même partout : c'est un objet de la
+   salle, il ne change pas avec le thème. */
+body[data-dv='events'] #main { --ev-velvet: #4f1626; }
+
+.ev-svc, .ev-lvl, .ev-backstage, .ev-port, .ev-ask { isolation: isolate; }
+.ev-svc {
+  background-image:
+    radial-gradient(48rem 26rem at 88% 100%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--night) 0, var(--night-2) 10rem, var(--night-2) calc(100% - 10rem), var(--night) 100%);
+}
+.ev-lvl {
+  background-image: radial-gradient(56rem 30rem at 50% 108%, color-mix(in srgb, var(--dv) 10%, transparent), transparent 70%);
+}
+/* Les coulisses : la feuille de conduite, sur scène. En Papier, c'est l'une
+   des grandes sections de nuit (`dv-night`). */
+.ev-backstage {
+  background-image:
+    radial-gradient(60rem 24rem at 50% 100%, color-mix(in srgb, var(--dv) 9%, transparent), transparent 75%),
+    linear-gradient(180deg, var(--night-2) 0, var(--night-2) calc(100% - 9rem), var(--night) 100%);
+}
+html[data-palette='papier'] .ev-backstage {
+  background-image:
+    radial-gradient(60rem 24rem at 50% 100%, color-mix(in srgb, var(--dv) 11%, transparent), transparent 75%),
+    linear-gradient(180deg, var(--night-2), var(--night) 14rem);
+}
+.ev-backstage::after, .ev-ask::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: var(--ev-noise); opacity: 0.045;
+}
+.ev-port {
+  background-image: radial-gradient(62rem 26rem at 50% 78%, color-mix(in srgb, var(--dv) 8%, transparent), transparent 72%);
+}
+
+/* La pastille des sur-titres est une lampe de top : éteinte (un cercle
+   d'ambre), elle s'allume quand sa section entre (events-scenes.js). */
+#main.ev-io :is(#types, #services, #levels, #process, #portfolio) .dv-head .dv-k::before {
+  background: color-mix(in srgb, var(--dv) 14%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--dv) 70%, transparent);
+  transition: background-color 0.5s var(--e-out), box-shadow 0.8s var(--e-out);
+}
+#main.ev-io :is(#types, #services, #levels, #process, #portfolio).is-in .dv-head .dv-k::before {
+  background: var(--dv);
+  box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--dv) 22%, transparent), 0 0 0.9em 0.1em color-mix(in srgb, var(--dv) 75%, transparent);
+}
+
+/* ─── Les lumières floues de la salle (bokeh) ───
+   Quelques disques d'ambre, très pâles, qui dérivent lentement. En CSS
+   seulement ; la dérive ne tourne que si la section se voit (`is-run`). */
+.ev-bokeh { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.ev-bokeh i {
+  position: absolute; left: var(--x); top: var(--y); width: var(--s); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle closest-side,
+    color-mix(in srgb, var(--dv) 11%, transparent) 0 58%,
+    color-mix(in srgb, var(--dv) 12%, transparent) 76%,
+    transparent 100%);
+  opacity: var(--o, 0.6);
+  animation: ev-float var(--d, 24s) ease-in-out var(--dl, 0s) infinite alternate paused;
+}
+.ev-bokeh.is-run i { animation-play-state: running; }
+@keyframes ev-float {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(var(--dx, 2rem), var(--dy, -2rem), 0) scale(1.08); }
+}
+
+/* ═══════════════════ LE PROGRAMME DES FAMILLES ═══════════════════
+   Onze lignes à grandes capitales. On en touche une : elle s'ouvre, les
+   autres se ferment (le même geste que les services de l'accueil).
+   La poursuite (`.ev-spot`) : une flaque de lumière ambrée, posée sous les
+   lignes, qui glisse vers celle qu'on survole (et suit la souris sur la
+   largeur), puis revient sur la famille ouverte. Les filets de la ligne
+   éclairée prennent la lumière. Placée par events-scenes.js (transform
+   seulement). Sur téléphone, elle suit la famille qu'on ouvre. */
+.ev-prog { position: relative; isolation: isolate; border-top: 1px solid var(--line); }
+.ev-spot {
+  position: absolute; left: 0; top: 0; z-index: 0; width: 100%; height: 6rem; pointer-events: none;
+  opacity: 0; transition: opacity 0.7s var(--e-out);
+}
+.ev-prog.has-spot .ev-spot { opacity: 1; }
+.ev-spot__pool {
+  position: absolute; left: 0; top: -1.75rem; bottom: -1.75rem; width: min(62rem, 94%);
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--dv) 17%, transparent),
+    color-mix(in srgb, var(--dv) 6%, transparent) 62%, transparent);
+}
+html[data-palette='papier'] .ev-spot__pool {
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--dv) 24%, transparent),
+    color-mix(in srgb, var(--dv) 8%, transparent) 62%, transparent);
+}
+.ev-spot__pool::before, .ev-spot__pool::after {
+  content: ''; position: absolute; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--dv) 75%, transparent) 50%, transparent);
+}
+.ev-spot__pool::before { top: calc(1.75rem - 1px); }
+.ev-spot__pool::after { bottom: calc(1.75rem); }
+
+.ev-fam { position: relative; isolation: isolate; border-bottom: 1px solid var(--line-2); }
+.ev-fam__h { margin: 0; font: inherit; }
+.ev-fam__q {
+  position: relative;
+  width: 100%; display: grid; grid-template-columns: 3rem minmax(0, 1fr) minmax(0, 19rem) 2.75rem;
+  align-items: center; gap: var(--s-5);
+  padding: clamp(1.15rem, 0.9rem + 0.8vw, 1.7rem) 0;
+  background: none; border: 0; color: var(--fg); text-align: left; cursor: pointer;
+  font: inherit;
+}
+.ev-fam__q:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: -2px; }
+
+.ev-fam__n {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em;
+  color: var(--cream-3); transition: color 0.4s var(--e-out), text-shadow 0.4s var(--e-out);
+}
+.ev-fam__t {
+  font-family: var(--ff-d);
+  font-size: clamp(1.4rem, 0.85rem + 2.1vw, 2.85rem); line-height: 1.02; letter-spacing: -0.02em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase;
+  color: var(--cream-2); text-wrap: balance;
+  transition: color 0.45s var(--e-out), transform 0.7s var(--e-out), text-shadow 0.6s var(--e-out);
+}
+.ev-fam__peek {
+  justify-self: end; text-align: right;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); line-height: 1.5; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--cream-3); transition: opacity 0.45s var(--e-out);
+}
+.ev-fam__ic {
+  position: relative; justify-self: end; width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 0.45s var(--e-out), box-shadow 0.45s var(--e-out), transform 0.6s var(--e-out);
+}
+.ev-fam__ic::before, .ev-fam__ic::after {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 0.85rem; height: 1.5px; border-radius: 1px;
+  background: var(--fg); translate: -50% -50%;
+}
+.ev-fam__ic::after { rotate: 90deg; }
+.ev-fam__q:hover .ev-fam__t, .ev-fam.is-open .ev-fam__t { color: var(--fg); }
+.ev-fam__q:hover .ev-fam__t { transform: translateX(0.45rem); }
+.ev-fam__q:hover .ev-fam__n, .ev-fam.is-open .ev-fam__n { color: var(--dv-lt); }
+.ev-fam__q:hover .ev-fam__ic { box-shadow: inset 0 0 0 1px var(--fg); }
+.ev-fam.is-open .ev-fam__ic { transform: rotate(45deg); background: var(--dv); box-shadow: 0 0 18px -2px color-mix(in srgb, var(--dv) 60%, transparent); }
+.ev-fam.is-open .ev-fam__ic::before, .ev-fam.is-open .ev-fam__ic::after { background: var(--dv-ink); }
+.ev-fam.is-open .ev-fam__peek { opacity: 0; }
+/* Sur la nuit, la famille ouverte prend la lumière, comme le titre de l'ouverture. */
+html:not([data-palette='papier']) .ev-fam.is-open .ev-fam__t { text-shadow: 0 0 0.55em color-mix(in srgb, var(--dv) 30%, transparent); }
+html:not([data-palette='papier']) .ev-fam.is-open .ev-fam__n { text-shadow: 0 0 0.8em var(--dv); }
+
+/* Le dépli : une grille de 0fr à 1fr, sans hauteur mesurée en script. */
+.ev-fam__a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.7s var(--e-out); }
+.ev-fam.is-open .ev-fam__a, .ev-prog:not(.is-js) .ev-fam__a { grid-template-rows: 1fr; }
+.ev-prog.is-still .ev-fam__a { transition: none; }
+.ev-fam__in {
+  position: relative;
+  min-height: 0; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--s-5) var(--s-8);
+  padding-left: calc(3rem + var(--s-5));
+}
+.ev-prog.is-js .ev-fam:not(.is-open) .ev-fam__in { visibility: hidden; transition: visibility 0s 0.7s; }
+.ev-fam__in > * { padding-bottom: var(--s-6); }
+
+/* Le rideau : deux pans de velours couvrent le dépli et s'ouvrent vers les
+   côtés en se plissant (scaleX depuis le bord), puis s'effacent. */
+.ev-prog.is-js .ev-fam__in::before, .ev-prog.is-js .ev-fam__in::after {
+  content: ''; position: absolute; top: 0; bottom: 0; z-index: 2; width: 50.5%; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 0.3), transparent 28%, transparent 68%, rgb(0 0 0 / 0.42)),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.42) 0, rgb(255 255 255 / 0.07) 0.95rem, rgb(0 0 0 / 0.04) 1.55rem, rgb(0 0 0 / 0.42) 2.5rem),
+    var(--ev-velvet);
+  transition: transform 0.4s var(--e-inout), opacity 0.2s linear;
+}
+.ev-prog.is-js .ev-fam__in::before { left: 0; transform-origin: 0 50%; box-shadow: inset -2px 0 0 color-mix(in srgb, var(--dv) 60%, transparent); }
+.ev-prog.is-js .ev-fam__in::after { right: 0; transform-origin: 100% 50%; box-shadow: inset 2px 0 0 color-mix(in srgb, var(--dv) 60%, transparent); }
+.ev-prog.is-js .ev-fam.is-open .ev-fam__in::before, .ev-prog.is-js .ev-fam.is-open .ev-fam__in::after {
+  transform: scaleX(0); opacity: 0;
+  transition: transform 1s var(--e-inout) 0.16s, opacity 0.35s linear 0.9s;
+}
+
+.ev-fam__list {
+  columns: 2 13rem; column-gap: var(--s-6);
+  font-size: var(--fs-body); line-height: 1.4; color: var(--fg);
+}
+.ev-fam__list li { display: flex; gap: 0.7em; padding-block: 0.32rem; break-inside: avoid; }
+.ev-fam__list li::before {
+  content: ''; flex: none; width: 0.36em; height: 0.36em; margin-top: 0.55em; border-radius: 50%;
+  background: var(--dv); box-shadow: 0 0 0.6em color-mix(in srgb, var(--dv) 70%, transparent);
+}
+.ev-fam__side { display: grid; align-content: start; justify-items: start; gap: var(--s-5); }
+.ev-fam__p { display: grid; gap: 0.55rem; max-width: 30rem; font-size: var(--fs-sm); line-height: 1.6; color: var(--cream-2); }
+.ev-fam__p .dv-mono { color: var(--dv-lt); }
+
+/* Les lignes du dépli entrent pendant que le rideau s'ouvre (`--i` posé par events.js). */
+.ev-prog.is-js .ev-fam__list li, .ev-prog.is-js .ev-fam__side {
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.5s var(--e-out), transform 0.7s var(--e-out);
+}
+.ev-prog.is-js .ev-fam.is-open .ev-fam__list li, .ev-prog.is-js .ev-fam.is-open .ev-fam__side {
+  opacity: 1; transform: none;
+  transition-delay: calc(0.42s + var(--i, 0) * 0.04s);
+}
+.ev-prog.is-js .ev-fam.is-open .ev-fam__side { transition-delay: 0.62s; }
+
+.ev-prog__foot {
+  display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--s-5) var(--s-7);
+  margin-top: var(--s-7);
+}
+.ev-other { display: grid; gap: 0.6rem; color: var(--fg); }
+.ev-other .dv-mono { color: var(--dv-lt); }
+.ev-other__t {
+  display: inline-flex; align-items: baseline; gap: 0.4em;
+  font-family: var(--ff-p); font-size: clamp(2rem, 1.3rem + 2.4vw, 3.6rem); line-height: 1;
+  font-variation-settings: 'opsz' 144, 'wght' 380; letter-spacing: -0.025em;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.7s var(--e-out), color 0.35s var(--e-out);
+}
+.ev-other__t::after { content: '→'; font-family: var(--ff-m); font-size: 0.5em; transition: transform 0.5s var(--e-out); }
+.ev-other:hover .ev-other__t { background-size: 100% 1px; color: var(--dv-lt); }
+.ev-other:hover .ev-other__t::after { transform: translateX(0.35em); }
+.ev-other:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 6px; }
+.ev-prog__note { max-width: 26rem; text-align: right; }
+
+/* ═══════════════════ CE QUE COMPREND LE SERVICE : LE PROGRAMME ═══════════════════
+   Le programme imprimé de la soirée, posé sur la table : l'inverse de la
+   salle, comme le billet de la demande — un carton champagne sur la nuit
+   (Vert, Nuit), un carton de velours sur le jour (Papier). Un double filet,
+   un grain de papier, des points de conduite jusqu'au numéro. La lueur
+   d'une bougie suit la souris sur le carton (`--mx`, `--my` : spotlight()
+   du socle, via `data-spot`) et réchauffe la ligne survolée ; ses points
+   s'allument jusqu'au numéro. Sur téléphone, la ligne qui passe au milieu
+   de l'écran reçoit la lueur. */
+.ev-menu {
+  --m-bg: var(--L-night-3); --m-bg-2: var(--L-night);
+  --m-fg: var(--L-cream); --m-fg-2: var(--L-cream-2);
+  --m-acc: color-mix(in srgb, var(--L-dv-lt) 90%, var(--L-cream));
+  --m-dv: var(--L-dv); --m-glow: #f2a93b;
+  --m-rule: color-mix(in srgb, var(--L-dv-dp) 55%, transparent);
+  --m-off: color-mix(in srgb, var(--L-cream) 38%, transparent);
+  --m-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  position: relative; isolation: isolate;
+  max-width: 66rem; margin-inline: auto;
+  padding: clamp(1.9rem, 1rem + 3vw, 4rem) clamp(1.35rem, 0.4rem + 4vw, 5rem) clamp(1.6rem, 1rem + 2vw, 3rem);
+  border-radius: 0.25rem;
+  background:
+    var(--m-grain) 0 0 / 180px,
+    radial-gradient(80% 50% at 50% 0%, rgb(255 255 255 / 0.55), transparent 70%),
+    linear-gradient(180deg, var(--m-bg), var(--m-bg-2));
+  color: var(--m-fg);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.5) inset,
+    0 50px 90px -46px rgb(0 0 0 / 0.85),
+    0 0 110px -40px color-mix(in srgb, var(--dv) 45%, transparent);
+}
+html[data-palette='papier'] .ev-menu {
+  --m-bg: var(--D-night-3); --m-bg-2: var(--D-night);
+  --m-fg: var(--D-cream); --m-fg-2: var(--D-cream-2);
+  --m-acc: var(--D-dv-lt); --m-dv: var(--D-dv);
+  --m-rule: color-mix(in srgb, var(--D-dv) 50%, transparent);
+  --m-off: color-mix(in srgb, var(--D-cream) 34%, transparent);
+  --m-grain: var(--ev-noise-lt);
+  background:
+    var(--m-grain) 0 0 / 180px,
+    radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, var(--D-dv) 10%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--m-bg), var(--m-bg-2));
+  box-shadow: 0 44px 80px -44px rgb(60 25 10 / 0.5);
+}
+body[data-dv='events'] #main {
+  --ev-noise-lt: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Le double filet doré. */
+.ev-menu::after {
+  content: ''; position: absolute; inset: clamp(0.5rem, 0.3rem + 0.6vw, 0.85rem); z-index: -1; pointer-events: none;
+  border: 1px solid var(--m-rule); outline: 1px solid var(--m-rule); outline-offset: 3px;
+}
+/* La bougie : une lueur chaude sous le curseur. */
+.ev-menu::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 40%), color-mix(in srgb, var(--m-glow) 22%, transparent), transparent 65%);
+  opacity: 0; transition: opacity 0.6s var(--e-out);
+}
+.ev-menu:hover::before { opacity: 1; }
+
+.ev-menu__head {
+  display: flex; align-items: center; justify-content: center; gap: 0.9rem 1.1rem; flex-wrap: wrap;
+  margin: 0 0 clamp(1.4rem, 1rem + 1.4vw, 2.4rem);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--m-fg-2);
+}
+.ev-menu__head span:nth-of-type(2) { color: var(--m-acc); }
+.ev-menu__orn {
+  position: relative; display: inline-block; width: clamp(2rem, 1rem + 3vw, 4.5rem); height: 1px;
+  background: linear-gradient(90deg, transparent, var(--m-rule) 30%, var(--m-rule) 70%, transparent);
+}
+.ev-menu__orn::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 0.36rem; height: 0.36rem;
+  translate: -50% -50%; rotate: 45deg; background: var(--m-dv);
+}
+.ev-menu__foot { display: flex; justify-content: center; margin: clamp(1.2rem, 0.8rem + 1vw, 2rem) 0 0; }
+.ev-menu__foot .ev-menu__orn { width: clamp(5rem, 3rem + 6vw, 9rem); }
+
+.ev-menu__list { columns: 2 21rem; column-gap: clamp(2rem, 0.8rem + 3.5vw, 5rem); }
+.ev-menu__list > li {
+  position: relative; break-inside: avoid;
+  display: flex; align-items: flex-end; gap: 0.55rem;
+  padding: 0.62rem 0.15rem;
+}
+.ev-menu__t {
+  flex: 0 1 auto; min-width: 0; max-width: 84%;
+  font-family: var(--ff-p); font-size: clamp(1.05rem, 0.96rem + 0.35vw, 1.28rem); line-height: 1.28;
+  font-variation-settings: 'opsz' 36, 'wght' 420; letter-spacing: -0.005em;
+  transition: transform 0.6s var(--e-out);
+}
+.ev-menu__dots {
+  position: relative; flex: 1 1 1.5rem; min-width: 1.5rem; height: 4px; margin-bottom: 0.48em;
+  background: radial-gradient(circle, var(--m-off) 1px, transparent 1.45px) 0 50% / 7px 4px repeat-x;
+}
+.ev-menu__dots::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle, var(--m-dv) 1.35px, transparent 1.8px) 0 50% / 7px 4px repeat-x;
+  clip-path: inset(0 100% 0 0); transition: clip-path 0.7s var(--e-out);
+}
+.ev-menu__n {
+  flex: none; padding-bottom: 0.18em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+  color: var(--m-acc); transition: color 0.4s var(--e-out);
+}
+/* La lueur de la ligne : une flamme posée derrière, qui chauffe le papier. */
+.ev-menu__list > li::before {
+  content: ''; position: absolute; inset: -0.2rem -1rem; z-index: -1; pointer-events: none; border-radius: 0.6rem;
+  background: radial-gradient(60% 90% at 30% 60%, color-mix(in srgb, var(--m-glow) 26%, transparent), transparent 75%);
+  opacity: 0; transform: scale(0.94); transition: opacity 0.5s var(--e-out), transform 0.7s var(--e-out);
+}
+.ev-menu__list > li:is(:hover, :focus-within, .is-lit)::before { opacity: 1; transform: none; }
+.ev-menu__list > li:is(:hover, :focus-within, .is-lit) .ev-menu__t { transform: translateX(0.3rem); }
+.ev-menu__list > li:is(:hover, :focus-within, .is-lit) .ev-menu__dots::after { clip-path: inset(0 0 0 0); }
+
+.ev-menu__x a {
+  color: inherit;
+  background: linear-gradient(var(--m-dv), var(--m-dv)) 0 100% / 100% 1px no-repeat;
+  transition: color 0.3s var(--e-out);
+}
+.ev-menu__x a::after { content: ' ↗'; font-family: var(--ff-m); font-size: 0.8em; color: var(--m-acc); }
+.ev-menu__x a:hover { color: var(--m-acc); }
+.ev-menu__x a:focus-visible { outline: 2px solid var(--m-acc); outline-offset: 3px; border-radius: 2px; }
+.ev-menu__x small {
+  display: block; margin-top: 0.25rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--m-fg-2);
+}
+
+/* L'arrivée (events-scenes.js pose `is-js`, puis `is-in`) : les lignes
+   s'impriment une à une, leurs points se tracent jusqu'au numéro. */
+.ev-menu.is-js .ev-menu__list > li { opacity: 0; transform: translateY(8px); transition: opacity 0.6s var(--e-out), transform 0.8s var(--e-out); }
+.ev-menu.is-js.is-in .ev-menu__list > li { opacity: 1; transform: none; transition-delay: calc(0.3s + var(--i, 0) * 0.045s); }
+.ev-menu.is-js .ev-menu__dots { clip-path: inset(0 100% 0 0); transition: clip-path 0.9s var(--e-out); }
+.ev-menu.is-js.is-in .ev-menu__dots { clip-path: inset(0 0 0 0); transition-delay: calc(0.5s + var(--i, 0) * 0.045s); }
+
+/* ═══════════════════ LES OPTIONS : LES BADGES ═══════════════════
+   Quatre badges d'accès, chacun pendu à son cordon de velours (un double
+   point d'or), une agrafe de métal, une bande d'ambre, un hologramme, un
+   guillochage très pâle, une ligne prédécoupée et son code. Les gestes
+   (events-scenes.js, GSAP) : à l'arrivée, ils tombent et se balancent ;
+   au défilement, ils oscillent à peine ; sous la souris, le badge pivote
+   en 3D autour de son agrafe et un reflet le traverse. Tout le badge mène
+   au formulaire (le lien couvre la carte). */
+.ev-passes {
+  --ev-strap: clamp(3rem, 2.2rem + 2.6vw, 5.25rem);
+  --ev-stub: 3.6rem;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch;
+  gap: clamp(1rem, 0.6rem + 1.2vw, 1.9rem);
+}
+.ev-pass { position: relative; display: flex; min-width: 0; }
+.ev-pass__swing { position: relative; flex: 1; display: flex; flex-direction: column; padding-top: var(--ev-strap); }
+.ev-pass__strap {
+  position: absolute; left: 50%; top: 0; width: 1.4rem; height: calc(var(--ev-strap) + 0.5rem); translate: -50% 0;
+  background:
+    linear-gradient(90deg, transparent 0.2rem, color-mix(in srgb, var(--dv) 75%, transparent) 0.2rem 0.29rem, transparent 0.29rem calc(100% - 0.29rem), color-mix(in srgb, var(--dv) 75%, transparent) calc(100% - 0.29rem) calc(100% - 0.2rem), transparent calc(100% - 0.2rem)),
+    linear-gradient(90deg, rgb(0 0 0 / 0.38), rgb(255 255 255 / 0.06) 45%, rgb(0 0 0 / 0.3)),
+    var(--ev-velvet);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 2.4rem);
+          mask-image: linear-gradient(180deg, transparent, #000 2.4rem);
+}
+/* L'agrafe : du métal, au bout du cordon, mordant le haut du badge. */
+.ev-pass__clip {
+  position: absolute; left: 50%; top: calc(var(--ev-strap) - 0.75rem); z-index: 3; width: 1.9rem; height: 1.55rem; translate: -50% 0;
+  border-radius: 0.3rem 0.3rem 0.45rem 0.45rem;
+  background: linear-gradient(180deg, #ebe6de, #a59d92 48%, #6d665d 52%, #c9c2b8);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25), 0 3px 6px -2px rgb(0 0 0 / 0.55);
+}
+.ev-pass__clip::after {
+  content: ''; position: absolute; left: 50%; top: -0.35rem; width: 1.6rem; height: 0.55rem; translate: -50% 0;
+  border-radius: 0.3rem 0.3rem 0 0; box-shadow: inset 0 0 0 2px #9d968b;
+}
+.ev-pass__tilt { position: relative; flex: 1; display: flex; }
+.ev-pass__card {
+  position: relative; isolation: isolate; overflow: hidden;
+  flex: 1; display: flex; flex-direction: column;
+  border-radius: 0.9rem;
+  background:
+    repeating-radial-gradient(circle at 100% 0%, transparent 0 0.5rem, color-mix(in srgb, var(--fg) 4%, transparent) 0.5rem 0.56rem),
+    linear-gradient(180deg, var(--night-3), color-mix(in srgb, var(--night-3) 62%, var(--night-2)));
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--fg);
+  /* Les deux encoches de la ligne prédécoupée. */
+  -webkit-mask: radial-gradient(circle 0.6rem at 0 calc(100% - var(--ev-stub)), #0000 97%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 0.6rem at 100% calc(100% - var(--ev-stub)), #0000 97%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 0.6rem at 0 calc(100% - var(--ev-stub)), #0000 97%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 0.6rem at 100% calc(100% - var(--ev-stub)), #0000 97%, #000) right / 51% 100% no-repeat;
+}
+/* Le numéro du badge, imprimé en grand et en creux, comme un filigrane. */
+.ev-passes { counter-reset: ev-pass; }
+.ev-pass { counter-increment: ev-pass; }
+.ev-pass__card::before {
+  content: counter(ev-pass, decimal-leading-zero) / '';
+  position: absolute; right: 1.1rem; bottom: calc(var(--ev-stub) + 0.35rem); z-index: -1; pointer-events: none;
+  font-family: var(--ff-d); font-size: clamp(4rem, 2.8rem + 2.4vw, 5.6rem); line-height: 0.8; letter-spacing: -0.04em;
+  font-variation-settings: 'wdth' 84, 'wght' 760;
+  color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--fg) 13%, transparent);
+}
+/* L'ombre du badge (le masque rogne les ombres de la carte elle-même). */
+.ev-pass__tilt::before {
+  content: ''; position: absolute; inset: 0.8rem 0.6rem -0.2rem; z-index: -1; border-radius: 1rem; pointer-events: none;
+  box-shadow: 0 34px 50px -26px rgb(0 0 0 / 0.8);
+  transition: box-shadow 0.6s var(--e-out);
+}
+html[data-palette='papier'] .ev-pass__tilt::before { box-shadow: 0 30px 46px -26px rgb(70 35 10 / 0.42); }
+.ev-pass:hover .ev-pass__tilt::before { box-shadow: 0 44px 60px -28px rgb(0 0 0 / 0.85), 0 0 60px -20px color-mix(in srgb, var(--dv) 45%, transparent); }
+html[data-palette='papier'] .ev-pass:hover .ev-pass__tilt::before { box-shadow: 0 40px 56px -28px rgb(70 35 10 / 0.5); }
+
+.ev-pass__band {
+  position: relative; margin: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1.45rem 1.25rem 1rem;
+  background: linear-gradient(180deg, var(--dv), color-mix(in srgb, var(--dv) 80%, var(--dv-dp)));
+  color: var(--D-night-2);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase;
+}
+/* La fente où passe l'agrafe. */
+.ev-pass__band::before {
+  content: ''; position: absolute; left: 50%; top: 0.5rem; width: 2.3rem; height: 0.42rem; translate: -50% 0; border-radius: 1rem;
+  background: color-mix(in srgb, var(--D-night-2) 55%, transparent); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.5);
+}
+.ev-pass__n { font-size: 1.05rem; font-weight: 600; letter-spacing: 0.05em; }
+/* L'hologramme : une pastille irisée sous la bande, à hauteur du titre ;
+   ses reflets tournent avec la souris (`--ha`). */
+.ev-pass__holo {
+  position: absolute; right: 1.15rem; top: 5.4rem; z-index: 1; width: 2.5rem; height: 2.5rem; border-radius: 0.45rem;
+  background:
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.22) 0 1.5px, transparent 1.5px 4.5px),
+    conic-gradient(from var(--ha, 20deg), #f7c675, #ffcdb8, #ecd6ff, #c9ecff, #fff0ae, #f2a93b, #f7c675);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.4), 0 4px 10px -3px rgb(0 0 0 / 0.45);
+}
+.ev-pass__h {
+  margin: 1.7rem 1.25rem 0; max-width: 12ch;
+  font-family: var(--ff-d); font-size: clamp(1.3rem, 0.95rem + 0.85vw, 1.7rem); line-height: 1.02; letter-spacing: -0.012em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; text-wrap: balance;
+}
+.ev-pass__p { margin: 0.9rem 1.25rem 5.4rem; font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
+.ev-pass__stub {
+  margin-top: auto; height: var(--ev-stub);
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+  padding: 0 1.25rem;
+  border-top: 1.5px dashed color-mix(in srgb, var(--fg) 28%, transparent);
+}
+.ev-pass__go {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg);
+}
+.ev-pass__go::after { content: '→'; color: var(--dv-lt); transition: transform 0.45s var(--e-out); }
+.ev-pass__go::before { content: ''; position: absolute; inset: 0; z-index: 4; }   /* tout le badge est cliquable */
+.ev-pass:hover .ev-pass__go::after { transform: translateX(0.4em); }
+.ev-pass__go:focus-visible { outline: none; }
+.ev-pass__card:has(.ev-pass__go:focus-visible) { box-shadow: inset 0 0 0 2px var(--dv-lt); }
+.ev-pass__code {
+  flex: none; width: 4.4rem; height: 1.55rem; opacity: 0.5; color: var(--fg);
+  background: linear-gradient(90deg,
+    currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 11px,
+    transparent 11px 12px, currentColor 12px 13px, transparent 13px 16px, currentColor 16px 18px, transparent 18px 19px,
+    currentColor 19px 20px, transparent 20px 23px, currentColor 23px 26px, transparent 26px 28px) 0 0 / 28px 100% repeat-x;
+}
+/* Le reflet holographique : il suit la souris (`--hx`) ; sur téléphone, il
+   traverse le badge une fois, quand celui-ci passe au milieu de l'écran. */
+.ev-pass__sheen {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: linear-gradient(105deg, transparent 36%, rgb(255 226 170 / 0.16) 45%, rgb(255 255 255 / 0.28) 50%, rgb(255 210 150 / 0.14) 55%, transparent 64%) var(--hx, 120%) 0 / 260% 100% no-repeat;
+  mix-blend-mode: screen; opacity: 0; transition: opacity 0.45s var(--e-out);
+}
+html[data-palette='papier'] .ev-pass__sheen {
+  background: linear-gradient(105deg, transparent 36%, rgb(242 169 59 / 0.12) 45%, rgb(255 236 200 / 0.4) 50%, rgb(242 169 59 / 0.1) 55%, transparent 64%) var(--hx, 120%) 0 / 260% 100% no-repeat;
+  mix-blend-mode: normal;
+}
+.ev-pass:hover .ev-pass__sheen, .ev-pass:focus-within .ev-pass__sheen { opacity: 1; }
+.ev-pass.is-on .ev-pass__sheen { opacity: 1; animation: ev-sweep 1.5s var(--e-out) both; }
+@keyframes ev-sweep { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+.ev-pass.is-on .ev-pass__band { box-shadow: 0 0 30px -6px var(--dv); }
+
+/* ═══════════════════ LE PROCESSUS : LA SCÈNE ═══════════════════
+   Le processus lu comme la conduite d'un spectacle : chaque top attend
+   (« Standby »), puis part (« Go ») quand on l'atteint. Le dernier parti
+   garde le témoin et la lumière.
+   Autour, une scène : une frise de velours en haut, une perche et cinq
+   projecteurs ; à chaque top, un projecteur de plus s'allume et son
+   faisceau tombe sur le plateau (derrière le texte, très pâle). Le rideau
+   s'ouvre pendant qu'on descend dans la section (events-scenes.js) ; sans
+   script ou en mouvement réduit, il est ouvert. */
+.ev-backstage { --ev-val: clamp(2.1rem, 1.5rem + 1.9vw, 3.6rem); }
+.ev-rig2, .ev-curtain { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.ev-rig2 { z-index: -1; }
+/* Le bord du plateau, à peine éclairé. */
+.ev-rig2::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--dv) 45%, transparent) 30%, color-mix(in srgb, var(--dv) 45%, transparent) 70%, transparent);
+}
+.ev-curtain { z-index: 3; }
+.ev-sym { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.ev-truss {
+  --t: color-mix(in srgb, var(--cream-3) 42%, transparent);
+  position: absolute; left: 0; right: 0; top: calc(var(--ev-val) - 0.1rem); height: 0.7rem;
+  background:
+    linear-gradient(var(--t), var(--t)) 0 0 / 100% 1.5px no-repeat,
+    linear-gradient(var(--t), var(--t)) 0 100% / 100% 1.5px no-repeat,
+    repeating-linear-gradient(60deg, transparent 0 0.62rem, var(--t) 0.62rem calc(0.62rem + 1px), transparent calc(0.62rem + 1px) 0.8rem),
+    repeating-linear-gradient(-60deg, transparent 0 0.62rem, var(--t) 0.62rem calc(0.62rem + 1px), transparent calc(0.62rem + 1px) 0.8rem);
+}
+.ev-fix {
+  position: absolute; left: var(--x); top: calc(var(--ev-val) + 0.45rem); width: clamp(1.45rem, 1.15rem + 0.8vw, 2.2rem); translate: -50% 0;
+}
+.ev-fix svg {
+  display: block; width: 100%; height: auto; overflow: visible;
+  fill: color-mix(in srgb, var(--night-3) 55%, #000);
+  stroke: color-mix(in srgb, var(--cream-3) 50%, transparent); stroke-width: 1.2;
+}
+.ev-fix__lens {
+  position: absolute; left: 50%; bottom: 0; width: 120%; aspect-ratio: 1; translate: -50% 38%; border-radius: 50%;
+  background: radial-gradient(circle, #fff6e2 0 14%, color-mix(in srgb, var(--dv) 90%, #fff) 28%, color-mix(in srgb, var(--dv) 35%, transparent) 50%, transparent 70%);
+  opacity: 0; transition: opacity 0.9s var(--e-out);
+}
+.ev-backstage.is-pre .ev-fix__lens { opacity: 0.18; }
+.ev-fix.is-on .ev-fix__lens { opacity: 0.8; }
+.ev-fix.is-now .ev-fix__lens { opacity: 1; }
+.ev-beam {
+  position: absolute; left: var(--x); top: calc(var(--ev-val) + 0.45rem + clamp(1.45rem, 1.15rem + 0.8vw, 2.2rem) * 1.2); bottom: 0;
+  width: 64rem; translate: -50% 0;
+  background: conic-gradient(from 171deg at 50% 0%, transparent 0deg, color-mix(in srgb, var(--dv) 28%, transparent) 9deg, transparent 18deg);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.55) 48%, transparent 94%);
+          mask-image: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.55) 48%, transparent 94%);
+  opacity: 0; transition: opacity 1.2s var(--e-out);
+}
+.ev-beam.is-on { opacity: 0.45; }
+.ev-beam.is-now { opacity: 0.85; }
+
+/* Le rideau : deux pans de velours plissés. Au repos (sans script), ils
+   sont ouverts : un pan fin à chaque bord, sur la marge. */
+.ev-backstage { --ev-rest: calc(var(--pad-x) * 0.62); }
+.ev-drape {
+  position: absolute; top: 0; bottom: 0; width: 50.5%;
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 0.5), transparent 14%, transparent 72%, rgb(0 0 0 / 0.55)),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.46) 0, rgb(255 255 255 / 0.07) 1.5rem, rgb(0 0 0 / 0.05) 2.5rem, rgb(0 0 0 / 0.46) 4rem),
+    var(--ev-velvet);
+}
+.ev-drape--l { left: 0; transform-origin: 0 50%; transform: translateX(calc(-100% + var(--ev-rest))); box-shadow: inset -3px 0 0 color-mix(in srgb, var(--dv) 50%, transparent), 22px 0 40px -14px rgb(0 0 0 / 0.65); }
+.ev-drape--r { right: 0; transform-origin: 100% 50%; transform: translateX(calc(100% - var(--ev-rest))); box-shadow: inset 3px 0 0 color-mix(in srgb, var(--dv) 50%, transparent), -22px 0 40px -14px rgb(0 0 0 / 0.65); }
+/* La frise : des drapés en festons, un galon d'or. */
+.ev-valance {
+  position: absolute; left: 0; right: 0; top: 0; height: var(--ev-val);
+  background:
+    linear-gradient(180deg, transparent calc(100% - 1.05rem), color-mix(in srgb, var(--dv) 55%, transparent) calc(100% - 1.05rem) calc(100% - 0.9rem), transparent calc(100% - 0.9rem)),
+    linear-gradient(180deg, rgb(0 0 0 / 0.45), transparent 60%),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.42) 0, rgb(255 255 255 / 0.07) 2.2rem, rgb(0 0 0 / 0.42) 4.4rem),
+    var(--ev-velvet);
+  -webkit-mask: radial-gradient(2.3rem 0.95rem at 50% 0, #000 97%, #0000) 0 100% / 4.4rem 0.95rem repeat-x,
+                linear-gradient(#000, #000) 0 0 / 100% calc(100% - 0.92rem) no-repeat;
+          mask: radial-gradient(2.3rem 0.95rem at 50% 0, #000 97%, #0000) 0 100% / 4.4rem 0.95rem repeat-x,
+                linear-gradient(#000, #000) 0 0 / 100% calc(100% - 0.92rem) no-repeat;
+}
+
+.ev-cues { border-top: 1px solid var(--line); }
+.ev-cue {
+  position: relative; isolation: isolate;
+  display: grid; grid-template-columns: 6.5rem minmax(0, 1.1fr) minmax(0, 1fr) auto; align-items: center;
+  gap: var(--s-3) var(--s-6);
+  padding: clamp(1.4rem, 1.1rem + 0.9vw, 2.1rem) 0 clamp(1.4rem, 1.1rem + 0.9vw, 2.1rem) 1.1rem;
+  border-bottom: 1px solid var(--line-2);
+}
+.ev-cue::before {
+  content: ''; position: absolute; left: 0; top: 22%; bottom: 22%; width: 2px; border-radius: 2px;
+  background: var(--dv); box-shadow: 0 0 12px color-mix(in srgb, var(--dv) 70%, transparent);
+  transform: scaleY(0); transition: transform 0.7s var(--e-out);
+}
+/* La lumière du top : quand il part, une flaque tombe d'en haut sur son
+   titre (on la voit là où l'on lit, même quand les projecteurs de la perche
+   sont sortis de l'écran) ; le top en cours la garde, plus vive. */
+.ev-cue::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(34rem 8rem at 30% 0%, color-mix(in srgb, var(--dv) 15%, transparent), transparent 72%),
+    linear-gradient(90deg, color-mix(in srgb, var(--dv) 10%, transparent), transparent 58%);
+  opacity: 0; transition: opacity 0.9s var(--e-out);
+}
+.ev-cue.is-go::after { opacity: 0.4; }
+.ev-cue.is-now::before { transform: none; }
+.ev-cue.is-now::after { opacity: 1; }
+.ev-cue__n {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--cream-3); transition: color 0.5s var(--e-out);
+}
+.ev-cue__h {
+  font-family: var(--ff-d); font-size: clamp(1.25rem, 0.95rem + 1.1vw, 2.05rem); line-height: 1.02; letter-spacing: -0.015em;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; text-wrap: balance;
+  color: var(--cream-3); transition: color 0.6s var(--e-out);
+}
+.ev-cue__p { max-width: 30rem; font-size: var(--fs-sm); line-height: 1.6; color: var(--cream-3); transition: color 0.6s var(--e-out); }
+.ev-cue__st {
+  justify-self: end; display: inline-flex; align-items: center; gap: 0.55rem; min-width: 7.2rem; justify-content: center;
+  padding: 0.55rem 0.9rem; border-radius: 999px;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cream-3); box-shadow: inset 0 0 0 1px var(--line);
+  transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out), color 0.5s var(--e-out);
+}
+.ev-cue__st b { font-weight: 400; }
+.ev-cue__st i {
+  width: 0.5rem; height: 0.5rem; border-radius: 50%; flex: none;
+  background: color-mix(in srgb, var(--dv) 35%, var(--cream-3));
+  transition: background-color 0.4s var(--e-out), box-shadow 0.4s var(--e-out);
+}
+.ev-cue__st [data-go] { display: none; }
+.ev-cue.is-go .ev-cue__st [data-go] { display: inline; }
+.ev-cue.is-go .ev-cue__st [data-standby] { display: none; }
+.ev-cue.is-go .ev-cue__n { color: var(--dv-lt); }
+.ev-cue.is-go .ev-cue__h { color: var(--fg); }
+.ev-cue.is-go .ev-cue__p { color: var(--cream-2); }
+.ev-cue.is-go .ev-cue__st { color: var(--fg); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 55%, transparent); }
+.ev-cue.is-go .ev-cue__st i { background: var(--dv); box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--dv) 22%, transparent), 0 0 12px var(--dv); }
+.ev-cue.is-now .ev-cue__st { background: var(--dv); color: var(--dv-ink); box-shadow: 0 0 22px -4px color-mix(in srgb, var(--dv) 70%, transparent); }
+.ev-cue.is-now .ev-cue__st i { background: var(--dv-ink); box-shadow: none; }
+/* « Go » : l'éclair du top qui part. */
+.ev-cue.is-flash .ev-cue__st { animation: ev-go 0.9s var(--e-out); }
+@keyframes ev-go {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--dv) 70%, transparent), 0 0 34px var(--dv); }
+  to { box-shadow: 0 0 0 0.9rem transparent, 0 0 22px -4px color-mix(in srgb, var(--dv) 70%, transparent); }
+}
+
+/* ═══════════════════ LE PORTFOLIO : L'ENSEIGNE ═══════════════════
+   Tant qu'aucun événement n'est publié, l'état « en préparation » du socle
+   devient l'enseigne de la salle : un cadre sombre bordé d'ampoules, un
+   panneau rétroéclairé aux rails de lettres. events-scenes.js y range le
+   titre et pose les ampoules ; à l'arrivée, elles s'allument une à une, le
+   panneau s'éclaire, les lettres se posent, puis un chenillard lent tourne
+   (ordinateur, seulement quand l'enseigne se voit). C'est un objet : ses
+   couleurs ne changent pas avec le thème. */
+#portfolio .dv-empty.ev-marq {
+  grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-5) var(--s-7);
+  padding: 0; border-radius: 0; background: none; box-shadow: none; overflow: visible;
+}
+.ev-marq p { margin-top: 0; }
+.ev-marq__sign {
+  grid-column: 1 / -1; position: relative;
+  padding: clamp(1.15rem, 0.8rem + 1.2vw, 1.9rem);
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, var(--D-night-3), var(--D-night-2));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--D-dv) 38%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.08),
+    0 40px 80px -40px rgb(0 0 0 / 0.85),
+    0 0 90px -34px color-mix(in srgb, var(--D-dv) 55%, transparent);
+}
+html[data-palette='papier'] .ev-marq__sign { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--D-dv) 38%, transparent), 0 36px 70px -40px rgb(70 35 10 / 0.55); }
+.ev-marq__panel {
+  --rail: 1.05rem;
+  position: relative; display: grid; place-items: center; min-height: clamp(7.5rem, 4.5rem + 8vw, 12.5rem);
+  padding: clamp(1.25rem, 0.8rem + 2vw, 2.75rem) clamp(1rem, 0.4rem + 3vw, 3.5rem);
+  border-radius: 0.3rem; perspective: 700px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(var(--rail) - 1px), rgb(34 21 15 / 0.09) calc(var(--rail) - 1px) var(--rail)),
+    radial-gradient(120% 150% at 50% 50%, #fffaf0 0%, #f7e7cd 68%, #ead2aa 100%);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.3), inset 0 0 34px rgb(160 100 30 / 0.28), 0 0 44px -8px rgb(242 169 59 / 0.5);
+  color: #22150f; text-align: center;
+}
+/* Le panneau éteint, avant l'allumage (seulement si le script est là). */
+.ev-marq__panel::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: #1a0d12; opacity: 0;
+}
+.ev-marq.is-js:not(.is-lit) .ev-marq__panel::after { opacity: 0.72; }
+.ev-marq.is-lit .ev-marq__panel::after { animation: ev-flicker 0.9s steps(1, end); }
+@keyframes ev-flicker { 0% { opacity: 0.72; } 18% { opacity: 0.2; } 30% { opacity: 0.6; } 44% { opacity: 0.08; } 58% { opacity: 0.3; } 72%, 100% { opacity: 0; } }
+#portfolio .ev-marq .dv-empty__h {
+  max-width: 22ch;
+  font-family: var(--ff-d); font-size: clamp(1.65rem, 0.9rem + 3.1vw, 4.1rem); line-height: 1.04; letter-spacing: 0.015em;
+  font-variation-settings: 'wdth' 84, 'wght' 760; text-transform: uppercase; text-wrap: balance;
+  color: #22150f;
+}
+.ev-marq .dv-empty__h .ev-ch { display: inline-block; }
+.ev-marq__bulbs { position: absolute; inset: 0; pointer-events: none; }
+.ev-bulb {
+  position: absolute; width: 0.62rem; height: 0.62rem; margin: -0.31rem 0 0 -0.31rem; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #6a4a2c, #34200f);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.45);
+}
+.ev-bulb::after {
+  content: ''; position: absolute; inset: -0.08rem; border-radius: 50%;
+  background: radial-gradient(circle at 45% 40%, #fff7e6 0 22%, #ffd58c 42%, #f2a93b 64%, rgb(242 169 59 / 0) 74%);
+  box-shadow: 0 0 9px 2px rgb(242 169 59 / 0.5);
+  opacity: 0; transition: opacity 0.2s linear;
+}
+/* Sans script (ou en mouvement réduit) : allumées. */
+.ev-marq:not(.is-js) .ev-bulb::after, .ev-marq.is-on .ev-bulb::after { opacity: 1; }
+.ev-marq.is-on:not(.is-run) .ev-bulb::after { transition-delay: calc(var(--i, 0) * 14ms); }
+.ev-marq.is-run .ev-bulb::after { animation: ev-chase 2.7s linear infinite; animation-delay: calc(var(--k, 0) * -0.9s); }
+@keyframes ev-chase { 0%, 64% { opacity: 1; } 67%, 97% { opacity: 0.28; } 100% { opacity: 1; } }
+
+/* ═══════════════════ LA DEMANDE : L'INVITATION ═══════════════════
+   Le velours (les coulisses, un halo d'ambre au-dessus de la carte), puis la
+   carte d'invitation : un filet ambré doublé, des coins gravés, quatre actes
+   comme au programme. Le billet suit la saisie, à droite ; sur téléphone,
+   il se place juste avant le bouton, comme un récapitulatif. */
+.ev-ask {
+  background-image:
+    radial-gradient(64rem 26rem at 50% 26rem, color-mix(in srgb, var(--dv) 11%, transparent), transparent),
+    linear-gradient(180deg, var(--night) 0, var(--night-2) 12rem, var(--night-2) calc(100% - 12rem), var(--night) 100%);
+}
+/* Le rideau : des plis de velours aux deux bords, très bas. Ordinateur seulement. */
+.ev-ask::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: repeating-linear-gradient(90deg,
+    rgb(0 0 0 / 0.34) 0rem, rgb(0 0 0 / 0) 1.4rem,
+    color-mix(in srgb, var(--dv-dp) 9%, transparent) 2.3rem,
+    rgb(0 0 0 / 0) 3.2rem, rgb(0 0 0 / 0.34) 4.5rem);
+  -webkit-mask-image: linear-gradient(90deg, #000, transparent 7.5rem, transparent calc(100% - 7.5rem), #000), linear-gradient(180deg, transparent, #000 14rem, #000 calc(100% - 8rem), transparent);
+          mask-image: linear-gradient(90deg, #000, transparent 7.5rem, transparent calc(100% - 7.5rem), #000), linear-gradient(180deg, transparent, #000 14rem, #000 calc(100% - 8rem), transparent);
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+}
+html[data-palette='papier'] .ev-ask::before { display: none; }
+
+.ev-ask__head { margin-bottom: var(--s-7); }
+.ev-ask__head .dv-head__side { gap: var(--s-4); }
+.ev-ask .dv-reach { width: 100%; margin-top: 0; }
+.ev-ask .dv-reach a > span:first-child { color: var(--dv-lt); }
+/* Papier : sur la lueur ambrée de la section, l'ambre brûlé seul tombe à 4,48:1 ; un cran plus sombre. */
+html[data-palette='papier'] .ev-ask .dv-reach a > span:first-child { color: color-mix(in srgb, var(--dv-lt) 80%, #000); }
+.ev-ask .dv-reach a:hover, .ev-ask .dv-reach a:hover::after { color: var(--dv-lt); }
+.ev-ask .dv-reach a:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 2px; }
+
+/* ─── La carte ─── */
+.ev-invite {
+  --ev-gap: clamp(2rem, 1rem + 3vw, 4.5rem);
+  position: relative; isolation: isolate;
+  padding: clamp(1.5rem, 0.6rem + 3.4vw, 4.25rem);
+  border-radius: 0.375rem;
+  background:
+    radial-gradient(70% 40% at 50% 0%, color-mix(in srgb, var(--dv) 6%, transparent), transparent 75%),
+    linear-gradient(180deg, var(--night-3), color-mix(in srgb, var(--night-3) 70%, var(--night-2)));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--dv) 46%, transparent),
+    0 50px 90px -50px rgb(0 0 0 / 0.75),
+    0 0 120px -60px color-mix(in srgb, var(--dv) 40%, transparent);
+}
+html[data-palette='papier'] .ev-invite {
+  background:
+    radial-gradient(70% 40% at 50% 0%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 75%),
+    var(--night-3);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--dv-dp) 55%, transparent),
+    0 40px 80px -48px rgb(70 35 10 / 0.35);
+}
+/* Le filet intérieur, et les coins gravés (huit traits d'ambre). */
+.ev-invite::before, .ev-invite::after {
+  content: ''; position: absolute; inset: 0.55rem; z-index: -1; pointer-events: none; border-radius: 0.2rem;
+}
+.ev-invite::before { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 20%, transparent); }
+.ev-invite::after {
+  --c: color-mix(in srgb, var(--dv) 85%, transparent);
+  background:
+    linear-gradient(var(--c), var(--c)) left top / 1.6rem 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) left top / 1px 1.6rem no-repeat,
+    linear-gradient(var(--c), var(--c)) right top / 1.6rem 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) right top / 1px 1.6rem no-repeat,
+    linear-gradient(var(--c), var(--c)) left bottom / 1.6rem 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) left bottom / 1px 1.6rem no-repeat,
+    linear-gradient(var(--c), var(--c)) right bottom / 1.6rem 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) right bottom / 1px 1.6rem no-repeat;
+}
+html[data-palette='papier'] .ev-invite::after { --c: var(--dv-dp); }
+
+/* ─── Le formulaire : les actes à gauche, le billet à droite ─── */
+.ev-form {
+  display: grid; grid-template-columns: minmax(0, 1fr) 19.5rem; column-gap: var(--ev-gap);
+  align-items: start;
+}
+.ev-act, .ev-form__foot { grid-column: 1; }
+
+.ev-act {
+  position: relative; isolation: isolate;
+  min-width: 0; margin: 0; border: 0;
+  padding: 0 0 clamp(2.25rem, 1.8rem + 1.6vw, 3.4rem);
+}
+/* La poursuite : l'acte où l'on écrit reçoit une douce lumière. */
+.ev-act::before {
+  content: ''; position: absolute; inset: -1.25rem -1.5rem 0.75rem; z-index: -1; pointer-events: none; border-radius: 0.6rem;
+  background: radial-gradient(closest-side at 34% 30%, color-mix(in srgb, var(--dv) 11%, transparent), transparent);
+  opacity: 0; transition: opacity 0.8s var(--e-out);
+}
+.ev-act:focus-within::before { opacity: 1; }
+
+/* L'en-tête d'acte : « ACT I » en petites capitales ambrées, le titre en
+   serif d'affiche, un filet qui se trace, une lampe qui s'allume. */
+.ev-act__l {
+  float: left; width: 100%;
+  margin: 0 0 var(--s-5); padding: 0 2.5rem 1rem 0;
+  position: relative;
+}
+.ev-act__f { clear: both; }
+.ev-act__n {
+  display: inline-block; margin-right: 0.9rem; vertical-align: 0.35em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--dv-lt);
+}
+.ev-act__t {
+  font-family: var(--ff-p); font-weight: 400;
+  font-size: clamp(1.7rem, 1.25rem + 1.5vw, 2.6rem); line-height: 1.05; letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 96, 'wght' 380;
+  color: var(--fg);
+}
+.ev-act__l::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--dv) 75%, transparent), color-mix(in srgb, var(--dv) 22%, transparent) 55%, transparent);
+  transform-origin: 0 50%; transition: transform 1.2s var(--e-out);
+}
+.ev-form.is-js .ev-act:not(.is-in) .ev-act__l::after { transform: scaleX(0); }
+.ev-act__lamp {
+  position: absolute; right: 0.2rem; top: 0.7rem;
+  width: 0.8rem; height: 0.8rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--dv-lt) 75%, var(--cream-3));
+  transition: background-color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.ev-act.is-lit .ev-act__lamp {
+  background: var(--dv);
+  box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--dv) 20%, transparent), 0 0 16px 2px color-mix(in srgb, var(--dv) 70%, transparent);
+}
+
+.ev-act__f {
+  /* Alignés par le bas : un libellé sur deux lignes ne décale pas sa ligne. */
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end;
+  gap: clamp(1.4rem, 1.1rem + 0.8vw, 1.9rem) clamp(1.25rem, 0.8rem + 1.6vw, 2.5rem);
+}
+.ev-act__f > .is-wide { grid-column: 1 / -1; }
+
+/* ─── Les champs : une ligne d'invitation à remplir ─── */
+.ev-form .field { margin: 0; min-width: 0; }
+.ev-form .field label, .ev-form .ev-group > legend {
+  display: block; margin: 0 0 0.45rem; padding: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500; line-height: 1.35;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
+  transition: color 0.35s var(--e-out);
+}
+.ev-form .field__opt { opacity: 1; color: var(--cream-3); text-transform: none; letter-spacing: 0.02em; font-weight: 400; }
+.ev-form .field:focus-within label { color: var(--dv-lt); }
+
+.ev-form .field input, .ev-form .field textarea, .ev-form .field select {
+  display: block; width: 100%; min-height: 3rem; margin: 0;
+  padding: 0.65rem 0 0.7rem;
+  border: 0; border-bottom: 1px solid var(--cream-3); border-radius: 0;
+  background: linear-gradient(var(--dv-lt), var(--dv-lt)) 50% 100% / 0% 2px no-repeat;
+  color: var(--fg); caret-color: var(--dv-lt);
+  font-family: var(--ff-t); font-size: 1.0625rem; line-height: 1.45;
+  transition: background-size 0.55s var(--e-out), border-color 0.35s var(--e-out);
+}
+.ev-form .field input::placeholder, .ev-form .field textarea::placeholder { color: var(--cream-3); opacity: 1; }
+.ev-form .field input:hover, .ev-form .field textarea:hover, .ev-form .field select:hover { border-color: var(--cream-2); }
+.ev-form .field input:focus, .ev-form .field textarea:focus, .ev-form .field select:focus,
+.ev-form .field input:focus-visible, .ev-form .field textarea:focus-visible, .ev-form .field select:focus-visible {
+  outline: none; background-color: transparent; background-size: 100% 2px; border-color: transparent;
+}
+/* Le socle marque d'un trait à gauche les champs remplis : sur une ligne
+   d'invitation, c'est la lampe de l'acte qui le dit. */
+.ev-form .field input:user-valid, .ev-form .field textarea:user-valid,
+.ev-form .field input:user-invalid, .ev-form .field textarea:user-invalid { border-left: 0; }
+@supports not selector(:user-valid) {
+  .ev-form .field input:not(:placeholder-shown):valid, .ev-form .field textarea:not(:placeholder-shown):valid { border-left: 0; }
+}
+/* Le remplissage automatique du navigateur garde la couleur de la carte. */
+.ev-form .field input:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg);
+  -webkit-box-shadow: 0 0 0 100px var(--night-3) inset;
+  transition: background-color 9999s;
+}
+.ev-form .field input[type='date'] { min-height: 3rem; }
+.ev-form .field input[type='date']::-webkit-calendar-picker-indicator { opacity: 0.75; cursor: pointer; }
+
+/* La liste : un chevron ambré, la flèche native en moins. */
+.ev-sel { position: relative; display: block; }
+.ev-sel::after {
+  content: ''; position: absolute; right: 0.35rem; top: 50%; width: 0.55rem; height: 0.55rem; margin-top: -0.4rem;
+  border-right: 1.5px solid var(--dv-lt); border-bottom: 1.5px solid var(--dv-lt);
+  rotate: 45deg; pointer-events: none; transition: translate 0.4s var(--e-out);
+}
+.ev-sel:focus-within::after { translate: 0 2px; }
+.ev-form .field select { appearance: none; padding-right: 2rem; cursor: pointer; text-overflow: ellipsis; }
+.ev-form .field select option { background: var(--night-3); color: var(--fg); }
+
+/* Les notes : du papier réglé, comme le dos d'un carton. */
+.ev-form .field textarea {
+  min-height: 9.5rem; resize: vertical; padding-top: 0.35rem; line-height: 2rem;
+  background:
+    linear-gradient(var(--dv-lt), var(--dv-lt)) 50% 100% / 0% 2px no-repeat,
+    repeating-linear-gradient(180deg, transparent 0 calc(2rem - 1px), color-mix(in srgb, var(--fg) 12%, transparent) calc(2rem - 1px) 2rem) 0 0.35rem / 100% calc(100% - 0.35rem) no-repeat;
+}
+.ev-form .field textarea:focus {
+  background-size: 100% 2px, 100% calc(100% - 0.35rem);
+}
+
+/* Les erreurs : lisibles, à taille de texte. */
+#inquiry .field.is-err input, #inquiry .field.is-err textarea { border-bottom-color: var(--ev-err); }
+#inquiry .field.is-err label { color: var(--ev-err); }
+#inquiry .field__err {
+  display: flex; align-items: center; gap: 0.45rem; margin-top: 0.45rem;
+  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; color: var(--ev-err);
+}
+#inquiry .field__err::before {
+  content: ''; width: 0.5rem; height: 0.5rem; flex: none; rotate: 45deg; background: var(--ev-err);
+}
+#inquiry { --ev-err: #ffb4a6; }
+html[data-palette='papier'] #inquiry { --ev-err: #a3261c; }
+
+/* ─── Les services : des pastilles au losange ─── */
+.ev-group { margin: 0; padding: 0; border: 0; min-width: 0; }
+.ev-group > legend { float: left; width: 100%; margin-bottom: 0.85rem; }
+.ev-group > legend + * { clear: both; }
+.ev-chips { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.ev-form .chip { position: relative; display: inline-flex; cursor: pointer; }
+.ev-form .chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.ev-form .chip span {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  min-height: 2.75rem; padding: 0.5rem 1.05rem 0.5rem 0.9rem;
+  border: 1px solid var(--cream-3); border-radius: 999px;
+  background: transparent; color: var(--fg);
+  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 500; line-height: 1.25; letter-spacing: 0; text-transform: none;
+  transition: background-color 0.4s var(--e-out), border-color 0.35s var(--e-out), color 0.35s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.ev-chips .chip span::before {
+  content: ''; flex: none; width: 0.5rem; height: 0.5rem; rotate: 45deg;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+  transition: background-color 0.3s var(--e-out), box-shadow 0.3s var(--e-out), rotate 0.5s var(--e-out);
+}
+.ev-form .chip:hover span { border-color: var(--fg); }
+.ev-chips .chip input:checked + span {
+  background: var(--dv); border-color: var(--dv); color: var(--dv-ink);
+  box-shadow: 0 0 22px -6px color-mix(in srgb, var(--dv) 75%, transparent);
+}
+.ev-chips .chip input:checked + span::before { background: currentColor; rotate: 225deg; }
+.ev-form .chip input:focus-visible + span { outline: 2px solid var(--dv-lt); outline-offset: 3px; }
+
+/* ─── Le niveau : des places, une seule choisie ─── */
+.ev-seats { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr)); gap: 0.6rem; }
+.ev-seats .chip { display: flex; }
+.ev-seats .chip span {
+  width: 100%; min-height: 3.4rem; padding: 0.75rem 1rem; border-radius: 0.6rem; gap: 0.8rem;
+}
+.ev-seats .chip span::before {
+  content: ''; flex: none; width: 1.05rem; height: 1.05rem; border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+  transition: box-shadow 0.35s var(--e-out), background-color 0.35s var(--e-out);
+}
+.ev-seats .chip input:checked + span {
+  border-color: var(--dv); color: var(--fg);
+  background: color-mix(in srgb, var(--dv) 15%, transparent);
+  box-shadow: inset 0 0 0 1px var(--dv), 0 0 26px -10px color-mix(in srgb, var(--dv) 80%, transparent);
+}
+.ev-seats .chip input:checked + span::before {
+  background: var(--dv-lt);
+  box-shadow: inset 0 0 0 1.5px var(--dv-lt), inset 0 0 0 0.3rem var(--night-3);
+}
+
+/* Le champ qu'un lien vient d'orienter (« Plan a wedding… ») s'éclaire. */
+#inquiry .field.is-picked select { box-shadow: none; background-size: 100% 2px; }
+#inquiry [data-group].is-picked { box-shadow: none; }
+#inquiry [data-group].is-picked .chip input:checked + span { box-shadow: 0 0 0 4px color-mix(in srgb, var(--dv) 38%, transparent), 0 0 30px -6px var(--dv); }
+
+/* ─── Le pied : le bouton-billet ─── */
+.ev-form__foot {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-5);
+  margin-top: 0; padding-top: var(--s-5);
+  border-top: 1px dashed color-mix(in srgb, var(--dv) 40%, transparent);
+}
+.ev-send.dv-btn {
+  min-height: 3.6rem; padding: 0 0 0 1.6rem; gap: 0; border-radius: 0.5rem;
+  background: var(--dv); color: var(--dv-ink);
+  font-size: 1rem; font-weight: 600;
+  box-shadow: 0 18px 40px -22px color-mix(in srgb, var(--dv) 90%, transparent);
+  transition: color 0.45s var(--e-out), box-shadow 0.6s var(--e-out);
+}
+.ev-send.dv-btn::before { background: var(--fg); }
+.ev-send.dv-btn:hover, .ev-send.dv-btn:focus-visible { color: var(--bg); }
+.ev-send.dv-btn:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 4px; }
+.ev-send__t { padding-right: 1.3rem; }
+.ev-send__s {
+  align-self: stretch; display: grid; place-items: center; width: 3.6rem;
+  border-left: 1.5px dashed color-mix(in srgb, currentColor 45%, transparent);
+}
+.ev-send__s svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.45s var(--e-out); }
+.ev-send:hover .ev-send__s svg { transform: translateX(3px); }
+/* Prêt à partir (nom, téléphone, email) : le bouton s'allume, une fois. */
+.ev-send.is-ready { box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--dv) 22%, transparent), 0 18px 46px -18px var(--dv); }
+.ev-send.is-ready.is-glint::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.55) 50%, transparent 65%) -150% 0 / 60% 100% no-repeat;
+  animation: ev-glint 1.1s var(--e-out) both;
+}
+@keyframes ev-glint { to { background-position: 250% 0; } }
+.ev-form .dv-form__note {
+  flex: 1 1 14rem;
+  font-family: var(--ff-t); font-size: 0.9375rem; letter-spacing: 0; color: var(--cream-2);
+}
+
+/* ─── Le billet ───
+   L'inverse de la carte : un carton champagne sur la nuit (Vert, Nuit), un
+   billet de velours sur le jour (Papier). Deux parties, séparées par une
+   ligne prédécoupée ; deux encoches mordent les bords. */
+.ev-stub {
+  --t-bg: color-mix(in srgb, var(--L-night) 85%, var(--L-dv));
+  --t-bg-2: color-mix(in srgb, var(--L-night) 76%, var(--L-dv));
+  --t-fg: var(--L-cream); --t-fg-2: var(--L-cream-2); --t-dv: var(--L-dv);
+  --t-acc: color-mix(in srgb, var(--L-dv-lt) 88%, var(--L-cream));   /* l'ambre brûlé, un ton plus profond : 5:1 sur tout le carton */
+  --t-rule: color-mix(in srgb, var(--L-cream) 22%, transparent);
+  --t-off: color-mix(in srgb, var(--L-cream) 30%, transparent);
+  grid-column: 2; grid-row: 1 / span 5; align-self: start;
+  position: sticky; top: calc(var(--bar-h) + 1.25rem);
+  filter: drop-shadow(0 26px 34px rgb(0 0 0 / 0.42)) drop-shadow(0 0 30px color-mix(in srgb, var(--dv) 18%, transparent));
+  color: var(--t-fg);
+  font-family: var(--ff-t);
+}
+html[data-palette='papier'] .ev-stub {
+  --t-bg: var(--D-night-3); --t-bg-2: var(--D-night);
+  --t-fg: var(--D-cream); --t-fg-2: var(--D-cream-2); --t-acc: var(--D-dv-lt); --t-dv: var(--D-dv);
+  --t-rule: color-mix(in srgb, var(--D-cream) 20%, transparent);
+  --t-off: color-mix(in srgb, var(--D-cream) 28%, transparent);
+  filter: drop-shadow(0 24px 30px rgb(60 25 10 / 0.28));
+}
+.ev-stub__main, .ev-stub__foil { position: relative; padding: 1.4rem 1.5rem; }
+.ev-stub__main {
+  padding-bottom: 1.6rem;
+  background:
+    radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--t-dv) 22%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--t-bg), var(--t-bg-2));
+  border-radius: 0.6rem 0.6rem 0 0;
+  -webkit-mask: radial-gradient(circle 0.8rem at 0 100%, #0000 98%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 0.8rem at 100% 100%, #0000 98%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 0.8rem at 0 100%, #0000 98%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 0.8rem at 100% 100%, #0000 98%, #000) right / 51% 100% no-repeat;
+}
+/* La ligne prédécoupée, au bas du billet : elle reste quand le talon part. */
+.ev-stub__main::after {
+  content: ''; position: absolute; left: 1.2rem; right: 1.2rem; bottom: 0; height: 2px;
+  background: repeating-linear-gradient(90deg, var(--t-off) 0 0.45rem, transparent 0.45rem 0.8rem);
+}
+.ev-stub__foil {
+  padding-top: 1.1rem;
+  background: var(--t-bg-2);
+  border-radius: 0 0 0.6rem 0.6rem;
+  -webkit-mask: radial-gradient(circle 0.8rem at 0 0, #0000 98%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 0.8rem at 100% 0, #0000 98%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 0.8rem at 0 0, #0000 98%, #000) left / 51% 100% no-repeat,
+                radial-gradient(circle 0.8rem at 100% 0, #0000 98%, #000) right / 51% 100% no-repeat;
+  will-change: transform;
+}
+.ev-stub .ev-stub__top {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem;
+  padding-bottom: 0.85rem; margin: 0 0 1.1rem; border-bottom: 1px solid var(--t-rule);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; color: var(--t-fg-2);
+}
+.ev-stub .ev-stub__k {
+  margin: 0;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--t-acc);
+}
+.ev-stub .ev-stub__h {
+  min-height: 2.3em; margin: 0.35rem 0 1.1rem; overflow: hidden;
+  font-family: var(--ff-p); font-weight: 400;
+  font-size: clamp(1.55rem, 1.3rem + 0.6vw, 1.9rem); line-height: 1.12; letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 72, 'wght' 400;
+  color: var(--t-fg); text-wrap: balance;
+}
+.ev-stub__h [data-st] { display: block; }
+.ev-stub__h [data-st].is-empty { color: var(--t-fg-2); }
+.ev-stub__rows { display: grid; }
+.ev-stub .ev-stub__rows p {
+  margin: 0; display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); align-items: baseline; gap: 0.75rem;
+  padding: 0.55rem 0; border-top: 1px solid var(--t-rule);
+}
+.ev-stub__rows span {
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-fg-2);
+}
+.ev-stub__rows b {
+  min-height: 1.4em; font-weight: 500; font-size: 0.9875rem; line-height: 1.4; color: var(--t-fg);
+  overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+/* Une case encore vide : la ligne pointillée d'un carton à remplir. */
+.ev-stub__rows b:empty {
+  display: block; height: 1.1em; min-height: 0;
+  background: radial-gradient(circle, var(--t-off) 1px, transparent 1.4px) 0 100% / 7px 4px repeat-x;
+}
+.ev-stub .ev-stub__acts {
+  display: flex; transition: opacity 0.4s var(--e-out); align-items: center; gap: 0.4rem; margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--t-rule);
+}
+.ev-stub__acts span {
+  margin-right: auto;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t-fg-2);
+}
+.ev-stub__acts i {
+  display: inline-grid; place-items: center; min-width: 2.1rem; height: 1.7rem; padding: 0 0.4rem; border-radius: 999px;
+  font-family: var(--ff-p); font-style: normal; font-size: 0.9rem; line-height: 1; color: var(--t-fg-2);
+  box-shadow: inset 0 0 0 1px var(--t-off);
+  transition: background-color 0.5s var(--e-out), color 0.5s var(--e-out), box-shadow 0.5s var(--e-out);
+}
+.ev-stub__acts i.is-cur { box-shadow: inset 0 0 0 1.5px var(--t-acc); color: var(--t-fg); }
+.ev-stub__acts i.is-on {
+  background: var(--t-dv); color: var(--D-night-2);
+  box-shadow: 0 0 14px -2px color-mix(in srgb, var(--t-dv) 80%, transparent);
+}
+.ev-stub__foil .ev-stub__rows p:first-child { border-top: 0; }
+
+/* Le tampon : invisible tant que la demande n'est pas prête. */
+.ev-stub__stamp {
+  position: absolute; right: 1.25rem; bottom: 1.35rem;
+  padding: 0.45rem 0.7rem; border-radius: 0.3rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--t-acc); box-shadow: inset 0 0 0 2px var(--t-acc);
+  background: color-mix(in srgb, var(--t-bg) 70%, transparent);
+  rotate: -9deg; opacity: 0; visibility: hidden;
+}
+.ev-stub.is-torn .ev-stub__stamp { opacity: 1; visibility: visible; }
+/* Une fois la demande prête, le tampon prend la place des lampes. */
+.ev-stub.is-torn .ev-stub__acts { opacity: 0; }
+.ev-stub.is-torn .ev-stub__foil { display: none; }
+
+/* L'impression : une ligne qui change se tape, de gauche à droite. */
+.ev-stub [data-st].is-print { animation: ev-print 0.55s steps(11, end) both; }
+@keyframes ev-print { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.ev-stub__h [data-st].is-roll { animation: ev-roll 0.7s var(--e-out) both; }
+@keyframes ev-roll { from { transform: translateY(0.7em); opacity: 0; } to { transform: none; opacity: 1; } }
+/* Le billet complet : un reflet de dorure le traverse, une fois. */
+.ev-stub__main::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: linear-gradient(110deg, transparent 38%, rgb(255 255 255 / 0.42) 50%, transparent 62%) -160% 0 / 70% 100% no-repeat;
+  opacity: 0;
+}
+.ev-stub.is-shine .ev-stub__main::before { opacity: 1; animation: ev-shine 1.4s var(--e-out) both; }
+@keyframes ev-shine { to { background-position: 260% 0; } }
+
+/* ─── La demande prête : le billet et le récapitulatif ─── */
+.ev-done.dv-done {
+  display: grid; grid-template-columns: 19.5rem minmax(0, 1fr); gap: var(--ev-gap); align-items: start;
+  padding: 0; border-radius: 0; background: none; box-shadow: none;
+}
+.ev-done[hidden] { display: none; }
+.ev-done__slot .ev-stub { position: relative; top: auto; grid-column: auto; grid-row: auto; }
+.ev-done__txt .ev-done__k {
+  margin: 0; max-width: none;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--dv-lt);
+}
+.ev-done.dv-done h3 {
+  margin-top: 0.4rem;
+  font-family: var(--ff-p); font-weight: 400; text-transform: none;
+  font-size: clamp(2rem, 1.4rem + 2.2vw, 3.4rem); line-height: 1.02; letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 144, 'wght' 380;
+}
+.ev-done h3:focus { outline: none; }
+.ev-done__txt p { max-width: 36rem; margin-top: var(--s-4); font-size: var(--fs-body); line-height: 1.6; color: var(--cream-2); }
+.ev-done .dv-link { color: var(--fg); }
+.ev-done .dv-link:hover { color: var(--dv-lt); }
+.ev-done .dv-link:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 3px; }
+.ev-done.dv-done dl {
+  grid-template-columns: minmax(7rem, 13rem) minmax(0, 1fr); gap: 0; margin-top: var(--s-6);
+  border-top: 1px solid color-mix(in srgb, var(--dv) 40%, transparent);
+  font-size: var(--fs-sm);
+}
+.ev-done.dv-done dt, .ev-done.dv-done dd { padding: 0.8rem 0; border-bottom: 1px dotted var(--line); }
+.ev-done.dv-done dt { padding-right: 1rem; font-size: 0.75rem; color: var(--cream-2); }
+.ev-done.dv-done dd { color: var(--fg); overflow-wrap: anywhere; }
+
+/* ═══════════════════ LES AUTRES DIVISIONS ═══════════════════ */
+.ev-next { background-image: linear-gradient(180deg, var(--night), var(--night-2)); }
+
+/* ═══════════════════ ÉCRANS MOYENS ET TÉLÉPHONE ═══════════════════ */
+@media (max-width: 64rem) {
+  .ev-fam__q { grid-template-columns: 2.4rem minmax(0, 1fr) 2.5rem; }
+  .ev-fam__peek { display: none; }
+  .ev-fam__in { grid-template-columns: 1fr; padding-left: calc(2.4rem + var(--s-5)); }
+  .ev-fam__in > .ev-fam__list { padding-bottom: 0; }
+  .ev-passes { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 0.6rem; }
+  .ev-cue { grid-template-columns: minmax(0, 1fr) auto; }
+  .ev-cue__n { grid-column: 1; grid-row: 1; }
+  .ev-cue__st { grid-column: 2; grid-row: 1; }
+  .ev-cue__h, .ev-cue__p { grid-column: 1 / -1; }
+  .ev-ask::before { display: none; }
+}
+/* Une colonne : le billet passe juste avant le bouton, en récapitulatif. */
+@media (max-width: 60rem) {
+  .ev-form { grid-template-columns: minmax(0, 1fr); }
+  .ev-stub { grid-column: 1; grid-row: auto; position: relative; top: auto; order: 1; width: 100%; max-width: 24rem; margin: 0 0 var(--s-6); }
+  .ev-act { order: 0; }
+  .ev-form__foot { order: 2; }
+  .ev-done.dv-done { grid-template-columns: minmax(0, 1fr); }
+  .ev-done__slot .ev-stub { margin: 0; }
+}
+@media (max-width: 44rem) {
+  #portfolio .dv-empty.ev-marq { grid-template-columns: minmax(0, 1fr); }
+  .ev-marq .dv-btn { justify-self: start; }
+}
+@media (max-width: 40rem) {
+  .ev-hero__in { justify-items: start; text-align: left; }
+  .ev-hero__copy { justify-items: start; }
+  .ev-hero .dv-h1, .ev-hero .dv-lede { margin-inline: 0; }
+  .ev-hero .dv-acts { justify-content: flex-start; }
+  .ev-hero__meta.dv-hero__meta { justify-content: flex-start; gap: 0.5rem 1.4rem; text-align: left; }
+  .ev-fam__q { grid-template-columns: minmax(0, 1fr) 2.5rem; gap: var(--s-4); }
+  .ev-fam__n { display: none; }
+  .ev-fam__ic { width: 2.5rem; height: 2.5rem; }
+  .ev-fam__in { padding-left: 0; }
+  .ev-fam__list { columns: 1; }
+  .ev-prog__note { text-align: left; }
+  .ev-cue { padding-left: 0.9rem; }
+  .ev-cue__st { min-width: 0; }
+
+  .ev-bokeh .is-x { display: none; }
+  .ev-menu__head span:nth-of-type(1), .ev-menu__head span:nth-of-type(3) { display: none; }
+  .ev-menu { padding-inline: 1.5rem; }
+  .ev-menu__list > li { gap: 0.4rem; }
+  .ev-menu__t { max-width: calc(100% - 3.4rem); font-size: 1.05rem; }
+  .ev-menu__dots { min-width: 0.9rem; flex-basis: 0.9rem; }
+  .ev-passes { grid-template-columns: minmax(0, 1fr); row-gap: 0.4rem; max-width: 24rem; margin-inline: auto; }
+  .ev-pass:nth-child(odd) { rotate: -0.7deg; }
+  .ev-pass:nth-child(even) { rotate: 0.8deg; }
+  .ev-pass__card::before { content: none; }
+  .ev-pass__p { margin-bottom: 1.3rem; }
+  .ev-fix { width: 1.3rem; }
+  .ev-beam { width: 40rem; }
+
+  .ev-invite { padding: 1.6rem 1.15rem 1.4rem; }
+  .ev-invite::before, .ev-invite::after { inset: 0.4rem; }
+  .ev-act__f { grid-template-columns: minmax(0, 1fr); }
+  .ev-act::before { inset: -0.75rem -0.6rem 0.5rem; }
+  .ev-act__n { display: block; margin: 0 0 0.3rem; }
+  .ev-seats { grid-template-columns: minmax(0, 1fr); }
+  .ev-chips { gap: 0.45rem; }
+  .ev-chips .chip span { gap: 0.5rem; padding: 0.45rem 0.85rem 0.45rem 0.75rem; font-size: 0.875rem; }
+  .ev-send.dv-btn { width: 100%; justify-content: space-between; }
+  .ev-done.dv-done dl { grid-template-columns: minmax(0, 1fr); }
+  .ev-done.dv-done dt { padding-bottom: 0.15rem; border-bottom: 0; }
+  .ev-done.dv-done dd { padding-top: 0; }
+}
+
+/* ─────────────── Sans mouvement ───────────────
+   Tout est posé et allumé : la poursuite sur la famille ouverte, le
+   programme imprimé, les badges immobiles, le rideau ouvert et les cinq
+   projecteurs allumés, l'enseigne allumée sans chenillard. */
+@media (prefers-reduced-motion: reduce) {
+  .ev-fam__a, .ev-fam__t, .ev-fam__ic, .ev-cue::before, .ev-cue::after,
+  .ev-prog.is-js .ev-fam__list li, .ev-prog.is-js .ev-fam__side,
+  .ev-spot, .ev-menu::before, .ev-menu__list > li::before, .ev-menu__t, .ev-menu__dots::after,
+  .ev-pass__sheen, .ev-pass__tilt::before, .ev-fix__lens, .ev-beam, .ev-bulb::after,
+  .ev-act::before, .ev-act__l::after, .ev-act__lamp, .ev-form .field input, .ev-form .field textarea, .ev-form .field select,
+  .ev-form .chip span, .ev-stub__acts i { transition: none !important; }
+  .ev-prog.is-js .ev-fam__in::before, .ev-prog.is-js .ev-fam__in::after { display: none; }
+  .ev-fam__q:hover .ev-fam__t, .ev-menu__list > li:is(:hover, :focus-within, .is-lit) .ev-menu__t { transform: none; }
+  .ev-bokeh i, .ev-pass.is-on .ev-pass__sheen, .ev-cue.is-flash .ev-cue__st, .ev-marq.is-lit .ev-marq__panel::after { animation: none; }
+  .ev-stub [data-st].is-print, .ev-stub__h [data-st].is-roll, .ev-stub.is-shine .ev-stub__main::before,
+  .ev-send.is-ready.is-glint::after { animation: none; }
+  .ev-stub.is-shine .ev-stub__main::before { opacity: 0; }
+}

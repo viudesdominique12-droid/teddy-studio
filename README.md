@@ -7,7 +7,7 @@ Site source analysé : `ethiopianfilmoffice.com` (relevé le 18/09/2026).
 
 ---
 
-## Reprendre le projet (état au 27/09/2026)
+## Reprendre le projet (état au 18/10/2026)
 
 **En ligne** : https://viudesdominique12-droid.github.io/teddy-studio/ — c'est la branche `main`, publiée automatiquement par GitHub Pages à chaque envoi (`.github/workflows/pages.yml`, environ une minute).
 
@@ -21,12 +21,16 @@ npm run build:pages   # construit comme GitHub Pages (sous /teddy-studio/)
 Publier = envoyer sur `main` (`git push origin main`) : le site se reconstruit et se met en ligne tout seul.
 
 ### Où en est le site
-La refonte est en ligne, avec **trois thèmes** que le client compare : Vert (le thème de marque), Nuit et Papier. Un sélecteur (au milieu du bord droit) ou `?palette=vert|nuit|papier` les fait changer. Quand le client aura choisi : héberger les polices du thème retenu dans `public/fonts/` (elles viennent de Google Fonts le temps de l'essai), retirer le sélecteur, en faire le thème par défaut.
+La version en ligne (27/09) proposait trois thèmes à comparer. **Depuis le 18/10, le site n'a plus qu'un thème : le Vert** (Nuit et Papier archivés dans `docs/archive/`). Chaque page de division a en plus sa propre couleur de page (`division.css`, « L'IMMERSION »).
+
+### Le brief du client (17/10/2026) : sept divisions
+Le site est devenu celui d'une société média, événements et production en sept divisions (Live Streaming, Event Organizing, AI Production, Music Production, Feature Film, Documentary, Equipment Rentals), chacune avec sa page, son formulaire et son portfolio, plus Services, Portfolio, About et Contact. Tout est raconté dans `REFONTE.md`, vague 16. **Ce que le client doit valider ou fournir** : `docs/A-VALIDER-CLIENT.md`.
 
 ### Les documents, du plus récent au plus ancien
 | Fichier | Contenu |
 |---|---|
-| `REFONTE.md` | **À lire en premier.** Le journal de la refonte, vague par vague (1 à 15, 26–27/09 ; la 11 est la fluidité, mesurée dans Safari), avec les demandes de Dominique mot pour mot, et **« Pistes pour la suite »** : tout ce qui reste à faire ou à faire valider par le client. |
+| `docs/A-VALIDER-CLIENT.md` | La liste de ce que le client doit valider ou fournir (adresses de réception, films, photos, sons, inventaire, textes nouveaux). |
+| `REFONTE.md` | **À lire en premier.** Le journal de la refonte, vague par vague (1 à 15, 26–27/09 ; la 11 est la fluidité, mesurée dans Safari ; la 16, le brief du 17/10 et les sept divisions), avec les demandes de Dominique mot pour mot, et **« Pistes pour la suite »** : tout ce qui reste à faire ou à faire valider par le client. |
 | `CREDITS.md` | Licences de chaque média, modèle 3D et police. Certains médias sont encore **à confirmer** par le client. |
 | `DECISIONS.md` | Les décisions de Dominique (périmètre, menu, fond vert…). |
 | `DESIGN_SYSTEM.md`, `CONCEPTS.md`, `AUDIT.md`, `RESEARCH.md` | Les phases précédentes (24–26/09) : audit du site de départ, recherche de références, pistes de concept, système de design. Utiles pour le *pourquoi* ; la refonte en ligne a évolué depuis. |
@@ -35,8 +39,10 @@ La refonte est en ligne, avec **trois thèmes** que le client compare : Vert (le
 | `docs/archive/` | L'ancienne page d'accueil, pour revenir en arrière si besoin. |
 
 ### Où est le code
-- **Pages** : `index.html` (accueil), `locations.html`, `works.html`, `book.html`, `vacancy.html`, `404.html`. Les morceaux communs sont dans `src/partials/` (`head`, `bar`, `footer`), insérés par `plugins/html-include.js`.
-- **Styles** (`src/styles/`) : `tokens.css` (les neuf couleurs de base : tout le site en dérive), `themes.css` (Nuit et Papier), `home.css` (l'accueil), `refonte.css` (la barre, le pied de page, l'ouverture), `pages.css` et `components.css` (pages intérieures).
+- **Pages** : `index.html` (accueil) ; les sept divisions `live-streaming.html`, `event-organizing.html`, `ai-production.html`, `music-production.html`, `feature-film.html`, `documentary.html`, `equipment-rentals.html` ; `services.html`, `portfolio.html`, `about.html`, `contact.html` ; et les pages d'avant, `locations.html`, `works.html`, `book.html`, `vacancy.html`, `404.html`. Les morceaux communs sont dans `src/partials/` (`head`, `bar`, `footer`, et pour les divisions `dv-next`, `dv-quick`, `dv-reach`), insérés par `plugins/html-include.js`.
+- **Données** (`src/data/`) : `divisions.js`, `portfolio.js`, `equipment.js` — pour ajouter une division, un projet ou un appareil, on ajoute une fiche ici ; `site.js` porte les coordonnées et les adresses de réception des formulaires (`inquiry`).
+- **Divisions** : `src/styles/division.css` et `src/js/division.js` (le socle commun), `src/js/inquiry.js` (tous les formulaires), puis une feuille et un script par page dans `src/styles/pages/` et `src/js/pages/`.
+- **Styles** (`src/styles/`) : `tokens.css` (les neuf couleurs de base : tout le site en dérive), `home.css` (l'accueil), `refonte.css` (la barre, le pied de page, l'ouverture), `pages.css` et `components.css` (pages intérieures).
 - **Scripts** (`src/js/`) : `home.js` (démarrage de l'accueil), `kit3d.js` (le matériel en 3D, Three.js), `reel3d.js` (la bobine des lieux, WebGL), `services.js` (les listes qu'on déplie : services et « Why us »), `palette.js` (les thèmes), `motion.js` (la barre, l'index, le curseur), `wipe.js` (le changement de page), `page.js` / `book.js` (pages intérieures).
 - **Médias** : `public/` (photos déjà préparées, modèles 3D dans `public/kit3d/`, polices dans `public/fonts/`).
 

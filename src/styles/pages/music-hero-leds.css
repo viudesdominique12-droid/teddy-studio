@@ -1,0 +1,54 @@
+/* ══════════════════════════════════════════════════════════════
+   MUSIC — l'ouverture « le mur de LEDs » (choisie le 18/10/2026)
+
+   Le fond de l'ouverture est l'écran de LEDs d'une scène de concert
+   (`music-hero-leds.js`) : deux canevas superposés dans la scène, les
+   diodes éteintes dessous, les diodes allumées dessus. Le texte ne bouge
+   pas : c'est le mur qui s'assombrit derrière lui. Toutes les règles sont
+   rangées sous `.mu-hero--leds` (ou dans `.mu-leds`, créé par le script).
+   ══════════════════════════════════════════════════════════════ */
+
+.mu-hero--leds { background-color: var(--bg); }
+.mu-hero--leds .mu-stage { background: var(--bg); }
+
+.mu-leds { position: absolute; inset: 0; will-change: transform; }
+.mu-hero--leds .mu-leds canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; will-change: auto;
+}
+
+/* La mise sous tension : les diodes éteintes apparaissent de haut en bas,
+   au pas de la ligne que le script fait descendre sur le mur. */
+.mu-leds__off { clip-path: inset(0 0 100% 0); transition: clip-path 0.85s cubic-bezier(0.55, 0, 0.45, 1); }
+.mu-leds.is-on .mu-leds__off { clip-path: inset(0); }
+@media (prefers-reduced-motion: reduce) { .mu-leds__off { transition: none; } }
+
+/* Le voile : le mur se fond dans la nuit de la section suivante, en bas
+   seulement (le reste de l'assombrissement est fait diode par diode). */
+.mu-hero--leds .dv-hero__veil {
+  background: linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 78%, transparent) 5%, color-mix(in srgb, var(--bg) 30%, transparent) 12%, transparent 22%);
+}
+
+/* La lueur du temps fort derrière « Your Identity. » : plus large, plus
+   douce, comme le rose du mur qui passe à travers le titre. */
+.mu-hero--leds .mu-pulse {
+  inset: -0.5em -0.7em -0.4em;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--dv) 26%, transparent), transparent);
+}
+
+/* Sans canevas : une trame fixe de diodes éteintes et une lueur rose. */
+.mu-leds.is-static {
+  background:
+    radial-gradient(60% 45% at 50% 22%, color-mix(in srgb, var(--dv) 20%, transparent), transparent 70%),
+    radial-gradient(circle, color-mix(in srgb, var(--fg) 9%, transparent) 0 31%, transparent 35%) 50% 50% / 14px 14px;
+}
+.mu-leds.is-static canvas { display: none; }
+
+/* Au doigt, pas de flou derrière le bouton de verre (le mur bouge dessous à
+   chaque image) : un fond un peu plus dense à la place. */
+@media (pointer: coarse) {
+  .mu-hero--leds .dv-btn--ghost {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
+  }
+}

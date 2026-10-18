@@ -1,0 +1,739 @@
+/* ══════════════════════════════════════════════════════════════
+   START A PRODUCTION — le bureau des autorisations (18/10/2026)
+   Dominique : « améliore-moi les autres pages avec la même logique de
+   customisation de thème ». La demande de production devient le guichet du
+   bureau du film : un tampon dateur à la vraie date et à l'heure d'Addis,
+   un formulaire numéroté comme une demande d'autorisation (chaque partie a
+   sa case « Office use » où le tampon « Cleared » tombe quand elle est
+   remplie), et une fiche de production qui se remplit à côté, ligne à
+   ligne, pendant la saisie. Les champs, leurs noms, leurs valeurs et ce
+   qui est obligatoire ne changent pas.
+
+   LA COULEUR : le vert olive d'un sous-main de bureau, sous une lampe ; le
+   rouge terre cuite d'un tampon encreur ; la fiche sur un papier vert
+   pâle de formulaire administratif. Sur le contenu (#main) et le pied de
+   page seulement : la barre, le menu et le reste de la marque ne changent
+   pas. Contrastes mesurés :
+     sur --night #1b2517 : crème 12,98:1 · crème-2 8,35:1 · crème-3 6,07:1
+                           (5,16:1 sur --night-3) · tampon #ec5d3b 4,68:1
+                           (grands textes, cases) · tampon clair 6,96:1
+     fiche #ebeedb : encre 12,1:1 · encre-2 6,3:1 · encre-3 4,8:1 · rouge 5,3:1
+     bouton : encre #160d09 sur le tampon 5,38:1
+   ══════════════════════════════════════════════════════════════ */
+
+body[data-page='book'] #main,
+body[data-page='book'] .ftr {
+  --dv: #ec5d3b; --dv-lt: #f8906f; --dv-dp: #b23c20; --dv-ink: #160d09;
+  --night: #1b2517; --night-2: #131b10; --night-3: #253221;
+  --cream: #efe8d6; --cream-2: #c3bca4; --cream-3: #a7a08a;
+  --line: #efe8d628; --line-2: #efe8d614; --line-ui: #efe8d666;
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --gold: var(--dv); --gold-lt: var(--dv-lt); --gold-dp: var(--dv-dp);
+  --go: var(--dv); --go-text: var(--dv-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --on-go: var(--dv-ink);
+  --g-300: var(--dv-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  /* La fiche : un papier de formulaire vert pâle, l'encre vert-noir, le
+     rouge du tampon. */
+  --bk-paper: #ebeedb; --bk-paper-2: #e0e5cc;
+  --bk-ink: #1c2a1d; --bk-ink-2: #46523f; --bk-ink-3: #5b6656; --bk-red: #a5341d;
+  /* L'encre d'un tampon n'est jamais pleine : un bruit fixe, peint une fois,
+     sert de masque. */
+  --bk-ink-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3.2 2.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --bk-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .9 0 0 0 0 .82 0 0 0 .16 -.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color-scheme: dark;
+  background-color: var(--bg);
+  color: var(--fg);
+}
+/* Le sous-main : un grain fin, posé une fois, jamais animé. */
+body[data-page='book'] #main { background-image: var(--bk-grain); }
+
+/* ═══════════════════ LES BOUCLES ═══════════════════
+   Les filets tournent en continu, chacun à sa façon, mais seulement quand
+   leur partie est à l'écran (`.is-live`, posé par book-desk.js) et que
+   l'onglet est affiché. */
+html.bk-js body[data-page='book'] [data-bk-live]:not(.is-live) *,
+html.bk-js body[data-page='book'] [data-bk-live]:not(.is-live) *::before,
+html.bk-js body[data-page='book'] [data-bk-live]:not(.is-live) *::after,
+html.bk-js body[data-page='book'] .ftr:not(.is-live)::before,
+html.bk-hidden body[data-page='book'] #main *,
+html.bk-hidden body[data-page='book'] #main *::before,
+html.bk-hidden body[data-page='book'] #main *::after,
+html.bk-hidden body[data-page='book'] .ftr::before { animation-play-state: paused !important; }
+
+/* ═══════════════════ LA PAGE ═══════════════════ */
+body[data-page='book'] .bk {
+  position: relative;
+  max-width: 86rem;
+  padding: calc(var(--bar-h) + clamp(1.5rem, 4vw, 3.5rem)) var(--pad-x) var(--sec-y);
+  overflow-x: clip;
+}
+
+/* Le bureau : la lampe en haut à droite, la trame d'un formulaire sous le
+   tampon. Rien ne bouge : c'est la table. */
+.bk-desk { position: absolute; inset: 0 0 auto; height: min(62rem, 120vh); pointer-events: none; }
+.bk-desk__lamp {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(44% 52% at 82% 18%, color-mix(in srgb, #fff3d8 6.5%, transparent), transparent 70%),
+    radial-gradient(30% 34% at 80% 22%, color-mix(in srgb, var(--dv) 7%, transparent), transparent 72%);
+}
+.bk-desk__grid {
+  position: absolute; top: calc(var(--bar-h) - 1rem); right: 0; width: min(58vw, 54rem); height: 34rem;
+  background-image:
+    linear-gradient(var(--line-2) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-2) 1px, transparent 1px);
+  background-size: 9rem 3.25rem, 9rem 3.25rem;
+  -webkit-mask-image: radial-gradient(60% 62% at 70% 38%, #000 10%, transparent 72%);
+          mask-image: radial-gradient(60% 62% at 70% 38%, #000 10%, transparent 72%);
+}
+
+/* ═══════════════════ L'EN-TÊTE ET LE TAMPON ═══════════════════ */
+body[data-page='book'] .bk__head {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-5) var(--s-8);
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+.bk__title { max-width: 46rem; }
+body[data-page='book'] .eyebrow {
+  display: inline-flex; align-items: center; gap: 0.7em;
+  padding: 0.5em 0.85em; border: 1px solid var(--line);
+  color: var(--dv-lt); margin-bottom: var(--s-5);
+}
+body[data-page='book'] .eyebrow::before {
+  content: ''; width: 0.5em; height: 0.5em; flex: none; opacity: 1;
+  background: var(--dv); transform: rotate(45deg);
+}
+body[data-page='book'] .bk__head .sec__h {
+  font-size: clamp(2.35rem, 1.2rem + 3.9vw, 4.6rem);
+  line-height: 0.98;
+}
+body[data-page='book'] .bk__head .sec__lede { max-width: 38rem; }
+
+/* Le tampon dateur. L'encre est rouge et jamais pleine ; la date et
+   l'heure sont celles d'Addis, peintes par book-desk.js et clock.js. */
+.bk-stamp {
+  position: relative; width: clamp(10rem, 17vw, 15rem); aspect-ratio: 1;
+  margin-right: clamp(0rem, 2vw, 2rem);
+  container-type: inline-size;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  --r: -9deg;
+}
+.bk-stamp__ink, .bk-stamp__ghost {
+  position: absolute; inset: 0; color: var(--dv);
+  transform: rotate(var(--r));
+  -webkit-mask: var(--bk-ink-mask) 0 0 / 180px 180px;
+          mask: var(--bk-ink-mask) 0 0 / 180px 180px;
+}
+.bk-stamp__ink { will-change: transform; }
+.bk-stamp__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.bk-stamp__o { fill: none; stroke: currentColor; stroke-width: 3.2; }
+.bk-stamp__o--thin { stroke-width: 1.4; }
+.bk-stamp__ring {
+  fill: currentColor; font-family: var(--ff-d); font-size: 13.4px; letter-spacing: 0.16em;
+  font-variation-settings: 'wdth' 80, 'wght' 760;
+}
+.bk-stamp__mid {
+  position: absolute; inset: 22%; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.12em;
+  text-align: center; text-transform: uppercase; line-height: 1;
+}
+.bk-stamp__k { font-family: var(--ff-m); font-size: 3.5cqw; letter-spacing: 0.14em; }
+.bk-stamp__date {
+  padding: 0.28em 0.35em; border-block: 1.5px solid currentColor;
+  font-family: var(--ff-d); font-size: 7.4cqw;
+  font-variation-settings: 'wdth' 72, 'wght' 820; letter-spacing: 0.04em; white-space: nowrap;
+}
+.bk-stamp__time {
+  font-family: var(--ff-d); font-size: 12.5cqw;
+  font-variation-settings: 'wdth' 70, 'wght' 840; font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+}
+/* Les empreintes laissées par les coups de tampon précédents. */
+.bk-stamp__prints { position: absolute; inset: 0; pointer-events: none; }
+.bk-stamp__ghost { opacity: 0.34; transition: opacity 2.6s ease-out; }
+.bk-stamp__ghost.is-gone { opacity: 0; }
+/* Au survol, la visée du tampon : un cercle en tirets qui tourne autour de
+   l'empreinte ; un clic (un toucher) frappe une nouvelle empreinte. */
+.bk-stamp::after {
+  content: ''; position: absolute; inset: -7%; border-radius: 50%; pointer-events: none;
+  border: 1px dashed var(--line-ui); opacity: 0; transition: opacity 0.3s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .bk-stamp:hover::after { opacity: 1; animation: bk-aim 16s linear infinite; }
+}
+@keyframes bk-aim { to { transform: rotate(1turn); } }
+
+/* ═══════════════════ LE RAIL : LES ONGLETS DU DOSSIER ═══════════════════ */
+body[data-page='book'] .bk__rail { position: relative; margin-bottom: clamp(3rem, 6vw, 5rem); }
+body[data-page='book'] .rail {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0;
+  padding: 0 0 1.1rem; margin: 0; border: 0;
+}
+body[data-page='book'] .rail__i {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; align-items: center; gap: 0.35rem 0.6rem;
+  cursor: pointer; color: var(--fg-3);
+  padding-right: 0.5rem;
+}
+.rail__n {
+  grid-column: 1 / -1;
+  font-family: var(--ff-d); font-size: clamp(1.35rem, 2.2vw, 2rem); line-height: 1;
+  font-variation-settings: 'wdth' 64, 'wght' 760;
+  color: transparent; -webkit-text-stroke: 1px var(--cream-3);
+  transition: color var(--d-clear) var(--e-clear), -webkit-text-stroke-color var(--d-clear) var(--e-clear);
+}
+body[data-page='book'] .rail__d { width: 0.6rem; height: 0.6rem; border-color: var(--line-ui); border-radius: 1px; transform: rotate(45deg); }
+body[data-page='book'] .rail__t { font-size: var(--fs-nano); }
+body[data-page='book'] .rail__i.is-cleared { color: var(--fg); }
+body[data-page='book'] .rail__i.is-cleared .rail__n { color: var(--dv); -webkit-text-stroke-color: var(--dv); }
+@media (hover: hover) and (pointer: fine) {
+  body[data-page='book'] .rail__i:hover { color: var(--fg); }
+  body[data-page='book'] .rail__i:hover .rail__n { -webkit-text-stroke-color: var(--fg); }
+}
+/* La ligne du rail : une perforation qui glisse lentement, et la part
+   remplie, au rouge du tampon, où court un reflet. */
+.rail__line { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; overflow: hidden; }
+.rail__perf {
+  position: absolute; top: 1px; left: 0; width: calc(100% + 12px); height: 1px;
+  background: repeating-linear-gradient(90deg, var(--line-ui) 0 6px, transparent 6px 12px);
+  animation: bk-perf 2.6s linear infinite;
+}
+.rail__fill {
+  position: absolute; inset: 0; background: var(--dv);
+  transform: scaleX(calc(var(--done, 0) / 5)); transform-origin: 0 50%;
+  transition: transform 0.9s var(--e-out);
+  overflow: hidden;
+}
+.rail__fill::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 18%;
+  background: linear-gradient(90deg, transparent, #fff8 50%, transparent);
+  animation: bk-glint 3.8s var(--e-inout) infinite;
+}
+@keyframes bk-perf { to { transform: translateX(-12px); } }
+@keyframes bk-glint { 0% { transform: translateX(-120%); } 70%, 100% { transform: translateX(560%); } }
+
+/* ═══════════════════ LE FORMULAIRE ═══════════════════ */
+body[data-page='book'] .bk__form {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 21rem);
+  column-gap: clamp(2.5rem, 5vw, 5rem); align-items: start;
+}
+body[data-page='book'] .bk__form > .step,
+body[data-page='book'] .bk__form > .bk__end { grid-column: 1; }
+.bk-slip { grid-column: 2; grid-row: 1 / span 6; align-self: stretch; }
+
+/* Une partie de la demande. */
+body[data-page='book'] .step {
+  margin: 0 0 clamp(3.5rem, 6vw, 5.25rem);
+  scroll-margin-top: calc(var(--bar-h) + 1.5rem);
+}
+body[data-page='book'] .step > :not(legend) { margin-left: 4.6rem; }
+body[data-page='book'] .step > .hp { margin-left: 0; }
+
+/* L'en-tête de la partie : le numéro, la rubrique, la question, la case du
+   bureau, et le filet propre à la partie. */
+body[data-page='book'] .step__h {
+  position: relative; width: 100%;
+  display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) auto; column-gap: 1.4rem; row-gap: 0.4rem;
+  align-items: center;
+  padding: 0 0 1.35rem; margin-bottom: 1.9rem;
+  font-size: clamp(1.35rem, 1rem + 1.1vw, 1.85rem); line-height: 1.15;
+}
+.step__no {
+  grid-column: 1; grid-row: 1 / span 2; align-self: center;
+  font-family: var(--ff-d); font-size: 3rem; line-height: 0.85; letter-spacing: -0.02em;
+  font-variation-settings: 'wdth' 62, 'wght' 800;
+  color: transparent; -webkit-text-stroke: 1.2px var(--cream-3);
+  transition: color var(--d-clear) var(--e-clear), -webkit-text-stroke-color var(--d-clear) var(--e-clear), transform 0.8s var(--e-out), opacity 0.6s var(--e-out);
+}
+body[data-page='book'] .step__k { grid-column: 2; grid-row: 1; font-size: var(--fs-micro); font-variation-settings: normal; letter-spacing: var(--ls-eyebrow); }
+body[data-page='book'] .step.is-cleared .step__k { color: var(--dv-lt); }
+body[data-page='book'] .step.is-cleared .step__no { color: var(--dv); -webkit-text-stroke-color: var(--dv); }
+
+/* La case « Office use », et le tampon qui y tombe. */
+.step__box {
+  grid-column: 3; grid-row: 1 / span 2; position: relative;
+  display: grid; place-items: center;
+  width: 7.6rem; height: 3.3rem;
+  border: 1px dashed var(--line-ui);
+}
+.step__use {
+  font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--fg-3); transition: opacity 0.3s ease;
+}
+.step__stamp {
+  position: absolute; inset: 0.28rem -0.3rem;
+  display: grid; place-items: center;
+  border: 2.5px solid var(--dv); outline: 1px solid var(--dv); outline-offset: -6px;
+  color: var(--dv); background: color-mix(in srgb, var(--dv) 9%, transparent);
+  font-family: var(--ff-d); font-size: 1.02rem; letter-spacing: 0.16em; text-transform: uppercase;
+  font-variation-settings: 'wdth' 72, 'wght' 820;
+  -webkit-mask: var(--bk-ink-mask) 0 0 / 180px 180px;
+          mask: var(--bk-ink-mask) 0 0 / 180px 180px;
+  opacity: 0; transform: rotate(-7deg) scale(1.7);
+  transition: opacity 0.16s ease-in, transform 0.34s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.step:nth-of-type(2n) .step__stamp { --tilt: 5deg; }
+.step.is-cleared .step__use { opacity: 0; }
+.step.is-cleared .step__stamp { opacity: 1; transform: rotate(var(--tilt, -7deg)) scale(1); }
+
+/* Les filets : un par partie, chacun vit à sa façon. */
+.step__rule { position: absolute; left: 0; right: 0; bottom: 0; height: 10px; overflow: hidden; pointer-events: none; }
+.step__rule::before { content: ''; position: absolute; left: 0; right: 0; bottom: 4px; height: 1px; background: var(--line); }
+.step__rule > i { position: absolute; display: block; }
+
+/* 01 — le chariot d'une machine à écrire : le trait avance par à-coups,
+   lettre à lettre, puis s'efface et revient à la ligne. */
+.step__rule--carriage > i {
+  left: 0; bottom: 4px; width: 100%; height: 1px; background: color-mix(in srgb, var(--dv) 70%, transparent);
+  transform: translateX(-100%);
+  animation: bk-carriage 7s steps(56) infinite;
+}
+.step__rule--carriage > i::after {
+  content: ''; position: absolute; right: -6px; bottom: -3px; width: 6px; height: 7px; background: var(--dv);
+}
+@keyframes bk-carriage {
+  0% { transform: translateX(-100%); opacity: 1; }
+  72% { transform: translateX(0); opacity: 1; }
+  86% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(0); opacity: 0; }
+}
+
+/* 02 — la réglette du calendrier : un jour par trait, une semaine marquée,
+   qui défile sans fin sous un repère rouge. */
+.step__rule--ruler > i {
+  left: 0; bottom: 4px; width: calc(100% + 84px); height: 6px;
+  background:
+    repeating-linear-gradient(90deg, var(--line-ui) 0 1px, transparent 1px 84px) 0 0 / 100% 6px no-repeat,
+    repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 12px) 0 100% / 100% 3px no-repeat;
+  animation: bk-ruler 9s linear infinite;
+}
+.step__rule--ruler::after {
+  content: ''; position: absolute; left: 18%; bottom: 3px; width: 2px; height: 9px; background: var(--dv);
+}
+@keyframes bk-ruler { to { transform: translateX(-84px); } }
+
+/* 03 — l'itinéraire : une route en tirets, trois étapes, et un point qui
+   va de l'une à l'autre en s'y arrêtant. */
+.step__rule--route::before { background: repeating-linear-gradient(90deg, var(--line-ui) 0 7px, transparent 7px 13px); }
+.step__rule--route::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 26% calc(100% - 4.5px), transparent 2px, var(--line-ui) 2.2px 3.2px, transparent 3.4px),
+    radial-gradient(circle at 56% calc(100% - 4.5px), transparent 2px, var(--line-ui) 2.2px 3.2px, transparent 3.4px),
+    radial-gradient(circle at 86% calc(100% - 4.5px), transparent 2px, var(--line-ui) 2.2px 3.2px, transparent 3.4px);
+}
+.step__rule--route > i {
+  left: 0; bottom: 1px; width: 100%; height: 7px; transform: translateX(-100%);
+  animation: bk-route 11s var(--e-inout) infinite;
+}
+.step__rule--route > i::after {
+  content: ''; position: absolute; right: -3.5px; top: 0; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--dv); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 22%, transparent);
+}
+@keyframes bk-route {
+  0% { transform: translateX(-100%); opacity: 0; }
+  4% { opacity: 1; }
+  18%, 30% { transform: translateX(-74%); }
+  48%, 60% { transform: translateX(-44%); }
+  78%, 90% { transform: translateX(-14%); opacity: 1; }
+  100% { transform: translateX(0); opacity: 0; }
+}
+
+/* 04 — la liste à cocher : une rangée de cases au bout du filet, cochées
+   une à une, puis tout recommence. */
+.step__rule--checks::before { right: 236px; }
+.step__rule--checks::after {
+  content: ''; position: absolute; right: 0; bottom: 1px; width: 224px; height: 7px;
+  background: repeating-linear-gradient(90deg, var(--line) 0 7px, transparent 7px 14px);
+}
+.step__rule--checks > i {
+  right: 217px; bottom: 1px; width: 7px; height: 7px; background: var(--dv);
+  animation: bk-checks 6.4s steps(16) infinite;
+}
+@keyframes bk-checks { from { transform: translateX(0); } to { transform: translateX(224px); } }
+
+/* 05 — la ligne de signature : la croix « signez ici », et un trait
+   d'encre qui va et vient sur la ligne. */
+.step__rule--sign::before { left: 1.1rem; background: var(--line-ui); }
+.step__rule--sign::after {
+  content: '\00D7'; position: absolute; left: 0; bottom: 0; line-height: 1;
+  font-family: var(--ff-m); font-size: 0.8rem; color: var(--dv);
+}
+.step__rule--sign > i {
+  left: 1.1rem; bottom: 3.5px; width: 34%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--dv) 45%, var(--dv-lt) 55%, transparent);
+  animation: bk-sign 5.5s var(--e-inout) infinite alternate;
+}
+@keyframes bk-sign { from { transform: translateX(-30%); } to { transform: translateX(220%); } }
+
+/* L'entrée de chaque partie : le numéro monte, le filet se pose. */
+html.bk-js body[data-page='book'] .step:not(.is-in) .step__no { opacity: 0; transform: translateY(45%); }
+html.bk-js body[data-page='book'] .step:not(.is-in) .step__rule { transform: scaleX(0); }
+body[data-page='book'] .step__rule { transform-origin: 0 50%; transition: transform 1.1s var(--e-out) 0.1s; }
+
+/* ═══════════════════ LES CASES À COCHER ═══════════════════
+   Les choix ressemblent aux cases d'un formulaire : une case carrée (un
+   rond pour un choix unique) où le tampon pose sa croix. */
+body[data-page='book'] .chips { gap: 0.6rem; }
+body[data-page='book'] .chip span {
+  position: relative; display: inline-flex; align-items: center; gap: 0.75em;
+  padding: 0.7em 1em 0.7em 0.8em;
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--night-2) 55%, transparent);
+  color: var(--fg-2);
+  transition: border-color var(--d-settle) var(--e-settle), color var(--d-settle) var(--e-settle),
+              background-color var(--d-clear) var(--e-clear), transform 0.18s var(--e-out);
+}
+body[data-page='book'] .chip span::before {
+  content: ''; flex: none; width: 0.95em; height: 0.95em;
+  border: 1px solid var(--line-ui); border-radius: 1px;
+  transition: border-color 0.3s ease;
+}
+body[data-page='book'] .chip span::after {
+  content: '\00D7'; position: absolute; left: 0.8em; top: 50%; width: 0.95em; text-align: center;
+  font-family: var(--ff-d); font-size: 1.35em; line-height: 1; margin-top: -0.53em; margin-left: -0.18em;
+  font-variation-settings: 'wght' 800; color: var(--dv);
+  opacity: 0; transform: scale(2.2) rotate(-20deg);
+  transition: opacity 0.12s ease-in, transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+body[data-page='book'] .chip input[type='radio'] + span::before { border-radius: 50%; }
+body[data-page='book'] .chip input[type='radio'] + span::after {
+  content: ''; width: 0.5em; height: 0.5em; margin: -0.25em 0 0 0.225em; border-radius: 50%;
+  background: var(--dv); font-size: inherit;
+}
+body[data-page='book'] .chip:hover span { border-color: var(--line-ui); color: var(--fg); }
+body[data-page='book'] .chip:active span { transform: scale(0.97); }
+body[data-page='book'] .chip input:checked + span {
+  background: color-mix(in srgb, var(--dv) 13%, var(--night-2)); border-color: var(--dv); color: var(--fg);
+}
+body[data-page='book'] .chip input:checked + span::before { border-color: var(--dv); }
+body[data-page='book'] .chip input:checked + span::after { opacity: 1; transform: none; }
+body[data-page='book'] .chip input:focus-visible + span { outline: 2px solid var(--dv-lt); outline-offset: 3px; }
+body[data-page='book'] .chips--sm span { padding: 0.55em 0.85em 0.55em 0.7em; }
+
+/* Les autorisations : bord en tirets et un petit sceau rond, qui se
+   remplit d'encre quand on coche. */
+body[data-page='book'] .chip--permit span {
+  border-style: dashed; padding-right: 2.5em;
+  background-image: radial-gradient(circle at calc(100% - 1.2em) 50%, transparent 0.4em, var(--line-ui) 0.43em 0.5em, transparent 0.53em);
+}
+body[data-page='book'] .chip--permit input:checked + span {
+  background-image: radial-gradient(circle at calc(100% - 1.2em) 50%, var(--dv) 0.28em, transparent 0.31em 0.4em, var(--dv) 0.43em 0.52em, transparent 0.55em);
+}
+
+/* Les lieux : des étiquettes de bagage, percées d'un œillet ; cochées, elles
+   deviennent papier et pendent un peu. */
+body[data-page='book'] .chip input[name='loc'] + span {
+  padding-left: 1.9em; border-radius: 2px 0.5em 0.5em 2px;
+  transform-origin: 0.7em 50%;
+}
+body[data-page='book'] .chip input[name='loc'] + span::before {
+  position: absolute; left: 0.6em; top: 50%; width: 0.55em; height: 0.55em; margin-top: -0.275em;
+  border-radius: 50%; border-color: var(--line-ui);
+}
+body[data-page='book'] .chip input[name='loc'] + span::after { content: none; }
+body[data-page='book'] .chip input[name='loc']:checked + span {
+  background: var(--bk-paper); color: var(--bk-ink); border-color: var(--bk-paper);
+  transform: rotate(-2deg);
+}
+body[data-page='book'] .chip input[name='loc']:checked + span::before { border: 2px solid var(--bk-red); background: var(--night); }
+@media (hover: hover) and (pointer: fine) {
+  body[data-page='book'] .chip input[name='loc'] + span:hover { animation: bk-swing 0.9s var(--e-out); }
+}
+@keyframes bk-swing { 0% { rotate: 0deg; } 30% { rotate: 3deg; } 60% { rotate: -1.6deg; } 100% { rotate: 0deg; } }
+
+/* Le matériel : des étiquettes d'inventaire, un code-barres en tête. */
+body[data-page='book'] .chip input[name='kit'] + span::before {
+  width: 1.25em; height: 0.85em; border: 0; border-radius: 0;
+  background: repeating-linear-gradient(90deg, var(--cream-3) 0 1px, transparent 1px 3px, var(--cream-3) 3px 5px, transparent 5px 6px);
+}
+body[data-page='book'] .chip input[name='kit'] + span::after { content: none; }
+body[data-page='book'] .chip input[name='kit']:checked + span::before {
+  background: repeating-linear-gradient(90deg, var(--dv) 0 1px, transparent 1px 3px, var(--dv) 3px 5px, transparent 5px 6px);
+}
+
+/* ═══════════════════ LES CHAMPS ═══════════════════
+   Des cases de formulaire : un fond un peu plus sombre, et un trait d'encre
+   qui se trace sous la case quand on y écrit. */
+body[data-page='book'] .field label { color: var(--fg-3); }
+body[data-page='book'] .field input,
+body[data-page='book'] .field textarea {
+  background-color: color-mix(in srgb, var(--night-2) 78%, transparent);
+  background-image: linear-gradient(var(--dv), var(--dv));
+  background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 2px;
+  border: 1px solid var(--line); border-bottom-color: var(--line-ui);
+  transition: border-color var(--d-settle) var(--e-settle), background-size 0.6s var(--e-out), background-color 0.3s ease;
+}
+body[data-page='book'] .field input:hover,
+body[data-page='book'] .field textarea:hover { border-color: var(--line-ui); }
+body[data-page='book'] .field input:focus,
+body[data-page='book'] .field textarea:focus {
+  outline: none; background-color: var(--night-3); background-size: 100% 2px;
+  background-image: linear-gradient(var(--dv), var(--dv));
+  border-color: var(--line-ui);
+}
+body[data-page='book'] .field input:focus-visible,
+body[data-page='book'] .field textarea:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 2px; }
+body[data-page='book'] .field input[type='date'],
+body[data-page='book'] .field input[type='time'],
+body[data-page='book'] .field input[type='number'] { font-family: var(--ff-m); font-size: var(--fs-sm); letter-spacing: 0.04em; }
+body[data-page='book'] #bk-title { font-family: var(--ff-m); font-size: var(--fs-sm); letter-spacing: 0.03em; }
+/* La note libre : du papier réglé, dont les lignes suivent le texte. */
+body[data-page='book'] .field textarea {
+  line-height: 1.8rem; padding-top: 0.55rem;
+  background-image:
+    linear-gradient(var(--dv), var(--dv)),
+    repeating-linear-gradient(transparent 0 calc(1.8rem - 1px), var(--line-2) calc(1.8rem - 1px) 1.8rem);
+  background-size: 0% 2px, 100% 100%;
+  background-position: 0 100%, 0 0.55rem;
+  background-repeat: no-repeat, repeat;
+  background-attachment: scroll, local;
+}
+body[data-page='book'] .field textarea:focus {
+  background-image:
+    linear-gradient(var(--dv), var(--dv)),
+    repeating-linear-gradient(transparent 0 calc(1.8rem - 1px), var(--line-2) calc(1.8rem - 1px) 1.8rem);
+  background-size: 100% 2px, 100% 100%;
+}
+body[data-page='book'] .step__note.is-warn { color: #ffb3a1; }
+body[data-page='book'] .field.is-err input,
+body[data-page='book'] .field.is-err textarea { border-color: #ffb3a1; }
+body[data-page='book'] .field__err { color: #ffb3a1; }
+
+/* ═══════════════════ LES JOURS DE TOURNAGE ═══════════════════
+   Les deux dates posées, la feuille de service se dessine : une case par
+   jour, son jour de la semaine, le premier et le dernier tamponnés. */
+.bk-days { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.9rem; max-width: 40rem; }
+.bk-days:empty { display: none; }
+.bk-days__d {
+  display: grid; place-items: center; width: 2.15rem; height: 2.5rem;
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--night-2) 60%, transparent);
+  font-family: var(--ff-m); line-height: 1.05; text-align: center;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.3s ease calc(var(--i) * 18ms), transform 0.45s var(--e-out) calc(var(--i) * 18ms);
+}
+.bk-days__d b { display: block; font-size: 0.72rem; font-weight: 500; color: var(--fg); }
+.bk-days__d small { display: block; font-size: 0.55rem; letter-spacing: 0.08em; color: var(--fg-3); }
+.bk-days__d.is-end { border-color: var(--dv); background: color-mix(in srgb, var(--dv) 16%, var(--night-2)); }
+.bk-days__d.is-end small { color: var(--dv-lt); }
+.bk-days__d.is-more { width: auto; padding: 0 0.6rem; font-size: 0.7rem; color: var(--fg-2); }
+.bk-days.is-on .bk-days__d { opacity: 1; transform: none; }
+
+/* ═══════════════════ LE TÉLÉPHONE DU BUREAU ═══════════════════
+   Deux cadrans : l'heure du visiteur et celle d'Addis. L'heure choisie fait
+   tourner les aiguilles ; sans choix, ce sont les heures de maintenant, et
+   la trotteuse d'Addis tourne. */
+body[data-page='book'] .callslot {
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-6); align-items: center;
+  margin-top: var(--s-6); padding: var(--s-5);
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--night-2) 70%, transparent);
+}
+body[data-page='book'] .callslot > :not(.clocks) { grid-column: 2; }
+body[data-page='book'] .callslot .field--inline { margin-top: 0; }
+.clocks { grid-column: 1; grid-row: 1 / span 3; display: flex; align-items: center; gap: 0.9rem; }
+.clock { margin: 0; display: grid; justify-items: center; gap: 0.5rem; }
+.clock figcaption { font-family: var(--ff-m); font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg-3); white-space: nowrap; }
+.clock--addis figcaption { color: var(--dv-lt); }
+.clock__face {
+  position: relative; display: block; width: 5.2rem; aspect-ratio: 1; border-radius: 50%;
+  border: 1px solid var(--line-ui);
+  background:
+    radial-gradient(circle closest-side, var(--night-2) 0 80%, transparent 81%),
+    repeating-conic-gradient(from -1deg, var(--cream-3) 0 2deg, transparent 2deg 30deg);
+}
+.clock--addis .clock__face { border-color: var(--dv); box-shadow: 0 0 0 4px color-mix(in srgb, var(--dv) 12%, transparent); }
+.clock__h, .clock__m, .clock__s {
+  position: absolute; left: 50%; bottom: 50%; display: block;
+  transform-origin: 50% 100%; transform: rotate(var(--a, 0deg)); transition: transform 0.9s var(--e-out);
+}
+.clock__h { width: 3px; height: 26%; margin-left: -1.5px; background: var(--fg); border-radius: 2px; }
+.clock__m { width: 2px; height: 37%; margin-left: -1px; background: var(--fg-2); border-radius: 2px; }
+.clock--addis .clock__h { background: var(--dv-lt); }
+.clock__s {
+  width: 1px; height: 40%; margin-left: -0.5px; background: var(--dv);
+  animation: bk-sec 60s linear infinite; transition: opacity 0.4s ease;
+}
+.clocks.is-set .clock__s { opacity: 0; }
+.clock__pin { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: var(--dv); }
+.clocks__arrow { width: 1.6rem; height: 1px; background: var(--line-ui); position: relative; margin-bottom: 1.4rem; }
+.clocks__arrow::after { content: ''; position: absolute; right: 0; top: -3px; border: 3.5px solid transparent; border-left: 5px solid var(--line-ui); border-right: 0; }
+@keyframes bk-sec { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ═══════════════════ LA FICHE DE PRODUCTION ═══════════════════ */
+.slip {
+  position: sticky; top: calc(var(--bar-h) + 1.25rem);
+  padding: 1.35rem 1.35rem 1.5rem;
+  background: var(--bk-paper) var(--bk-grain);
+  color: var(--bk-ink);
+  box-shadow: 0 1px 0 #0000002e, 0 30px 50px -24px #000000b3;
+  transform: rotate(0.7deg);
+}
+/* Le bord détaché : des dents en bas de la fiche. */
+.slip::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -7px; height: 8px;
+  background:
+    linear-gradient(135deg, var(--bk-paper) 50%, transparent 50%) 0 0 / 12px 8px repeat-x,
+    linear-gradient(-135deg, var(--bk-paper) 50%, transparent 50%) 0 0 / 12px 8px repeat-x;
+}
+/* La pince en tête. */
+.slip::before {
+  content: ''; position: absolute; top: -0.55rem; left: 50%; width: 4.2rem; height: 1.1rem; margin-left: -2.1rem;
+  background: linear-gradient(#c9ccb9, #9fa391); border-radius: 3px 3px 1px 1px;
+  box-shadow: 0 2px 3px #0000004d;
+}
+.slip__top { padding-bottom: 0.85rem; border-bottom: 2px solid var(--bk-ink); margin-bottom: 0.4rem; }
+.slip__org { font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bk-ink-2); }
+.slip__t {
+  margin-top: 0.3rem; font-family: var(--ff-d); font-size: 1.55rem; line-height: 1; text-transform: uppercase;
+  font-variation-settings: 'wdth' 66, 'wght' 800; letter-spacing: 0.01em;
+}
+.slip__meta {
+  display: flex; justify-content: space-between; gap: 1rem; margin-top: 0.55rem;
+  font-family: var(--ff-m); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bk-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.slip__rows { display: grid; }
+.slip__r {
+  position: relative; display: grid; grid-template-columns: 5.8rem minmax(0, 1fr); gap: 0.6rem; align-items: baseline;
+  padding: 0.5rem 0 0.45rem; border-bottom: 1px dotted color-mix(in srgb, var(--bk-ink) 35%, transparent);
+}
+.slip__r::before {
+  content: ''; position: absolute; left: -1.35rem; top: 0; bottom: 0; width: 3px; background: var(--bk-red);
+  transform: scaleY(0); transition: transform 0.4s var(--e-out);
+}
+.slip__r.is-here::before { transform: scaleY(1); }
+.slip__k {
+  display: flex; align-items: baseline; gap: 0.4rem;
+  font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bk-ink-3);
+}
+.slip__k i { font-style: normal; color: var(--bk-ink-2); }
+.slip__r.is-here .slip__k i { color: var(--bk-red); }
+.slip__v {
+  font-size: 0.8rem; line-height: 1.35; color: var(--bk-ink); min-height: 1.1em;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.slip__v:empty::before { content: ''; display: block; height: 1px; margin-top: 0.8em; background: color-mix(in srgb, var(--bk-ink) 22%, transparent); }
+.slip__v.is-new { animation: bk-ink 0.9s var(--e-out); }
+@keyframes bk-ink { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+
+.slip__foot { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-top: 1rem; }
+.slip__boxes { display: flex; gap: 4px; }
+.slip__boxes li {
+  position: relative; display: grid; place-items: center; width: 1.85rem; height: 1.85rem;
+  border: 1px solid color-mix(in srgb, var(--bk-ink) 45%, transparent);
+  font-family: var(--ff-m); font-size: 0.56rem; color: var(--bk-ink-3);
+}
+.slip__boxes li::after {
+  content: ''; position: absolute; inset: 3px; border-radius: 50%;
+  border: 2px solid var(--bk-red); background: color-mix(in srgb, var(--bk-red) 14%, transparent);
+  -webkit-mask: var(--bk-ink-mask) 0 0 / 120px 120px; mask: var(--bk-ink-mask) 0 0 / 120px 120px;
+  opacity: 0; transform: scale(1.8) rotate(-30deg);
+  transition: opacity 0.14s ease-in, transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+.slip__boxes li.is-cleared { color: var(--bk-red); font-weight: 600; }
+.slip__boxes li.is-cleared::after { opacity: 1; transform: none; }
+.slip__count { font-family: var(--ff-m); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bk-ink-2); white-space: nowrap; }
+.slip__count b { font-weight: 600; color: var(--bk-red); font-size: 0.8rem; }
+
+/* « Ready » : le grand coup de tampon, quand la demande est prête. */
+.slip__ready {
+  position: absolute; left: 50%; top: 52%; pointer-events: none;
+  padding: 0.25em 0.6em; border: 4px solid var(--bk-red); outline: 1.5px solid var(--bk-red); outline-offset: 3px;
+  color: var(--bk-red); font-family: var(--ff-d); font-size: 2.6rem; line-height: 1; text-transform: uppercase; letter-spacing: 0.14em;
+  font-variation-settings: 'wdth' 70, 'wght' 860;
+  -webkit-mask: var(--bk-ink-mask) 0 0 / 180px 180px; mask: var(--bk-ink-mask) 0 0 / 180px 180px;
+  opacity: 0; transform: translate(-50%, -50%) rotate(-14deg) scale(2);
+  transition: opacity 0.16s ease-in, transform 0.42s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.bk-slip.is-sent .slip__ready { opacity: 0.9; transform: translate(-50%, -50%) rotate(-14deg) scale(1); }
+
+/* ═══════════════════ L'ENVOI ═══════════════════ */
+body[data-page='book'] .bk__end { position: relative; border-top: 0; padding-top: clamp(2.5rem, 4vw, 3.25rem); }
+/* La perforation à détacher, qui glisse lentement. */
+.bk__perf { position: absolute; left: 0; right: 0; top: 0; height: 8px; overflow: hidden; }
+.bk__perf > i {
+  position: absolute; left: -16px; top: 0; width: calc(100% + 32px); height: 8px; display: block;
+  background: radial-gradient(circle, var(--line-ui) 2px, transparent 2.6px) 0 50% / 16px 8px repeat-x;
+  animation: bk-tear 5s linear infinite;
+}
+@keyframes bk-tear { to { transform: translateX(16px); } }
+
+/* Le bouton : un tampon, à double filet, qui s'enfonce sous le doigt. */
+body[data-page='book'] .bk__act .btn--go {
+  box-shadow: inset 0 0 0 4px var(--dv), inset 0 0 0 5px color-mix(in srgb, var(--dv-ink) 55%, transparent);
+  transition: color var(--d-settle) var(--e-settle), border-color var(--d-settle) var(--e-settle), transform 0.12s ease;
+}
+body[data-page='book'] .bk__act .btn--go:hover,
+body[data-page='book'] .bk__act .btn--go:focus-visible { box-shadow: inset 0 0 0 4px var(--fg), inset 0 0 0 5px color-mix(in srgb, var(--bg) 55%, transparent); }
+body[data-page='book'] .bk__act .btn--go:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 4px; }
+body[data-page='book'] .bk__act .btn--go:active { transform: translateY(2px) scale(0.985); }
+
+/* Le récapitulatif envoyé : le double de la fiche, sur le même papier. */
+body[data-page='book'] .summary {
+  border: 0; padding: 1.5rem 1.6rem; background: var(--bk-paper) var(--bk-grain); color: var(--bk-ink);
+  box-shadow: 0 24px 44px -24px #000000b3;
+}
+body[data-page='book'] .summary__h { color: var(--bk-red); }
+body[data-page='book'] .summary__dl dt { color: var(--bk-ink-3); }
+body[data-page='book'] .summary__dl dd { color: var(--bk-ink); overflow-wrap: anywhere; }
+
+/* ═══════════════════ LE PIED DE PAGE ═══════════════════
+   Un double filet en tête, où la tête d'une imprimante matricielle avance
+   par pas, et « STUDIO » à l'encre du tampon. */
+body[data-page='book'] .ftr {
+  border-top-color: color-mix(in srgb, var(--dv) 30%, transparent);
+  background-image:
+    linear-gradient(var(--line-2), var(--line-2)),
+    radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--dv) 8%, transparent), transparent 70%);
+  background-size: 100% 1px, 100% 100%; background-position: 0 4px, 0 0; background-repeat: no-repeat;
+  overflow-x: clip;
+}
+body[data-page='book'] .ftr::before {
+  content: ''; position: absolute; top: -2px; left: 0; width: 34px; height: 3px; background: var(--dv); pointer-events: none;
+  animation: bk-print 12s steps(36) infinite;
+}
+@keyframes bk-print { from { transform: translateX(-34px); } to { transform: translateX(100vw); } }
+body[data-page='book'] .ftr__wl .ln--b { color: var(--dv); }
+
+/* ═══════════════════ TABLETTE ET TÉLÉPHONE ═══════════════════ */
+@media (max-width: 63.99rem) {
+  body[data-page='book'] .bk__form { grid-template-columns: minmax(0, 1fr); }
+  .bk-slip { grid-column: 1; grid-row: auto; margin: 0 0 clamp(2.5rem, 6vw, 3.5rem); }
+  .slip { position: relative; top: 0; transform: none; max-width: 34rem; }
+}
+@media (max-width: 47.99rem) {
+  body[data-page='book'] .bk__head { grid-template-columns: minmax(0, 1fr); }
+  .bk-stamp { width: 9.4rem; justify-self: end; margin: -0.75rem 0.25rem -1.75rem 0; }
+  .bk-desk__grid { width: 100%; }
+  body[data-page='book'] .step > :not(legend) { margin-left: 0; }
+  body[data-page='book'] .step__h { grid-template-columns: 2.5rem minmax(0, 1fr) auto; column-gap: 0.9rem; }
+  .step__no { font-size: 2.35rem; }
+  .step__box { width: 5.6rem; height: 2.7rem; }
+  .step__stamp { font-size: 0.82rem; letter-spacing: 0.12em; }
+  .step__use { font-size: 0.58rem; letter-spacing: 0.1em; }
+  .step__rule--checks::before { right: 124px; }
+  .step__rule--checks::after { width: 112px; }
+  .step__rule--checks > i { right: 105px; animation-name: bk-checks-s; animation-timing-function: steps(8); }
+  body[data-page='book'] .rail__t { font-size: 0.5rem; letter-spacing: 0.02em; }
+  body[data-page='book'] .rail__i { grid-template-columns: auto; justify-items: start; }
+  body[data-page='book'] .rail__i .rail__d { display: none; }
+  body[data-page='book'] .callslot { grid-template-columns: minmax(0, 1fr); }
+  body[data-page='book'] .callslot > :not(.clocks) { grid-column: 1; }
+  .clocks { grid-row: auto; margin-bottom: var(--s-5); }
+  .clock__face { width: 4.4rem; }
+  .slip { padding: 1.2rem 1.1rem 1.35rem; }
+  .slip__r::before { left: -1.1rem; }
+}
+@keyframes bk-checks-s { from { transform: translateX(0); } to { transform: translateX(112px); } }
+
+/* ═══════════════════ MOUVEMENT RÉDUIT ═══════════════════
+   Tout est posé : les filets tracés, les tampons à leur place. */
+@media (prefers-reduced-motion: reduce) {
+  body[data-page='book'] #main *, body[data-page='book'] #main *::before, body[data-page='book'] #main *::after,
+  body[data-page='book'] .ftr::before { animation: none !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+  .step__rule--carriage > i, .step__rule--route > i { transform: none; opacity: 1; }
+  .step__rule--route > i { transform: translateX(-44%); }
+  .rail__fill::after, body[data-page='book'] .ftr::before { display: none; }
+}

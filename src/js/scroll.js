@@ -25,10 +25,14 @@ if (!reduced()) {
     if (!a) return;
     const url = new URL(a.href, location.href);
     if (url.pathname !== location.pathname || url.origin !== location.origin || !url.hash) return;
-    const target = document.querySelector(url.hash);
+    // Par l'identifiant, pas par un sélecteur : une ancre comme `#2024-gala`
+    // n'est pas un sélecteur CSS valide.
+    const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
     if (!target) return;
     e.preventDefault();
     lenis.scrollTo(target, { offset: -86, duration: 1.1 });
-    history.pushState(null, '', url.hash);
+    // La requête reste dans l'adresse (`?type=wedding#inquiry`) : le
+    // formulaire vient d'être orienté par elle (`inquiry.js`).
+    history.pushState(null, '', url.search + url.hash);
   });
 }

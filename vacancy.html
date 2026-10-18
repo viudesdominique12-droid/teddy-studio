@@ -5,47 +5,120 @@
   <title>Vacancy — Ethiopian Film Office</title>
   <meta name="description" content="Open roles at Teddy Studio / Ethiopian Film Office, Addis Ababa.">
   <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/pages/vacancy.css">
 </head>
-<body class="page page--vac">
+<body class="page page--vac" data-page="vacancy">
 
 <!--#include "bar" -->
 
+<!-- ══════════ LE TABLEAU DE L'ÉQUIPE (18/10/2026) ══════════
+     Dominique : « améliore-moi les autres pages avec la même logique de
+     customisation de thème ». La page des postes devient le tableau de liège
+     du bureau de production : un feutre vert mousse, des feuilles de service
+     punaisées, des badges d'équipe. Tout ce qui est ajouté ici est décoratif
+     (aria-hidden) : les textes, les liens et le sélecteur de poste sont ceux
+     de la page source. Gestes : src/js/pages/vacancy.js. -->
 <main id="main">
-  <header class="phead">
-    <p class="eyebrow">Vacancy</p>
-    <h1 class="phead__h">Working here</h1>
+  <!-- L'OUVERTURE : le titre, et le badge d'équipe au bout de sa lanière.
+       Il se balance au défilement, se tire à la souris, se pousse au doigt.
+       Le nom est en blanc et le poste vide : rien n'est ouvert. -->
+  <header class="phead vc-hero" data-vc-hero>
+    <div class="vc-hero__txt">
+      <p class="eyebrow vc-tape">Vacancy</p>
+      <h1 class="phead__h">Working here</h1>
+    </div>
+
+    <div class="vc-pass" aria-hidden="true">
+      <i class="vc-pass__hook"></i>
+      <div class="vc-pass__sway">
+        <div class="vc-pass__swing" data-vc-swing>
+          <div class="vc-pass__strap"><span class="vc-pass__weave">Teddy Studio · Ethiopian Film Office · Teddy Studio · Ethiopian Film Office · Teddy Studio · Ethiopian Film Office ·</span></div>
+          <div class="vc-pass__clip"><i></i></div>
+          <div class="vc-pass__card" data-vc-card data-cursor="drag">
+            <i class="vc-pass__slot"></i>
+            <div class="vc-pass__band"><img src="/brand/teddy-studio-logo.webp" alt="" width="960" height="338" decoding="async"></div>
+            <p class="vc-pass__crew">Crew</p>
+            <dl class="vc-pass__f">
+              <div><dt>Name</dt><dd class="is-blank"></dd></div>
+              <div><dt>Role</dt><dd>—</dd></div>
+              <div><dt>Base</dt><dd>Meskel Square, Addis Ababa</dd></div>
+            </dl>
+            <div class="vc-pass__foot">
+              <i class="vc-pass__code"></i>
+              <i class="vc-pass__holo"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </header>
+
+  <!-- Le fil tendu entre deux punaises : il vibre, et se pince au passage. -->
+  <div class="vc-seam vc-seam--string" aria-hidden="true" data-vc-string>
+    <i class="vc-seam__pin"></i>
+    <svg class="vc-seam__thread" viewBox="0 0 1000 24" preserveAspectRatio="none"><path d="M0 12 Q500 19 1000 12"/></svg>
+    <i class="vc-seam__pin"></i>
+  </div>
 
   <!-- ÉTAT ACTUEL : aucune offre ouverte.
        C'est l'état réel du site source au 18/09/2026 — un état vide se DESSINE,
-       il ne se subit pas. -->
+       il ne se subit pas : le tableau est vide, seules restent les traces des
+       feuilles d'avant et quelques punaises ; une seule note y est épinglée. -->
   <section class="vac vac--empty" id="vac-empty" aria-labelledby="vac-empty-h">
-    <div class="vac__empty">
-      <p class="vac__dash mono" aria-hidden="true">—</p>
-      <h2 class="vac__empty-h" id="vac-empty-h">No Vacancies Currently Available</h2>
-      <p class="vac__empty-p">Nothing is open at this moment. Crews change fast in this business, so if you work in production, printing or marketing, send us your file anyway &mdash; we read them.</p>
-      <p class="vac__empty-a">
-        <a class="btn btn--go" href="mailto:info@ethiopianfilmoffice.com?subject=Speculative%20application"><span>Send your CV</span></a>
-      </p>
-      <p class="vac__empty-n mono">info@ethiopianfilmoffice.com &middot; Meskel Square, Addis Ababa</p>
+    <div class="vac__empty vc-board" data-vc-board>
+      <div class="vc-board__felt" aria-hidden="true">
+        <i class="vc-board__st vc-board__st--t"></i>
+        <i class="vc-board__st vc-board__st--b"></i>
+        <i class="vc-ghost vc-ghost--1"><b></b><b></b></i>
+        <i class="vc-ghost vc-ghost--2"><b></b></i>
+        <i class="vc-ghost vc-ghost--3"><b></b><b></b></i>
+        <i class="vc-loose vc-loose--1"></i>
+        <i class="vc-loose vc-loose--2"></i>
+        <i class="vc-loose vc-loose--3"></i>
+      </div>
+
+      <div class="vc-board__head">
+        <p class="vac__dash mono vc-flap" aria-hidden="true" data-vc-flap><span class="vc-flap__c">—</span></p>
+        <h2 class="vac__empty-h" id="vac-empty-h">No Vacancies Currently Available</h2>
+      </div>
+
+      <div class="vc-notice" data-vc-notice>
+        <div class="vc-notice__paper" data-vc-swing>
+          <i class="vc-pin vc-notice__pin" aria-hidden="true"></i>
+          <p class="vac__empty-p">Nothing is open at this moment. Crews change fast in this business, so if you work in production, printing or marketing, send us your file anyway &mdash; we read them.</p>
+          <p class="vac__empty-a">
+            <a class="btn btn--go vc-tapebtn" href="mailto:info@ethiopianfilmoffice.com?subject=Speculative%20application"><span>Send your CV</span></a>
+          </p>
+          <p class="vac__empty-n mono">info@ethiopianfilmoffice.com &middot; Meskel Square, Addis Ababa</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ARCHIVE : la dernière campagne, telle qu'elle a été publiée. -->
+  <!-- La ligne perforée : un éclat la parcourt, comme une feuille qu'on détache. -->
+  <div class="vc-seam vc-seam--perf" aria-hidden="true"><i class="vc-seam__glint"></i></div>
+
+  <!-- ARCHIVE : la dernière campagne, telle qu'elle a été publiée.
+       Les postes sont des badges accrochés au rail ; la feuille de service
+       du poste choisi est punaisée à côté. Les postes dont la description
+       n'est plus publiée ont leur feuille déchirée. -->
   <section class="vac vac--past" aria-labelledby="vac-past-h">
     <header class="vac__past-head">
       <h2 class="vac__past-h" id="vac-past-h">Last announcement</h2>
-      <p class="vac__dates mono">
-        <span>Published <time datetime="2025-01-28">January 28, 2025</time></span>
-        <span class="vac__sep" aria-hidden="true">·</span>
-        <span class="is-closed">Closed <time datetime="2025-02-28">February 28, 2025</time></span>
-      </p>
+      <div class="vc-dates">
+        <p class="vac__dates mono">
+          <span class="vc-date">Published <time datetime="2025-01-28">January 28, 2025</time></span>
+          <span class="vac__sep" aria-hidden="true">·</span>
+          <span class="is-closed vc-date">Closed <time datetime="2025-02-28">February 28, 2025</time></span>
+        </p>
+        <span class="vc-stamp" aria-hidden="true" data-vc-stamp><b>Closed</b><i>28 · 02 · 2025</i></span>
+      </div>
     </header>
 
     <div class="vac__grid">
       <nav class="vac__list" aria-label="Roles in that announcement">
         <p class="vac__list-h mono">Vacancy List</p>
-        <ul>
+        <ul class="vc-rail">
           <li><button type="button" class="vac__btn is-on" data-role="film-production-head">Film and Add Production Department Head</button></li>
           <li><button type="button" class="vac__btn" data-role="marketing-head">Marketing Department Head</button></li>
           <li><button type="button" class="vac__btn" data-role="printing-manager">Digital Printing Production Manager</button></li>
@@ -54,46 +127,67 @@
       </nav>
 
       <div class="vac__panel" id="vac-panel">
+        <div class="vc-stack" data-vc-stack>
 
-        <article class="vac__role is-on" data-role="film-production-head">
-          <h3 class="vac__role-h">Film and Add Production Department Head</h3>
-          <p>The Creative and Production Department Head will lead the creative vision and oversee all production related activities. This role involves managing a team of directors, producers, writers, and designers to deliver high-quality content that aligns with Teddy Studio&rsquo;s objectives. The successful candidate will coordinate pre-production, production, and post-production processes to ensure timely and budget-friendly completion of projects.</p>
-          <h4 class="vac__sub">Key Responsibilities</h4>
-          <ul class="vac__ul">
-            <li>Develop creative strategies and innovative content concepts.</li>
-            <li>Oversee the planning, budgeting, and execution of production schedules.</li>
-            <li>Lead and mentor a creative production team.</li>
-            <li>Ensure quality control for all productions and content deliverables.</li>
-            <li>Collaborate with other departments to meet client and project needs.</li>
-          </ul>
-          <h4 class="vac__sub">Job Requirements</h4>
-          <ul class="vac__ul">
-            <li>Bachelor&rsquo;s degree in Film Production, Media, or a related field.</li>
-            <li>Minimum of 5 years of experience in creative content production.</li>
-            <li>Strong leadership and project management skills.</li>
-            <li>Expertise in storytelling, production workflows, and industry tools.</li>
-            <li>Excellent communication and organizational abilities.</li>
-          </ul>
-        </article>
+          <article class="vac__role vc-sheet is-on" data-role="film-production-head">
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--l" aria-hidden="true"></i>
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--r" aria-hidden="true"></i>
+            <p class="vc-sheet__top" aria-hidden="true"><span>Crew call · Jan 2025</span><span>Role 01 / 04</span></p>
+            <h3 class="vac__role-h">Film and Add Production Department Head</h3>
+            <p>The Creative and Production Department Head will lead the creative vision and oversee all production related activities. This role involves managing a team of directors, producers, writers, and designers to deliver high-quality content that aligns with Teddy Studio&rsquo;s objectives. The successful candidate will coordinate pre-production, production, and post-production processes to ensure timely and budget-friendly completion of projects.</p>
+            <h4 class="vac__sub">Key Responsibilities</h4>
+            <ul class="vac__ul">
+              <li>Develop creative strategies and innovative content concepts.</li>
+              <li>Oversee the planning, budgeting, and execution of production schedules.</li>
+              <li>Lead and mentor a creative production team.</li>
+              <li>Ensure quality control for all productions and content deliverables.</li>
+              <li>Collaborate with other departments to meet client and project needs.</li>
+            </ul>
+            <h4 class="vac__sub">Job Requirements</h4>
+            <ul class="vac__ul">
+              <li>Bachelor&rsquo;s degree in Film Production, Media, or a related field.</li>
+              <li>Minimum of 5 years of experience in creative content production.</li>
+              <li>Strong leadership and project management skills.</li>
+              <li>Expertise in storytelling, production workflows, and industry tools.</li>
+              <li>Excellent communication and organizational abilities.</li>
+            </ul>
+          </article>
 
-        <article class="vac__role" data-role="marketing-head">
-          <h3 class="vac__role-h">Marketing Department Head</h3>
-          <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
-        </article>
+          <article class="vac__role vc-sheet vc-sheet--torn" data-role="marketing-head">
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--l" aria-hidden="true"></i>
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--r" aria-hidden="true"></i>
+            <p class="vc-sheet__top" aria-hidden="true"><span>Crew call · Jan 2025</span><span>Role 02 / 04</span></p>
+            <h3 class="vac__role-h">Marketing Department Head</h3>
+            <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
+          </article>
 
-        <article class="vac__role" data-role="printing-manager">
-          <h3 class="vac__role-h">Digital Printing Production Manager</h3>
-          <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
-        </article>
+          <article class="vac__role vc-sheet vc-sheet--torn" data-role="printing-manager">
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--l" aria-hidden="true"></i>
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--r" aria-hidden="true"></i>
+            <p class="vc-sheet__top" aria-hidden="true"><span>Crew call · Jan 2025</span><span>Role 03 / 04</span></p>
+            <h3 class="vac__role-h">Digital Printing Production Manager</h3>
+            <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
+          </article>
 
-        <article class="vac__role" data-role="printing-operators">
-          <h3 class="vac__role-h">Digital Printing Operators</h3>
-          <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
-        </article>
+          <article class="vac__role vc-sheet vc-sheet--torn" data-role="printing-operators">
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--l" aria-hidden="true"></i>
+            <i class="vc-pin vc-sheet__pin vc-sheet__pin--r" aria-hidden="true"></i>
+            <p class="vc-sheet__top" aria-hidden="true"><span>Crew call · Jan 2025</span><span>Role 04 / 04</span></p>
+            <h3 class="vac__role-h">Digital Printing Operators</h3>
+            <p class="vac__gone">This role was part of the January 2025 announcement. Its full description is no longer published.</p>
+          </article>
 
-        <footer class="vac__apply">
+          <!-- La trace de la feuille entière, là où la feuille déchirée manque. -->
+          <i class="vc-stack__ghost" aria-hidden="true"></i>
+        </div>
+
+        <!-- Le chemin pour postuler : une petite affiche punaisée, et ses
+             languettes à arracher (décoratives : le lien est au-dessus). -->
+        <footer class="vac__apply vc-flyer" data-vc-flyer>
+          <i class="vc-pin vc-flyer__pin" aria-hidden="true"></i>
           <p class="vac__apply-t">Send us your cover letter and resume</p>
           <p><a class="lnk" href="mailto:info@ethiopianfilmoffice.com"><span>info@ethiopianfilmoffice.com</span></a></p>
+          <div class="vc-tabs" aria-hidden="true" data-vc-tabs></div>
         </footer>
       </div>
     </div>
@@ -109,7 +203,7 @@
   </button>
   <div class="dock__body" id="dock-body" hidden>
     <ol class="dock__log mono" id="dock-log"></ol>
-    <a class="dock__go" href="/#contact"><span class="mono">Open the sheet</span></a>
+    <a class="dock__go" href="/contact.html#inquiry"><span class="mono">Open the sheet</span></a>
   </div>
 </aside>
 
@@ -130,5 +224,6 @@
     });
   }
 </script>
+<script type="module" src="/src/js/pages/vacancy.js"></script>
 </body>
 </html>

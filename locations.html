@@ -5,6 +5,7 @@
   <title>Locations — Ethiopian Film Office</title>
   <meta name="description" content="We take pride in facilitating filming in a diverse range of stunning locations throughout Ethiopia. Nine we work in most, from the Simien Mountains to the Erta Ale lava lake.">
   <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/pages/locations.css">
   <!-- Le <img> ci-dessous choisit sa taille par `sizes` : un préchargement qui
        ne reprend pas le même srcset télécharge une AUTRE image que celle qui
        sera affichée — deux fichiers au lieu d'un, et le gain devient une perte. -->
@@ -13,17 +14,43 @@
         imagesizes="(max-width: 900px) 100vw, 58vw"
         fetchpriority="high">
 </head>
-<body class="page page--loc">
+<body class="page page--loc" data-page="locations">
 
 <!--#include "bar" -->
 
 <main id="main">
-  <header class="phead">
-    <p class="eyebrow">Locations</p>
-    <h1 class="phead__h">We take pride in facilitating filming in a diverse range of <em>stunning locations</em> throughout Ethiopia.</h1>
-    <p class="phead__meta mono"><span>Nine locations</span><span class="go-dot" aria-hidden="true"></span><span>Permits handled in-house</span></p>
+  <!-- L'ATLAS (18/10/2026) : l'ouverture est une carte topographique vivante
+       (courbes de niveau tracées en direct, locations.js), puis l'index des
+       neuf lieux, du plus haut au plus bas, sur leur coupe d'altitude. Les
+       altitudes sont celles de src/data/site.js (déjà publiées sur l'accueil) ;
+       Winding Road n'en a pas. -->
+  <header class="phead ol-hero" data-ol-live>
+    <div class="ol-topo" aria-hidden="true"><canvas class="ol-topo__c"></canvas></div>
+    <div class="ol-hero__text">
+      <p class="eyebrow">Locations</p>
+      <h1 class="phead__h">We take pride in facilitating filming in a diverse range of <em>stunning locations</em> throughout Ethiopia.</h1>
+      <p class="phead__meta mono"><span>Nine locations</span><span class="go-dot" aria-hidden="true"></span><span>Permits handled in-house</span></p>
+    </div>
+    <nav class="ol-prof" aria-label="The nine locations, from the highest to the lowest">
+      <div class="ol-prof__chart" aria-hidden="true"></div>
+      <ol class="ol-prof__list">
+        <li><a href="#simien-mountains"><span class="ol-prof__n">Simien Mountains</span><span class="ol-prof__a">4,550&nbsp;m</span></a></li>
+        <li><a href="#wonchi"><span class="ol-prof__n">Wonchi</span><span class="ol-prof__a">3,450&nbsp;m</span></a></li>
+        <li><a href="#lalibela"><span class="ol-prof__n">Lalibela</span><span class="ol-prof__a">2,630&nbsp;m</span></a></li>
+        <li><a href="#addis-ababa"><span class="ol-prof__n">Addis Ababa</span><span class="ol-prof__a">2,355&nbsp;m</span></a></li>
+        <li><a href="#wollo"><span class="ol-prof__n">Wollo</span><span class="ol-prof__a">2,030&nbsp;m</span></a></li>
+        <li><a href="#fasilides"><span class="ol-prof__n">Fasilides</span><span class="ol-prof__a">1,994&nbsp;m</span></a></li>
+        <li><a href="#erta-ale"><span class="ol-prof__n">Erta Ale Lava Lake</span><span class="ol-prof__a">613&nbsp;m</span></a></li>
+        <li><a href="#afar"><span class="ol-prof__n">Afar</span><span class="ol-prof__a">&minus;125&nbsp;m</span></a></li>
+        <li><a href="#winding-road"><span class="ol-prof__n">Winding Road</span><span class="ol-prof__a" aria-hidden="true">&mdash;</span></a></li>
+      </ol>
+    </nav>
   </header>
 
+  <!-- Les fiches de repérage. À gauche (ordinateur), l'altimètre suit le
+       défilement : son aiguille glisse à l'altitude du lieu à l'écran. -->
+  <div class="ol-atlas">
+  <div class="ol-rail" aria-hidden="true"></div>
   <ol class="locs">
 
     <li class="loc__i" id="simien-mountains">
@@ -36,6 +63,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Simien Mountains</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">4,550&nbsp;m</span></p>
         <p class="loc__note">Discover the beauty of the natural world</p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY-SA 3.0</p>
       </div>
@@ -48,6 +76,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Wollo</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">2,030&nbsp;m</span></p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY-SA 3.0</p>
       </div>
     </li>
@@ -59,6 +88,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Lalibela</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">2,630&nbsp;m</span></p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY-SA 3.0</p>
       </div>
     </li>
@@ -70,6 +100,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Wonchi</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">3,450&nbsp;m</span></p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY-SA 4.0</p>
       </div>
     </li>
@@ -81,6 +112,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Fasilides</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">1,994&nbsp;m</span></p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY-SA 3.0</p>
       </div>
     </li>
@@ -92,6 +124,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Afar</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">&minus;125&nbsp;m</span></p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY-SA 4.0</p>
       </div>
     </li>
@@ -103,6 +136,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Erta Ale Lava Lake</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">613&nbsp;m</span></p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY 2.5</p>
       </div>
     </li>
@@ -114,6 +148,7 @@
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Addis Ababa</h2>
+        <p class="ol-alt"><span class="ol-alt__k">Altitude</span> <span class="ol-alt__v">2,355&nbsp;m</span></p>
         <p class="loc__note">Where the office is &mdash; Meskel Square, open <span class="go">24/7</span></p>
         <p class="loc__credit mono">Photo: Wikimedia Commons &middot; CC BY-SA 3.0</p>
       </div>
@@ -131,8 +166,10 @@
     </li>
 
   </ol>
+  </div>
 
-  <aside class="locs__cta">
+  <aside class="locs__cta" data-ol-live>
+    <div class="ol-cta__map" aria-hidden="true"></div>
     <p class="locs__q">Somewhere else in mind?</p>
     <p class="locs__a">We scout, we clear the permits, we get the trucks there.</p>
     <a class="btn btn--go btn--lg" href="/book.html"><span>Start a production</span></a>
@@ -148,11 +185,13 @@
   </button>
   <div class="dock__body" id="dock-body" hidden>
     <ol class="dock__log mono" id="dock-log"></ol>
-    <a class="dock__go" href="/#contact"><span class="mono">Open the sheet</span></a>
+    <a class="dock__go" href="/contact.html#inquiry"><span class="mono">Open the sheet</span></a>
   </div>
 </aside>
 
 <div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">Drag</i></div>
+<!-- Avant page.js : l'atlas pose ses propres entrées sur les fiches. -->
+<script type="module" src="/src/js/pages/locations.js"></script>
 <script type="module" src="/src/js/page.js"></script>
 </body>
 </html>

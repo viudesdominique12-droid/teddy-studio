@@ -329,7 +329,10 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
 }
 
 .bar__pill { display: none; }
-@media (min-width: 48rem) {
+/* Six liens et l'appel (Equipment Rentals est passé dans le menu des
+   services le 18/10) : la pilule tient en entier à partir de 60 rem ; en
+   dessous, le rond de l'index porte tout. */
+@media (min-width: 60rem) {
   .bar__pill {
     display: flex; align-items: center; gap: 0.25rem;
     margin-left: auto;
@@ -361,6 +364,74 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
   fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
 }
 
+/* ── Le menu des services ──
+   Une carte de verre sous la pilule : les sept divisions, Live Streaming et
+   Event Organizing en tête, chacune avec sa lumière (`--c`). */
+.bar__dd { position: relative; }
+.bar__ddb {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.5rem 0.65rem 0.5rem 0.75rem; border: 0; border-radius: 999px; background: none;
+  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  color: color-mix(in srgb, var(--bar-ink) 80%, transparent); cursor: pointer;
+  transition: color 0.25s var(--e-out);
+}
+.bar__ddb:hover, .bar__ddb[aria-expanded='true'], .bar__ddb.is-current { color: var(--bar-ink); }
+.bar__chev { width: 0.95rem; height: 0.95rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: rotate 0.4s var(--e-out); }
+.bar__ddb[aria-expanded='true'] .bar__chev { rotate: 180deg; }
+.bar__menu {
+  position: absolute; top: calc(100% + 0.9rem); left: 50%; translate: -50% 0;
+  width: min(44rem, calc(100vw - 2rem));
+}
+.bar__menu::before { content: ''; position: absolute; left: 0; right: 0; top: -1rem; height: 1rem; }  /* le pont sous la souris */
+.bar__menu-in {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.25rem;
+  padding: 0.5rem; border-radius: 1.4rem;
+  background: color-mix(in srgb, var(--night-2) 95%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bar-ink) 12%, transparent), 0 30px 60px -24px rgb(0 0 0 / 0.65);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+}
+.bar__menu:not([hidden]) .bar__menu-in { animation: bar-menu 0.5s var(--e-out); }
+@keyframes bar-menu { from { opacity: 0; transform: translateY(-8px) scale(0.985); } }
+.bar__pill .bar__svc {
+  position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.2rem 0.75rem; align-items: baseline;
+  padding: 0.85rem 1rem; border-radius: 1rem; white-space: normal;
+  color: var(--fg); overflow: hidden; isolation: isolate;
+}
+.bar__svc::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+  background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--c) 24%, transparent), transparent 70%);
+  opacity: 0; transition: opacity 0.4s var(--e-out);
+}
+.bar__svc:hover::before, .bar__svc:focus-visible::before, .bar__svc[aria-current]::before { opacity: 1; }
+.bar__svc-n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.08em; color: var(--c); }
+.bar__svc-t { font-family: var(--ff-d); font-size: 1.05rem; line-height: 1.05; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; letter-spacing: -0.005em; }
+.bar__svc-d { grid-column: 2; font-family: var(--ff-t); font-size: 0.8125rem; line-height: 1.4; color: var(--cream-3); }
+.bar__svc--feat { background: color-mix(in srgb, var(--c) 8%, transparent); }
+.bar__svc--feat .bar__svc-t { font-size: 1.3rem; }
+.bar__pill .bar__all {
+  grid-column: 1 / -1; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  margin-top: 0.25rem; padding: 0.8rem; border-radius: 1rem;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--cream-2); background: color-mix(in srgb, var(--fg) 5%, transparent);
+}
+.bar__all svg { width: 0.9rem; height: 0.9rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.bar__pill .bar__all:hover { color: var(--fg); }
+html.is-locked .bar__menu { display: none; }
+
+/* ── L'index : les sept divisions en petit, sous les grandes entrées ── */
+.index__sub {
+  display: grid; grid-template-columns: repeat(3, minmax(0, auto)); justify-content: center; gap: 0.35rem 1.6rem;
+  margin-top: clamp(0.6rem, 2vh, 1.4rem);
+}
+.index__nav .index__sl {
+  display: inline-flex; align-items: baseline; gap: 0.5em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); letter-spacing: 0.08em; text-transform: uppercase;
+  line-height: 1.6; color: color-mix(in srgb, var(--basalt) 78%, transparent);
+}
+.index__sl span { color: color-mix(in srgb, var(--basalt) 50%, transparent); }
+.index__nav .index__sl:hover { color: var(--basalt); }
+@media (max-width: 40rem) { .index__sub { grid-template-columns: repeat(2, minmax(0, auto)); } }
+
 /* L'index : un rond plein, à droite — terre cuite et encre basalte, le
    couple fort du site (Dominique, 27/09 : « orange, comme le orange qu'il y a
    sur le site »). Dans les autres thèmes, l'accent du thème. */
@@ -376,7 +447,12 @@ html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
 .burger__b { width: 1.1rem; height: 1.5px; }
 .burger[aria-expanded='true'] .burger__b:nth-child(1) { transform: translateY(calc(0.3rem + 1.5px)) rotate(45deg); }
 .burger[aria-expanded='true'] .burger__b:nth-child(3) { transform: translateY(calc(-0.3rem - 1.5px)) rotate(-45deg); }
-@media (max-width: 47.99rem) { .burger { margin-left: auto; } }
+@media (max-width: 59.99rem) { .burger { margin-left: auto; } }
+/* Sur ordinateur, la pilule porte déjà tous les liens et le menu des
+   services : le grand menu orange n'y sert plus (Dominique, 18/10 : « ça on
+   en a pas besoin vu qu'on a le header sur desktop »). Il reste le menu du
+   téléphone et de la tablette. */
+@media (min-width: 60rem) { .burger { display: none; } }
 
 /* Sur le contenu (hors de l'ouverture de l'accueil) : un verre plus sombre et
    une ombre portée — la pilule flotte, elle ne se fond pas dans la page. Le

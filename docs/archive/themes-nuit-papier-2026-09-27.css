@@ -46,11 +46,14 @@ html[data-palette='nuit'] {
 /* Le titre de l'ouverture : un fronton de cinéma, en capitales. */
 html[data-palette='nuit'] .hx__h {
   font-family: var(--ff-d);
-  font-size: clamp(3.4rem, 1rem + 8.6vw, 9.75rem);
+  font-size: clamp(3rem, 0.9rem + 7vw, 8.5rem);
   font-weight: 800; font-variation-settings: 'wght' 800;
   line-height: 0.9; letter-spacing: 0;
   text-transform: uppercase; text-wrap: balance;
 }
+@media (max-width: 40rem) { html[data-palette='nuit'] .hx .hx__h { font-size: 17vw; line-height: 0.92; } }
+html[data-palette='nuit'] .hx__h-b { font-size: 0.42em; font-style: normal; line-height: 1; letter-spacing: 0.01em; }
+html[data-palette='nuit'] .hm-cta__h { font-family: var(--ff-d); font-weight: 800; font-variation-settings: 'wght' 800; text-transform: uppercase; line-height: 0.92; letter-spacing: 0; }
 /* Des capitales déjà étroites : on desserre un peu l'approche des titres. */
 html[data-palette='nuit'] :is(.hm-h, .phead__h, .k3__h, .hm-why__h) { letter-spacing: -0.005em; }
 html[data-palette='nuit'] .index__n {
@@ -98,7 +101,7 @@ html[data-palette='papier'] :is(#resources, #locations, #gallery, .ftr) {
 /* L'ouverture : l'encre noire sur le papier, le bouton et la puce inversés. */
 html[data-palette='papier'] .hx { --ink: var(--fg); --ink-inv: var(--bg); }
 html[data-palette='papier'] .hx__h {
-  font-size: clamp(3rem, 1.2rem + 6.6vw, 7.75rem);
+  font-size: clamp(2.8rem, 1rem + 6vw, 7.25rem);
   font-weight: 400; font-variation-settings: normal;
   line-height: 1; letter-spacing: -0.015em;
 }
@@ -181,9 +184,17 @@ html.is-locked .pal { opacity: 0; pointer-events: none; }
   .pal { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--night-2) 94%, transparent); }
   html[data-palette='papier'] .bar { --bar-glass: color-mix(in srgb, var(--night-3) 94%, transparent); }
 }
+/* Sur téléphone : les pastilles seules, en ligne, au milieu de la barre —
+   sur le bord droit, elles mordaient sur le texte. Elles s'effacent avec la
+   barre quand on descend. */
 @media (max-width: 48rem) {
-  .pal { right: 0.45rem; padding: 0.3rem; }
+  .pal {
+    top: calc(var(--bar-h) / 2); right: auto; left: 50%; transform: translate(-50%, -50%);
+    flex-direction: row; padding: 0.25rem;
+    transition: opacity 0.35s var(--e-out);
+  }
   .pal__k { display: none; }
   .pal__b { font-size: 0; gap: 0; padding: 0.4rem; }
+  .bar.is-away ~ .pal { opacity: 0; pointer-events: none; }
 }
 @media print { .pal { display: none; } }

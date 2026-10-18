@@ -1,0 +1,583 @@
+/* 18/10/2026 — LES THÈMES NUIT ET PAPIER SONT RETIRÉS (Dominique : « on reste
+   que sur le vert de base »). Seul le jeu de nuit (`--D-*`) sert ; les règles
+   `html[data-palette='papier']` ci-dessous et dans les pages sont inactives. */
+/* ══════════════════════════════════════════════════════════════
+   LES PAGES DE DIVISION — 17/10/2026
+   Le brief du client fait de l'entreprise une société média, événements et
+   production en sept divisions, chacune avec sa page. Ce fichier porte le
+   vocabulaire commun (préfixe `dv-`) ; chaque page ajoute sa pièce
+   signature (src/styles/pages/<division>.css) et sa couleur de lumière.
+
+   Une seule identité (le brief §14), mais chaque division a son caractère
+   (§17, « avoid making every service look identical »). Depuis le 18/10
+   (Dominique : « change même la couleur de la page pour une immersion
+   totale dans le thème »), chaque division a SA couleur de page, pas
+   seulement une lumière : voir « L'immersion » juste dessous.
+   ══════════════════════════════════════════════════════════════ */
+
+body[data-dv] { --dv: var(--gold); --dv-ink: var(--basalt); }
+body[data-dv='hub']     { --dv: var(--gold); }
+
+/* ═══════════════════ L'IMMERSION — 18/10/2026 ═══════════════════
+   Chaque division porte deux jeux de couleurs : `--D-*` (la nuit, pour Vert
+   et Nuit) et `--L-*` (le jour, pour Papier). Le jeu actif est recopié dans
+   les jetons de rôle du site (`--night`, `--cream`, `--line`, `--bg`,
+   `--fg`…) DANS LE CONTENU DE LA PAGE (`#main`) : les sections et les
+   formulaires prennent la couleur de la division ; `--gold` (l'accent de
+   marque) y devient l'accent de la division. La barre, le menu et le pied
+   de page gardent la couleur de la marque. Les pages de synthèse (`hub` :
+   Services, Portfolio, About, Contact) aussi.
+   En Papier, les grandes sections noires du contenu reprennent la nuit DE
+   LA DIVISION, pas un noir neutre. */
+body[data-dv='live'] {
+  --D-dv: #ff4a3d; --D-dv-lt: #ff7f74; --D-dv-dp: #c42a1f;
+  --D-night: #0c0e12; --D-night-2: #07080b; --D-night-3: #161a21;
+  --D-cream: #eef0f3; --D-cream-2: #a9b0ba; --D-cream-3: #8a929d;
+  --L-dv: #e0362a; --L-dv-lt: #b3241a; --L-dv-dp: #a11f15;
+  --L-night: #f3f4f6; --L-night-2: #e6e8ec; --L-night-3: #ffffff;
+  --L-cream: #0f1216; --L-cream-2: #4a515b; --L-cream-3: #5f6671;
+}
+body[data-dv='events'] {
+  --D-dv: #f2a93b; --D-dv-lt: #f7c675; --D-dv-dp: #b8781a;
+  --D-night: #170c10; --D-night-2: #0f070a; --D-night-3: #25141b;
+  --D-cream: #f7ede3; --D-cream-2: #c6b4a8; --D-cream-3: #a08e83;
+  --L-dv: #e0921f; --L-dv-lt: #8e530a; --L-dv-dp: #a8670d;
+  --L-night: #f8f0e6; --L-night-2: #efe3d3; --L-night-3: #fffaf3;
+  --L-cream: #22150f; --L-cream-2: #5d4a3f; --L-cream-3: #725f54;
+}
+body[data-dv='ai'] {
+  --D-dv: #8f7cff; --D-dv-lt: #b4a8ff; --D-dv-dp: #5d49d6;
+  --D-night: #0c0b1e; --D-night-2: #070614; --D-night-3: #17153a;
+  --D-cream: #eeebff; --D-cream-2: #b2acd8; --D-cream-3: #908ab9;
+  --L-dv: #7a63ff; --L-dv-lt: #4c37c2; --L-dv-dp: #4c37c2;
+  --L-night: #f2f0fc; --L-night-2: #e5e1f8; --L-night-3: #fdfcff;
+  --L-cream: #15122b; --L-cream-2: #4b466f; --L-cream-3: #615c86;
+}
+body[data-dv='music'] {
+  --D-dv: #ff5c8a; --D-dv-lt: #ff92b0; --D-dv-dp: #c92d5a;
+  --D-night: #170a14; --D-night-2: #0e050c; --D-night-3: #27101f;
+  --D-cream: #fcebf3; --D-cream-2: #d0afbf; --D-cream-3: #a8899b;
+  --L-dv: #f0447a; --L-dv-lt: #b0144a; --L-dv-dp: #b0144a;
+  --L-night: #fbeff4; --L-night-2: #f3e0e9; --L-night-3: #fff9fb;
+  --L-cream: #2a0f1d; --L-cream-2: #694456; --L-cream-3: #7f5b6d;
+}
+body[data-dv='film'] {
+  --D-dv: #e8c27a; --D-dv-lt: #f2d9a6; --D-dv-dp: #b08a3e;
+  --D-night: #0e0c0a; --D-night-2: #070605; --D-night-3: #1b1814;
+  --D-cream: #f4ead6; --D-cream-2: #beb29d; --D-cream-3: #978d7b;
+  --L-dv: #c99a3e; --L-dv-lt: #7a5815; --L-dv-dp: #8a6620;
+  --L-night: #f6f1e6; --L-night-2: #ebe3d1; --L-night-3: #fffcf5;
+  --L-cream: #17130c; --L-cream-2: #564d3e; --L-cream-3: #6c6353;
+}
+body[data-dv='doc'] {
+  --D-dv: #d0915a; --D-dv-lt: #e3b386; --D-dv-dp: #9a5f2f;
+  --D-night: #1a110c; --D-night-2: #110b07; --D-night-3: #2a1c13;
+  --D-cream: #f1e5d3; --D-cream-2: #c4b29c; --D-cream-3: #a08d77;
+  --L-dv: #b8723a; --L-dv-lt: #82481b; --L-dv-dp: #8f5222;
+  --L-night: #efe5d6; --L-night-2: #e3d5c0; --L-night-3: #f9f3ea;
+  --L-cream: #23180f; --L-cream-2: #5d4b3a; --L-cream-3: #715f4d;
+}
+body[data-dv='rentals'] {
+  --D-dv: #7fb7d9; --D-dv-lt: #aad2ea; --D-dv-dp: #3f86b3;
+  --D-night: #0a1622; --D-night-2: #06101a; --D-night-3: #122436;
+  --D-cream: #e8f1f8; --D-cream-2: #a7b9c9; --D-cream-3: #8295a8;
+  --L-dv: #3f86b3; --L-dv-lt: #235d84; --L-dv-dp: #2a6489;
+  --L-night: #eef4f9; --L-night-2: #dfe9f2; --L-night-3: #fbfdff;
+  --L-cream: #0b1a28; --L-cream-2: #43576a; --L-cream-3: #5a6e81;
+}
+
+/* La partie commune — la barre, le menu, le pied de page, la barre d'appel
+   du téléphone — ne change pas (Dominique, 18/10 : « la partie commune
+   change pas, le client il aime comme ça ») : seul le contenu de la page
+   (`#main`) — et, depuis le 18/10, le pied de page (`.ftr`) — prend la
+   couleur de la division. Hors de ces deux-là, `--dv` reste la lumière de la
+   division, comme avant. */
+body[data-dv]:not([data-dv='hub']) { --dv: var(--D-dv); }
+
+/* La nuit de la division : le contenu et, depuis le 18/10 (Dominique : « le
+   pied de page peut être changé pour matcher les styles »), le pied de page.
+   La barre du haut, le menu et la barre d'appel du téléphone restent ceux de
+   la marque. */
+body[data-dv]:not([data-dv='hub']) #main,
+body[data-dv]:not([data-dv='hub']) .ftr,
+html[data-palette='papier'] body[data-dv]:not([data-dv='hub']) #main :is(#resources, #locations, #gallery, .dv-night) {
+  --dv: var(--D-dv); --dv-lt: var(--D-dv-lt); --dv-dp: var(--D-dv-dp);
+  --night: var(--D-night); --night-2: var(--D-night-2); --night-3: var(--D-night-3);
+  --cream: var(--D-cream); --cream-2: var(--D-cream-2); --cream-3: var(--D-cream-3);
+  --line: #ffffff26; --line-2: #ffffff14; --line-ui: #ffffff5c;
+  --gold-lt: var(--D-dv-lt);
+  color-scheme: dark;
+}
+/* Le jour de la division : Papier. */
+html[data-palette='papier'] body[data-dv]:not([data-dv='hub']) #main {
+  --dv: var(--L-dv); --dv-lt: var(--L-dv-lt); --dv-dp: var(--L-dv-dp);
+  --night: var(--L-night); --night-2: var(--L-night-2); --night-3: var(--L-night-3);
+  --cream: var(--L-cream); --cream-2: var(--L-cream-2); --cream-3: var(--L-cream-3);
+  --line: #0000001f; --line-2: #00000012; --line-ui: #0000005c;
+  --gold-lt: var(--L-dv-lt);
+  color-scheme: light;
+}
+/* Les rôles, recalculés là où le jeu change (déclarés sur :root, ils y ont
+   été calculés avec les couleurs de la marque). */
+body[data-dv]:not([data-dv='hub']) #main,
+body[data-dv]:not([data-dv='hub']) .ftr,
+html[data-palette='papier'] body[data-dv]:not([data-dv='hub']) #main,
+html[data-palette='papier'] body[data-dv]:not([data-dv='hub']) #main :is(#resources, #locations, #gallery, .dv-night) {
+  --bg: var(--night); --bg-2: var(--night-2);
+  --fg: var(--cream); --fg-2: var(--cream-2); --fg-3: var(--cream-3);
+  --gold: var(--dv); --gold-dp: var(--dv-dp);
+  --go: var(--dv); --go-text: var(--gold-lt); --go-solid: var(--dv); --go-press: var(--dv-dp);
+  --go-soft: color-mix(in srgb, var(--dv) 12%, transparent);
+  --g-300: var(--gold-lt); --paper-2: var(--night-2);
+  --shadow-border: color-mix(in srgb, var(--dv) 50%, transparent);
+  --shadow-light: color-mix(in srgb, var(--dv) 40%, transparent);
+  background-color: var(--bg);
+  color: var(--fg);
+}
+/* Le pied de page d'une division : un filet de sa lumière en tête, et le
+   grand mot « STUDIO » dans son accent. */
+body[data-dv]:not([data-dv='hub']) .ftr {
+  border-top-color: color-mix(in srgb, var(--dv) 35%, transparent);
+  background-image: radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--dv) 10%, transparent), transparent 70%);
+}
+body[data-dv]:not([data-dv='hub']) .ftr__wl .ln--b { color: var(--dv); }
+
+/* Le texte coloré, en thème Papier : les accents sont clairs (l'ambre, le
+   bleu acier, le rose…) et se lisent mal sur le papier. Mêlés à l'encre de
+   la section, ils restent lisibles — et dans les sections noires du Papier,
+   où l'encre est crème, ils s'éclaircissent au lieu de s'assombrir. */
+html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps li > span:first-child,
+  .dv-link:hover, .dv-reach a:hover, .dv-reach a:hover::after) {
+  color: color-mix(in oklab, var(--dv) 55%, var(--fg));
+}
+
+.dv-wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--pad-x); }
+
+/* ─────────────── Les trois voix ─────────────── */
+.dv-k {
+  display: inline-flex; align-items: center; gap: 0.7em;
+  margin: 0 0 var(--s-5);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-weight: 400;
+  font-size: var(--fs-nano); line-height: 1.3; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cream-2);
+}
+.dv-k::before {
+  content: ''; width: 0.55em; height: 0.55em; border-radius: 50%; flex: none;
+  background: var(--dv); box-shadow: 0 0 0 0.25em color-mix(in srgb, var(--dv) 22%, transparent);
+}
+.dv-h1 {
+  max-width: 13ch;
+  font-family: var(--ff-p);
+  font-size: clamp(3rem, 1.2rem + 6.6vw, 8.25rem);
+  font-weight: 400; font-variation-settings: 'opsz' 144, 'wght' 380, 'SOFT' 0, 'WONK' 0;
+  line-height: 0.98; letter-spacing: -0.032em;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.dv-h1 .dv-w { display: inline-block; }
+.dv-h1 em { font-style: normal; color: var(--dv); }
+.dv-h2 {
+  max-width: 17ch;
+  font-family: var(--ff-d);
+  font-size: var(--fs-d1);
+  line-height: 0.96; letter-spacing: -0.03em;
+  font-variation-settings: 'wdth' 84, 'wght' 740;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.dv-h2--wide { max-width: none; }
+.dv-h3 {
+  font-family: var(--ff-d);
+  font-size: var(--fs-h3); line-height: 1.04; letter-spacing: -0.012em;
+  font-variation-settings: 'wdth' 86, 'wght' 700;
+  text-transform: uppercase;
+}
+.dv-lede { max-width: 38rem; font-size: var(--fs-lede); line-height: 1.55; color: var(--cream-2); }
+.dv-p { max-width: var(--measure, 40rem); color: var(--cream-2); line-height: 1.62; }
+.dv-mono {
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-3);
+}
+
+/* ─────────────── Les boutons ───────────────
+   Une pilule pleine (l'encre du thème) que la lumière de la division remplit
+   au survol, de bas en haut ; une pilule de verre en second. */
+.dv-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: var(--s-6); }
+.dv-btn {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.95rem 1.35rem 0.95rem 1.5rem; border-radius: 999px;
+  background: var(--fg); color: var(--bg);
+  font-family: var(--ff-t); font-size: 0.9375rem; font-weight: 600; line-height: 1;
+  transition: color 0.45s var(--e-out), transform 0.45s var(--e-out);
+}
+.dv-btn::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: var(--dv);
+  transform: translateY(101%); transition: transform 0.55s var(--e-out);
+}
+.dv-btn:hover, .dv-btn:focus-visible { color: var(--dv-ink); }
+.dv-btn:hover::before, .dv-btn:focus-visible::before { transform: none; }
+.dv-btn svg {
+  width: 1.05rem; height: 1.05rem; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  transition: transform 0.45s var(--e-out);
+}
+.dv-btn:hover svg { transform: translateX(3px); }
+.dv-btn--ghost {
+  background: color-mix(in srgb, var(--fg) 7%, transparent); color: var(--fg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 18%, transparent);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.dv-btn--xl { padding: 1.15rem 1.7rem 1.15rem 1.9rem; font-size: 1rem; }
+.dv-btn[aria-busy='true'] { opacity: 0.6; pointer-events: none; }
+
+.dv-link {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  color: var(--fg); font-weight: 500;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  transition: background-size 0.5s var(--e-out), color 0.3s var(--e-out);
+}
+.dv-link:hover { background-size: 0 1px; background-position: 100% 100%; color: var(--dv); }
+.dv-link::after { content: '→'; font-family: var(--ff-m); transition: transform 0.4s var(--e-out); }
+.dv-link:hover::after { transform: translateX(0.3em); }
+
+/* ═══════════════════ L'OUVERTURE ═══════════════════
+   Plein écran. La scène (`__stage`) porte la pièce signature de la division
+   (canevas, vidéos, lumière…) ; un voile garantit la lecture du titre. */
+.dv-hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: calc(var(--bar-h) + var(--s-7)) 0 var(--s-7);
+}
+.dv-hero__stage { position: absolute; inset: 0; z-index: -2; }
+.dv-hero__stage canvas, .dv-hero__stage video, .dv-hero__stage img { display: block; }
+.dv-hero__veil {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 82%, transparent) 22%, color-mix(in srgb, var(--bg) 30%, transparent) 55%, transparent 78%),
+    linear-gradient(90deg, color-mix(in srgb, var(--bg) 70%, transparent) 0%, transparent 60%);
+}
+.dv-hero__in {
+  position: relative; width: 100%;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--s-6) var(--s-8);
+}
+.dv-hero__meta {
+  display: grid; gap: 0.55rem; justify-items: end; text-align: right;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3);
+}
+.dv-hero__meta b { color: var(--fg); font-weight: 400; }
+.dv-cue {
+  display: inline-flex; align-items: center; gap: 0.6rem; margin-top: var(--s-5);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-3);
+}
+.dv-cue::before {
+  content: ''; width: 1px; height: 2.4rem; background: linear-gradient(var(--dv), transparent);
+  animation: dv-cue 2.2s var(--e-inout) infinite;
+}
+@keyframes dv-cue { 0% { transform: scaleY(0); transform-origin: top; } 45% { transform: scaleY(1); transform-origin: top; } 55% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+@media (max-width: 52rem) {
+  .dv-hero__in { grid-template-columns: 1fr; }
+  .dv-hero__meta { justify-items: start; text-align: left; grid-auto-flow: column; justify-content: start; gap: 1.2rem; }
+}
+
+/* ═══════════════════ LES SECTIONS ═══════════════════ */
+.dv-sec { position: relative; padding-block: var(--s-9); }
+.dv-sec--tight { padding-block: var(--s-8); }
+.dv-sec--rule::before {
+  content: ''; position: absolute; top: 0; left: 50%; width: min(calc(100% - 2 * var(--pad-x)), var(--maxw)); height: 1px;
+  translate: -50% 0; background: var(--line-2);
+}
+.dv-head {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
+  align-items: end; gap: var(--s-5) var(--s-8);
+  margin-bottom: var(--s-8);
+}
+.dv-head .dv-k { grid-column: 1 / -1; margin-bottom: 0; }
+.dv-head__side { display: grid; gap: var(--s-5); justify-items: start; }
+@media (max-width: 60rem) { .dv-head { grid-template-columns: 1fr; } }
+
+/* ─────────────── Les cartes (catégories, familles, types) ───────────────
+   Une grille aux filets d'un pixel, comme une feuille de service. Au survol,
+   une lumière de la division suit le curseur (`--mx`, `--my`, posés par
+   `spotlight()`), le numéro s'allume et la flèche avance. */
+.dv-cards {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18.5rem), 1fr));
+  gap: 1px; background: var(--line-2);
+  border: 1px solid var(--line-2);
+}
+.dv-card {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; flex-direction: column; gap: var(--s-4);
+  min-height: 21rem; padding: var(--s-6) var(--s-5) var(--s-5);
+  background: var(--bg);
+  transition: background-color 0.5s var(--e-out);
+}
+.dv-card::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(26rem circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--dv) 24%, transparent), transparent 62%);
+  opacity: 0; transition: opacity 0.5s var(--e-out);
+}
+.dv-card:hover::before, .dv-card:focus-within::before { opacity: 1; }
+.dv-card__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); transition: color 0.4s var(--e-out); }
+.dv-card:hover .dv-card__n { color: var(--dv); }
+.dv-card__h { font-family: var(--ff-d); font-size: clamp(1.35rem, 1.1rem + 0.7vw, 1.8rem); line-height: 1; letter-spacing: -0.015em; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.dv-card__p { font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-2); }
+.dv-card__list { display: grid; gap: 0.35rem; font-size: var(--fs-sm); line-height: 1.4; color: var(--cream-2); }
+.dv-card__list li { display: flex; gap: 0.6em; }
+.dv-card__list li::before { content: ''; flex: none; width: 0.32em; height: 0.32em; margin-top: 0.55em; border-radius: 50%; background: var(--cream-3); }
+.dv-card__go {
+  margin-top: auto; padding-top: var(--s-4);
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg);
+}
+.dv-card__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
+.dv-card:hover .dv-card__go::after { transform: translateX(0.4em); }
+.dv-card__go::before { content: ''; position: absolute; inset: 0; }   /* toute la carte est cliquable */
+.dv-card--feat { grid-column: span 2; }
+@media (max-width: 44rem) { .dv-card--feat { grid-column: auto; } .dv-card { min-height: 0; } }
+
+/* ─────────────── La liste des capacités ─────────────── */
+.dv-caps { columns: 2 22rem; column-gap: var(--s-8); }
+.dv-caps li {
+  break-inside: avoid;
+  display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); align-items: baseline;
+  padding-block: 0.95rem; border-top: 1px solid var(--line-2);
+  font-size: var(--fs-body); color: var(--fg);
+}
+.dv-caps li > span:first-child { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; color: var(--dv); }
+
+/* ─────────────── Le processus : un filet qui se remplit ───────────────
+   `stepsLine()` pose `--p` (0 → 1) au défilement et allume chaque étape
+   quand le filet l'atteint. */
+.dv-steps {
+  position: relative;
+  display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); gap: var(--s-5);
+  counter-reset: dvs;
+}
+.dv-steps__line { position: absolute; top: 0.6rem; left: 0; right: 0; height: 1px; background: var(--line); }
+.dv-steps__line::after {
+  content: ''; position: absolute; inset: 0; background: var(--dv);
+  transform-origin: 0 50%; transform: scaleX(var(--p, 0));
+}
+.dv-step { position: relative; padding-top: 2.6rem; counter-increment: dvs; }
+.dv-step::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 1.2rem; height: 1.2rem; border-radius: 50%;
+  background: var(--bg); box-shadow: inset 0 0 0 1px var(--line-ui);
+  transition: box-shadow 0.5s var(--e-out), background-color 0.5s var(--e-out);
+}
+.dv-step.is-on::before { background: var(--dv); box-shadow: 0 0 0 0.35rem color-mix(in srgb, var(--dv) 22%, transparent); }
+.dv-step__n { display: block; margin-bottom: var(--s-3); font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.1em; color: var(--cream-3); }
+.dv-step__n::before { content: counter(dvs, decimal-leading-zero); }
+.dv-step__h { font-family: var(--ff-d); font-size: clamp(1.1rem, 0.95rem + 0.5vw, 1.4rem); line-height: 1.06; letter-spacing: -0.01em; font-variation-settings: 'wdth' 86, 'wght' 700; text-transform: uppercase; color: var(--cream-2); transition: color 0.5s var(--e-out); }
+.dv-step.is-on .dv-step__h { color: var(--fg); }
+.dv-step__p { margin-top: var(--s-3); font-size: var(--fs-sm); line-height: 1.55; color: var(--cream-3); }
+@media (max-width: 60rem) {
+  .dv-steps { grid-template-columns: 1fr; gap: var(--s-6); padding-left: 2.4rem; }
+  .dv-steps__line { top: 0; bottom: 0; left: 0.6rem; right: auto; width: 1px; height: auto; }
+  .dv-steps__line::after { transform-origin: 50% 0; transform: scaleY(var(--p, 0)); }
+  .dv-step { padding-top: 0; }
+  .dv-step::before { left: -2.4rem; }
+}
+
+/* ─────────────── La bande qui défile ─────────────── */
+.dv-band {
+  overflow: hidden; padding-block: var(--s-6);
+  border-block: 1px solid var(--line-2);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.dv-band__track { display: flex; width: max-content; animation: dv-band var(--dur, 42s) linear infinite; }
+.dv-band__row { display: flex; align-items: center; gap: var(--s-8); padding-right: var(--s-8); }
+.dv-band__row > * {
+  font-family: var(--ff-d); font-size: clamp(1.8rem, 1rem + 2.6vw, 3.4rem); line-height: 1;
+  font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; white-space: nowrap;
+  color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--fg) 55%, transparent);
+}
+.dv-band__row > .is-solid { color: var(--fg); -webkit-text-stroke: 0; }
+.dv-band__row > i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--dv); -webkit-text-stroke: 0; flex: none; }
+.dv-band:hover .dv-band__track { animation-play-state: paused; }
+@keyframes dv-band { to { transform: translateX(-50%); } }
+
+/* ─────────────── Deux colonnes : texte et visuel ─────────────── */
+.dv-split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: center; }
+.dv-split--rev { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.dv-split--rev > :first-child { order: 2; }
+@media (max-width: 60rem) { .dv-split, .dv-split--rev { grid-template-columns: 1fr; } .dv-split--rev > :first-child { order: 0; } }
+
+/* ─────────────── Les niveaux de service (options, pas des forfaits) ─────────────── */
+.dv-levels { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--s-4); }
+.dv-level {
+  position: relative; display: flex; flex-direction: column; gap: var(--s-4);
+  padding: var(--s-6) var(--s-5) var(--s-5); border-radius: 1.1rem;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  transition: box-shadow 0.5s var(--e-out), transform 0.5s var(--e-out), background-color 0.5s var(--e-out);
+}
+.dv-level:hover { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 70%, transparent); transform: translateY(-4px); background: color-mix(in srgb, var(--dv) 7%, transparent); }
+.dv-level .dv-card__go::before { border-radius: 1.1rem; }
+
+/* ─────────────── Le portfolio d'une division ─────────────── */
+.dv-port { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16.5rem), 1fr)); gap: var(--s-6) var(--s-5); }
+.dv-proj { position: relative; display: grid; gap: var(--s-3); }
+.dv-proj__fig { position: relative; overflow: hidden; aspect-ratio: 4 / 3; border-radius: 0.6rem; background: var(--night-2); }
+.dv-proj__fig img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--e-out), filter 0.6s var(--e-out); }
+.dv-proj:hover .dv-proj__fig img { transform: scale(1.05); }
+.dv-proj__st {
+  position: absolute; left: 0.6rem; top: 0.6rem;
+  padding: 0.3rem 0.55rem; border-radius: 999px;
+  background: color-mix(in srgb, var(--night-2) 82%, transparent); color: var(--cream);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.dv-proj__st--ai { left: auto; right: 0.6rem; background: color-mix(in srgb, #8f7cff 85%, #000); color: #fff; }
+/* Le champ qu'une carte vient d'orienter s'éclaire un instant (`inquiry.js`). */
+.dv-form .field.is-picked select,
+.dv-form [data-group].is-picked { box-shadow: 0 0 0 3px color-mix(in srgb, var(--dv) 35%, transparent); transition: box-shadow 0.4s var(--e-out); }
+.dv-proj__h { font-family: var(--ff-d); font-size: var(--fs-h3); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.dv-proj__m { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); }
+.dv-proj a::before { content: ''; position: absolute; inset: 0; }
+
+/* Une catégorie sans projet réel : jamais de faux exemple. */
+.dv-empty {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-5) var(--s-7);
+  padding: var(--s-7) var(--s-6); border-radius: 1.1rem;
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--fg) 3%, transparent) 0 1px, transparent 1px 14px),
+    color-mix(in srgb, var(--fg) 3%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+.dv-empty__h { font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.dv-empty p { margin-top: var(--s-3); color: var(--cream-2); max-width: 38rem; }
+@media (max-width: 44rem) { .dv-empty { grid-template-columns: 1fr; } }
+
+/* ═══════════════════ LA DEMANDE ═══════════════════ */
+.dv-ask { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-8); align-items: start; }
+.dv-ask__intro { position: sticky; top: calc(var(--bar-h) + var(--s-5)); display: grid; gap: var(--s-5); }
+.dv-reach { display: grid; margin-top: var(--s-4); border-top: 1px solid var(--line-2); }
+.dv-reach a {
+  display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) auto; align-items: center; gap: var(--s-4);
+  padding-block: 1rem; border-bottom: 1px solid var(--line-2);
+  color: var(--fg); transition: padding 0.45s var(--e-out), color 0.3s var(--e-out);
+}
+.dv-reach a > span:first-child { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3); }
+.dv-reach a::after { content: '↗'; font-family: var(--ff-m); color: var(--cream-3); transition: transform 0.45s var(--e-out), color 0.3s; }
+.dv-reach a:hover { padding-left: 0.6rem; color: var(--dv); }
+.dv-reach a:hover::after { transform: translate(3px, -3px); color: var(--dv); }
+
+.dv-form { position: relative; }
+.dv-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-5); }
+.dv-fields > .is-wide { grid-column: 1 / -1; }
+.dv-group { margin-bottom: var(--s-5); border: 0; padding: 0; min-width: 0; }
+.dv-group > legend, .dv-group__l {
+  display: block; margin-bottom: var(--s-3);
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream-2);
+}
+.dv-form select {
+  width: 100%; appearance: none;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 0.9rem center;
+}
+.dv-form select option { color: var(--fg); background-color: var(--bg); }
+.dv-done [tabindex='-1']:focus { outline: none; }
+.dv-form__foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-5); margin-top: var(--s-4); }
+.dv-form__note { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-micro); letter-spacing: 0.04em; color: var(--cream-3); }
+.dv-form.is-sent { display: none; }
+.u-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+
+.dv-done {
+  padding: var(--s-6); border-radius: 1.1rem;
+  background: color-mix(in srgb, var(--dv) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dv) 45%, transparent);
+}
+.dv-done h3 { font-family: var(--ff-d); font-size: var(--fs-d3); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; }
+.dv-done p { margin-top: var(--s-3); color: var(--cream-2); }
+.dv-done dl { display: grid; grid-template-columns: minmax(8rem, auto) minmax(0, 1fr); gap: 0.4rem var(--s-4); margin-top: var(--s-5); font-size: var(--fs-sm); }
+.dv-done dt { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); letter-spacing: 0.08em; text-transform: uppercase; color: var(--cream-3); padding-top: 0.2em; }
+.dv-done dd { color: var(--fg); }
+@media (max-width: 60rem) {
+  .dv-ask { grid-template-columns: 1fr; }
+  .dv-ask__intro { position: static; }
+}
+@media (max-width: 36rem) { .dv-fields { grid-template-columns: 1fr; } }
+
+/* ═══════════════════ LES AUTRES DIVISIONS ═══════════════════
+   Une liste à grandes lignes ; au survol, la ligne glisse et prend la lumière
+   de SA division (`--c`, posée par la ligne). */
+.dv-next { border-top: 1px solid var(--line-2); }
+.dv-next a {
+  position: relative; display: grid; grid-template-columns: 3rem minmax(0, 1fr) auto; align-items: center; gap: var(--s-5);
+  padding-block: var(--s-5); border-bottom: 1px solid var(--line-2);
+  color: var(--fg); overflow: hidden; isolation: isolate;
+}
+.dv-next a::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--c, var(--dv)) 16%, transparent), transparent 70%);
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 0.7s var(--e-out);
+}
+.dv-next a:hover::before, .dv-next a:focus-visible::before { transform: none; }
+.dv-next__n { font-family: var(--ff-m); font-stretch: 87.5%; font-size: var(--fs-nano); color: var(--cream-3); }
+.dv-next__t { font-family: var(--ff-d); font-size: clamp(1.5rem, 1rem + 2vw, 2.8rem); line-height: 1; font-variation-settings: 'wdth' 84, 'wght' 720; text-transform: uppercase; transition: transform 0.7s var(--e-out); }
+.dv-next a:hover .dv-next__t { transform: translateX(0.6rem); }
+.dv-next__s { max-width: 26rem; font-size: var(--fs-sm); color: var(--cream-3); text-align: right; }
+.dv-next a::after { content: '→'; position: absolute; right: 0; opacity: 0; }
+@media (max-width: 44rem) { .dv-next a { grid-template-columns: 2.2rem minmax(0, 1fr); } .dv-next__s { grid-column: 2; text-align: left; } }
+
+/* La division de la page n'apparaît pas dans « les autres ». */
+body[data-dv='live'] .dv-next [data-id='live'], body[data-dv='events'] .dv-next [data-id='events'],
+body[data-dv='ai'] .dv-next [data-id='ai'], body[data-dv='music'] .dv-next [data-id='music'],
+body[data-dv='film'] .dv-next [data-id='film'], body[data-dv='doc'] .dv-next [data-id='doc'],
+body[data-dv='rentals'] .dv-next [data-id='rentals'] { display: none; }
+
+/* ═══════════════════ L'APPEL FINAL ═══════════════════ */
+.dv-final {
+  position: relative; overflow: hidden; isolation: isolate;
+  padding: var(--s-9) var(--pad-x); text-align: center;
+}
+.dv-final::before {
+  content: ''; position: absolute; inset: -20% -10%; z-index: -1;
+  background: radial-gradient(40% 55% at 50% 60%, color-mix(in srgb, var(--dv) 20%, transparent), transparent 70%);
+}
+.dv-final .dv-h2 { margin-inline: auto; max-width: 14ch; font-size: clamp(2.6rem, 1.4rem + 5vw, 6rem); }
+.dv-final .dv-lede { margin: var(--s-5) auto 0; }
+.dv-final .dv-acts { justify-content: center; }
+
+/* ═══════════════════ LA BARRE D'APPEL SUR TÉLÉPHONE ═══════════════════
+   Appeler, WhatsApp, demander : toujours à portée de pouce, une fois
+   l'ouverture passée. */
+.dv-quick {
+  position: fixed; left: 50%; bottom: max(0.8rem, env(safe-area-inset-bottom)); z-index: 85;
+  display: flex; gap: 0.3rem; padding: 0.3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--night-2) 94%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line), 0 18px 40px -16px rgb(0 0 0 / 0.6);
+  translate: -50% 160%; transition: translate 0.6s var(--e-out);
+}
+.dv-quick.is-on { translate: -50% 0; }
+.dv-quick a {
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.7rem 1rem; border-radius: 999px;
+  font-family: var(--ff-t); font-size: 0.875rem; font-weight: 600; color: var(--fg); white-space: nowrap;
+}
+.dv-quick a.is-main { background: var(--fg); color: var(--bg); }
+.dv-quick svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+html.is-locked .dv-quick { translate: -50% 160%; }
+@media (min-width: 64rem) { .dv-quick { display: none; } }
+
+/* L'ouverture attend le script pour entrer (`heroIn`) ; sans lui, elle se
+   montre d'elle-même au bout de 3 s : rien ne reste caché. */
+html.js:not(.dv-in) .dv-hero .dv-h1,
+html.js:not(.dv-in) .dv-hero [data-in] { opacity: 0; animation: dv-failsafe 0s 3s forwards; }
+@keyframes dv-failsafe { to { opacity: 1; } }
+
+/* ─────────────── Un média qui flotte au défilement ─────────────── */
+[data-drift] { will-change: transform; }
+
+/* ─────────────── Sans mouvement ─────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .dv-band__track { animation: none; }
+  .dv-cue::before { animation: none; }
+  .dv-btn::before, .dv-card::before { transition: none; }
+}
