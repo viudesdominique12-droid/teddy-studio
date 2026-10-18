@@ -18,6 +18,10 @@ if (!reduced()) {
   gsap.ticker.add((t) => lenis.raf(t * 1000));
   gsap.ticker.lagSmoothing(0);
   window.addEventListener('menu:open', () => lenis.stop());
+  // Le menu du téléphone ouvert : la page derrière ne bouge plus ; le menu,
+  // lui, défile (il porte `data-lenis-prevent`).
+  window.addEventListener('index:open', () => lenis.stop());
+  window.addEventListener('index:close', () => lenis.start());
   window.addEventListener('menu:close', () => lenis.start());
 
   document.addEventListener('click', (e) => {
