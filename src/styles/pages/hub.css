@@ -163,6 +163,7 @@ body[data-page='services'] .ftr {
 .hb-fan__nav {
   position: absolute; z-index: 1;
   top: var(--fan-top); bottom: var(--fan-bot); right: var(--edge); width: var(--nav-w);
+  container-type: size;
 }
 .hb-fan__nav a {
   position: absolute; left: 0; right: 0; translate: 0 -50%;
@@ -170,6 +171,21 @@ body[data-page='services'] .ftr {
   padding: 0.35rem 0;
   color: var(--cream-2);
   transition: color 0.4s var(--e-out), transform 0.6s var(--e-out);
+}
+/* La cible du doigt (F22, 18/10/2026) : chaque nom occupe 44 px de haut, ou,
+   quand les rayons sont plus serrés, tout l'écart entre deux rayons (9,333 %
+   de la colonne) — les cibles se touchent sans se chevaucher. Le texte reste
+   centré sur la fin de son rayon (une ligne, centrée), rien ne bouge à l'œil. */
+@supports (height: 1cqh) {
+  /* La hauteur étant connue, le centrage passe par une marge plutôt que par
+     `translate` : GSAP replie `translate` dans sa transformation à l'entrée
+     des noms et perdait le -50 % — les noms arrivaient 16 px trop bas puis
+     sautaient en place à la fin de leur entrée. */
+  .hb-fan__nav a {
+    --hit: min(2.75rem, 9.333cqh);
+    height: var(--hit); margin-top: calc(var(--hit) / -2); translate: none;
+    padding-block: 0; flex-wrap: wrap; align-content: center;
+  }
 }
 .hb-fan__nav a::before {
   content: ''; position: absolute; left: -0.95rem; top: 50%; width: 0.5rem; height: 0.5rem; translate: 0 -50%; border-radius: 50%;
@@ -203,6 +219,18 @@ body[data-page='services'] .ftr {
   .hb-hero .dv-hero__veil {
     background: linear-gradient(0deg, var(--bg) 0%, var(--bg) 34%, color-mix(in srgb, var(--bg) 50%, transparent) 46%, transparent 56%);
   }
+}
+/* Téléphone en hauteur (F22) : l'éventail garde sa taille (la moitié de
+   l'écran, au moins 18 rem) même si l'ouverture s'allonge, et le texte
+   commence sous son dernier nom — sur un petit écran (360 × 740), les noms
+   se posaient sur le titre. À 390 × 844, rien ne bouge : le texte y était
+   déjà sous l'éventail. */
+@media (max-width: 60rem) and (orientation: portrait) {
+  .dv-hero.hb-hero {
+    --fan-h: max(calc(50svh - var(--fan-top)), 18rem);
+    padding-top: max(calc(var(--bar-h) + var(--s-7)), calc(var(--fan-top) + var(--fan-h) * 0.7067 - 1.75rem));
+  }
+  .hb-fan, .hb-fan__nav { bottom: auto; height: var(--fan-h); }
 }
 
 /* ═══════════════════ LES FILETS DE LUMIÈRE ═══════════════════
@@ -633,7 +661,8 @@ body[data-page='services'] .ftr {
 .hb-div__svc { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .hb-div__svc li {
   padding: 0.38rem 0.65rem; border-radius: 999px;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase;
+  text-wrap: balance;   /* 12 px (F23) : sur téléphone, les plus longues passent sur deux lignes égales */
   color: var(--fg); box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
   background: rgb(0 0 0 / 0.25);
 }

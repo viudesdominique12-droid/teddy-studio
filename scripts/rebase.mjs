@@ -39,9 +39,12 @@ if (!base || !base.startsWith('/') || !base.endsWith('/')) {
 const ASSET_DIRS = ['assets', 'reel', 'loc', 'kit', 'kit3d', 'cam', 'works', 'clients', 'office',
                     'media', 'fonts', 'emblem', 'film'];
 /* `data-href` et `data-href-small` : les images de la caméra devant la
-   galerie ; `data-model` : les modèles 3D du matériel. */
+   galerie ; `data-model` : les modèles 3D du matériel ; `data-model-small` :
+   leur version allégée pour téléphone ; `data-poster` : l'affiche d'une vidéo
+   posée seulement quand elle se charge (18/10/2026). */
 const URL_ATTRS = ['src', 'href', 'poster', 'content', 'data-src', 'data-view',
-                   'data-href', 'data-href-small', 'data-model'];
+                   'data-href', 'data-href-small', 'data-model', 'data-model-small',
+                   'data-poster'];
 const SET_ATTRS = ['srcset', 'imagesrcset'];
 
 /** Préfixe une URL racine-absolue, en refusant les cas qui n'en sont pas. */

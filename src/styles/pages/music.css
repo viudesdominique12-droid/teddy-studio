@@ -712,6 +712,7 @@ html[data-palette='papier'] .mu-listen {
 .mu-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: var(--s-6); }
 .mu-filter button {
   position: relative; display: inline-flex; align-items: center; gap: 0.65rem;
+  min-height: 2.75rem;   /* 44 px sous le doigt (F22) */
   padding: 0.74rem 1.05rem 0.74rem 0.8rem; border-radius: 0.6rem;
   background: linear-gradient(180deg, color-mix(in srgb, var(--fg) 8%, var(--night-2)), color-mix(in srgb, var(--fg) 3%, var(--night-2)));
   box-shadow: inset 0 0 0 1px var(--line), inset 0 1px 0 color-mix(in srgb, var(--fg) 10%, transparent), 0 2px 0 rgb(0 0 0 / 0.5);
@@ -930,6 +931,8 @@ html:not(.js) .mu-deck { grid-template-columns: minmax(0, 1fr); }
   transition: color 0.3s var(--e-out);
 }
 .mu-side__go::after { content: '→'; transition: transform 0.45s var(--e-out); }
+/* La cible du doigt (F22) : 12 px de plus en haut et en bas, invisibles. */
+.mu-side__go::before { content: ''; position: absolute; inset: -12px 0; }
 .mu-side__go:hover, .mu-side__go:focus-visible { color: var(--go-text); }
 .mu-side__go:hover::after, .mu-side__go:focus-visible::after { transform: translateX(0.35em); }
 .mu-side:hover .mu-side__n, .mu-side:focus-within .mu-side__n { background: var(--dv); color: var(--D-night); box-shadow: none; }
@@ -1406,7 +1409,7 @@ html[data-palette='papier'] .mu-key span { box-shadow: inset 0 1px 0 #fff, 0 2px
   .mu-cap::after { width: 1.5rem; }
   /* Les catégories défilent sur une ligne, au doigt, plutôt que sur quatre. */
   .mu-filter {
-    flex-wrap: nowrap; gap: 0.4rem; overflow-x: auto; overscroll-behavior-x: contain;
+    flex-wrap: nowrap; gap: 0.5rem; overflow-x: auto; overscroll-behavior-x: contain;
     margin-inline: calc(-1 * var(--pad-x)); padding: 0.2rem var(--pad-x);
     scroll-snap-type: x proximity; scrollbar-width: none;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--pad-x), #000 calc(100% - var(--pad-x)), transparent);

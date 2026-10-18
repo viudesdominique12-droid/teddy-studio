@@ -8,6 +8,10 @@
  * marque, ni modèle, ni quantité, ni prix. Pour ajouter un appareil, on ajoute
  * un article ici (marque, modèle, photo, caractéristiques…).
  *
+ * Les images : `img` (la fiche, `imgW` px de large, 800 par défaut),
+ * `imgSmall` (sa variante de 400 px) et `thumb` (la vignette du formulaire
+ * et du compteur, 3 rem de côté : 144 px suffisent à un écran ×3).
+ *
  * `price` : null = « Price on request » (le brief : bouton « Request Rental
  * Quote » quand les prix ne sont pas publiés). `availability` n'est jamais
  * « disponible » sans vérification : « Confirmed on request ».
@@ -35,7 +39,7 @@ export const equipment = [
         name: 'Cinema Camera',
         tag: '12K',
         body: 'We provide advanced cameras—cinema, DSLRs, mirrorless—with high-resolution sensors, customizable settings, and cutting-edge features to meet filmmakers diverse needs.',
-        img: '/kit/camera-800.webp', imgSmall: '/kit/camera-400.webp',
+        img: '/kit/camera-800.webp', imgSmall: '/kit/camera-400.webp', thumb: '/kit/camera-144.webp',
         model3d: '/kit3d/camera.glb'
       },
       {
@@ -43,7 +47,7 @@ export const equipment = [
         name: 'Lenses',
         tag: 'Cinematic',
         body: 'Expand your creative vision with our diverse lens collection. Wide-angle to telephoto, prime to zoom, achieve desired focal length, depth, and visual quality.',
-        img: '/kit/lense-800.webp', imgSmall: '/kit/lense-400.webp',
+        img: '/kit/lense-800.webp', imgSmall: '/kit/lense-400.webp', thumb: '/kit/lense-144.webp',
         model3d: '/kit3d/lens.glb'
       },
       {
@@ -51,7 +55,7 @@ export const equipment = [
         name: 'Drone',
         tag: 'Aerial',
         body: 'Ensure precision with our versatile drones. Advanced features, stable flight, smooth gimbal control for steady aerial shots and dynamic filming possibilities.',
-        img: '/kit/drone-800.webp', imgSmall: '/kit/drone-400.webp',
+        img: '/kit/drone-800.webp', imgSmall: '/kit/drone-400.webp', thumb: '/kit/drone-144.webp',
         model3d: '/kit3d/drone.glb'
       }
     ]
@@ -66,7 +70,7 @@ export const equipment = [
         name: 'Microphones',
         tag: 'Shotgun · Lavalier · Boom',
         body: 'Achieve pristine audio with our pro-grade microphones. Capture focused directional sound with shotgun mics, individual subjects with lavaliers, and clear dialogue with boom mics.',
-        img: '/kit/mic-800.webp', imgSmall: '/kit/mic-400.webp'
+        img: '/kit/mic-640.webp', imgW: 640, imgSmall: '/kit/mic-400.webp', thumb: '/kit/mic-144.webp'
       }
     ]
   },
@@ -80,7 +84,7 @@ export const equipment = [
         name: 'Lighting Kit',
         tag: 'Professional',
         body: 'Shape and control lighting conditions with precision using our versatile lighting kits. Key lights, fill lights, backlight, and light modifiers included for scene illumination.',
-        img: '/kit/lighting-800.webp', imgSmall: '/kit/lighting-400.webp'
+        img: '/kit/lighting-800.webp', imgSmall: '/kit/lighting-400.webp', thumb: '/kit/lighting-144.webp'
       }
     ]
   },
@@ -94,7 +98,7 @@ export const equipment = [
         name: 'Green Screen / Chroma Key',
         tag: 'Studio',
         body: 'Explore limitless visual potential with our green screen setup. Replace the green background with any image or video, enabling diverse visual effects and compositing techniques in post-production.',
-        img: '/kit/green-screen-800.webp', imgSmall: '/kit/green-screen-400.webp'
+        img: '/kit/green-screen-800.webp', imgSmall: '/kit/green-screen-400.webp', thumb: '/kit/green-screen-144.webp'
       }
     ]
   },

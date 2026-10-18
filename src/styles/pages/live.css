@@ -66,10 +66,17 @@ html[data-palette='papier'] .lv-wall {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
 }
 .lv-cam img { animation: lv-pan 14s ease-in-out infinite alternate; }
+/* Sur téléphone, le programme est une image fixe (F13) : elle glisse
+   doucement, comme les vignettes, au lieu d'une vidéo à chaque coupe. */
+.lv-pgm__media img:only-child { animation: lv-pan 16s ease-in-out infinite alternate; }
 .lv-cam:nth-child(odd) img { animation-duration: 18s; animation-direction: alternate-reverse; }
 @keyframes lv-pan { from { transform: scale(1.06) translateX(-2%); } to { transform: scale(1.14) translateX(2%); } }
 .lv-cam.is-pgm { box-shadow: inset 0 0 0 3px var(--lv-pgm); }
 .lv-cam.is-pvw { box-shadow: inset 0 0 0 3px var(--lv-pvw); }
+/* Sur écran tactile (le mur y est voilé), les témoins basculent d'un coup,
+   comme sur une vraie régie : le fondu de 0,18 s repeignait trois vignettes
+   pendant une vingtaine de trames à chaque coupe (F14). */
+@media (pointer: coarse) { .lv-cam { transition: none; } }
 .lv-cam::after {
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(transparent 55%, rgb(0 0 0 / 0.55));
@@ -93,9 +100,28 @@ html[data-palette='papier'] .lv-wall {
 @keyframes lv-rec { 50% { opacity: 0.2; } }
 .lv-tc {
   position: absolute; bottom: 0.55rem; right: 0.6rem; z-index: 2;
-  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.7rem; letter-spacing: 0.08em; color: #fff;
+  font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.7rem; line-height: 1.6; letter-spacing: 0.08em; color: #fff;
   font-variant-numeric: tabular-nums; text-shadow: 0 1px 4px rgb(0 0 0 / 0.8);
+  /* Ce qui change ici ne dérange rien autour (F14). La marge de 0,4 em,
+     reprise par une marge négative, laisse l'ombre du texte entière. */
+  contain: layout paint;
+  padding: 0.4em; margin: -0.4em;
 }
+/* Les images (00 → 24) : une bande de chiffres dans une fenêtre d'une
+   ligne, que le compositeur fait monter de 25 pas par seconde (live.js).
+   Chaque ligne a 0,4 em d'air en haut et en bas, rendu par la marge
+   négative de la fenêtre : la ligne de base ne bouge pas et l'ombre des
+   chiffres n'est pas rognée. */
+.lv-tc__ff {
+  display: inline-block; vertical-align: top; overflow: hidden;
+  height: calc(1.6em + 0.8em); margin-block: -0.4em;
+}
+.lv-tc__ff > span {
+  display: block; white-space: pre; line-height: calc(1.6em + 0.8em);
+  animation: lv-ff 1s steps(25) infinite;
+}
+.lv-tc.is-paused .lv-tc__ff > span { animation-play-state: paused; }
+@keyframes lv-ff { to { transform: translateY(-100%); } }
 .lv-l3 {
   position: absolute; left: 0.6rem; bottom: 2.1rem; z-index: 2;
   display: grid; gap: 0.1rem; padding: 0.4rem 0.7rem 0.45rem; border-left: 3px solid var(--lv-pgm);
@@ -111,10 +137,19 @@ html[data-palette='papier'] .lv-wall {
   width: 0.55rem; height: 100%; border-radius: 0.1rem; position: relative; overflow: hidden;
   background: rgb(255 255 255 / 0.06);
 }
-.lv-meters i::after {
-  content: ''; position: absolute; inset: 0;
+/* Le niveau (F14, 18/10/2026) : la barre est mise à l'échelle par le bas
+   (`scaleY(v)`, live.js) et sa couleur contre-étirée (`1 / v`) : le
+   dégradé reste posé sur toute la hauteur, le vert en bas, le rouge tout en
+   haut, comme avec l'ancien `clip-path` — mais le compositeur s'en charge,
+   sans repeindre à chaque trame. Sans script : le niveau de repos (0,3). */
+.lv-meters i > span {
+  position: absolute; inset: 0; overflow: hidden;
+  transform-origin: 50% 100%; transform: scaleY(0.3); will-change: transform;
+}
+.lv-meters i > span > span {
+  position: absolute; inset: 0;
   background: linear-gradient(0deg, var(--lv-pvw) 0%, var(--lv-pvw) 62%, var(--lv-amb) 78%, var(--lv-pgm) 96%);
-  clip-path: inset(calc((1 - var(--v, 0.3)) * 100%) 0 0 0);
+  transform-origin: 50% 100%; transform: scaleY(3.333333); will-change: transform;
 }
 
 /* ═══════════════════ CE QU'ON DIFFUSE : LE MULTIVIEWER ═══════════════════
@@ -1058,13 +1093,17 @@ html[data-palette='papier'] .lv-desk {
 }
 .lv-desk.is-armed .lv-take__led { background: #fff; box-shadow: 0 0 0 3px rgb(255 255 255 / 0.35), 0 0 14px #fff; animation: lv-led 1.6s ease-in-out infinite; }
 .lv-desk.is-armed .lv-take__s { color: #0c0e12; box-shadow: inset 0 0 0 1px rgb(12 14 18 / 0.45); }
+/* Le reflet qui traverse la touche armée : le dégradé (60 % de la largeur)
+   glisse par `transform` (F30) — le même trajet que l'ancien
+   `background-position` de -100 % à 260 %, sans repeindre la touche. */
 .lv-desk.is-armed .lv-take::after {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(100deg, transparent 35%, rgb(255 255 255 / 0.32) 50%, transparent 65%) -100% 0 / 60% 100% no-repeat;
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 60%; z-index: -1; pointer-events: none;
+  background: linear-gradient(100deg, transparent 35%, rgb(255 255 255 / 0.32) 50%, transparent 65%);
+  transform: translateX(-66.6667%);
   animation: lv-sheen 3.6s var(--e-inout) infinite;
 }
 @keyframes lv-led { 50% { box-shadow: 0 0 0 5px rgb(255 255 255 / 0.12), 0 0 18px #fff; } }
-@keyframes lv-sheen { 0% { background-position: -100% 0; } 55%, 100% { background-position: 260% 0; } }
+@keyframes lv-sheen { 0% { transform: translateX(-66.6667%); } 55%, 100% { transform: translateX(173.3333%); } }
 .lv-foot .dv-form__note { font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.8125rem; letter-spacing: 0.04em; color: var(--cream-3); }
 
 /* ─────────────── Envoyée : la feuille de conduite ─────────────── */
@@ -1212,7 +1251,7 @@ html[data-palette='papier'] .lv-desk {
   .lv-desk .lv-cue dd { padding-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lv-cam img, .lv-live i, .lv-mon__rec::before { animation: none; }
+  .lv-cam img, .lv-pgm__media img, .lv-live i, .lv-mon__rec::before { animation: none; }
   .lv-mv__k i, .lv-tick__live i, .lv-enc__leds .is-air, .lv-enc__bug i, .lv-enc__in b i, .lv-pkt,
   .lv-rd__row.is-air .lv-rd__st::before, .lv-nosig__flag i, .lv-src[data-st] .lv-src__vu i::after { animation: none; }
   .lv-enc__in b i:nth-child(-n+4) { opacity: 1; }

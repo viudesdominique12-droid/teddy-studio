@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 import htmlInclude from './plugins/html-include.js';
+import cssOrder from './plugins/css-order.js';
+import stripComments from './plugins/strip-comments.js';
+import fontPreload from './plugins/font-preload.js';
 import { identity, inquiry } from './src/data/site.js';
 
 export default defineConfig({
@@ -19,9 +22,18 @@ export default defineConfig({
       phone: identity.phone,
       phoneDisplay: identity.phoneDisplay,
       email: identity.email,
+      // L'adresse peut passer à la ligne après « @ », jamais au milieu d'un mot.
+      emailBreak: identity.email.replace('@', '@<wbr>'),
       whatsapp: inquiry.whatsapp,
       year: new Date().getFullYear()
-    })
+    }),
+    // Au build seulement : `division.css` reprend sa place avant la feuille
+    // de la page (F04), PUIS le HTML perd ses commentaires (F26). L'ordre de
+    // cette liste est l'ordre d'exécution.
+    cssOrder(),
+    stripComments(),
+    // En dev et au build : la fonte du premier écran, demandée d'emblée (F15).
+    fontPreload()
   ],
   build: {
     target: 'es2020',
@@ -31,7 +43,7 @@ export default defineConfig({
       // Les pages du site. Depuis le brief du 17/10/2026 : les sept divisions,
       // Services, Portfolio, About et Contact. Une page absente est ignorée.
       input: Object.fromEntries([
-        ['main', 'index.html'], ['locations', 'locations.html'], ['works', 'works.html'],
+        ['main', 'index.html'], ['locations', 'locations.html'],
         ['book', 'book.html'], ['vacancy', 'vacancy.html'], ['notfound', '404.html'],
         ['services', 'services.html'], ['live', 'live-streaming.html'], ['events', 'event-organizing.html'],
         ['ai', 'ai-production.html'], ['music', 'music-production.html'], ['film', 'feature-film.html'],
@@ -40,6 +52,9 @@ export default defineConfig({
       ].filter(([, f]) => existsSync(resolve(__dirname, f))).map(([k, f]) => [k, resolve(__dirname, f)])),
       output: {
         manualChunks(id) {
+          // Flip (et sa géométrie) ne sert qu'au portfolio et à Rentals : il
+          // suit ces pages au lieu d'alourdir le morceau commun (F25).
+          if (/node_modules\/gsap\/(dist\/)?(Flip|utils\/matrix)/.test(id)) return;
           if (id.includes('node_modules/gsap')) return 'gsap';
           if (id.includes('node_modules/lenis')) return 'lenis';
         }

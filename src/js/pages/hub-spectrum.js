@@ -40,6 +40,9 @@ function switchOn() {
 /* ─────────────── Les boucles, seulement à l'écran ─────────────── */
 function idle() {
   const els = [...document.querySelectorAll('#main [data-sec], .ftr')];
+  // Ces éléments sont gérés ici : la sentinelle commune (offscreen.js) les
+  // laisse tranquilles (`data-off-manual`, aussi posé dans services.html).
+  els.forEach((el) => el.setAttribute('data-off-manual', ''));
   const seen = new Map(els.map((el) => [el, false]));
   const paint = () => els.forEach((el) => el.toggleAttribute('data-off', !seen.get(el) || document.hidden));
   const io = new IntersectionObserver((entries) => {

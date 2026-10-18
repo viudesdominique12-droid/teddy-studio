@@ -493,6 +493,8 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
   background: color-mix(in srgb, var(--night-2) 78%, transparent); color: var(--cream);
   font-family: var(--ff-m); font-stretch: 87.5%; font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
 }
+/* Sur téléphone, l'étiquette « Worked on » passe à 12 px. */
+@media (max-width: 40rem) { .fi-film__st { font-size: 0.75rem; } }
 .fi-film__open {
   position: absolute; right: 0.8rem; bottom: 0.7rem; z-index: 2;
   display: inline-flex; align-items: center; gap: 0.45rem;
@@ -536,6 +538,10 @@ html.js:not(.dv-in) .fi-matte--b { animation: fi-open-b 0s 3s forwards; }
 }
 .fi-film__go::after { content: ' →'; }
 .fi-film__go:hover { color: var(--fi-gold); }
+/* La cible au doigt : 44 px de haut, invisible, surtout sous le lien (au-dessus,
+   les vignettes des photos de tournage gardent leur distance). */
+.fi-film__go { position: relative; }
+.fi-film__go::before { content: ''; position: absolute; left: -0.5rem; right: -0.5rem; top: -0.25rem; height: 2.75rem; }
 
 /* Le pied de la rangée : où l'on en est, et les deux flèches. */
 .fi-rail__foot { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--s-5); margin-top: var(--s-2); }

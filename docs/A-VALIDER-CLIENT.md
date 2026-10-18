@@ -22,9 +22,15 @@ de l'entreprise est marquée `<!-- À VALIDER : client -->` dans le code de la p
 - [ ] **Le rôle de l'entreprise sur chacun des 5 films** : production maison, projet client,
       partenaire de production, prestataire technique ou contribution. Aujourd'hui, ils portent
       seulement l'étiquette « Worked on », la formule du site d'origine (« We've worked on »).
-- [ ] **Les affiches** : celle de Sost Maezen 1 (Triangle) porte « 2016 ». Est-ce la bonne ?
+- [ ] **Les affiches** : l'image de Sost Maezen 1 (Triangle), reprise du site d'origine,
+      porte en gros « TRIANGLE 2 · 2016 ». Est-ce la bonne ?
       Fournir de meilleures affiches pour Fikir Siferd (300 px, logo DEKIKA FLIX) et
-      Sost Maezen 2 (640 px).
+      Sost Maezen 2 (640 px). Le 18/10, le client a demandé « clearer posters » : on garde les
+      images actuelles telles quelles et on reprendra les nouvelles dès qu'elles seront sur son
+      site (ethiopianfilmoffice.com).
+- [ ] **Seol** et **Abay Weys Vegas** (« New movies », message du 18/10) : à ajouter quand leurs
+      affiches seront sur le site d'origine (vérifié le 18/10 : pas encore). Confirmer
+      l'orthographe.
 - [ ] **L'orthographe du fondateur** : « Theodros Teshome » sur l'affiche de Triangle II,
       « Tewodros Teshome » partout ailleurs.
 - [ ] Pour chaque film : année, court résumé, générique, bande-annonce.
@@ -79,7 +85,7 @@ Toutes les phrases marquées `À VALIDER : client` dans les pages. Les principal
 
 ## 6. Choix à faire
 
-- [ ] **Le thème** : Vert, Nuit ou Papier (le sélecteur disparaîtra une fois le choix fait).
+- [x] **Le thème** : Vert, choisi le 18/10/2026 (Nuit et Papier retirés).
 - [ ] **Le modèle 3D de la caméra** (accueil et location) montre une marque (RED) sous certains
       angles et un « 8K » dans son crédit obligatoire, alors que la fiche dit « 12K ». Le garder,
       ou le remplacer par un modèle de leur vraie caméra ?

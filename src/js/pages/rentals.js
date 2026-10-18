@@ -6,14 +6,17 @@
  * est là, il s'y matérialise et le plan s'efface en filigrane. Sur
  * ordinateur, la caméra tourne lentement, suit à peine la souris et se tourne
  * à la main (glisser) ; la réglette du bas donne l'angle, comme la bague
- * d'un objectif. Sur écran tactile : dessinée à 1,25 fois l'écran, rien ne
- * tourne tout seul et rien n'est redessiné tant que rien ne bouge (le geste,
- * la descente de page). Sans WebGL, ou si le modèle ne vient pas, la photo de
+ * d'un objectif. Sur écran tactile : la photo de la caméra d'abord ; la 3D
+ * (le modèle allégé camera-m.glb, sans anticrénelage) la remplace en fondu
+ * une fois la page chargée et au repos, sauf sur un réseau lent. Elle est
+ * dessinée à 1,25 fois l'écran, rien ne tourne tout seul et rien n'est
+ * redessiné tant que rien ne bouge (le geste, la descente de page). Sans
+ * WebGL, en économie de données, ou si le modèle ne vient pas, la photo de
  * la caméra prend sa place. En mouvement réduit : le modèle posé, immobile,
  * qu'on peut encore tourner à la main.
  *
  * Le catalogue : tout est tiré de src/data/equipment.js — les catégories, les
- * articles, les cases du formulaire. Le filtre réordonne les fiches (Flip).
+ * articles, les cases du formulaire. Le filtre change les fiches en fondu.
  * « Add to quote » coche l'article dans le formulaire ; un petit compteur
  * flottant mène au devis. Les liens ?item=, ?option=, ?category= cochent le
  * formulaire sans recharger la page.
@@ -34,13 +37,12 @@
  */
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Flip } from 'gsap/Flip';
 import { bootDivision, LITE } from '../division.js';
 import { reduced, breathe } from '../motion.js';
 import { equipment, allItems, RENTAL_OPTIONS, DURATIONS } from '../../data/equipment.js';
 import { initSheets, plotLine } from './rentals-sheets.js';
 
-gsap.registerPlugin(ScrollTrigger, Flip);
+gsap.registerPlugin(ScrollTrigger);
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const pad = (n) => String(n).padStart(2, '0');
@@ -52,6 +54,9 @@ const short = (l) => String(l).replace(/\s+equipment$/i, '');
    sur blanc se posent sur la plaque claire (« contain »), les photos de
    scène la remplissent (« cover »). Un article inconnu prend « cover ». */
 const FIT = { 'cinema-camera': 'contain', lenses: 'contain', microphones: 'contain' };
+/* La vignette d'un article (le formulaire, le compteur : 3 rem de côté) : sa
+   version de 144 px, sinon celle de 400. */
+const thumbOf = (it) => it?.thumb || it?.imgSmall || '';
 
 
 /* ═══════════════════════ LE CATALOGUE ═══════════════════════ */
@@ -60,7 +65,7 @@ const FIT = { 'cinema-camera': 'contain', lenses: 'contain', microphones: 'conta
    de papier millimétré, ses deux cotes (la ligne du haut porte « Fig. 0n »),
    ses repères d'angle ; dessous, le cartouche « Rate / Availability ».
    `.re-item__in` porte tout le visuel : c'est lui qui s'incline sous la main
-   (rentals-sheets.js), l'article reste la cible du filtre (Flip). */
+   (rentals-sheets.js), l'article reste la cible du filtre. */
 function itemCard(it, i) {
   const fit = FIT[it.id] || 'cover';
   const small = it.imgSmall ? `${esc(it.imgSmall)} 400w, ` : '';
@@ -70,7 +75,7 @@ function itemCard(it, i) {
       <span class="re-dim re-dim--h" aria-hidden="true"><i class="re-dim__l"></i><b class="re-dim__t">Fig. ${pad(i + 1)}</b></span>
       <span class="re-dim re-dim--v" aria-hidden="true"><i class="re-dim__l"></i></span>
       <div class="re-item__fig re-item__fig--${fit}">
-        <img src="${esc(it.img)}" srcset="${small}${esc(it.img)} 800w" sizes="(max-width: 40rem) 86vw, (max-width: 72rem) 42vw, 19rem" width="800" height="600" alt="${esc(it.name)}" loading="lazy" decoding="async">
+        <img src="${esc(it.img)}" srcset="${small}${esc(it.img)} ${it.imgW || 800}w" sizes="(max-width: 40rem) 86vw, (max-width: 72rem) 42vw, 19rem" width="800" height="600" alt="${esc(it.name)}" loading="lazy" decoding="async">
         <span class="re-item__cat">${esc(it.categoryLabel)}</span>
         <i class="re-item__mk" aria-hidden="true"></i>
       </div>
@@ -139,7 +144,7 @@ function renderForm() {
   if (pick) {
     // Une petite fiche par article : la photo du parc, le nom, la catégorie.
     pick.innerHTML = allItems.map((it) => `<label class="re-pk"><input type="checkbox" name="item" value="${esc(it.id)}" data-text="${esc(it.name)}"><span>
-      <i class="re-pk__img re-pk__img--${FIT[it.id] || 'cover'}" aria-hidden="true">${it.imgSmall ? `<img src="${esc(it.imgSmall)}" alt="" width="96" height="96" loading="lazy" decoding="async">` : ''}</i>
+      <i class="re-pk__img re-pk__img--${FIT[it.id] || 'cover'}" aria-hidden="true">${thumbOf(it) ? `<img src="${esc(thumbOf(it))}" alt="" width="96" height="96" loading="lazy" decoding="async">` : ''}</i>
       <i><b>${esc(it.name)}</b><small>${esc(short(it.categoryLabel))}</small></i>
       <i class="re-pk__box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></i>
     </span></label>`).join('');
@@ -217,27 +222,41 @@ function initFilter() {
     rail.scrollTo({ left, behavior: smooth && !still ? 'smooth' : 'auto' });
   };
 
+  /* Le changement de catégorie (18/10, Dominique : « entre les transitions
+     il y a un bug ») : la réorganisation Flip faisait voler les fiches par-
+     dessus le titre. Désormais un fondu en deux temps, sur place : les
+     fiches affichées s'effacent, puis celles de la catégorie choisie
+     apparaissent en cascade, chacune à sa place. */
+  let swap = null;
   const apply = (id, animate = true) => {
     current = id;
     tabs.forEach((t) => t.setAttribute('aria-pressed', String(t.dataset.filter === id)));
     const els = cards();
-    const state = animate && !still ? Flip.getState(els) : null;
-    els.forEach((el) => el.classList.toggle('is-out', !visible(el, id)));
     describe(id, animate);
     slide(!animate);
-    const n = els.filter((el) => !el.classList.contains('is-out') && el.classList.contains('re-item')).length;
+    const n = els.filter((el) => visible(el, id) && el.classList.contains('re-item')).length;
     const label = id === 'all' ? 'all categories' : equipment.find((c) => c.id === id)?.label;
     if (status && animate) status.textContent = `${n ? `${n} ${n > 1 ? 'items' : 'item'}` : 'No listed items yet'} in ${label}.`;
-    if (state) {
-      Flip.from(state, {
-        duration: 0.75, ease: 'power3.inOut', absolute: true, nested: true, prune: true,
-        onEnter: (en) => gsap.fromTo(en, { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 0.7, delay: 0.18, stagger: 0.05, ease: 'power3.out', clearProps: 'transform,opacity,visibility' }),
-        onLeave: (out) => gsap.to(out, { autoAlpha: 0, y: -10, duration: 0.3, ease: 'power2.in' }),
-        onComplete: () => ScrollTrigger.refresh()
-      });
-    } else {
+    const toggle = () => els.forEach((el) => el.classList.toggle('is-out', !visible(el, id)));
+    swap?.kill();
+    if (!animate || still) {
+      gsap.set(els, { clearProps: 'transform,opacity,visibility' });
+      toggle();
       requestAnimationFrame(() => ScrollTrigger.refresh());
+      return;
     }
+    const shown = els.filter((el) => !el.classList.contains('is-out'));
+    swap = gsap.timeline()
+      .to(shown, { autoAlpha: 0, y: -8, duration: 0.22, ease: 'power2.in', stagger: 0.02 })
+      .add(() => {
+        toggle();
+        gsap.set(els, { clearProps: 'transform,opacity,visibility' });
+        const next = els.filter((el) => !el.classList.contains('is-out'));
+        gsap.fromTo(next, { autoAlpha: 0, y: 22 }, {
+          autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
+          clearProps: 'transform,opacity,visibility', onComplete: () => ScrollTrigger.refresh()
+        });
+      });
   };
 
   rail.addEventListener('click', (e) => {
@@ -315,8 +334,8 @@ function initQuote() {
     if (!tray) return;
     if (count) count.textContent = String(on.length);
     if (thumbs) {
-      thumbs.innerHTML = on.slice(0, 3).map((id) => (byId[id]?.imgSmall
-        ? `<i class="re-tray__i re-tray__i--${FIT[id] || 'cover'}"><img src="${esc(byId[id].imgSmall)}" alt="" width="40" height="40"></i>` : '')).join('');
+      thumbs.innerHTML = on.slice(0, 3).map((id) => (thumbOf(byId[id])
+        ? `<i class="re-tray__i re-tray__i--${FIT[id] || 'cover'}"><img src="${esc(thumbOf(byId[id]))}" alt="" width="40" height="40"></i>` : '')).join('');
     }
     const show = on.length > 0 && !atAsk;
     tray.classList.toggle('is-on', show);
@@ -637,11 +656,61 @@ const RAD = Math.PI / 180;
 const BASE = -40;        // le trois-quarts face, au repos (degrés)
 const PX = 4;            // la réglette : 4 px par degré
 
+/* Le test WebGL : un contexte jetable, rendu aussitôt (sur iOS, les contextes
+   vivants sont comptés), et un seul test par page. */
+let canGL = null;
 function webgl() {
+  if (canGL !== null) return canGL;
   try {
     const c = document.createElement('canvas');
-    return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
-  } catch { return false; }
+    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    canGL = Boolean(gl);
+    gl?.getExtension('WEBGL_lose_context')?.loseContext();
+  } catch { canGL = false; }
+  return canGL;
+}
+
+/* Le téléphone (18/10/2026) : la photo d'abord, la 3D ensuite, une fois la
+   page chargée et au repos, avec le modèle allégé (camera-m.glb). Sur un
+   réseau lent, elle ne vient pas : la photo reste. « Lent » : ce que le
+   navigateur annonce (2G, 3G), ou le débit que cette page a réellement reçu
+   en se chargeant, sous 2,5 Mbit/s (le modèle et Three.js, 0,9 Mo, y
+   mettraient plus de trois secondes). Le débit annoncé par Chrome
+   (`downlink`) ne sert pas : sans historique, il vaut souvent 1,5 Mbit/s
+   sur une connexion rapide. */
+const NET = navigator.connection;
+const SLOW = /(^|-)(2g|3g)$/.test(NET?.effectiveType || '');
+const MODEL = LITE ? '/kit3d/camera-m.glb' : '/kit3d/camera.glb';
+
+/* Le débit mesuré (Mbit/s) : les octets reçus par la page, divisés par le
+   temps pendant lequel quelque chose arrivait (Resource Timing). Rien à
+   juger (page en cache, navigateur muet) : null. */
+function measuredMbps() {
+  let bytes = 0;
+  const spans = [];
+  for (const r of [...performance.getEntriesByType('navigation'), ...performance.getEntriesByType('resource')]) {
+    if (!(r.transferSize > 1000) || !(r.responseEnd > r.responseStart) || !(r.responseStart > 0)) continue;
+    bytes += r.transferSize;
+    spans.push([r.responseStart, r.responseEnd]);
+  }
+  if (bytes < 150e3) return null;
+  spans.sort((a, b) => a[0] - b[0]);
+  let busy = 0;
+  let [s0, e0] = spans[0];
+  for (const [s1, e1] of spans) {
+    if (s1 > e0) { busy += e0 - s0; s0 = s1; e0 = e1; } else e0 = Math.max(e0, e1);
+  }
+  busy += e0 - s0;
+  return busy > 0 ? (bytes * 8) / (busy * 1000) : null;
+}
+const slowLink = () => { const m = measuredMbps(); return m !== null && m < 2.5; };
+
+/* Après le chargement de la page, puis au premier repos du navigateur
+   (au plus tard 3 s après). */
+function afterLoadIdle(fn) {
+  const idle = () => (window.requestIdleCallback ? window.requestIdleCallback(fn, { timeout: 3000 }) : window.setTimeout(fn, 700));
+  if (document.readyState === 'complete') idle();
+  else window.addEventListener('load', idle, { once: true });
 }
 
 /* L'ombre posée sous l'objet : un disque flou peint une fois. */
@@ -724,7 +793,10 @@ function initHeroModel() {
     if (plan) gsap.to(plan, { autoAlpha: 0.12, duration: 0.8, ease: 'power2.out', overwrite: true });
   };
   // Sans WebGL, ou en économie de données (le modèle pèse 2,4 Mo) : la photo.
-  if (!webgl() || navigator.connection?.saveData) { photo(); return; }
+  // Sur téléphone, aussi sur un réseau lent.
+  if (!webgl() || NET?.saveData || (LITE && SLOW)) { photo(); return; }
+  // Sur téléphone, la photo tient la place pendant que la 3D se prépare.
+  if (LITE) photo();
 
   /* La pose. P : l'entrée (dans le temps). S : la vie (souris, main,
      défilement, rotation lente). */
@@ -820,7 +892,8 @@ function initHeroModel() {
 
   const start = async () => {
     try {
-      const THREE = await import('three');
+      // Seulement les classes dont la scène se sert (`three-rentals.js`).
+      const THREE = await import('./three-rentals.js');
       await breathe();
       const [{ GLTFLoader }, { RoomEnvironment }, { MeshoptDecoder }] = await Promise.all([
         import('three/addons/loaders/GLTFLoader.js'),
@@ -830,7 +903,9 @@ function initHeroModel() {
       try { MeshoptDecoder.useWorkers?.(2); } catch { /* décodage sur place */ }
       await breathe();
 
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+      // Sur écran tactile, sans anticrénelage (MSAA) : c'est lui qui pesait sur
+      // les puces graphiques modestes.
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: !LITE, alpha: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LITE ? 1.25 : 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.NeutralToneMapping;
@@ -867,7 +942,7 @@ function initHeroModel() {
       new ResizeObserver(() => size()).observe(canvas);
 
       const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-      const gltf = await loader.loadAsync('/kit3d/camera.glb', (e) => {
+      const gltf = await loader.loadAsync(MODEL, (e) => {
         if (pct && e.total) pct.textContent = String(Math.round((e.loaded / e.total) * 100)).padStart(3, '0');
       });
       await breathe();
@@ -876,16 +951,28 @@ function initHeroModel() {
       await renderer.compileAsync(holder, cam, scene);
       await breathe();
       if (!three) return;
+      // La première image est peinte avant le fondu (la photo s'efface pendant
+      // que la 3D monte, au même endroit : rien ne bouge dans la page).
+      sig = '';
+      render(gsap.ticker.time);
       enter();
     } catch (err) {
       three = null;
       photo(err);
     }
   };
-  start();
+  // Sur ordinateur, tout de suite. Sur téléphone, après le chargement et au
+  // repos ; et seulement quand l'ouverture est à l'écran (sinon, à son retour).
+  let waiting = false;
+  if (!LITE) start();
+  else afterLoadIdle(() => { if (slowLink()) return; if (visible) start(); else waiting = true; });
 
   // On ne dessine que ce qui se voit.
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; sig = ''; }).observe(hero);
+  new IntersectionObserver(([e]) => {
+    visible = e.isIntersecting;
+    sig = '';
+    if (visible && waiting) { waiting = false; start(); }
+  }).observe(hero);
   gsap.ticker.add(render);
 
   /* La main : glisser de côté tourne la caméra (le défilement vertical reste

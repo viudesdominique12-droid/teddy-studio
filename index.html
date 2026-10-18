@@ -78,12 +78,20 @@
       <rect class="bp__grid" x="-9000" y="-9000" width="20000" height="20000" fill="url(#bp-grid)"/>
       <rect class="bp__sheet" x="-230" y="-130" width="2860" height="1840" pathLength="1"/>
       <path class="bp__axis" d="M-200 1107L2600 745"/>
-      <image class="bp__lines" href="/cam/blueprint-2400.webp" x="0" y="0" width="2400" height="1599" clip-path="url(#bp-plot)"/>
+      <image class="bp__lines" data-href="/cam/blueprint-2400.webp" x="0" y="0" width="2400" height="1599" clip-path="url(#bp-plot)"/>
       <line class="bp__head" x1="-60" y1="-80" x2="-60" y2="1680"/>
       <g class="bp__notes"><circle cx="215" cy="700" r="9" pathLength="1"/><path d="M215 700L110 500H-170" pathLength="1"/><text x="-170" y="484" text-anchor="start">MATTE BOX</text><circle cx="1020" cy="745" r="9" pathLength="1"/><path d="M1020 745L900 470H560" pathLength="1"/><text x="560" y="454" text-anchor="start">CINE ZOOM &#183; 30&#8211;300</text><circle cx="1235" cy="262" r="9" pathLength="1"/><path d="M1235 262L1080 120H740" pathLength="1"/><text x="740" y="104" text-anchor="start">MONITOR</text><circle cx="1650" cy="430" r="9" pathLength="1"/><path d="M1650 430L1770 150H2090" pathLength="1"/><text x="2090" y="134" text-anchor="end">TOP HANDLE</text><circle cx="2143" cy="722" r="9" pathLength="1"/><path d="M2143 722L2330 520H2600" pathLength="1"/><text x="2600" y="504" text-anchor="end">BATTERY</text><circle cx="1985" cy="935" r="9" pathLength="1"/><path d="M1985 935L2240 1180H2600" pathLength="1"/><text x="2600" y="1164" text-anchor="end">CAMERA BODY</text><circle cx="960" cy="1300" r="9" pathLength="1"/><path d="M960 1300L860 1560H500" pathLength="1"/><text x="500" y="1544" text-anchor="start">RODS &#183; BASEPLATE</text></g>
       <g class="bp__block"><rect x="1960" y="1440" width="660" height="260" pathLength="1"/><path d="M1960 1510H2620M1960 1575H2620M1960 1640H2620M2400 1640V1700" pathLength="1"/><text x="1982" y="1487" class="bp__strong">TEDDY STUDIO &#8212; ETHIOPIAN FILM OFFICE</text><text x="1982" y="1552">CAMERA A &#183; THREE-QUARTER VIEW</text><text x="1982" y="1617">FILM SERVICE &amp; PRODUCTION ACROSS ETHIOPIA</text><text x="1982" y="1682">ADDIS ABABA &#183; 24/7</text><text x="2422" y="1682">SHEET 01</text></g>
     </g>
   </svg>
+  <!-- Le plan ne se télécharge que si l'ouverture se joue (première visite de
+       la session) : la page déjà vue ne paie pas ses 128 Ko. -->
+  <script>
+    if (document.documentElement.classList.contains('is-booting')) {
+      const lines = document.querySelector('#boot .bp__lines');
+      if (lines) lines.setAttribute('href', lines.getAttribute('data-href'));
+    }
+  </script>
 
   <div class="boot__top">
     <p class="brk">Teddy Studio &middot; Ethiopian Film Office</p>
@@ -138,21 +146,21 @@
       <h2 class="hx__k" id="cli-h">Our Clients</h2>
       <div class="hx-mq">
         <ul class="hx-mq__row" aria-label="Our clients">
-          <li class="hx-mq__i"><img src="/clients/bgi.png" alt="BGI Ethiopia" width="195" height="200" decoding="async"></li>
-          <li class="hx-mq__i"><img src="/clients/pepsi.png" alt="Pepsi" width="196" height="200" decoding="async"></li>
-          <li class="hx-mq__i"><img src="/clients/world-bank.png" alt="World Bank" width="404" height="200" decoding="async"></li>
-          <li class="hx-mq__i"><img src="/clients/prime-office.png" alt="Ethiopian Prime Minister Office" width="208" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/bgi.webp" alt="BGI Ethiopia" width="146" height="150" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/pepsi.webp" alt="Pepsi" width="147" height="150" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/world-bank.webp" alt="World Bank" width="303" height="150" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/prime-office.webp" alt="Ethiopian Prime Minister Office" width="156" height="150" decoding="async"></li>
           <li class="hx-mq__i"><span class="hx-mq__t">Ethiopia<br>Defence Force</span></li>
-          <li class="hx-mq__i"><img src="/clients/us-embassy.png" alt="U.S. Embassy Ethiopia" width="200" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/us-embassy.webp" alt="U.S. Embassy Ethiopia" width="150" height="150" decoding="async"></li>
           <li class="hx-mq__i"><span class="hx-mq__t">Wosti Jnvis</span></li>
         </ul>
         <ul class="hx-mq__row" aria-hidden="true">
-          <li class="hx-mq__i"><img src="/clients/bgi.png" alt="" width="195" height="200" decoding="async"></li>
-          <li class="hx-mq__i"><img src="/clients/pepsi.png" alt="" width="196" height="200" decoding="async"></li>
-          <li class="hx-mq__i"><img src="/clients/world-bank.png" alt="" width="404" height="200" decoding="async"></li>
-          <li class="hx-mq__i"><img src="/clients/prime-office.png" alt="" width="208" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/bgi.webp" alt="" width="146" height="150" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/pepsi.webp" alt="" width="147" height="150" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/world-bank.webp" alt="" width="303" height="150" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/prime-office.webp" alt="" width="156" height="150" decoding="async"></li>
           <li class="hx-mq__i"><span class="hx-mq__t">Ethiopia<br>Defence Force</span></li>
-          <li class="hx-mq__i"><img src="/clients/us-embassy.png" alt="" width="200" height="200" decoding="async"></li>
+          <li class="hx-mq__i"><img src="/clients/us-embassy.webp" alt="" width="150" height="150" decoding="async"></li>
           <li class="hx-mq__i"><span class="hx-mq__t">Wosti Jnvis</span></li>
         </ul>
       </div>
@@ -251,7 +259,7 @@
         </li>
         <li class="dvg__i" style="--c: #7fb7d9">
           <a class="dvg__a" href="/equipment-rentals.html">
-            <span class="dvg__v" aria-hidden="true"><img src="/cam/camera-1400.webp" alt="" width="1400" height="933" loading="lazy" decoding="async"></span>
+            <span class="dvg__v" aria-hidden="true"><img src="/cam/camera-1400.webp" srcset="/cam/camera-480.webp 480w, /cam/camera-1400.webp 1400w" sizes="(max-width: 40rem) 30vw, 480px" alt="" width="1400" height="933" loading="lazy" decoding="async"></span>
             <span class="dvg__t">
               <span class="dvg__n">07</span>
               <h3 class="dvg__h">Equipment Rentals</h3>
@@ -342,7 +350,7 @@
         <canvas class="k3__gl" aria-hidden="true"></canvas>
 
         <!-- 01 — la caméra, en 3D (repli : sa photo) -->
-        <article class="k3__plan" data-k3-plan data-side="left" data-model="/kit3d/camera.glb" data-fix="0 -90 0" data-fit="1.22">
+        <article class="k3__plan" data-k3-plan data-side="left" data-model="/kit3d/camera.glb" data-model-small="/kit3d/camera-m.glb" data-fix="0 -90 0" data-fit="1.22">
           <figure class="k3__photo" style="--ar: 800 / 533" data-view="/kit/photo/camera.webp" data-view-label="Camera"><img src="/kit/camera-800.webp" alt="Cinema camera body on a support" width="800" height="533" loading="lazy" decoding="async"></figure>
           <p class="k3__load" aria-hidden="true">Loading &middot; <span data-k3-pct>000</span></p>
           <div class="k3__text">
@@ -355,7 +363,7 @@
         </article>
 
         <!-- 02 — les objectifs, en 3D -->
-        <article class="k3__plan" data-k3-plan data-side="right" data-model="/kit3d/lens.glb" data-fix="-90 0 90" data-fit="0.8" data-turn="16 -42">
+        <article class="k3__plan" data-k3-plan data-side="right" data-model="/kit3d/lens.glb" data-model-small="/kit3d/lens-m.glb" data-fix="-90 0 90" data-fit="0.8" data-turn="16 -42">
           <figure class="k3__photo" style="--ar: 800 / 420" data-view="/kit/photo/lense.webp" data-view-label="Lenses"><img src="/kit/lense-800.webp" alt="A set of prime and zoom lenses" width="800" height="420" loading="lazy" decoding="async"></figure>
           <p class="k3__load" aria-hidden="true">Loading &middot; <span data-k3-pct>000</span></p>
           <div class="k3__text">
@@ -368,7 +376,7 @@
         </article>
 
         <!-- 03 — le drone, en 3D -->
-        <article class="k3__plan" data-k3-plan data-side="left" data-model="/kit3d/drone.glb" data-fix="0 90 0" data-fit="1.55" data-shadow-gap="-0.04" data-shadow="0.6">
+        <article class="k3__plan" data-k3-plan data-side="left" data-model="/kit3d/drone.glb" data-model-small="/kit3d/drone-m.glb" data-fix="0 90 0" data-fit="1.55" data-shadow-gap="-0.04" data-shadow="0.6">
           <figure class="k3__photo" style="--ar: 800 / 450" data-view="/kit/photo/drone.webp" data-view-label="Drone"><img src="/kit/drone-800.webp" alt="A camera drone with gimbal" width="800" height="450" loading="lazy" decoding="async"></figure>
           <p class="k3__load" aria-hidden="true">Loading &middot; <span data-k3-pct>000</span></p>
           <div class="k3__text">
@@ -391,7 +399,7 @@
         </article>
 
         <article class="k3__plan" data-k3-plan data-side="left">
-          <figure class="k3__photo" style="--ar: 1 / 1" data-view="/kit/mic-800.webp" data-view-label="Microphones"><img src="/kit/mic-800.webp" alt="A shotgun microphone in a blimp with windshield" width="800" height="800" loading="lazy" decoding="async"></figure>
+          <figure class="k3__photo" style="--ar: 1 / 1" data-view="/kit/mic-800.webp" data-view-label="Microphones"><img src="/kit/mic-800.webp" srcset="/kit/mic-640.webp 640w, /kit/mic-800.webp 800w" sizes="(max-width: 48rem) 54vw, 40vw" alt="A shotgun microphone in a blimp with windshield" width="800" height="800" loading="lazy" decoding="async"></figure>
           <div class="k3__text">
             <p class="k3__n">05 <span>/ 06</span></p>
             <h3 class="k3__h">Microphones</h3>
@@ -815,18 +823,18 @@
       <div class="gal__stage" data-gallery data-gallery-status="loading" data-cursor="drag">
         <div class="gal__collection" data-gallery-collection>
           <div data-gallery-list>
-            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r01.jpg" data-src="/reel/r01.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r02.jpg" data-src="/reel/r02.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r03.jpg" data-src="/reel/r03.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r04.jpg" data-src="/reel/r04.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r05.jpg" data-src="/reel/r05.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r06.jpg" data-src="/reel/r06.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r07.jpg" data-src="/reel/r07.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r08.jpg" data-src="/reel/r08.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r09.jpg" data-src="/reel/r09.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r10.jpg" data-src="/reel/r10.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r11.jpg" data-src="/reel/r11.mp4" aria-hidden="true"></video></div></div>
-            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" poster="/reel/r12.jpg" data-src="/reel/r12.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r01.jpg" data-src="/reel/r01.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r02.jpg" data-src="/reel/r02.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r03.jpg" data-src="/reel/r03.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r04.jpg" data-src="/reel/r04.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r05.jpg" data-src="/reel/r05.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r06.jpg" data-src="/reel/r06.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r07.jpg" data-src="/reel/r07.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r08.jpg" data-src="/reel/r08.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r09.jpg" data-src="/reel/r09.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r10.jpg" data-src="/reel/r10.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="16/9"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r11.jpg" data-src="/reel/r11.mp4" aria-hidden="true"></video></div></div>
+            <div class="gal__item" data-gallery-item data-ratio="9/16"><div class="gal__card" data-gallery-card><video muted playsinline loop preload="none" data-poster="/reel/r12.jpg" data-src="/reel/r12.mp4" aria-hidden="true"></video></div></div>
           </div>
         </div>
         <p class="gal__hint mono" aria-hidden="true"><span>Drag</span></p>

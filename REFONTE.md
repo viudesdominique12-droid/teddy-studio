@@ -600,6 +600,30 @@ filets animés, chacun différent :
 - Contrôles : formulaires Contact et Book identiques, 0 erreur, pas de débordement, pins de
   l'accueil alignés.
 
+### Vague 16 quinquies — le téléphone, les filtres, la vitesse (18/10/2026, journée)
+
+Retours de Dominique depuis son iPhone, sur le site en ligne :
+- **Le menu du téléphone** (« incompréhensible ») devient un panneau qui glisse de la droite
+  (`bar.html` `#index`, `shell.css` « LE MENU DU TÉLÉPHONE », `motion.js` `indexPanel()`) :
+  Home, Services qu'on déplie (les sept divisions, chacune avec sa pastille), Portfolio,
+  About Us, Contact, puis « Start a Project », Call et WhatsApp. On le ferme par la croix, le
+  voile, Échap ou un glissé vers la droite. Il défile au doigt sur toutes les pages
+  (`data-lenis-prevent`, et Lenis s'arrête pendant qu'il est ouvert, `scroll.js`).
+- **La caméra de Location** ne passe plus sous le titre : la hauteur du cadre suit la largeur
+  de l'écran (`--re-fh`).
+- **Les filtres** de Location (le catalogue) et du Portfolio (les tiroirs) : GSAP Flip faisait
+  voler les fiches par-dessus le titre et la galerie s'écrasait un instant. Remplacé par un
+  fondu enchaîné : les fiches affichées s'effacent, la grille change, les nouvelles arrivent
+  une à une ; au Portfolio, la table glisse d'une hauteur à l'autre.
+- **La section « From brief to delivery »** (AI) et le haut de Location étaient cassés en ligne
+  mais pas en local : dans la version construite, `division.css` arrivait après la feuille de
+  la page et écrasait ses réglages. Le module `plugins/css-order.js` remet l'ordre du mode local.
+- **La vitesse et le téléphone** : audit en quatre volets (poids, exécution sur téléphone
+  ralenti, confort au doigt, code mort), puis 40 corrections réparties en six lots sans
+  fichier commun (`plugins/`, `offscreen.js`, `three-lite.js`, images et modèles 3D allégés,
+  fontes allégées ci-dessous, chargement différé des modèles et vidéos de l'accueil et de
+  Location, cibles tactiles, champs de Book à 16 px pour éviter le zoom d'iOS).
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).
@@ -610,3 +634,34 @@ filets animés, chacun différent :
 - **Les outils de travail** (captures, préparation des modèles 3D) sont dans `docs/outils/`, avec leur mode d'emploi.
 - **Le thème à retenir** (vague 9) : Vert, Nuit ou Papier. Réponse attendue de Dominique, puis du client.
 - **Les logos manquants** : Ethiopia Defence Force et Wosti Jnvis sont en texte dans la bande des clients. Si Dominique a leurs logos, les aplatir comme les autres (crème sur transparent, 200 px de haut) et les poser dans `public/clients/`.
+
+## Exigences d'hébergement (hosting requirements, 18/10/2026)
+
+GitHub Pages ne permet ni l'un ni l'autre ; à régler sur l'hébergeur du domaine définitif
+(Netlify, Cloudflare Pages, Vercel ou un serveur à soi) :
+
+- **Cache immuable d'un an** pour `/assets/`, `/fonts/` et `/kit3d/` :
+  `Cache-Control: public, max-age=31536000, immutable`. Les fichiers de `/assets/` portent une
+  empreinte dans leur nom ; ceux de `/fonts/` et `/kit3d/` changent de nom quand on les refait
+  (sinon, raccourcir leur durée). Les pages `.html` restent en revalidation courte
+  (`max-age=0, must-revalidate` ou quelques minutes).
+- **Compression brotli** pour le texte (HTML, CSS, JS, JSON, SVG) et les modèles `.glb` (la
+  compression meshopt est faite pour être suivie d'une compression générale), **gzip en repli**
+  pour les navigateurs qui n'annoncent pas brotli. Pas de recompression des `.woff2`, `.webp`,
+  `.jpg` et `.mp4` (déjà compressés).
+- Gain attendu : une visite de retour évite ~150 ms d'aller-retour par fichier revalidé, et le
+  texte pèse 10 à 18 % de moins qu'en gzip.
+
+## Les fontes livrées sont allégées (18/10/2026)
+
+Les originaux sont dans `design/fonts-src/`. Dans `public/fonts/`, mêmes noms, on n'a gardé que
+ce que le site utilise, relevé sur les 16 pages (téléphone et ordinateur, menus, formulaires) :
+
+- **Fraunces** : l'axe SOFT est figé à 0 (121 → 67 Ko). opsz, wght et WONK restent entiers.
+- **Archivo** : largeur (wdth) de 62 à 100 seulement (90 → 64 Ko). Plus rien au-delà de 100 %.
+- **Instrument Sans** : largeur figée à 100 (57 → 30 Ko). Graisses 400 à 700 intactes.
+- **Martian Mono** : inchangée.
+
+Rendu identique au pixel près (titres de 7 pages comparés). Si un nouveau dessin demande une
+Archivo plus large que 100, une Instrument Sans étroite ou une Fraunces « SOFT », repartir des
+originaux (`fontTools.varLib.instancer`).

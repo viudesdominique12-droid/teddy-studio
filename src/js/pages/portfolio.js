@@ -11,7 +11,7 @@
  *              du projecteur (portfolio-beam.js) vacille à chaque image ;
  *   grid()     les tirages sur la table lumineuse, les mises en avant
  *              d'abord ; les tiroirs (Tout + les sept catégories)
- *              réorganisent la table avec GSAP Flip et s'écrivent dans
+ *              changent la table en fondu enchaîné et s'écrivent dans
  *              l'adresse (?cat=film) ; une catégorie vide ouvre un tiroir sur
  *              une boîte de bobine scellée qui mène à sa division ; les
  *              étiquettes de la légende éclairent les tirages qui les portent
@@ -23,7 +23,6 @@
  */
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Flip } from 'gsap/Flip';
 import { bootDivision, LITE } from '../division.js';
 import { reduced } from '../motion.js';
 import { CATEGORIES, STATUS, ROLES, projects } from '../../data/portfolio.js';
@@ -31,7 +30,7 @@ import { divisionById } from '../../data/divisions.js';
 import { initBeam } from './portfolio-beam.js';
 import { live, tableOn, loupe, near, reel } from './portfolio-archive.js';
 
-gsap.registerPlugin(ScrollTrigger, Flip);
+gsap.registerPlugin(ScrollTrigger);
 
 /* Les catégories du portfolio et les divisions qui les portent. */
 const CAT_DIV = { live: 'live', events: 'events', ai: 'ai', music: 'music', film: 'film', doc: 'doc', tech: 'rentals' };
@@ -59,6 +58,11 @@ const bySlug = (slug) => projects.find((p) => p.slug === slug);
 const ordered = [...projects.filter((p) => p.featured), ...projects.filter((p) => !p.featured)];
 const noOf = (slug) => ordered.findIndex((p) => p.slug === slug) + 1;
 const imagesOf = (p) => [...new Set([p.posterFull || p.poster, ...(p.stills || [])].filter(Boolean))];
+/* L'affiche d'un tirage : sur téléphone (une colonne), la version de 720 px
+   suffit, même sur un écran ×3 ; au-delà, l'affiche entière, comme avant
+   (la loupe de l'ordinateur la lit). */
+const posterSet = (p) => (p.posterMid && p.posterFull
+  ? ` srcset="${esc(p.posterMid)} 720w, ${esc(p.posterFull)} 1280w" sizes="(max-width: 44rem) 60vw, 1280px"` : '');
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
 
 const still = reduced();
@@ -226,7 +230,7 @@ function initGrid() {
       <div class="pf-card__fig">
         <div class="pf-card__pic">
           ${bg ? `<img class="pf-card__bg" src="${esc(bg)}" alt="" loading="lazy" decoding="async" width="1280" height="720">` : ''}
-          <img class="pf-card__img" src="${esc(p.posterFull || p.poster)}" alt="" loading="lazy" decoding="async" width="1280" height="720">
+          <img class="pf-card__img" src="${esc(p.posterFull || p.poster)}"${posterSet(p)} alt="" loading="lazy" decoding="async" width="1280" height="720">
           <span class="pf-card__flip" aria-hidden="true"></span>
         </div>
         <p class="pf-card__strip"><span class="pf-badge"><span class="pf-mark pf-mark--${esc(p.status)}" aria-hidden="true"></span>${esc(STATUS[p.status] || '')}</span><span class="pf-card__no" aria-hidden="true">No. ${pad(i + 1)}</span></p>
@@ -368,15 +372,14 @@ function initGrid() {
   // L'entrée des tirages (posée par ready()) : un premier filtre la solde.
   let settle = () => {};
 
-  const apply = (catId, { animate = true, url = true } = {}) => {
-    if (!chips.some((c) => c.id === catId)) catId = 'all';
-    current = catId;
-    if (animate) settle();
-    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cat === catId)));
-    if (pinned) { pinned = null; tags.forEach((t) => t.setAttribute('aria-pressed', 'false')); light(null); }
-    const flipping = animate && !still;
-    const state = flipping ? Flip.getState(items, { props: 'opacity' }) : null;
+  /* Changer de tiroir : les tirages affichés s'effacent, la table change,
+     les nouveaux tombent un à un pendant que la table prend sa hauteur.
+     (18/10 : l'ancienne réorganisation GSAP Flip faisait voler les tirages
+     les uns sur les autres et la galerie s'écrasait un instant.) */
+  const box = table || gridEl;           // la table : la galerie ET le tiroir vide
+  let swap = null;
 
+  const render = (catId, animate) => {
     items.forEach((el) => {
       const show = el.hasAttribute('data-soon') ? catId === 'all' : (catId === 'all' || el.dataset.cat === catId);
       el.classList.toggle('is-hidden', !show);
@@ -393,22 +396,48 @@ function initGrid() {
     if (empty) {
       prep.innerHTML = prepHTML(catId);
       prep.hidden = false;
-      if (flipping) openDrawer(prep.firstElementChild);
+      if (animate) openDrawer(prep.firstElementChild);
     } else if (!prep.hidden) {
       prep.hidden = true; prep.innerHTML = '';
     }
+  };
 
-    if (state) {
-      Flip.from(state, {
-        duration: 0.85, ease: 'power3.inOut', absolute: true, stagger: 0.025, nested: true, prune: true,
-        onEnter: (els) => gsap.fromTo(els, { autoAlpha: 0, scale: 0.94, y: -14 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.75, ease: 'power3.out', delay: 0.25 }),
-        onLeave: (els) => gsap.to(els, { autoAlpha: 0, scale: 0.94, duration: 0.4, ease: 'power2.in' }),
-        onComplete: () => ScrollTrigger.refresh()
-      });
-    } else {
-      requestAnimationFrame(() => ScrollTrigger.refresh());
-    }
+  const apply = (catId, { animate = true, url = true } = {}) => {
+    if (!chips.some((c) => c.id === catId)) catId = 'all';
+    current = catId;
+    if (animate) settle();
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cat === catId)));
+    if (pinned) { pinned = null; tags.forEach((t) => t.setAttribute('aria-pressed', 'false')); light(null); }
     if (url) writeUrl();
+
+    swap?.kill();
+    gsap.killTweensOf(box, 'height');
+    if (!animate || still) {
+      gsap.set(items, { clearProps: 'transform,opacity,visibility' });
+      gsap.set(box, { clearProps: 'height' });
+      render(catId, false);
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+      return;
+    }
+    const out = items.filter((el) => !el.classList.contains('is-hidden'));
+    if (!prep.hidden && prep.firstElementChild) out.push(prep.firstElementChild);
+    const h0 = box.offsetHeight;
+    gsap.set(box, { height: h0 });
+    swap = gsap.timeline()
+      .to(out, { autoAlpha: 0, y: -8, duration: 0.22, ease: 'power2.in', stagger: 0.02 })
+      .add(() => {
+        gsap.set(items, { clearProps: 'transform,opacity,visibility' });
+        render(catId, true);
+        gsap.set(box, { clearProps: 'height' });
+        const h1 = box.offsetHeight;
+        gsap.fromTo(box, { height: h0 }, { height: h1, duration: 0.55, ease: 'power3.inOut', clearProps: 'height' });
+        const next = items.filter((el) => !el.classList.contains('is-hidden'));
+        if (!next.length) { ScrollTrigger.refresh(); return; }
+        gsap.fromTo(next, { autoAlpha: 0, y: 22 }, {
+          autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
+          clearProps: 'transform,opacity,visibility', onComplete: () => ScrollTrigger.refresh()
+        });
+      });
   };
 
   // Le tiroir sort, la boîte glisse en place, le ruban de scellé s'enroule.
@@ -486,7 +515,7 @@ function initGrid() {
       els.forEach((el) => io.observe(el));
 
       /* Un tirage qui attend encore sa chute n'a plus à l'attendre dès qu'on
-         filtre : Flip doit partir d'un état net (sinon il restait invisible). */
+         filtre : le fondu doit partir d'un état net (sinon il restait invisible). */
       settle = () => {
         settle = () => {};
         io.disconnect();

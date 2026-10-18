@@ -167,7 +167,10 @@ html.ab-hidden body[data-page='about'] .ftr::before { animation-play-state: paus
   box-shadow: 0 0 0 1px var(--ab-brass-line), 0 18px 36px -14px rgb(0 0 0 / 0.75);
   will-change: transform;
 }
-.ab-seal__ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: ab-spin 48s linear infinite; }
+/* L'anneau tourne dans son cadre : une couche à part, que le compositeur
+   fait tourner seul (l'SVG n'est plus redessiné à chaque image). */
+.ab-seal__spin { position: absolute; inset: 0; animation: ab-spin 48s linear infinite; will-change: transform; }
+.ab-seal__ring { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ab-seal__o { fill: none; stroke: var(--ab-brass); stroke-width: 1; }
 .ab-seal__i { fill: none; stroke: var(--ab-brass-line); stroke-width: 1; stroke-dasharray: 1.5 3; }
 .ab-seal text {
@@ -260,7 +263,6 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
   text-shadow: 0.025em 0.025em 0 color-mix(in srgb, var(--ab-brass) 45%, transparent);
 }
 .ab-stmt em { font-style: italic; color: var(--dv-lt); }
-.ab-stmt .ab-w { will-change: opacity; }
 /* Le rouleau encreur : il descend avec l'encre, au défilement. */
 .ab-roller {
   position: absolute; z-index: 0; left: -1.2rem; right: -1.2rem; top: 0; height: 2.2rem;
@@ -582,6 +584,12 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 .ab-tabs button[aria-selected='true'] { color: var(--fg); }
 .ab-tabs button[aria-selected='true']::before { background: var(--c); box-shadow: 0 0 12px color-mix(in srgb, var(--c) 60%, transparent); }
 .ab-tabs button:focus-visible { outline-offset: 4px; overflow: visible; }
+/* Au doigt : des onglets de 44 px de haut, à 8 px l'un de l'autre (le filet
+   et le libellé restent en haut). */
+@media (pointer: coarse) {
+  .ab-svc.is-drum .ab-tabs { gap: 0.5rem; }
+  .ab-tabs button { min-height: 2.75rem; align-content: start; }
+}
 
 .ab-svc.is-drum .ab-pans { display: grid; border: 0; min-height: 15rem; }
 .ab-svc.is-drum .ab-pan {
@@ -793,7 +801,7 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 @media (max-width: 44rem) {
   .ab-films .dv-port { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
   .ab-films .dv-proj__h { font-size: 1.05rem; }
-  .ab-films .dv-proj__st { left: 0.4rem; top: 0.4rem; padding: 0.25rem 0.45rem; font-size: 0.5rem; }
+  .ab-films .dv-proj__st { left: 0.4rem; top: 0.4rem; padding: 0.25rem 0.45rem; font-size: 0.75rem; }
 }
 
 /* ═══════════════════ NOS CLIENTS ═══════════════════

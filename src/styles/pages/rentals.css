@@ -183,6 +183,12 @@ html:not(.js) .re-photo { opacity: 0.9; }
    correspondait pas, et le titre passait sous la caméra. Le texte part
    toujours sous la planche, quelle que soit la barre du navigateur. */
 @media (max-width: 52rem) {
+  /* Le plan en 900 px (alpha seul, 38 Ko au lieu de 131) : c'était l'image
+     la plus lente à arriver sur téléphone (18/10/2026). */
+  .re-plan {
+    -webkit-mask-image: url('/cam/blueprint-900.webp');
+            mask-image: url('/cam/blueprint-900.webp');
+  }
   .re-hero {
     --re-fh: min(calc((100vw - 2 * var(--pad-x)) * 0.66), 31rem);
     padding-top: calc(var(--bar-h) + 0.25rem + var(--re-fh) + 4.25rem);
@@ -210,6 +216,16 @@ html:not(.js) .re-photo { opacity: 0.9; }
   /* Revue croisée (18/10/2026) : sur un iPhone, la planche un peu plus basse
      pour que « Request Rental Quote » tienne dans le premier écran. */
   .re-hero { --re-fh: calc((100vw - 2 * var(--pad-x)) * 0.8); }
+}
+/* Téléphone couché : l'étiquette du haut à droite heurtait la barre. */
+@media (max-height: 30rem) { .re-lab--tr { display: none; } }
+/* Au doigt (18/10/2026) : les deux flèches font 44 px ; sur téléphone, elles
+   gardent leur bord bas à la même hauteur au-dessus de la réglette. */
+@media (pointer: coarse) {
+  .re-ctrl button { width: 2.75rem; height: 2.75rem; }
+}
+@media (pointer: coarse) and (max-width: 52rem) {
+  .re-ctrl { top: calc(var(--bar-h) + 0.25rem + var(--re-fh) - 2.6rem - 3.65rem); }
 }
 
 /* ═══════════════════ LES PLANCHES — 18/10/2026 ═══════════════════
@@ -502,6 +518,12 @@ html:not(.js) .re-photo { opacity: 0.9; }
 .re-item__go:hover { color: var(--fg); }
 .re-item__go:hover::after { transform: translateX(0.3em); }
 .re-item__go:focus-visible { outline: 2px solid var(--dv); outline-offset: 3px; border-radius: 0.2rem; }
+/* La cible au doigt : 44 px de haut, invisible, surtout sous le lien (au
+   téléphone, « Add to quote » passe au-dessus : 8 px restent entre les deux
+   cibles). La flèche est déjà son ::after. */
+.re-item__go { position: relative; }
+.re-item__go::before { content: ''; position: absolute; left: -0.5rem; right: -0.5rem; top: -0.25rem; height: 2.75rem; }
+@media (pointer: coarse) { .re-add { min-height: 2.75rem; } }
 
 /* La fiche d'une catégorie : en cours d'inventaire (sa plaque est hachurée,
    comme une coupe sur un plan), ou « autre chose ? ». Un cadre en tirets :
@@ -1256,6 +1278,16 @@ html[data-palette='papier'] .re-tray:focus-visible { outline-color: var(--L-dv-d
   .re-tray { right: 1rem; bottom: calc(max(0.8rem, env(safe-area-inset-bottom)) + 3.7rem); }
 }
 html.is-locked .re-tray { opacity: 0; pointer-events: none; }
+
+/* Sur téléphone, les petites étiquettes passent à 12 px (18/10/2026) : la
+   catégorie sur la plaque, les entêtes du cartouche, celle des conditions et
+   les compteurs du filtre. La colonne des entêtes s'élargit d'autant ; la
+   ligne des conditions, un peu moins espacée, tient sur une ligne. */
+@media (max-width: 40rem) {
+  .re-item__cat, .re-item__spec dt, .re-terms__head, .re-filter__n, .re-filter__c { font-size: 0.75rem; }
+  .re-item__spec > div { grid-template-columns: 7.8rem minmax(0, 1fr); }
+  .re-terms__head { letter-spacing: 0.08em; }
+}
 
 /* ─────────────── Sans mouvement ─────────────── */
 @media (prefers-reduced-motion: reduce) {

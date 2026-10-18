@@ -15,119 +15,6 @@
    ══════════════════════════════════════════════════════════════ */
 
 
-/* ═══════════ ACTE 2 · LE TABLEAU DE SERVICE ═══════════
-   Ce n'était qu'un tableau : trois colonnes de texte entre deux filets. Le
-   voici en dispositif — le tableau d'un bureau de production, où UN SEUL
-   département est ouvert à la fois.
-
-   Le scroll désigne l'ouvert (`acts.js` pose `is-on`), le CSS fait le reste.
-   Un déclencheur pour huit lignes, aucune timeline, et l'animation reste en
-   CSS — donc `prefers-reduced-motion` est gratuit.
-
-   `grid-template-rows: 0fr → 1fr` est la seule façon d'animer une hauteur
-   inconnue sans mesurer quoi que ce soit en JS. */
-
-.table-act { padding: var(--sec-y) var(--pad-x); max-width: var(--maxw); margin-inline: auto; }
-.table-act__head {
-  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--s-6); align-items: end; margin-bottom: var(--s-8);
-}
-.table-act__h {
-  font-family: var(--ff-d);
-  font-size: var(--fs-d1); line-height: 0.96; letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' 96, 'wdth' 84, 'wght' 740;
-  text-transform: uppercase;
-}
-.table-act__note { max-width: 52ch; color: var(--fg-2); font-size: var(--fs-sm); }
-@media (max-width: 54rem) { .table-act__head { grid-template-columns: 1fr; } }
-
-.board { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-
-.dep {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas: 'n name st' '. body .';
-  align-items: baseline;
-  column-gap: var(--s-5);
-  padding: clamp(0.9rem, 1.6vh, 1.5rem) 0;
-  border-bottom: 1px solid var(--line-2);
-  position: relative;
-}
-/* Le filet d'or du département ouvert : il désigne, il ne décore pas. */
-.dep::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-  background: var(--gold);
-  transform: scaleY(0); transform-origin: center top;
-  transition: transform 0.5s var(--e-expressive);
-}
-.dep.is-on::before { transform: scaleY(1); }
-
-.dep__n { grid-area: n; color: var(--cream-3); font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow); }
-.dep__name {
-  grid-area: name;
-  font-family: var(--ff-d);
-  font-size: clamp(1.15rem, 2.6vw, 2.1rem);
-  line-height: 1.04; letter-spacing: -0.02em; text-transform: uppercase;
-  font-variation-settings: 'opsz' 48, 'wdth' 88, 'wght' 620;
-  color: var(--cream-2);
-  transition: color 0.4s var(--e-response),
-              font-variation-settings 0.5s var(--e-expressive);
-}
-.dep.is-on .dep__name { color: var(--cream); font-variation-settings: 'opsz' 96, 'wdth' 100, 'wght' 760; }
-
-/* Le corps : fermé à `0fr`, ouvert à `1fr`. L'enfant DOIT être en
-   `overflow: hidden`, sinon le texte dépasse de la grille repliée. */
-.dep__body {
-  grid-area: body;
-  display: grid; grid-template-rows: 0fr;
-  transition: grid-template-rows 0.55s var(--e-expressive);
-}
-.dep.is-on .dep__body { grid-template-rows: 1fr; }
-.dep__covers {
-  overflow: hidden;
-  max-width: 54ch;
-  font-size: var(--fs-sm); color: var(--fg-2);
-  opacity: 0; transform: translateY(0.4rem);
-  /* L'opacité finit avant le mouvement — la règle du site. */
-  transition: opacity 0.25s var(--e-response) 0.08s,
-              transform 0.5s var(--e-expressive);
-}
-.dep.is-on .dep__covers { opacity: 1; transform: none; padding-top: 0.55rem; }
-
-.dep__st {
-  grid-area: st; justify-self: end; white-space: nowrap;
-  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase; color: var(--cream-3);
-}
-.dep--go .dep__st { color: var(--gold); }
-
-/* Le tampon : il ne glisse pas, il FRAPPE. `steps(3, end)` fait le coup —
-   trois paliers au lieu d'un fondu, c'est la différence entre un site web et
-   un tampon sur un dossier. */
-.dep__stamp {
-  display: inline-block; margin-right: 0.55em;
-  padding: 0.25em 0.5em;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  transform: rotate(-4deg) scale(1.6);
-  opacity: 0;
-  transition: opacity 0.24s steps(3, end), transform 0.24s steps(3, end);
-}
-.dep--go.is-on .dep__stamp { opacity: 1; transform: rotate(-4deg) scale(1); }
-
-@media (max-width: 40rem) {
-  .dep { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'n name' '. st' '. body'; }
-  .dep__st { justify-self: start; margin-top: 0.3rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  /* Sans mouvement, tout est ouvert : on ne cache pas du contenu derrière une
-     animation qui ne jouera pas. */
-  .dep__body { grid-template-rows: 1fr; }
-  .dep__covers { opacity: 1; transform: none; padding-top: 0.55rem; }
-  .dep__stamp { opacity: 1; transform: rotate(-4deg); }
-  .dep::before, .dep__name, .dep__covers, .dep__body, .dep__stamp { transition: none; }
-}
-
 /* ═══════════ ACTE 3 · LA NOTE ═══════════
    Densité inversée par rapport au tableau : presque rien, et du vide qui compte. */
 
@@ -140,77 +27,9 @@
   column-gap: var(--s-7); row-gap: var(--s-6);
   border-top: 1px solid var(--line-2);
 }
-.note__fig {
-  grid-area: fig; margin: 0;
-  border-radius: 2px; overflow: hidden;
-  box-shadow: 0 0 0 1px #eae0d024, 0 30px 60px -28px #000000c4;
-  /* Le mur orange du bureau est le point le plus lumineux de toute la page :
-     sur un fond nuit il éclate et tire l'œil hors du texte qu'il accompagne.
-     On baisse la LUMINOSITÉ, pas la saturation — l'orange reste orange, il
-     cesse seulement de crier. (Le client a refusé le désaturé ailleurs ; on
-     ne le réintroduit pas ici.) */
-  filter: brightness(0.82) contrast(1.04);
-}
-.note__fig img {
-  display: block; width: 100%; height: auto;
-  transition: transform var(--d-lift) var(--e-lift), filter var(--d-settle) var(--e-settle);
-}
-.note__fig:hover img { transform: scale(1.03); filter: brightness(1.05); }
-.note__body { grid-area: body; }
-/* Les trois faits — le fondateur, l'adresse, les horaires — étaient une
-   simple colonne de texte gris. Chacun devient sa propre fiche : ce sont
-   trois informations de nature différente, pas un paragraphe. */
-.note__facts {
-  grid-area: facts; align-self: start;
-  display: grid; gap: var(--s-3);
-  margin-top: var(--s-5);
-}
-.note__facts p {
-  margin: 0;
-  padding: var(--s-4);
-  border: 1px solid var(--line-2);
-  border-radius: var(--r-s);
-  background: color-mix(in srgb, var(--night-3) 42%, transparent);
-  color: var(--fg-2);
-  font-size: var(--fs-sm);
-  line-height: 1.45;
-  transition: border-color var(--d-micro) var(--e-out),
-              background var(--d-micro) var(--e-out);
-}
-@media (hover: hover) and (pointer: fine) {
-  .note__facts p:hover {
-    border-color: color-mix(in srgb, var(--go) 42%, transparent);
-    background: color-mix(in srgb, var(--night-3) 68%, transparent);
-  }
-}
-.note__body { max-width: 46ch; }
-.note__h {
-  font-family: var(--ff-m); font-size: var(--fs-micro);
-  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
-  color: var(--fg-3); margin-bottom: var(--s-5); font-weight: 400;
-}
-/* La seule prose longue du site : donc le seul endroit où l'on LIT. */
-.note__p {
-  /* Remonté d'un cran : c'est la seule prose longue du site, donc le seul
-     endroit où l'on LIT vraiment. Elle mérite une taille de lecture. */
-  font-size: clamp(1.32rem, 1.85vw, 1.75rem);
-  line-height: 1.5; letter-spacing: -0.008em;
-  font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 380;
-  margin-bottom: var(--s-5);
-}
-.note__p strong { font-variation-settings: 'opsz' 32, 'wdth' 100, 'wght' 700; font-weight: 400; }
-.note__sig {
-  display: flex; align-items: center; gap: var(--s-4);
-  margin-top: var(--s-6); padding-top: var(--s-5);
-  border-top: 1px solid var(--line-2);
-  color: var(--fg-3);
-}
-.note__mark { width: 74px; height: auto; flex: none; color: var(--fg-3); }
 
 @media (max-width: 56rem) {
   .note { grid-template-columns: 1fr; gap: var(--s-6); }
-  .note__facts { order: 2; padding-top: var(--s-5); border-top: 1px solid var(--line-2); }
-  .note__body { order: 1; max-width: none; }
 }
 
 
@@ -220,32 +39,6 @@
    même dessin que celui des services, et les quatre arguments côte à côte. */
 
 .why { padding: var(--sec-y) var(--pad-x); max-width: var(--maxw); margin-inline: auto; }
-.why__h {
-  font-family: var(--ff-d);
-  font-size: var(--fs-d1); line-height: 0.96; letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' 96, 'wdth' 84, 'wght' 740;
-  text-transform: uppercase;
-  margin-bottom: var(--s-8);
-}
-.why__grid {
-  display: grid; gap: var(--s-7) var(--s-6);
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-.why__item { padding-top: var(--s-5); border-top: 1px solid var(--line); }
-.why__item h3 {
-  font-family: var(--ff-d);
-  font-size: clamp(1.25rem, 1.7vw, 1.6rem);
-  line-height: 1.06; letter-spacing: var(--ls-d);
-  font-variation-settings: 'wdth' 104, 'wght' 700;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: var(--s-4);
-}
-.why__item p { font-size: var(--fs-sm); line-height: 1.65; color: var(--cream-2); }
-
-/* Quatre, puis deux, puis une : jamais trois et un orphelin. */
-@media (max-width: 68rem) { .why__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 40rem) { .why__grid { grid-template-columns: 1fr; } }
 
 /* ═══════════ ACTE 5 · LA ZONE D'IMAGES ═══════════
    Les valeurs viennent de la référence, relevées dans sa feuille de style :
@@ -256,28 +49,6 @@
    Le message est en ABSOLU par-dessus le ruban : il ne bouge pas pendant que
    les images dérivent. C'est toute la composition, et c'est précisément ce
    qui manquait. */
-
-.drop { position: relative; }
-
-.drop__stage {
-  position: relative;
-  overflow: clip;
-  height: 100svh;
-  display: flex; flex-flow: column; justify-content: center;
-}
-
-.drop__track {
-  display: flex; align-items: center;
-  gap: 1vw;
-  width: max-content;
-  /* Un plein écran de marge : aucune carte n'apparaît ni ne disparaît dans le
-     cadre, elles entrent et sortent toujours par le hors-champ. */
-  padding-inline: 105vw;
-  margin: 0; list-style: none;
-  white-space: nowrap;
-  pointer-events: none;
-  will-change: transform;
-}
 
 /* Les tirages sont au format du paysage qu'ils montrent, pas dans un carré :
    une photo 16/9 en `scale-down` dans un carré n'occupe que la moitié de sa
@@ -311,44 +82,6 @@
   pointer-events: none;
 }
 
-/* Le message, immobile, par-dessus. */
-/* Un carton de titre sur de l'image : la lumière tombe au centre pour que le
-   texte tienne, quelle que soit la photo qui passe derrière. Un dégradé
-   radial, pas un rectangle — un rectangle se verrait. */
-.drop__center::before {
-  content: ''; position: absolute; inset: 0; z-index: -1;
-  background: radial-gradient(58% 42% at 50% 46%,
-    rgba(16, 27, 19, 0.93) 0%,
-    rgba(16, 27, 19, 0.82) 38%,
-    rgba(16, 27, 19, 0.44) 66%,
-    rgba(16, 27, 19, 0) 100%);
-  pointer-events: none;
-}
-.drop__center {
-  position: absolute; inset: 0;
-  z-index: 2;
-  display: flex; flex-flow: column; justify-content: center; align-items: center;
-  width: 100%; padding: 0 var(--pad-x);
-  text-align: center;
-  pointer-events: none;
-}
-.drop__center > * { pointer-events: auto; }
-.drop__h {
-  font-family: var(--ff-d);
-  font-size: clamp(2rem, 4.4vw, 4rem);
-  line-height: 1.16; letter-spacing: -0.025em;
-  font-variation-settings: 'opsz' 96, 'wdth' 90, 'wght' 320;
-  text-transform: none;
-  /* Le texte doit rester lisible quelle que soit l'image qui passe derrière. */
-  text-shadow: 0 2px 34px rgba(16, 27, 19, 0.92), 0 0 90px rgba(16, 27, 19, 0.8);
-}
-.drop__lede {
-  max-width: 44ch; margin-top: var(--s-5);
-  color: var(--fg-2); font-size: var(--fs-sm);
-  text-shadow: 0 2px 24px rgba(16, 27, 19, 0.95);
-}
-.drop__more { margin-top: var(--s-6); }
-
 /* Sur téléphone, la traversée redevient une descente : les tirages s'empilent,
    pleine largeur, et le message reprend sa place au-dessus. */
 /* ── LE RAIL SUR TÉLÉPHONE ──
@@ -371,75 +104,6 @@
   .stop { width: 38vw; }
 }
 
-/* La jauge d'altitude : c'est elle qui transforme le paysage en instrument. */
-/* La jauge est l'instrument de bord : en haut, sous la barre, là où un
-   altimètre se lit — et là où la fiche du visiteur ne la recouvre pas. */
-.gauge {
-  position: absolute; left: 0; right: 0; top: 0;
-  z-index: 2; display: flex; align-items: center; gap: var(--s-4);
-  padding: calc(var(--hdr-h) + 0.6rem) var(--pad-x) 1.4rem;
-  color: #fff;
-  background: linear-gradient(to bottom, rgba(7,15,6,0.8), rgba(7,15,6,0));
-}
-/* Sur écran étroit, le mot « altitude » déborde de 21 px : le nom du lieu et
-   l'unité « m » disent déjà ce que c'est. */
-@media (max-width: 767px) {
-  .gauge { flex-wrap: wrap; }
-  .gauge__k { display: none; }
-}
-.gauge__place {
-  font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase; color: var(--gold);
-  white-space: nowrap;
-}
-.gauge__alt {
-  flex: none; font-variant-numeric: tabular-nums; min-width: 8ch;
-  font-size: clamp(1.1rem, 2.2vw, 1.7rem);
-  font-variation-settings: 'wdth' 112.5, 'wght' 500;
-  letter-spacing: -0.01em;
-}
-.gauge__k { flex: none; text-transform: uppercase; letter-spacing: 0.16em; color: rgba(255,255,255,0.5); }
-.gauge__line { position: relative; flex: 1 1 auto; height: 2px; background: rgba(255,255,255,0.3); }
-.gauge__fill {
-  /* Pleine largeur et mise à l'échelle depuis la gauche : le JS écrit un
-     `scaleX`, qui se compose, au lieu d'une `width`, qui remet en page. */
-  position: absolute; left: 0; top: 0; height: 2px; width: 100%;
-  transform: scaleX(0); transform-origin: left center;
-  background: var(--g-300);
-  box-shadow: 0 0 12px rgba(135, 228, 114, 0.55);
-}
-/* Le niveau de la mer marqué sur la règle : le fond du pays passe dessous. */
-.gauge__sea {
-  position: absolute; top: -5px; bottom: -5px; left: 97.3%;
-  width: 1px; background: rgba(255,255,255,0.55);
-}
-/* Le repère du niveau de la mer se nomme : sans légende, un trait ne dit rien. */
-.gauge__sea::after {
-  content: 'sea level';
-  position: absolute; top: 100%; right: 0; margin-top: 0.4em;
-  font-family: var(--ff-m); font-size: 0.5625rem;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: rgba(255,255,255,0.5); white-space: nowrap;
-}
-
-@media (max-width: 48rem) {
-  /* `.stop__fig` et `.stop__t` n'existent plus dans le markup : une carte est
-     une image, son nom vient d'un attribut. Les règles qui les visaient — dont
-     un `min-height: 76svh` — sont parties avec eux ; elles gonflaient chaque
-     carte à 641 px autour d'une image de 197, soit 444 px de vide répétés
-     neuf fois. Il ne reste ici que l'altimètre, lui bien réel. */
-  /* PAS de `position: sticky` ici. Elle datait de l'époque où les lieux
-     étaient une pile verticale. Depuis que le rail est revenu, « collé »
-     remet l'altimètre DANS LE FLUX — donc après le message centré, donc au
-     milieu de l'écran, par-dessus le bouton « The nine, in full ».
-     La règle de base le place en `absolute` en haut de la scène épinglée :
-     c'est la bonne, et elle vaut pour les deux formats. On ne garde ici que
-     le repère du niveau de la mer, qui n'a pas la place sur 390 px. */
-  .gauge__sea::after { display: none; }
-}
-
-.drop__more { max-width: var(--maxw); margin: var(--s-6) auto 0; padding: 0 var(--pad-x) var(--s-7); }
-
 
 /* ═══════════ ACTE 6 · LES CAISSES ═══════════
    Une pile physique qu'on écarte. Premier moment où l'on PREND quelque chose. */
@@ -448,16 +112,6 @@
   max-width: var(--maxw); margin-inline: auto;
   padding: var(--sec-y) var(--pad-x);
 }
-.cases__head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-6); align-items: end; margin-bottom: var(--s-7); }
-.cases__h {
-  font-family: var(--ff-d); font-size: var(--fs-d2);
-  line-height: 1.02; letter-spacing: var(--ls-d); text-transform: uppercase;
-  font-variation-settings: 'opsz' 72, 'wdth' 84, 'wght' 740;
-}
-.cases__lede { max-width: 48ch; color: var(--fg-2); font-size: var(--fs-sm); }
-@media (max-width: 54rem) { .cases__head { grid-template-columns: 1fr; } }
-
-.cases__stack { perspective: 1400px; }
 .case {
   position: relative;
   display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) auto;
@@ -468,47 +122,8 @@
   margin-top: -1px;
   transform-origin: center top;
 }
-/* Le matériel est détouré et aplati à l'encre crème (voir le script de
-   préparation) : plus de plaque, plus de fond — les objets flottent sur la
-   nuit, comme le dessin du char dans la note. */
-/* Les photos sont montrées ENTIÈRES et à pleine opacité : on doit reconnaître
-   un objectif d'un autre sans avoir à zoomer. Un cadre fin les tient sur le
-   vert nuit — sans lui, un fond produit blanc lit comme un trou dans la page. */
-.case__fig {
-  margin: 0; overflow: hidden;
-  border-radius: 2px;
-  box-shadow: 0 0 0 1px #eae0d024, 0 18px 34px -18px #000000a6;
-}
-.case__fig img {
-  width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
-  display: block;
-  transition: transform var(--d-lift) var(--e-lift), filter var(--d-settle) var(--e-settle);
-}
-.case:hover .case__fig img { transform: scale(1.04); filter: brightness(1.06); }
-
-.case__h {
-  font-family: var(--ff-d); font-size: var(--fs-h3);
-  font-variation-settings: 'opsz' 40, 'wdth' 92, 'wght' 700;
-  letter-spacing: -0.015em; margin-bottom: var(--s-2);
-}
-.case__t p { font-size: var(--fs-sm); color: var(--fg-2); max-width: 56ch; }
-
-.case__add {
-  align-self: center; white-space: nowrap;
-  padding: 0.7em 1em; border: 1px solid var(--line);
-  font-family: var(--ff-m); font-size: var(--fs-micro);
-  letter-spacing: var(--ls-eyebrow); text-transform: uppercase; color: var(--fg-2);
-  transition: border-color var(--d-settle) var(--e-settle), color var(--d-settle) var(--e-settle),
-              background var(--d-clear) var(--e-clear);
-}
-.case__add:hover { border-color: var(--fg-3); color: var(--fg); }
-.case__add.is-in { background: var(--go-solid); border-color: var(--go-solid); color: var(--on-go); }
-.case__add.is-in span::before { content: '✓ '; }
-
 @media (max-width: 54rem) {
   .case { grid-template-columns: minmax(0, 8rem) minmax(0, 1fr); grid-template-areas: 'fig txt' 'add add'; }
-  .case__fig { grid-area: fig; } .case__t { grid-area: txt; }
-  .case__add { grid-area: add; justify-self: start; }
 }
 @media (max-width: 34rem) {
   /* PAS de passage en colonne unique. Empilée, une caisse passait de 65 px à
@@ -530,7 +145,6 @@
   padding: clamp(5rem, 14vh, 10rem) var(--pad-x);
   text-align: center;
 }
-.credits__roll { max-width: 50rem; margin-inline: auto; }
 .credits__k {
   color: rgba(255,255,255,0.45);
   text-transform: uppercase; letter-spacing: 0.22em;
@@ -543,11 +157,6 @@
   line-height: 1.24; letter-spacing: -0.02em;
   font-variation-settings: 'opsz' 72, 'wdth' 92, 'wght' 480;
 }
-.credits__alt {
-  font-family: var(--ff-m); font-style: normal;
-  font-size: var(--fs-micro); letter-spacing: var(--ls-mono);
-  color: rgba(255,255,255,0.42); margin-left: 0.6em;
-}
 .credits__clients { margin-bottom: var(--s-7); }
 .credits__clients li {
   font-size: clamp(1rem, 1.7vw, 1.3rem); line-height: 1.7;
@@ -555,234 +164,13 @@
   color: rgba(255,255,255,0.86);
 }
 .credits__end { color: rgba(255,255,255,0.4); letter-spacing: 0.1em; }
-.credits__more { margin-top: var(--s-6); }
-.credits__more .lnk { color: rgba(255,255,255,0.75); }
-.credits__more .lnk:hover { color: #fff; }
 
-
-/* ═══════════ ACTE 8 · LA FEUILLE DE SERVICE ═══════════
-   Le document se déplie. La fiche qui suivait le visiteur DEVIENT la page. */
-
-.call-sheet {
-  max-width: var(--maxw); margin-inline: auto;
-  padding: var(--sec-y) var(--pad-x);
-}
-.cs { border: 1px solid var(--fg-3); background: var(--bg); }
-
-.cs__top { padding: var(--s-5); border-bottom: 1px solid var(--fg-3); }
-.cs__title {
-  font-family: var(--ff-d);
-  font-size: var(--fs-d2); line-height: 1; letter-spacing: -0.03em; text-transform: uppercase;
-  font-variation-settings: 'opsz' 72, 'wdth' 80, 'wght' 800;
-}
-/* On ne promet jamais rien au nom du client. */
-.cs__draft {
-  margin-top: var(--s-2); color: var(--fg-3);
-  text-transform: uppercase; letter-spacing: 0.14em;
-}
-.cs__meta { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); margin-top: var(--s-5); }
-.cs__meta > div { display: flex; align-items: baseline; gap: 0.6em; }
-.cs__meta dt { color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.1em; }
-.cs__meta dd { color: var(--fg); font-variant-numeric: tabular-nums; }
-
-.cs__grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
-@media (max-width: 54rem) { .cs__grid { grid-template-columns: 1fr; } }
-
-.cs__lines { padding: var(--s-5); border-right: 1px solid var(--line); }
-@media (max-width: 54rem) { .cs__lines { border-right: 0; border-bottom: 1px solid var(--line); } }
-.cs__lines-k, .cs__form-k {
-  color: var(--fg-3); text-transform: uppercase; letter-spacing: var(--ls-eyebrow);
-  margin-bottom: var(--s-4);
-}
-.cs__log li {
-  position: relative; padding-left: 1.2em; margin-bottom: 0.55em;
-  font-size: var(--fs-micro); line-height: 1.6; color: var(--fg-2);
-}
-.cs__log li::before {
-  content: ''; position: absolute; left: 0; top: 0.5em;
-  width: 0.4em; height: 0.4em; border-radius: 50%; background: var(--go);
-}
-.cs__empty { color: var(--fg-3); font-size: var(--fs-micro); }
-.cs__log:not(:empty) + .cs__empty { display: none; }
-
-.cs__form { padding: var(--s-5); }
-.cs__act { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4); margin-top: var(--s-5); }
-
-.cs__foot {
-  display: grid; gap: var(--s-2) var(--s-6);
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  padding: var(--s-5); border-top: 1px solid var(--line);
-  color: var(--fg-2); font-size: var(--fs-micro); line-height: 1.7;
-}
-.cs__foot-k { color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.1em; margin-right: 0.6em; }
-.cs__foot a:hover { color: var(--go-text); }
 
 /* Un line producer qui imprime le site, c'est la meilleure conversion du monde. */
 @media print {
-  .bar, .index, .dock, .cursor, .boot, .open, .table-act, .note,
-  .cards, .drop, .cases, .credits, .ftr, .cs__form { display: none !important; }
-  .call-sheet { padding: 0; }
-  .cs { border-color: #000; }
+  .bar, .index, .dock, .cursor, .boot, .open, .note,
+  .cards, .cases, .credits, .ftr { display: none !important; }
   body { background: #fff; color: #000; }
-}
-
-/* ═══════════ LE MUR DE CLIENTS ═══════════
-   La preuve arrive avant l'argumentaire. Masque en dégradé haut et bas :
-   le mur n'a pas de bord, il émerge du ciel et s'y reperd. */
-
-.wall {
-  max-width: var(--maxw); margin-inline: auto;
-  padding: var(--sec-y) var(--pad-x) 0;
-}
-.wall__h {
-  font-family: var(--ff-t);
-  font-size: var(--fs-micro);
-  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
-  color: var(--cream-3);
-  text-align: center;
-  margin-bottom: var(--s-7);
-}
-.wall__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 3vw, 2.5rem);
-  align-items: center;
-  /* Le masque fait tout : sans lui c'est une grille de logos, avec lui
-     c'est une constellation. */
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
-}
-.wall__i {
-  display: grid; place-items: center;
-  min-height: 4.5rem;
-}
-.wall__i img {
-  max-width: 100%; height: auto; max-height: 3.6rem; width: auto;
-  /* Les logos ont été détourés et aplatis en encre crème à la source :
-     le mur lit comme un jeu de marques imprimées, pas comme une collection
-     de fichiers hétéroclites. */
-  opacity: 0.82;
-  transition: opacity var(--d-micro) var(--e-out);
-}
-.wall__i:hover img { opacity: 1; }
-/* Les deux clients sans logo ne laissent pas de trou : ils sont composés. */
-.wall__i--type span {
-  font-family: var(--ff-t);
-  font-size: var(--fs-sm);
-  font-variation-settings: 'wdth' 88, 'wght' 600;
-  letter-spacing: 0.02em; text-align: center; line-height: 1.25;
-  color: var(--cream-2);
-  text-transform: uppercase;
-}
-
-/* ═══════════ LA GALERIE ═══════════ */
-
-/* ── LE TITRE, DERRIÈRE ──
-   Lettres creuses, à l'échelle de l'écran. Il ne titre pas la grille : il est
-   le fond sur lequel elle passe. */
-.gal__h {
-  position: absolute; left: 0; right: 0; top: 50%;
-  transform: translateY(-50%);
-  z-index: 0; pointer-events: none;
-  text-align: center;
-  font-family: var(--ff-p);
-  font-size: clamp(3rem, 11vw, 11rem);
-  line-height: 0.9; letter-spacing: -0.03em;
-  font-variation-settings: 'opsz' 144, 'wght' 400, 'SOFT' 0, 'WONK' 1;
-  color: transparent;
-  /* Le titre est le FOND de la grille : trop pâle il disparaît derrière les
-     cartes, trop dense il se bat avec elles. Trait d'or à 1,5 px, plus un
-     remplissage très faible qui le fait exister dans les vides. */
-  -webkit-text-stroke: 1.5px #ecc779a6;
-  background: linear-gradient(#ecc7791a, #ecc7790d);
-  -webkit-background-clip: text; background-clip: text;
-}
-.gal__lede {
-  position: absolute; left: var(--pad-x); top: calc(var(--bar-h) + 0.6rem);
-  z-index: 3; pointer-events: none;
-  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase; color: var(--cream-3);
-}
-
-.gal {
-  position: relative;
-  /* Pleine hauteur : c'est elle qui décide du nombre de RANGÉES. Sur 558 px la
-     grille n'en tenait qu'une, et une rangée n'est pas un espace — c'est un
-     bandeau. `rows = round(hauteur / celluleH)` : il faut de la hauteur. */
-  height: 100svh;
-  overflow: clip;
-  display: grid; place-items: stretch;
-}
-
-.gal__stage {
-  position: relative; z-index: 1;
-  height: 100%;
-  overflow: hidden;
-  cursor: grab;
-  /* les colonnes et les gouttières : lues en JS par sonde, donc n'importe
-     quelle unité CSS fonctionne ici */
-  /* `rows = round(hauteurScène / celluleH)`. Une carte portrait fait
-     `colonne × 16/9` de haut : à 19vw elle mesurait 486 px et il n'en tenait
-     qu'une seule rangée. À 15vw elle en fait 384, et deux rangées tiennent
-     dans un écran — c'est la densité de la référence. */
-  --gallery-col: clamp(9rem, 15vw, 15rem);
-  --gallery-gap-x: clamp(0.7rem, 1.3vw, 1.2rem);
-  --gallery-gap-y: clamp(0.7rem, 1.3vw, 1.2rem);
-}
-.gal__stage:active { cursor: grabbing; }
-.gal__stage:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-
-.gal__collection { display: flex; will-change: transform; }
-.gal__list { flex: none; }
-.gal__item { display: grid; place-items: center; padding: 0; }
-
-.gal__card {
-  position: relative;
-  width: var(--gallery-col);
-  aspect-ratio: var(--ar, 16 / 9);
-  overflow: hidden;
-  border-radius: var(--r-s);
-  background: var(--night-2);
-  box-shadow: 0 0 0 1px #eae0d030;
-}
-.gal__item[data-ratio="9/16"] .gal__card { --ar: 9 / 16; }
-.gal__card video {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-  transform: scale(1.02);
-  transition: transform 700ms var(--e-out), opacity var(--d-micro) var(--e-out);
-  /* PAS de `filter` ici. Un filtre CSS sur une vidéo la sort du chemin rapide
-     de composition : le navigateur doit repasser chaque trame par un shader au
-     lieu de la poser telle quelle. Avec 24 vignettes dans la grille, c'est le
-     poste le plus cher de la page — pour un grisé que le client a déjà refusé
-     ailleurs (« je veux les vraies couleurs, qu'on voie sans zoomer »).
-     Le repos se marque donc par l'OPACITÉ, qui elle est gratuite. */
-  opacity: 0.88;
-}
-.gal__card.is-playing video { transform: scale(1.06); opacity: 1; }
-
-.gal__hint {
-  position: absolute; left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2; pointer-events: none;
-  font-size: clamp(3rem, 9vw, 7rem);
-  letter-spacing: 0.2em; text-transform: uppercase;
-  color: transparent;
-  -webkit-text-stroke: 1px #eae0d030;
-  transition: opacity var(--d-micro) var(--e-out);
-}
-.gal__stage[data-gallery-status="dragging"] .gal__hint,
-.gal__stage[data-gallery-status="scrolling"] .gal__hint { opacity: 0; }
-/* À la souris, c'est la pastille du curseur qui porte l'invitation : le grand
-   mot ferait doublon. Au doigt, il n'y a pas de curseur — il reste. */
-@media (hover: hover) and (pointer: fine) { .gal__hint { display: none; } }
-
-@media (max-width: 48rem) {
-  /* Le téléphone garde la PLEINE hauteur, comme l'ordinateur : la galerie est
-     un espace dans lequel on se promène, pas un bandeau qu'on fait défiler.
-     Plafonnée à 28rem elle ne tenait qu'une rangée et demie — la promenade
-     redevenait un carrousel. C'est la COLONNE qui rétrécit, pas la scène :
-     4 colonnes × 3 rangées sur un écran de 390, la densité de la référence. */
-  .gal__stage { --gallery-col: clamp(7.5rem, 34vw, 9.5rem); }
 }
 
 /* ═══════════ LE SURVOL QUI ÉTEINT LES FRÈRES ═══════════
@@ -798,96 +186,21 @@
    Le geste ne s'arme qu'à la souris : au doigt, il n'y a pas de survol, et
    `:hover` sur tactile reste collé après le tap. */
 @media (hover: hover) and (pointer: fine) {
-  .board,
-  .wall__grid,
-  .cases__stack,
   .credits__films,
   .credits__clients { --sib: 1; }
 
-  .board:hover,
-  .wall__grid:hover,
-  .cases__stack:hover,
   .credits__films:hover,
   .credits__clients:hover { --sib: 0.26; }
 
-  .dep,
-  .wall__i,
-  .cases__stack > .case,
   .credits__films li,
   .credits__clients li {
     opacity: var(--sib, 1);
     transition: opacity 0.2s var(--e-response);
   }
 
-  .dep:hover,
-  .wall__i:hover,
-  .cases__stack > .case:hover,
   .credits__films li:hover,
   .credits__clients li:hover { opacity: 1; }
 
-}
-
-/* ═══════════ LE TITRE ÉCLAIRÉ ═══════════
-   Deux calques posés sur le MÊME texte, en `background-clip: text`. Le texte
-   de base reste seul dans le flux : les calques sont des pseudo-éléments qui
-   le recopient depuis `data-lit-text`, donc ils ne peuvent pas diverger.
-
-   `--lit-x` est la position du balayage, `--lit-k` l'intensité du halo, et
-   l'opacité du balayage est pilotée À L'INVERSE du halo : l'ambiance s'efface
-   dès que la main prend le relais. */
-[data-lit] {
-  position: relative;
-  --lit-x: 160%;
-  --lit-k: 0;
-  --lit-hx: 50%;
-  --lit-hy: 50%;
-}
-[data-lit]::before,
-[data-lit]::after {
-  content: attr(data-lit-text);
-  position: absolute; inset: 0;
-  pointer-events: none;
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent;
-  /* Les calques héritent de la métrique exacte de leur hôte — sinon un seul
-     réglage de fonte variable suffit à les décaler d'un demi-pixel. */
-  font: inherit; letter-spacing: inherit; text-transform: inherit;
-  font-variation-settings: inherit;
-}
-
-/* Le balayage. L'asymétrie du dégradé (montée en 8 points, descente en 22)
-   est ce qui lui donne un SENS : symétrique, il paraîtrait immobile. */
-[data-lit]::before {
-  background-image: linear-gradient(90deg,
-    #ecc77900 0%,   #ecc77900 30%,
-    #ecc7792e 42%,  #ecc779ea 50%,
-    #ecc7794d 58%,  #ecc77900 72%, #ecc77900 100%);
-  background-size: 220% 100%;
-  background-position: var(--lit-x) 0%;
-  background-repeat: no-repeat;
-  filter: url(#lit-bloom);
-  mix-blend-mode: screen;
-  opacity: calc(0.18 + (1 - var(--lit-k)) * 0.72);
-}
-
-/* Le halo du curseur : 130 px de rayon, trois arrêts, et une intensité qui
-   monte en approchant — il ne s'allume pas au survol, il s'allume avant. */
-[data-lit]::after {
-  background-image: radial-gradient(circle clamp(160px, 16vw, 300px) at
-    calc(var(--lit-hx) * 1px) calc(var(--lit-hy) * 1px),
-    rgba(255, 233, 184, calc(var(--lit-k) * 1)) 0%,
-    rgba(255, 233, 184, calc(var(--lit-k) * 0.85)) 18%,
-    rgba(255, 233, 184, calc(var(--lit-k) * 0.32)) 45%,
-    rgba(255, 233, 184, 0) 100%);
-  mix-blend-mode: screen;
-}
-
-.lit-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
-
-/* Le filtre SVG coûte un calque de compositing par ligne : on ne le sert
-   qu'aux écrans qui peuvent le payer. */
-@media (max-width: 767px) {
-  [data-lit]::before { filter: none; }
 }
 
 /* ── LES AFFICHES DANS LE GÉNÉRIQUE ──
@@ -918,42 +231,6 @@
    vide. Le manque se lit comme un manque, pas comme un décalage.
    (Viser le `<li>` lui-même créait une deuxième colonne dans la LISTE.) */
 .credits__films li > span { grid-column: 2; }
-.credits__art {
-  grid-column: 1; width: 220px; height: auto;
-  border-radius: 2px;
-  /* NI opacité réduite NI désaturation. Le client l'a refusé deux fois :
-     « je veux les vraies couleurs, qu'on voie sans zoomer ». Le repos se
-     marque par le CADRE, pas par l'image — comme la galerie le fait déjà. */
-  box-shadow: 0 0 0 1px #eae0d024;
-  transition: opacity var(--d-settle) var(--e-response),
-              filter var(--d-settle) var(--e-response),
-              transform var(--d-lift) var(--e-lift);
-}
-.credits__films li:hover .credits__art {
-  opacity: 1; filter: none; transform: scale(1.06) translateY(-2px);
-  box-shadow: 0 0 0 1px var(--gold), 0 14px 30px -12px #000000a6;
-}
 @media (max-width: 40rem) {
-  .credits__art { width: 132px; }
   .credits__films li { grid-template-columns: 132px minmax(0, auto); gap: 0.85rem; min-height: 96px; }
-}
-
-/* ── LA MENTION DE SPÉCIFICATION ──
-   « 12K », « Cinematic », « Professional » : ce ne sont pas des adjectifs
-   publicitaires, ce sont les caractéristiques que demande un directeur de la
-   photo avant de réserver. Elles se composent donc comme une DONNÉE — voix
-   d'instrument, majuscules, dans un cadre — et non comme du texte de titre. */
-.case__spec {
-  display: inline-block;
-  margin-left: 0.55em;
-  padding: 0.18em 0.5em;
-  border: 1px solid color-mix(in srgb, var(--go) 40%, transparent);
-  border-radius: 2px;
-  font-family: var(--ff-m);
-  font-size: var(--fs-nano);
-  letter-spacing: var(--ls-mono);
-  text-transform: uppercase;
-  color: var(--go-text);
-  vertical-align: middle;
-  white-space: nowrap;
 }

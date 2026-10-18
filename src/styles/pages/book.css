@@ -477,8 +477,9 @@ body[data-page='book'] .field input:focus-visible,
 body[data-page='book'] .field textarea:focus-visible { outline: 2px solid var(--dv-lt); outline-offset: 2px; }
 body[data-page='book'] .field input[type='date'],
 body[data-page='book'] .field input[type='time'],
-body[data-page='book'] .field input[type='number'] { font-family: var(--ff-m); font-size: var(--fs-sm); letter-spacing: 0.04em; }
-body[data-page='book'] #bk-title { font-family: var(--ff-m); font-size: var(--fs-sm); letter-spacing: 0.03em; }
+body[data-page='book'] .field input[type='number'] { font-family: var(--ff-m); font-size: max(1rem, var(--fs-sm)); letter-spacing: 0.04em; }
+/* 16 px au moins : en dessous, l'iPhone zoome sur le champ au toucher (F19). */
+body[data-page='book'] #bk-title { font-family: var(--ff-m); font-size: max(1rem, var(--fs-sm)); letter-spacing: 0.03em; }
 /* La note libre : du papier réglé, dont les lignes suivent le texte. */
 body[data-page='book'] .field textarea {
   line-height: 1.8rem; padding-top: 0.55rem;

@@ -8,7 +8,7 @@ import gsap from 'gsap';
 import { startClocks, toAddis, offsetFromAddis } from './clock.js';
 import { cursor, indexPanel, bar, reduced, EASE, DUR } from './motion.js';
 import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js';
-import { initSheet } from './sheet.js';
+import { pauseOffscreen } from './offscreen.js';
 import { initWipe } from './wipe.js';
 import { applyPalette } from './palette.js';
 import { initBookDesk } from './pages/book-desk.js';
@@ -191,12 +191,14 @@ form?.addEventListener('submit', (ev) => {
 
 /* ─────────────── Démarrage ─────────────── */
 
+// La feuille de service est retirée (F35) : on oublie ce qu'elle gardait.
+try { localStorage.removeItem('teddy-sheet'); } catch { /* stockage indisponible */ }
+
 startClocks();
 initWipe();
 cursor();
 indexPanel();
 bar();
-initSheet();
 callSlot();
 
 form?.addEventListener('input', () => { paintSteps(); shootDays(); });
@@ -210,5 +212,6 @@ initMagnets();
 
 // Le bureau des autorisations : le tampon, la fiche, les cadrans (visuel seul).
 initBookDesk(form);
+pauseOffscreen('main > *, .ftr');
 
 applyPalette();

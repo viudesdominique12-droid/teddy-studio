@@ -95,6 +95,9 @@
         <p class="ct-clock__cap" aria-hidden="true">
           <span><i class="ct-live"></i>Open now · Monday – Sunday, 24/7</span>
           <span data-local hidden></span>
+          <!-- Sa place est gardée avant le script de la page (contact.css) :
+               une ligne sur l'heure d'Addis, deux ailleurs. -->
+          <script>(function (s) { if (s && Math.round((-new Date().getTimezoneOffset() - 180) / 60) === 0) s.setAttribute('data-one', ''); })(document.currentScript && document.currentScript.parentNode.querySelector('[data-local]'));</script>
         </p>
       </div>
     </div>

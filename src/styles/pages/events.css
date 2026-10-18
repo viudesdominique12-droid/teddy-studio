@@ -137,6 +137,10 @@ body[data-dv='events'] #main { --ev-velvet: #4f1626; }
 }
 .ev-lvl {
   background-image: radial-gradient(56rem 30rem at 50% 108%, color-mix(in srgb, var(--dv) 10%, transparent), transparent 70%);
+  /* Les badges qui se balancent dépassaient de 2 px (ordinateur) à 14 px
+     (téléphone) à droite : la page défilait de côté. On rogne au bord de
+     l'écran seulement (rien de visible n'est coupé). */
+  overflow-x: clip;
 }
 /* Les coulisses : la feuille de conduite, sur scène. En Papier, c'est l'une
    des grandes sections de nuit (`dv-night`). */
@@ -604,17 +608,26 @@ html[data-palette='papier'] .ev-pass:hover .ev-pass__tilt::before { box-shadow: 
 /* Le reflet holographique : il suit la souris (`--hx`) ; sur téléphone, il
    traverse le badge une fois, quand celui-ci passe au milieu de l'écran. */
 .ev-pass__sheen {
-  position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  background: linear-gradient(105deg, transparent 36%, rgb(255 226 170 / 0.16) 45%, rgb(255 255 255 / 0.28) 50%, rgb(255 210 150 / 0.14) 55%, transparent 64%) var(--hx, 120%) 0 / 260% 100% no-repeat;
+  position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden;
   mix-blend-mode: screen; opacity: 0; transition: opacity 0.45s var(--e-out);
 }
-html[data-palette='papier'] .ev-pass__sheen {
-  background: linear-gradient(105deg, transparent 36%, rgb(242 169 59 / 0.12) 45%, rgb(255 236 200 / 0.4) 50%, rgb(242 169 59 / 0.1) 55%, transparent 64%) var(--hx, 120%) 0 / 260% 100% no-repeat;
-  mix-blend-mode: normal;
+/* Le reflet lui-même (F30, 18/10/2026) : un dégradé 2,6 fois plus large que
+   le badge, déplacé par `transform` au lieu de `background-position` — le
+   même trajet (`--hx` de 120 % à -20 %, soit un décalage de -1,6 × --hx de
+   la largeur du badge), sans repeindre le badge à chaque trame. */
+.ev-pass__sheen::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 260%; height: 100%;
+  background: linear-gradient(105deg, transparent 36%, rgb(255 226 170 / 0.16) 45%, rgb(255 255 255 / 0.28) 50%, rgb(255 210 150 / 0.14) 55%, transparent 64%);
+  transform: translateX(calc(var(--hx, 120%) * -0.615385));
+}
+html[data-palette='papier'] .ev-pass__sheen { mix-blend-mode: normal; }
+html[data-palette='papier'] .ev-pass__sheen::before {
+  background: linear-gradient(105deg, transparent 36%, rgb(242 169 59 / 0.12) 45%, rgb(255 236 200 / 0.4) 50%, rgb(242 169 59 / 0.1) 55%, transparent 64%);
 }
 .ev-pass:hover .ev-pass__sheen, .ev-pass:focus-within .ev-pass__sheen { opacity: 1; }
-.ev-pass.is-on .ev-pass__sheen { opacity: 1; animation: ev-sweep 1.5s var(--e-out) both; }
-@keyframes ev-sweep { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+.ev-pass.is-on .ev-pass__sheen { opacity: 1; }
+.ev-pass.is-on .ev-pass__sheen::before { animation: ev-sweep 1.5s var(--e-out) both; }
+@keyframes ev-sweep { from { transform: translateX(-73.8462%); } to { transform: translateX(12.3077%); } }
 .ev-pass.is-on .ev-pass__band { box-shadow: 0 0 30px -6px var(--dv); }
 
 /* ═══════════════════ LE PROCESSUS : LA SCÈNE ═══════════════════
@@ -1127,12 +1140,15 @@ html[data-palette='papier'] #inquiry { --ev-err: #a3261c; }
 .ev-send:hover .ev-send__s svg { transform: translateX(3px); }
 /* Prêt à partir (nom, téléphone, email) : le bouton s'allume, une fois. */
 .ev-send.is-ready { box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--dv) 22%, transparent), 0 18px 46px -18px var(--dv); }
+/* L'éclat (F30) : le dégradé, 60 % de la largeur du bouton, glisse par
+   `transform` — le trajet de l'ancien `background-position` -150 % → 250 %. */
 .ev-send.is-ready.is-glint::after {
-  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.55) 50%, transparent 65%) -150% 0 / 60% 100% no-repeat;
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 60%; z-index: 1; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.55) 50%, transparent 65%);
+  transform: translateX(-100%);
   animation: ev-glint 1.1s var(--e-out) both;
 }
-@keyframes ev-glint { to { background-position: 250% 0; } }
+@keyframes ev-glint { from { transform: translateX(-100%); } to { transform: translateX(166.6667%); } }
 .ev-form .dv-form__note {
   flex: 1 1 14rem;
   font-family: var(--ff-t); font-size: 0.9375rem; letter-spacing: 0; color: var(--cream-2);
@@ -1266,13 +1282,17 @@ html[data-palette='papier'] .ev-stub {
 .ev-stub__h [data-st].is-roll { animation: ev-roll 0.7s var(--e-out) both; }
 @keyframes ev-roll { from { transform: translateY(0.7em); opacity: 0; } to { transform: none; opacity: 1; } }
 /* Le billet complet : un reflet de dorure le traverse, une fois. */
+/* Le dégradé (70 % de la largeur) glisse par `transform` (F30) : le trajet
+   de l'ancien `background-position` -160 % → 260 %. Le masque du billet le
+   rogne à ses bords. */
 .ev-stub__main::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
-  background: linear-gradient(110deg, transparent 38%, rgb(255 255 255 / 0.42) 50%, transparent 62%) -160% 0 / 70% 100% no-repeat;
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 70%; pointer-events: none; z-index: 1;
+  background: linear-gradient(110deg, transparent 38%, rgb(255 255 255 / 0.42) 50%, transparent 62%);
+  transform: translateX(-68.5714%);
   opacity: 0;
 }
 .ev-stub.is-shine .ev-stub__main::before { opacity: 1; animation: ev-shine 1.4s var(--e-out) both; }
-@keyframes ev-shine { to { background-position: 260% 0; } }
+@keyframes ev-shine { from { transform: translateX(-68.5714%); } to { transform: translateX(111.4286%); } }
 
 /* ─── La demande prête : le billet et le récapitulatif ─── */
 .ev-done.dv-done {
@@ -1391,7 +1411,7 @@ html[data-palette='papier'] .ev-stub {
   .ev-form .chip span, .ev-stub__acts i { transition: none !important; }
   .ev-prog.is-js .ev-fam__in::before, .ev-prog.is-js .ev-fam__in::after { display: none; }
   .ev-fam__q:hover .ev-fam__t, .ev-menu__list > li:is(:hover, :focus-within, .is-lit) .ev-menu__t { transform: none; }
-  .ev-bokeh i, .ev-pass.is-on .ev-pass__sheen, .ev-cue.is-flash .ev-cue__st, .ev-marq.is-lit .ev-marq__panel::after { animation: none; }
+  .ev-bokeh i, .ev-pass.is-on .ev-pass__sheen::before, .ev-cue.is-flash .ev-cue__st, .ev-marq.is-lit .ev-marq__panel::after { animation: none; }
   .ev-stub [data-st].is-print, .ev-stub__h [data-st].is-roll, .ev-stub.is-shine .ev-stub__main::before,
   .ev-send.is-ready.is-glint::after { animation: none; }
   .ev-stub.is-shine .ev-stub__main::before { opacity: 0; }

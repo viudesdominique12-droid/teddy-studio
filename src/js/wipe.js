@@ -68,12 +68,20 @@ function build() {
   ink = document.createElement('span'); ink.className = 'wipe__ink';
   root.append(gold, ink);
   paint(0);                      // l'état de départ AVANT l'affichage
+  // Rangé tant qu'il ne sert pas : une arrivée directe ne l'affiche jamais
+  // (F03), et deux calques de 175 vw n'ont pas à vivre hors champ.
+  root.hidden = true;
   document.body.appendChild(root);
 }
 
-/** Le panneau sort par la droite. */
-function reveal() {
+/** Le panneau sort par la droite.
+ *  `force` : le retour arrière (bfcache), où la page revient couverte par le
+ *  vrai volet. Sinon, on ne découvre que ce qui a été couvert : une arrivée
+ *  directe (Google, WhatsApp, une adresse tapée) n'a pas de volet à ouvrir
+ *  (F03, 18/10/2026) — la page s'affiche aussitôt. */
+function reveal(force) {
   if (!root) return;
+  if (!force && !document.documentElement.classList.contains('is-wiping')) return;
   const t = { s: 1 };
   paint(1);
   root.hidden = false;
@@ -96,7 +104,12 @@ function cover(href) {
   root.hidden = false;
   gsap.to(t, { s: 1, duration: COVER, ease: 'power4.inOut',
     onUpdate: () => paint(t.s),
-    onComplete: () => { location.href = href; } });
+    onComplete: () => {
+      // La page suivante naîtra couverte (`head.html`) : elle sait qu'on
+      // arrive d'ici, par le volet, et non d'un lien extérieur.
+      try { sessionStorage.setItem('teddy-wipe', String(Date.now())); } catch { /* sans stockage : arrivée nue */ }
+      location.href = href;
+    } });
 }
 
 /** Deux chemins désignent la même page malgré leurs habillages. */
@@ -114,11 +127,15 @@ export function initWipe() {
   }
 
   build();
-  reveal();
+  reveal(false);
 
   // Un retour arrière ressort la page du bfcache telle qu'on l'avait laissée —
   // c'est-à-dire couverte. Il faut la redécouvrir à la main.
-  window.addEventListener('pageshow', (e) => { if (e.persisted) reveal(); });
+  window.addEventListener('pageshow', (e) => {
+    if (!e.persisted) return;
+    try { sessionStorage.removeItem('teddy-wipe'); } catch { /* ignore */ }
+    reveal(true);
+  });
 
   document.addEventListener('click', (e) => {
     // Le défilement doux a déjà pris la main sur les ancres internes.

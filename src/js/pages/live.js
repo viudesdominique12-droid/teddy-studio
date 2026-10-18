@@ -99,6 +99,10 @@ function initWall() {
     }
   }
 
+  /* La coupe. Sur ordinateur, le programme repart en vidéo à chaque coupe.
+     Sur téléphone (ou en économie de données), il passe à l'image fixe de la
+     caméra suivante, déjà chargée par sa vignette : l'éclair et les témoins
+     restent, sans une nouvelle vidéo toutes les 2,6 s (F13, 18/10/2026). */
   let flip = 0;
   let k = 0;
   const cut = (n) => {
@@ -108,12 +112,16 @@ function initWall() {
     layer.replaceChildren();
     const img = new Image(); img.src = `${cam.dataset.src}.jpg`; img.alt = '';
     layer.append(img);
-    if (motion && !navigator.connection?.saveData) {
+    if (motion && !lite) {
       const v = video(cam.dataset.src);
       layer.append(v);
       v.play().catch(() => {});
     }
     layers.forEach((l) => l.classList.toggle('is-on', l === layer));
+    // L'ancienne couche, désormais cachée, se vide : une seule vidéo du
+    // programme décodée à la fois (comme sur la page Services).
+    const other = layers[flip ^ 1];
+    window.setTimeout(() => { if (!other.classList.contains('is-on')) other.replaceChildren(); }, 400);
     cams.forEach((c, j) => {
       c.classList.toggle('is-pgm', j === n);
       c.classList.toggle('is-pvw', j === (n + 1) % cams.length);
@@ -128,20 +136,50 @@ function initWall() {
   new IntersectionObserver(([e]) => {
     on = e.isIntersecting;
     wall.querySelectorAll('video').forEach((v) => (on ? v.play().catch(() => {}) : v.pause()));
+    tc?.classList.toggle('is-paused', !on);
   }).observe(hero);
 
   window.setInterval(() => { if (on && !document.hidden) { k = (k + 1) % cams.length; cut(k); } }, 2600);
 
-  // Le timecode (heure d'Addis, en images) et les vumètres.
+  /* Le timecode (heure d'Addis, en images) et les vumètres (F14, 18/10/2026).
+     Les images (00 → 24) sont une bande de chiffres que le compositeur fait
+     défiler en CSS (`.lv-tc__ff`, 25 pas par seconde) : plus d'écriture ni de
+     repeinte à chaque trame. Le script n'écrit l'heure qu'au changement de
+     seconde. Les vumètres : une barre mise à l'échelle (`scaleY`), sa
+     couleur contre-étirée pour garder le dégradé fixe — le même rendu que
+     l'ancien `clip-path`, sans repeindre. Sur téléphone, une trame sur deux. */
+  let sec = -1;
+  let tcS = null;
+  if (tc) {
+    tc.textContent = '';
+    tcS = document.createElement('span');
+    tcS.textContent = addisTime(true);
+    const ff = document.createElement('span');
+    ff.className = 'lv-tc__ff';
+    const strip = document.createElement('span');
+    strip.textContent = Array.from({ length: 25 }, (_, i) => String(i).padStart(2, '0')).join('\n');
+    strip.style.animationDelay = `${-Math.round(performance.now() % 1000)}ms`;
+    ff.append(strip);
+    tc.append(tcS, ':', ff);
+  }
+  const bars = meters.map((m) => {
+    const bar = m.firstElementChild;
+    const fill = bar?.firstElementChild;
+    return bar && fill ? { y: gsap.quickSetter(bar, 'scaleY'), f: gsap.quickSetter(fill, 'scaleY') } : null;
+  });
   const lv = meters.map(() => 0.3);
+  const K = LITE ? 0.4375 : 0.25;          // une trame sur deux : la même réponse
+  let skip = 0;
   gsap.ticker.add((time) => {
     if (!on) return;
-    const f = String(Math.floor((performance.now() % 1000) / 40)).padStart(2, '0');
-    if (tc) tc.textContent = `${addisTime(true)}:${f}`;
+    const s = Math.floor(Date.now() / 1000);
+    if (tcS && s !== sec) { sec = s; tcS.textContent = addisTime(true); }
+    if (LITE && (skip = (skip + 1) % 2)) return;
     meters.forEach((m, i) => {
       const target = 0.35 + 0.45 * Math.abs(Math.sin(time * (2.3 + i * 0.7)) * Math.sin(time * 5.1 + i)) + Math.random() * 0.12;
-      lv[i] += (Math.min(0.98, target) - lv[i]) * 0.25;
-      m.style.setProperty('--v', lv[i].toFixed(3));
+      lv[i] += (Math.min(0.98, target) - lv[i]) * K;
+      const b = bars[i];
+      if (b) { b.y(lv[i]); b.f(1 / lv[i]); } else m.style.setProperty('--v', lv[i].toFixed(3));
     });
   });
 
@@ -321,8 +359,15 @@ function initDesk() {
     const frames = !still && !LITE;
     let on = false;
     let id = 0;
+    // N'écrire que ce qui change : l'heure une fois par seconde, les images
+    // au plus 25 fois par seconde (F14).
+    let hms = '';
+    let sec = -1;
     const paint = () => {
-      tcEl.textContent = frames ? `${addisTime(true)}:${String(Math.floor((performance.now() % 1000) / 40)).padStart(2, '0')}` : addisTime(true);
+      const s = Math.floor(Date.now() / 1000);
+      if (s !== sec) { sec = s; hms = addisTime(true); }
+      const v = frames ? `${hms}:${String(Math.floor((performance.now() % 1000) / 40)).padStart(2, '0')}` : hms;
+      if (tcEl.textContent !== v) tcEl.textContent = v;
     };
     paint();
     if (frames) gsap.ticker.add(() => { if (on && !document.hidden) paint(); });

@@ -251,7 +251,7 @@ function filmCard(p, i, n) {
       <h3 class="fi-film__h">${title}</h3>
       ${p.aka ? `<p class="fi-film__aka">Released as <b>${esc(p.aka)}</b></p>` : ''}
       ${rows.length ? `<dl class="fi-film__dl">${rows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
-      ${stills.length ? `<div class="fi-film__stills"><span class="dv-mono">Stills</span>${stills.map((s, j) => `<button type="button" data-view="${esc(s)}" data-view-label="${title} — still ${j + 1}" aria-label="View still ${j + 1} from ${title}"><img src="${esc(s)}" alt="" width="1280" height="720" loading="lazy" decoding="async" draggable="false"></button>`).join('')}</div>` : ''}
+      ${stills.length ? `<div class="fi-film__stills"><span class="dv-mono">Stills</span>${stills.map((s, j) => `<button type="button" data-view="${esc(s)}" data-view-label="${title} — still ${j + 1}" aria-label="View still ${j + 1} from ${title}"><img src="${esc(p.stillThumbs?.[j] || s)}" alt="" width="240" height="135" loading="lazy" decoding="async" draggable="false"></button>`).join('')}</div>` : ''}
       <a class="fi-film__go" href="/portfolio.html#${esc(p.slug)}">In the portfolio</a>
     </div>
   </li>`;

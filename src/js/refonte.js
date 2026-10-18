@@ -25,8 +25,10 @@ function firstScreen() {
   const out = new Set();
   const logo = document.querySelector('img.logo__w');
   if (logo) out.add(logo.currentSrc || logo.src);
+  // Le plan est écrit `data-href` dans la page (index.html) ; un petit script
+  // lui donne son `href` seulement quand l'ouverture se joue.
   const plan = document.querySelector('.bp__lines');
-  if (plan) out.add(plan.getAttribute('href'));
+  if (plan) out.add(plan.getAttribute('href') || plan.getAttribute('data-href'));
   if (document.querySelector('.hero__media')) {
     out.add(matchMedia(MOBILE).matches ? '/media/sebastopol-poster-mobile.jpg' : '/media/sebastopol-poster.jpg');
   }

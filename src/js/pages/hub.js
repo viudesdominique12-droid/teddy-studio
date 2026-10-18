@@ -150,10 +150,17 @@ function regie() {
   });
   window.setInterval(() => { if (on) { k = (k + 1) % cams.length; cut(k); } }, 2800);
 
+  // Le minutage : n'écrire que ce qui change — l'heure une fois par seconde,
+  // les images (25 par seconde) au plus à chaque changement (F14).
+  let hms = '';
+  let sec = -1;
+  let last = '';
   gsap.ticker.add(() => {
     if (!on || !tc) return;
-    const f = String(Math.floor((performance.now() % 1000) / 40)).padStart(2, '0');
-    tc.textContent = `${addisTime(true)}:${f}`;
+    const s = Math.floor(Date.now() / 1000);
+    if (s !== sec) { sec = s; hms = addisTime(true); }
+    const v = `${hms}:${String(Math.floor((performance.now() % 1000) / 40)).padStart(2, '0')}`;
+    if (v !== last) { last = v; tc.textContent = v; }
   });
 }
 

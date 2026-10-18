@@ -45,6 +45,7 @@ function build(wrapper) {
   let pointerDown = false, downX = 0, downY = 0;
   let lastPointerX = -1, lastPointerY = -1;
   let activeCard = null, hoverTimer = 0, resumeTimer = 0;
+  let near = false;               // la galerie est à moins d'un écran : ses médias peuvent partir
   const prepared = [];
 
   const setStatus = (v) => { wrapper.dataset.galleryStatus = v; };
@@ -186,7 +187,7 @@ function build(wrapper) {
     wrapper.style.userSelect = 'none';
     document.documentElement.style.overscrollBehaviorX = 'none';
     setStatus('idle');
-    prepareVisible();
+    if (near) arm();
   }
 
   function move(self) {
@@ -206,10 +207,30 @@ function build(wrapper) {
 
   /* ── les vidéos ── */
 
-  function prepare(video) {
+  /* Rien ne part avant que la galerie approche (18/10, alléger l'accueil) :
+     les affiches sont écrites `data-poster` dans la page, et ne deviennent
+     `poster` qu'à moins d'un écran d'elle. Alors, à la souris, les premières
+     vidéos se préparent en entier (le survol les lance sans attendre) ; au
+     doigt, seules les deux premières lisent leur en-tête, et une carte
+     touchée se charge à l'appui. */
+  function arm() {
+    for (const v of collection.querySelectorAll('video[data-poster]')) {
+      if (!v.getAttribute('poster')) v.poster = v.dataset.poster;
+    }
+    if (canHover) prepareVisible();
+    else for (const v of [...collection.querySelectorAll('video')].slice(0, 2)) prepare(v, 'metadata');
+  }
+  new IntersectionObserver(([e], obs) => {
+    if (!e.isIntersecting) return;
+    obs.disconnect();
+    near = true;
+    arm();
+  }, { rootMargin: '100% 0px' }).observe(wrapper);
+
+  function prepare(video, preload = 'auto') {
     if (!video || video.dataset.prepared) return;
     video.dataset.prepared = '1';
-    video.preload = 'auto';
+    video.preload = preload;
     if (!video.src && video.dataset.src) video.src = video.dataset.src;
     prepared.push(video);
     while (prepared.length > MAX_PREPARED) {
@@ -231,7 +252,9 @@ function build(wrapper) {
   function play(card) {
     const v = card?.querySelector('video');
     if (!v) return;
+    if (!v.getAttribute('poster') && v.dataset.poster) v.poster = v.dataset.poster;
     prepare(v);
+    v.preload = 'auto';   // une carte préparée « en-tête seulement » se charge en entier
     v.muted = true; v.playsInline = true;   // posés en propriété, pas en attribut
     v.play().catch(() => {});
     card.classList.add('is-playing');

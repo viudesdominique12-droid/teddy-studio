@@ -25,11 +25,10 @@ import { initWipe } from './wipe.js';
 import { initViewer } from './viewer.js';
 import { initGallery } from './gallery.js';
 import { bootReel, cameraEntry } from './refonte.js';
-import { kit3dAvailable, initKit3d } from './kit3d.js';
-import { initReel } from './reel3d.js';
 import { initServices, initWhy } from './services.js';
 import { applyPalette } from './palette.js';
-import { splitWords } from './division.js';
+import { splitWords } from './split-words.js';
+import { pauseOffscreen } from './offscreen.js';
 import { initInquiries } from './inquiry.js';
 import { initLines } from './home-lines.js';
 import { initLobby } from './home-lobby.js';
@@ -122,10 +121,15 @@ function initDivisionGrid() {
   const live = cards[0];
   const tc = live?.querySelector('[data-dvg-tc]');
   if (tc) {
-    let f = 0;
-    gsap.ticker.add(() => {
+    // 25 images par seconde, à l'horloge et non à la cadence de l'écran (qui
+    // allait 4,8 fois trop vite à 120 Hz), et le texte n'est réécrit que
+    // quand il change.
+    let last = -1;
+    gsap.ticker.add((time) => {
       if (!live.classList.contains('is-vis')) return;
-      f = (f + 1) % 25;
+      const f = Math.floor(time * 25) % 25;
+      if (f === last) return;
+      last = f;
       tc.textContent = `${addisTime(true)}:${String(f).padStart(2, '0')}`;
     });
   }
@@ -194,6 +198,9 @@ function cascade(sel, { blur = !LITE, step = 0.08 } = {}) {
 async function start() {
   applyPalette();
   root.classList.add('hm-gate');
+  // Les boucles CSS des sections hors de l'écran se mettent en pause (le
+  // bandeau des clients, les vignettes, les points qui respirent).
+  pauseOffscreen();
   initWipe();
   startClocks();
   cursor();
@@ -204,9 +211,14 @@ async function start() {
   initServices();
   initWhy();
   initDivisionGrid();
-  // Le modèle 3D du matériel est-il là ? On le demande pendant l'ouverture.
-  const kit3d = kit3dAvailable();
-  const page = preparer(kit3d);
+  /* Les deux scènes 3D (le matériel, la bobine des lieux) ne sont plus dans
+     le script de départ : leurs modules se demandent ici, tout de suite, et
+     arrivent pendant l'ouverture. La préparation de la page les attend avant
+     sa première étape — l'ordre des épinglages ne change pas. */
+  const sets = Promise.all([import('./kit3d.js'), import('./reel3d.js')]);
+  // La séquence du matériel n'a lieu qu'avec du mouvement (`kit3dAvailable`).
+  const kit3d = Boolean(document.querySelector('[data-kit3d]')) && !reduced();
+  const page = preparer(kit3d, sets);
 
   /* Le reste de la page se prépare une seule fois, quand ça ne se voit pas :
      pendant que l'ouverture attend le clic (la page est cachée derrière). */
@@ -249,12 +261,19 @@ async function start() {
      animation (la fin de la plongée dans la caméra, le volet d'arrivée,
      l'entrée du premier écran).
    - `rush` : ce qui reste, d'un coup, quand tout doit être en place aussitôt. */
-function preparer(kit3d) {
+function preparer(kit3d, sets) {
+  let mods = null;
+  // Un module qui ne vient pas (réseau coupé) : sa section garde son repli,
+  // la liste du matériel ou la grille des lieux, et le reste se prépare.
+  const ready = sets.then(
+    ([k, r]) => { mods = { initKit3d: k.initKit3d, initReel: r.initReel }; },
+    (err) => { console.warn('[home]', err); mods = { initKit3d() {}, initReel() {} }; }
+  );
   const steps = [
     // Les épinglages sont créés dans l'ordre de la page : le matériel (juste
     // après les services), puis la caméra devant la galerie, puis tout le reste.
-    () => { if (kit3d) initKit3d(); },
-    () => initReel(),
+    () => { if (kit3d) mods.initKit3d(); },
+    () => mods.initReel(),
     () => initGallery(),
     () => cameraEntry(document.querySelector('.hm-band')),
     // Les titres sortent ligne à ligne, les blocs d'un seul tenant : le geste
@@ -297,16 +316,24 @@ function preparer(kit3d) {
   ];
   let i = 0;
   let chain = null;
+  let rushing = false;
   const next = () => steps[i++]();
+  // Tout ce qui reste, d'un coup — dès que les modules 3D sont là (ils
+  // le sont presque toujours : demandés dès le départ, ils pèsent peu).
+  const rush = () => {
+    if (!mods) { if (!rushing) { rushing = true; ready.then(rush, () => {}); } return; }
+    while (i < steps.length) next();
+  };
   return {
     get started() { return chain !== null || i > 0; },
     start: () => (chain ||= (async () => {
+      await ready;
       while (i < steps.length) {
         await breathe();
         if (i < steps.length) next();
       }
     })()),
-    rush: () => { while (i < steps.length) next(); }
+    rush
   };
 }
 

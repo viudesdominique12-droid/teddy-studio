@@ -441,8 +441,8 @@ const D = {
   }
 };
 
-function paintDiv(svg, kind, seed) {
-  const W = Math.round(svg.clientWidth), H = Math.round(svg.clientHeight);
+function paintDiv(svg, kind, seed, size = null) {
+  const W = size ? size[0] : Math.round(svg.clientWidth), H = size ? size[1] : Math.round(svg.clientHeight);
   if (W < 20 || !H || Number(svg.dataset.w) === W) return;
   svg.dataset.w = String(W);
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -450,7 +450,9 @@ function paintDiv(svg, kind, seed) {
   svg.innerHTML = `<g class="all">${(D[kind] || D['winding-road'])(W, H, rng(seed))}</g>`;
 }
 
-function divider(host, kind, label, seed) {
+/* `paint` à faux : la bande est posée, son trait sera tracé par l'appelant
+   (qui lit toutes les tailles d'un coup, puis écrit). */
+function divider(host, kind, label, seed, paint = true) {
   const div = document.createElement('div');
   div.className = 'ol-div';
   div.setAttribute('aria-hidden', 'true');
@@ -458,7 +460,7 @@ function divider(host, kind, label, seed) {
   host.prepend(div);
   optOut(div);
   const svg = div.querySelector('svg');
-  paintDiv(svg, kind, seed);
+  if (paint) paintDiv(svg, kind, seed);
   let t = 0;
   new ResizeObserver(() => { clearTimeout(t); t = setTimeout(() => paintDiv(svg, kind, seed), 100); }).observe(svg);
   return svg;
@@ -504,13 +506,26 @@ function hill(slug, alt, i) {
 }
 
 /* ═══════════════════════ LES FICHES ═══════════════════════ */
-function sheets() {
-  const total = pad(cards.length);
+/* Le signe de carte se pose AVANT page.js, avec l'ouverture : sur téléphone,
+   il prend une colonne à côté du nom du lieu, et le nom est découpé en
+   lignes par page.js (reveal.js) à la largeur qu'il trouve. */
+function signs() {
   cards.forEach((li, i) => {
     const loc = bySlug[li.id] || {};
     li.setAttribute('data-ol-live', '');
     watch(li);
-    divider(li, li.id, `${pad(i + 1)}<small> / ${total}</small>`, 300 + i * 13);
+    li.querySelector('.loc__t')?.insertAdjacentHTML('afterbegin', hill(li.id, loc.alt, i));
+  });
+}
+
+function sheets() {
+  const total = pad(cards.length);
+  /* D'abord toutes les écritures (bandes, viseurs), puis UNE lecture des
+     tailles, puis les tracés : avant, chaque fiche relisait la page après
+     l'avoir modifiée — neuf mises en page forcées d'affilée. */
+  const made = cards.map((li, i) => {
+    const seed = 300 + i * 13;
+    const svg = divider(li, li.id, `${pad(i + 1)}<small> / ${total}</small>`, seed, false);
 
     const fig = li.querySelector('.loc__fig');
     fig.insertAdjacentHTML('beforeend', `<div class="ol-vf" aria-hidden="true">
@@ -518,14 +533,17 @@ function sheets() {
       <i class="ol-vf__c ol-vf__c--tl"></i><i class="ol-vf__c ol-vf__c--tr"></i><i class="ol-vf__c ol-vf__c--bl"></i><i class="ol-vf__c ol-vf__c--br"></i>
       <i class="ol-vf__x"></i><span class="ol-vf__fmt"><span>3:2</span><span>2.39:1</span></span>
     </div>`);
-    const mh = () => fig.style.setProperty('--mh', `${(fig.clientHeight * 0.1862).toFixed(1)}px`);
-    mh();
-    new ResizeObserver(mh).observe(fig);
     /* Au toucher : un appui sur la photo la cadre en 2,39:1, un autre la rend. */
     if (LITE) fig.addEventListener('click', () => li.classList.toggle('is-framed'));
-
-    li.querySelector('.loc__t')?.insertAdjacentHTML('afterbegin', hill(li.id, loc.alt, i));
+    return { li, fig, svg, seed };
   });
+  for (const m of made) { m.fh = m.fig.clientHeight; m.size = [Math.round(m.svg.clientWidth), Math.round(m.svg.clientHeight)]; }
+  for (const m of made) {
+    const { fig } = m;
+    fig.style.setProperty('--mh', `${(m.fh * 0.1862).toFixed(1)}px`);
+    paintDiv(m.svg, m.li.id, m.seed, m.size);
+    new ResizeObserver(() => fig.style.setProperty('--mh', `${(fig.clientHeight * 0.1862).toFixed(1)}px`)).observe(fig);
+  }
 }
 
 /* L'entrée d'une fiche : l'obturateur du viseur s'ouvre, les coins se
@@ -642,7 +660,6 @@ function cta() {
   const box = document.querySelector('.locs__cta');
   const map = box?.querySelector('.ol-cta__map');
   if (!box || !map) return;
-  optOut(map);
   watch(box);
   divider(box, 'bearing', '', 77);
   let lastW = 0;
@@ -691,13 +708,46 @@ function cta() {
   new ResizeObserver(() => { clearTimeout(t); t = setTimeout(build, 120); }).observe(map);
 }
 
-/* ═══════════════════════ LE DÉMARRAGE ═══════════════════════ */
+/* ═══════════════════════ LE DÉMARRAGE ═══════════════════════
+   L'ouverture (la carte, l'index) juste après la première image ; le reste, sous le pli,
+   au premier temps libre, une étape à la fois et dans le même ordre (F32,
+   18/10/2026). D'un seul bloc, ce démarrage tenait le téléphone 170 ms
+   avant le premier affichage. Tout part d'un coup si la page s'ouvre déjà
+   défilée, sur une ancre, avec une fiche à l'écran, ou dès que le visiteur
+   bouge : rien ne doit apparaître avant d'être prêt. */
 const hero = document.querySelector('.ol-hero');
 watch(hero);
 watch(document.querySelector('.ftr'));
-topo();
-profile();
-sheets();
-entrances();
-altimeter();
-cta();
+// Avant page.js, comme les fiches : la carte de l'appel garde sa propre entrée.
+optOut(document.querySelector('.locs__cta .ol-cta__map'));
+signs();
+
+// Les fiches et leurs entrées vont ensemble : une fiche n'est jamais posée
+// sans son état de départ. À la fin, la page a changé de hauteur : on
+// remesure (au chargement, ScrollTrigger le fait de lui-même).
+const rest = [() => { sheets(); entrances(); }, altimeter, cta, () => { if (document.readyState === 'complete') ScrollTrigger.refresh(); }];
+const now = () => { while (rest.length) rest.shift()(); };
+// La première fiche à l'écran ? Ses 40 premiers px ne montrent que la bande
+// de relief, qui n'apparaît qu'à son entrée : en dessous, on peut attendre.
+const near = () => (cards[0] ? cards[0].getBoundingClientRect().top < window.innerHeight - 40 : true);
+const acts = ['wheel', 'touchstart', 'pointerdown', 'keydown', 'scroll'];
+const rush = () => { acts.forEach((t) => window.removeEventListener(t, rush, true)); now(); };
+acts.forEach((t) => window.addEventListener(t, rush, { capture: true, passive: true }));
+const idle = window.requestIdleCallback
+  ? (fn) => window.requestIdleCallback(fn, { timeout: 800 })
+  : (fn) => window.setTimeout(fn, 200);
+const step = () => {
+  if (!rest.length) return;
+  rest.shift()();
+  if (rest.length) idle(step);
+  else acts.forEach((t) => window.removeEventListener(t, rush, true));
+};
+/* La décision se prend juste avant la première image, quand la page est
+   mise en page de toute façon (la lire plus tôt forçait ce calcul dans le
+   script). Puis la carte et la coupe d'altitude se tracent : toutes deux
+   entrent en fondu depuis l'opacité 0, rien ne change à l'œil. */
+requestAnimationFrame(() => {
+  if (window.scrollY > 0 || location.hash || near()) rush();
+  else idle(step);
+  setTimeout(() => { topo(); profile(); }, 0);
+});

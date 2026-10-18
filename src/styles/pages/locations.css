@@ -472,6 +472,13 @@ body[data-page='locations'] .ftr__wl .ln--b { color: var(--dv); }
   body[data-page='locations'] .locs__cta { margin-top: var(--s-7); padding-top: 9.5rem; }
 }
 
+/* L'index garde sa hauteur pendant que les polices arrivent : avec la
+   police de secours, il mesurait 9 px de moins et grandissait ensuite d'un
+   coup (F32, 18/10/2026 ; hauteur posée mesurée à 390 px). */
+@media (max-width: 40rem) {
+  .ol-prof { min-height: 20.625rem; }
+}
+
 /* ═══════════════════ MOUVEMENT RÉDUIT ═══════════════════
    Tout est posé, rien ne bouge : la carte est dessinée une fois, les
    traits sont tracés, l'altimètre saute d'un lieu à l'autre. */

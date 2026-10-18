@@ -155,6 +155,14 @@ body[data-page='contact'] .ftr__wl .ln--b { color: var(--dv); }
 @media (max-width: 60rem) {
   .ct-clock__cap [data-local] span { display: block; }
   .ct-clock__cap .ct-dt::before { content: none; }
+  /* L'heure du visiteur s'écrit après le chargement, sous le cadran, donc
+     au-dessus du titre : sa place est gardée dès le départ, pour que le titre
+     et les boutons ne sautent pas. Deux lignes (« Your time… » / « Addis
+     Ababa is… ») ; une seule à l'heure d'Addis (`data-one`, posé dans la
+     page par un script d'une ligne). */
+  .ct-clock__cap [data-local] { display: block; min-height: 2.2rem; min-height: 2lh; }
+  .ct-clock__cap [data-local][data-one] { min-height: 1.1rem; min-height: 1lh; }
+  .ct-clock__cap [data-local][hidden] { visibility: hidden; }
 }
 .ct-live { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--dv); box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--dv) 22%, transparent); }
 

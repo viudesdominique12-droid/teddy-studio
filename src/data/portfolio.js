@@ -19,6 +19,11 @@
  *              'technical', 'contributor' ; vide tant que le client ne l'a
  *              pas confirmé (rien n'est affiché).
  *
+ * Les images : `poster` (560 px) et `posterFull` (l'affiche entière) ;
+ * `posterMid` (720 px, même cadrage que `posterFull`) quand elle existe, pour
+ * la grille sur téléphone ; `stills` (photos de tournage, 1280 px) et leurs
+ * vignettes `stillThumbs` (240 × 135, même ordre).
+ *
  * Une catégorie sans projet n'est jamais remplie de faux exemples : la page
  * affiche un état « en préparation » avec un appel à demander des références.
  */
@@ -60,6 +65,7 @@ export const projects = [
     poster: '/works/p-2-560.webp',
     posterFull: '/works/p-2-full.webp',
     stills: ['/film/triangle-card-w1280.webp', '/film/desert-walk-w1280.webp'],
+    stillThumbs: ['/film/triangle-card-t240.webp', '/film/desert-walk-t240.webp'],
     featured: true
   },
   {
@@ -71,7 +77,9 @@ export const projects = [
     role: '',
     poster: '/works/p-1-560.webp',
     posterFull: '/works/p-1-full.webp',
+    posterMid: '/works/p-1-720.webp',
     stills: ['/film/sundown-w1280.webp', '/film/forest-w1280.webp'],
+    stillThumbs: ['/film/sundown-t240.webp', '/film/forest-t240.webp'],
     featured: true
   },
   {
@@ -82,6 +90,7 @@ export const projects = [
     role: '',
     poster: '/works/p-5-560.webp',
     posterFull: '/works/p-5-full.webp',
+    posterMid: '/works/p-5-720.webp',
     featured: true
   },
   {
@@ -92,6 +101,7 @@ export const projects = [
     role: '',
     poster: '/works/p-4-560.webp',
     posterFull: '/works/p-4-full.webp',
+    posterMid: '/works/p-4-720.webp',
     featured: false
   },
   {

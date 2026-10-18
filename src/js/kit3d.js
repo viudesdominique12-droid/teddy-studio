@@ -38,16 +38,30 @@ const MOBILE = matchMedia('(max-width: 48rem)');
    souffle au repos, et n'est redessinée que quand quelque chose bouge. Mesuré :
    c'est elle qui saccadait, pas le reste de la page. */
 const LITE = matchMedia('(pointer: coarse)').matches;
+/* La connexion (18/10, alléger le site sur téléphone) : en mode économie de
+   données, les photos suffisent (comme sur la page Equipment Rentals) ; sur
+   une connexion lente, comme sur un écran tactile, rien n'est préchargé
+   d'avance — les modèles partent à l'approche de la section. */
+const conn = navigator.connection;
+const SAVE = Boolean(conn?.saveData);
+const SLOW = /(^|-)(2g|3g)$/.test(conn?.effectiveType || '');
 const RAD = Math.PI / 180;
 const HOME = 0.36;   // le centre d'un objet posé, en demi-largeurs d'écran depuis le milieu
 const AWAY = 1.9;    // hors champ, même mesure
 const HOLD = 0.1;    // le dernier plan tient un instant avant que la scène se libère
 
+/* La sonde WebGL : un seul essai par page, et le contexte d'essai est rendu
+   tout de suite (sur iPhone, les contextes vivants sont comptés). */
+let hasGL = null;
 function webgl() {
+  if (hasGL !== null) return hasGL;
   try {
     const c = document.createElement('canvas');
-    return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
-  } catch { return false; }
+    const ctx = c.getContext('webgl2') || c.getContext('webgl');
+    hasGL = Boolean(ctx);
+    ctx?.getExtension('WEBGL_lose_context')?.loseContext();
+  } catch { hasGL = false; }
+  return hasGL;
 }
 
 /** La séquence n'a lieu qu'avec du mouvement : sinon, la liste suffit. */
@@ -117,11 +131,19 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
   const stage = root.querySelector('.k3__stage');
   const canvas = root.querySelector('.k3__gl');
   if (!stage || !canvas) return;
-  const gl = webgl();
+  const gl = !SAVE && webgl();
+  /* Un objet pas encore arrivé ne laisse plus un cadre vide où défile
+     « Loading » : sur téléphone (les modèles ne partent qu'à l'approche, un
+     geste rapide peut les devancer), le plan qui entre sans son modèle entre
+     avec sa photo ; sur connexion lente, chaque plan part de sa photo. Le
+     modèle prend sa place dès qu'il arrive (`swapIn`). Sur ordinateur, rien
+     ne change. */
 
   const plans = [...root.querySelectorAll('[data-k3-plan]')].map((el, i) => {
-    const model = gl ? el.dataset.model || null : null;
-    el.dataset.mode = model ? '3d' : 'photo';
+    // Sur écran tactile, la version allégée du modèle (`data-model-small`) :
+    // la même silhouette, moins de facettes, des textures à sa taille réelle.
+    const model = gl ? (LITE && el.dataset.modelSmall) || el.dataset.model || null : null;
+    el.dataset.mode = model && !SLOW ? '3d' : 'photo';
     return {
       el,
       model,
@@ -208,6 +230,7 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
   // rien n'est à attendre.
   const enter = (p, k = 1, swap = true) => {
     const w = (swap ? 1 : 0.45) * k;
+    if (LITE && p.model && !p.holder && p.el.dataset.mode === '3d') p.el.dataset.mode = 'photo';
     // Un plan tout à fait sorti revient de son côté ; un plan qui sortait
     // fait demi-tour là où il en est.
     if (Math.abs(p.tr.x) >= AWAY - 0.01) gsap.set(p.tr, { x: p.side * AWAY, spin: p.side * 100, scale: 0.86 });
@@ -319,8 +342,10 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
      n'est retenu : chaque outil est déjà passé. En remontant, rien n'est
      retenu non plus. Sur ordinateur ; le clavier, la barre de défilement et
      les liens gardent leur course. */
-  const lenis = window.__lenis;
-  if (lenis && !LITE) {
+  // Lenis n'existe qu'à la souris, et arrive un instant après la page
+  // (`scroll.js`, 18/10) : la retenue se pose dès qu'il est là.
+  const holdWheel = (lenis) => {
+    if (!lenis || LITE) return;
     const last = plans.length - 1;
     const previous = lenis.options.virtualScroll;
     lenis.options.virtualScroll = (data) => {
@@ -337,7 +362,9 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       data.deltaY = room;
       return true;
     };
-  }
+  };
+  if (window.__lenis) holdWheel(window.__lenis);
+  else window.__lenisReady?.then(holdWheel);
 
   /* Sur écran tactile (27/09, Dominique : « sur téléphone, après le drone,
      quand je swipe, ça descend directement sans faire défiler le reste des
@@ -358,8 +385,12 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
      l'interrompt que pour un défilement animé, `_scrollToContentScrollPosition`).
      D'où le défilement animé du frein. Et le doigt est tenu par un
      `preventDefault` sur `touchmove`, que tous les iPhone respectent,
-     en plus de `touch-action`. */
-  if (lenis && LITE) {
+     en plus de `touch-action`.
+     Depuis le 18/10, le téléphone n'a plus Lenis (`scroll.js`) : le glissé
+     vers l'outil mène la page lui-même, image par image, avec la courbe que
+     Lenis lui donnait ; et l'élan se reconnaît à ce qu'il suit de près un
+     geste du doigt (un lien suivi, le menu, ne sont pas un élan). */
+  if (LITE) {
     const last = plans.length - 1;
     const html = document.documentElement;
     const centre = (i) => st.start + ((plans[i].t0 + plans[i].dur / 2) / total) * (st.end - st.start);
@@ -371,11 +402,19 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
     let grab = false;    // le geste en cours appartient à la scène
     let x0 = 0;
     let y0 = 0;
+    let flung = -1e9;    // l'instant où le doigt a lâché un geste hors de la scène : l'élan qui suit est le sien
     let prevY = window.scrollY;
 
+    const ride = { y: 0 };
+    let riding = null;
     const glide = (to, ms) => {
       ours = performance.now() + ms + 300;   // + la dernière image du glissé
-      lenis.scrollTo(to, { duration: ms / 1000, force: true });
+      riding?.kill();
+      ride.y = window.scrollY;
+      riding = gsap.to(ride, {
+        y: to, duration: ms / 1000, ease: 'expo.out',
+        onUpdate: () => window.scrollTo(0, Math.round(ride.y))
+      });
     };
     const brake = (to) => {
       ours = performance.now() + 900;
@@ -407,7 +446,8 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       // Pas un défilement programmé (un lien, le menu), ni un saut de plus
       // d'un demi-écran (la position rendue au retour sur la page) : ce n'est
       // pas un élan.
-      const coast = !touching && lenis.isScrolling !== 'smooth' && performance.now() > ours
+      const now = performance.now();
+      const coast = !touching && now - flung < 4000 && now > ours
         && y > prevY && y - prevY < window.innerHeight / 2;
       if (coast && y >= st.start - 1 && prevY <= st.end + 1 && !done()) brake(centre(Math.max(active, 0)));
       if (!inside(y)) goal = -1;
@@ -428,14 +468,18 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
     window.addEventListener('touchstart', (e) => {
       touching = true;
       grab = e.touches.length === 1 && inside(window.scrollY) && !html.classList.contains('is-locked');
-      if (!grab) { goal = -1; return; }
-      e.lenisStopPropagation = true;
       x0 = e.touches[0].clientX;
       y0 = e.touches[0].clientY;
+      if (!grab) { goal = -1; return; }
+      e.lenisStopPropagation = true;
     }, opt);
     window.addEventListener('touchend', (e) => {
       touching = e.touches.length > 0;
-      if (!grab) return;
+      if (!grab) {
+        // Un vrai glissé (pas un appui) : l'élan du système va suivre.
+        if (Math.abs(y0 - e.changedTouches[0].clientY) >= 10) flung = performance.now();
+        return;
+      }
       e.lenisStopPropagation = true;
       grab = false;
       const dx = e.changedTouches[0].clientX - x0;
@@ -444,6 +488,9 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       step(dy > 0 ? 1 : -1);
     }, opt);
     window.addEventListener('touchcancel', () => { touching = false; grab = false; }, opt);
+    // Un lien vers une ancre de la page (le menu, « Explore Our Services ») :
+    // le défilement qui suit n'est pas un élan à freiner.
+    document.addEventListener('click', (e) => { if (e.target.closest?.('a[href*="#"]')) flung = -1e9; }, true);
   }
 
   /* ── Le rendu ── */
@@ -573,10 +620,28 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       list.forEach((p) => { p.el.dataset.mode = 'photo'; });
     };
 
+    // Le modèle prêt prend sa place. Plan hors champ : il entrera en 3D.
+    // Plan à l'écran, qui montrait sa photo (téléphone, connexion lente) : la photo
+    // s'efface au-dessus du modèle qui se pose — un fondu, pas un saut.
+    // (Une animation du navigateur, pas GSAP : `enter`/`leave` écrasent tout
+    // tween GSAP de la photo, et le fondu doit toujours aller à son terme.)
+    const swapIn = (p) => {
+      const was = p.el.dataset.mode;
+      p.el.dataset.mode = '3d';
+      if (was === '3d' || !p.photo || Math.abs(p.tr.x) >= AWAY - 0.02 || !p.photo.animate) return;
+      p.photo.style.display = 'block';
+      const fade = p.photo.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 700, easing: 'ease-out', fill: 'forwards' });
+      const done = () => { p.photo.style.display = ''; fade.cancel(); };
+      fade.onfinish = done;
+      fade.oncancel = () => { p.photo.style.display = ''; };
+    };
+    let first = true;
+
     try {
       // Chaque gros morceau du chargement est suivi d'une respiration
       // (`breathe`) : la page garde ses images pendant qu'il se fait.
-      const THREE = await import('three');
+      // Seulement les classes dont la scène se sert (`three-lite.js`).
+      const THREE = await import('./three-lite.js');
       await breathe();
       const [{ GLTFLoader }, { RoomEnvironment }, { MeshoptDecoder }] = await Promise.all([
         import('three/addons/loaders/GLTFLoader.js'),
@@ -588,7 +653,10 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       try { MeshoptDecoder.useWorkers?.(2); } catch { /* décodage sur place */ }
       await breathe();
 
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+      // Sur écran tactile, sans lissage multi-échantillons (MSAA) : c'est lui
+      // qui coûtait le plus cher à une petite puce graphique, image après
+      // image. L'écran d'un téléphone est assez dense pour s'en passer.
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: !LITE, alpha: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LITE ? 1.25 : 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.NeutralToneMapping;
@@ -638,9 +706,14 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
       const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
       for (const p of need) {
         try {
+          // Le compteur n'est réécrit que quand son chiffre change.
+          let shown = -1;
           const gltf = await loader.loadAsync(p.model, (e) => {
             if (!p.pct || !e.total) return;
-            p.pct.textContent = String(Math.round((e.loaded / e.total) * 100)).padStart(3, '0');
+            const pct = Math.round((e.loaded / e.total) * 100);
+            if (pct === shown) return;
+            shown = pct;
+            p.pct.textContent = String(pct).padStart(3, '0');
           });
           await breathe();
           const holder = stageModel(THREE, gltf.scene, p);
@@ -648,7 +721,11 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
           await warm(holder);
           p.holder = holder;
           p.el.classList.add('is-ready');
+          swapIn(p);
           gsap.to(p, { grow: 1, duration: 0.9, ease: 'expo.out' });
+          // La bobine des lieux, plus bas, attend ce signal pour préparer
+          // ses vues sur téléphone, sans gêner l'arrivée du premier objet.
+          if (first) { first = false; document.dispatchEvent(new Event('kit3d:ready')); }
         } catch (err) {
           fallback([p], err);
         }
@@ -658,16 +735,22 @@ export function initKit3d(root = document.querySelector('[data-kit3d]')) {
     }
   };
 
-  // On charge dès que la page est tranquille (la section est la deuxième :
-  // on y arrive vite), et au plus tard à l'approche. On ne dessine que quand
-  // la scène est à l'écran.
-  const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1200));
-  const soon = () => idle(() => start(), { timeout: 2500 });
-  if (document.readyState === 'complete') soon();
-  else window.addEventListener('load', soon, { once: true });
+  // Sur ordinateur, on charge dès que la page est tranquille (on arrive vite
+  // à la section), et au plus tard à l'approche. Sur
+  // téléphone ou connexion lente, seulement à l'approche (deux écrans avant) :
+  // le visiteur qui ne descend pas jusque-là ne paie ni three.js ni les
+  // modèles, et le premier écran garde la ligne pour lui. On ne dessine que
+  // quand la scène est à l'écran.
+  const early = !LITE && !SLOW;
+  if (early) {
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1200));
+    const soon = () => idle(() => start(), { timeout: 2500 });
+    if (document.readyState === 'complete') soon();
+    else window.addEventListener('load', soon, { once: true });
+  }
   new IntersectionObserver((entries, io) => {
     if (entries.some((e) => e.isIntersecting)) { start(); io.disconnect(); }
-  }, { rootMargin: '180% 0px' }).observe(stage);
+  }, { rootMargin: early ? '180% 0px' : '200% 0px' }).observe(stage);
 
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(stage);
 

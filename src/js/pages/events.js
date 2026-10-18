@@ -196,6 +196,9 @@ function initRig(intro) {
     return angleTo(b, tx, ty) + 0.018 * Math.sin(t * 0.55 + b.ph);
   }
 
+  // Les lyres sont posées sur l'appel et personne ne les guide.
+  const calm = () => mode === 'aim' && st.settle > 0.99 && !follow && !hover;
+
   function snap() { beams.forEach((b, i) => { b.a = desired(b, i, 0); }); }
 
   /* ─── Le dessin ─── */
@@ -260,6 +263,13 @@ function initRig(intro) {
   /* ─── Les mots prennent la lumière ─── */
   function light() {
     if (!words.length) return;
+    /* Posées, les lyres ne font que flâner : la lumière des mots bouge de
+       quelques millièmes à chaque trame, et chaque écriture de `--lit`
+       repeignait le titre ~20 fois par seconde. Au repos (`calm()`), on ne
+       relit la lumière que 5 fois par seconde et on n'écrit qu'un écart de
+       3 % (invisible à l'œil) ; à l'ouverture, au balayage et sous la
+       souris, la finesse reste (F30, 18/10/2026). */
+    const eps = calm() ? 0.03 : 0.008;
     for (const w of words) {
       let lit = 0;
       for (const b of beams) {
@@ -275,7 +285,7 @@ function initRig(intro) {
         lit += (p / 3) * b.on * (1 - dist * 0.5);
       }
       lit = Math.min(1, lit * 0.95) * st.gain;
-      if (Math.abs(lit - w.lit) > 0.008) {
+      if (Math.abs(lit - w.lit) > eps || (lit === 0 && w.lit !== 0)) {
         w.lit = lit;
         w.el.style.setProperty('--lit', lit.toFixed(3));
       }
@@ -302,7 +312,13 @@ function initRig(intro) {
     gsap.to(st, { gain: 1, duration: 0.8, ease: 'power2.out' });
     measure();
   };
-  if (intro) intro.eventCallback('onComplete', lit); else lit();
+  /* Les mots s'allument quand l'entrée du titre est finie. Depuis F08
+     (18/10/2026), heroIn() ne règle plus que les mots (la phrase, les appels
+     et les repères montent en CSS) : on garde le moment d'avant, la fin de la
+     montée des repères (0,45 s + 1,1 s, puis +0,08 s par élément). */
+  const items = document.querySelectorAll('.dv-hero [data-in]').length;
+  if (intro) intro.call(lit, null, Math.max(intro.duration(), items ? 1.55 + 0.08 * (items - 1) : 0));
+  else lit();
 
   gsap.delayedCall(LITE ? 3.1 : 3.5, () => {
     mode = 'aim';
@@ -333,6 +349,7 @@ function initRig(intro) {
 
   let last = performance.now() / 1000;
   let frame = 0;
+  let litAt = 0;
   gsap.ticker.add(() => {
     const now = performance.now() / 1000;
     const dt = Math.min(0.05, now - last);
@@ -349,7 +366,7 @@ function initRig(intro) {
     beams.forEach((b, i) => { b.a += (desired(b, i, now) - b.a) * k; });
 
     draw(now);
-    if (!LITE || frame % 2 === 0) light();
+    if (calm() ? now - litAt > 0.2 : (!LITE || frame % 2 === 0)) { light(); litAt = now; }
   });
 
   // À la descente, la salle s'assombrit un peu : la lumière reste sur scène.
@@ -422,7 +439,9 @@ function initPrefillLinks(refresh = () => {}) {
     // Le billet imprime le choix (aucun événement `input` n'est émis ici).
     if (touched.length) requestAnimationFrame(() => refresh(true));
     // Sans défilement doux (mouvement réduit), on descend nous-mêmes.
-    if (!window.__lenis) {
+    // Le test porte sur le mouvement réduit, pas sur Lenis : au doigt, Lenis
+    // n'est plus chargé (F27) et scroll.js fait glisser la page nativement.
+    if (reduced()) {
       e.preventDefault();
       const target = url.hash && document.querySelector(url.hash);
       target?.scrollIntoView({ block: 'start' });

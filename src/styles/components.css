@@ -23,7 +23,6 @@
 .btn--go::before { background: var(--fg); }
 .btn--go:hover, .btn--go:focus-visible { color: var(--bg); border-color: var(--fg); }
 
-.btn--ghost { border-color: var(--line); color: var(--fg-2); }
 .btn--lg { padding: 1.15em 1.9em; }
 .btn--xl { padding: 1.3em 2.4em; font-size: var(--fs-xs); }
 
@@ -42,22 +41,6 @@
 /* ══════════════ FILMS ══════════════ */
 
 .films { border-top: 1px solid var(--line); }
-.films__i { border-bottom: 1px solid var(--line-2); }
-.films__i a {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-4);
-  padding: clamp(0.75rem, 1.7vw, 1.2rem) 0;
-}
-.films__t {
-  font-family: var(--ff-d);
-  font-size: clamp(1.3rem, 3.6vw, 2.6rem);
-  letter-spacing: var(--ls-d); text-transform: uppercase; line-height: 1.04;
-  font-variation-settings: 'opsz' 56, 'wdth' 90, 'wght' 600;
-  color: var(--fg-3);
-  transition: color var(--d-clear) var(--e-settle), transform var(--d-clear) var(--e-clear);
-}
-.films__i.is-cleared .films__t { color: var(--fg); }
-.films__alt { color: var(--fg-3); }
-.films__i a:hover .films__t { color: var(--go); transform: translateX(0.4em); }
 
 .films-full { max-width: var(--maxw); margin-inline: auto; padding: 0 var(--pad-x) var(--sec-y); }
 .film__row {
@@ -80,12 +63,6 @@ html.is-ready .film__h, html:not(.is-loading) .film__h { visibility: visible; }
   transition: filter var(--d-lift) var(--e-settle);
 }
 .film__row:hover .film__art img { filter: none; }
-.film__art--none {
-  display: grid; place-items: center;
-  aspect-ratio: 4 / 3; border: 1px dashed var(--line);
-  color: var(--fg-3); font-family: var(--ff-m); font-size: var(--fs-micro);
-  letter-spacing: var(--ls-mono); text-align: center; padding: var(--s-3);
-}
 .works__note { margin-top: var(--s-6); font-size: var(--fs-sm); color: var(--fg-3); }
 @media (max-width: 40rem) {
   .film__row { grid-template-columns: 1fr; }
@@ -157,9 +134,6 @@ html.is-ready .loc__h, html:not(.is-loading) .loc__h { visibility: visible; }
 
 /* ══════════════ FORMULAIRES ══════════════ */
 
-.con { display: grid; gap: var(--s-7); grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
-@media (max-width: 54rem) { .con { grid-template-columns: 1fr; } }
-
 .form__row { display: grid; gap: var(--s-4); grid-template-columns: 1fr 1fr; }
 @media (max-width: 34rem) { .form__row { grid-template-columns: 1fr; } }
 
@@ -199,16 +173,6 @@ html.is-ready .loc__h, html:not(.is-loading) .loc__h { visibility: visible; }
 .form__act { margin-top: var(--s-5); }
 .form__note, .bk__note { margin-top: var(--s-4); font-family: var(--ff-m); font-size: var(--fs-mono); color: var(--fg-2); }
 
-.con__meta { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3) var(--s-5); font-size: var(--fs-sm); }
-.con__meta dt { font-family: var(--ff-m); font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow); text-transform: uppercase; color: var(--fg-3); padding-top: 0.3em; }
-.con__meta dd { color: var(--fg-2); }
-.con__meta a:hover { color: var(--go); }
-.con__alt { margin-top: var(--s-6); padding-top: var(--s-5); border-top: 1px solid var(--line-2); font-size: var(--fs-sm); color: var(--fg-2); }
-.con__map { margin-top: var(--s-5); border: 1px solid var(--line-2); }
-.con__map iframe { width: 100%; height: 15rem; border: 0; filter: grayscale(1) contrast(1.05); }
-/* La carte vient de Google en clair : on la retourne pour qu'elle tienne
-   dans la nuit du site. */
-.con__map iframe { filter: grayscale(1) invert(0.92) hue-rotate(180deg) contrast(0.9); }
 
 /* ══════════════ BOOKING ══════════════
    Le concept descend jusqu'ici : chaque étape renseignée PASSE AU VERT.

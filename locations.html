@@ -6,13 +6,9 @@
   <meta name="description" content="We take pride in facilitating filming in a diverse range of stunning locations throughout Ethiopia. Nine we work in most, from the Simien Mountains to the Erta Ale lava lake.">
   <link rel="stylesheet" href="/src/styles/main.css">
   <link rel="stylesheet" href="/src/styles/pages/locations.css">
-  <!-- Le <img> ci-dessous choisit sa taille par `sizes` : un préchargement qui
-       ne reprend pas le même srcset télécharge une AUTRE image que celle qui
-       sera affichée — deux fichiers au lieu d'un, et le gain devient une perte. -->
-  <link rel="preload" as="image" href="/loc/simien-mountains-1200.webp"
-        imagesrcset="/loc/simien-mountains-640.webp 640w, /loc/simien-mountains-1200.webp 1200w, /loc/simien-mountains-1920.webp 1920w"
-        imagesizes="(max-width: 900px) 100vw, 58vw"
-        fetchpriority="high">
+  <!-- Aucune image préchargée (F16, 18/10/2026) : depuis l'atlas, la première
+       photo (Simien) est sous le pli ; la précharger en priorité haute la
+       faisait passer avant les styles et le script de la carte. -->
 </head>
 <body class="page page--loc" data-page="locations">
 
@@ -59,7 +55,7 @@
              srcset="/loc/simien-mountains-640.webp 640w, /loc/simien-mountains-1200.webp 1200w, /loc/simien-mountains-1920.webp 1920w"
              sizes="(max-width: 900px) 100vw, 58vw"
              alt="The ridge approaching Ras Dashen in the Simien Mountains, Ethiopia"
-             width="1200" height="800" fetchpriority="high" decoding="async">
+             width="1200" height="800" decoding="async">
       </figure>
       <div class="loc__t">
         <h2 class="loc__h">Simien Mountains</h2>
@@ -177,17 +173,6 @@
 </main>
 
 <!--#include "footer" -->
-
-<aside class="dock" id="dock" aria-label="Your call sheet so far">
-  <button class="dock__toggle" id="dock-toggle" type="button" aria-expanded="false" aria-controls="dock-body">
-    <span class="dock__k mono">Call sheet</span>
-    <span class="dock__n mono" id="dock-count">0</span>
-  </button>
-  <div class="dock__body" id="dock-body" hidden>
-    <ol class="dock__log mono" id="dock-log"></ol>
-    <a class="dock__go" href="/contact.html#inquiry"><span class="mono">Open the sheet</span></a>
-  </div>
-</aside>
 
 <div class="cursor" id="cursor" aria-hidden="true"><i class="cursor__d"></i><i class="cursor__r"></i><i class="cursor__t">Drag</i></div>
 <!-- Avant page.js : l'atlas pose ses propres entrées sur les fiches. -->

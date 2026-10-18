@@ -927,11 +927,17 @@ html[data-palette='papier'] .ai-prompt__box:focus-within { background-color: var
 .ai-brief__row dd { min-width: 0; min-height: 1.35em; font-size: var(--fs-sm); line-height: 1.4; color: var(--fg); overflow-wrap: anywhere; }
 /* Une ligne pas encore écrite : du grain, qui scintille doucement. */
 .ai-brief__noise {
-  display: block; width: var(--w, 60%); height: 0.62rem; margin-top: 0.3em;
+  display: block; position: relative; overflow: hidden; width: var(--w, 60%); height: 0.62rem; margin-top: 0.3em;
+}
+/* Le grain scintille par `transform` (F30, 18/10/2026) : la trame, plus
+   grande d'une maille en haut et à gauche (même phase), se décale d'un
+   demi-pas, comme l'ancien `background-position`, sans repeindre. */
+.ai-brief__noise::before {
+  content: ''; position: absolute; top: -5px; left: -5px; right: 0; bottom: 0;
   background: radial-gradient(circle, color-mix(in srgb, var(--cream-3) 80%, transparent) 0 0.9px, transparent 1.3px) 0 0 / 5px 5px;
   animation: ai-grain 1.6s steps(2) infinite;
 }
-@keyframes ai-grain { to { background-position: 2.5px 2.5px; } }
+@keyframes ai-grain { to { transform: translate(2.5px, 2.5px); } }
 .ai-brief__row.is-set .ai-brief__noise { display: none; }
 .ai-brief__v { display: block; }
 .ai-brief__v:empty { display: none; }
@@ -1011,11 +1017,11 @@ html[data-palette='papier'] .ai-prompt__box:focus-within { background-color: var
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ai-brief__noise, .ai-brief__ph::after { animation: none; }
+  .ai-brief__noise::before, .ai-brief__ph::after { animation: none; }
   .ai-step::before, .ai-line__box::after { transition: none; }
   #inquiry .ai-line.is-picked .ai-line__box, #inquiry .dv-group.is-picked .ai-mode:has(input:checked) { animation: none; }
 }
 /* Sur écran tactile : pas de grain qui scintille, le dessin reste fixe. */
 @media (pointer: coarse) {
-  .ai-brief__noise { animation: none; }
+  .ai-brief__noise::before { animation: none; }
 }

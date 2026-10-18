@@ -63,13 +63,17 @@ const DISSOLVE = 1.5;   // durée du fondu
 
 const pad = (n) => String(n).padStart(2, '0');
 
+// Les chemins écrits ici ne passent pas par scripts/rebase.mjs (gabarits) :
+// ils prennent la base du site eux-mêmes (/teddy-studio/ sur GitHub Pages).
+const BASE = import.meta.env.BASE_URL;
+
 function shotImg(s) {
   const img = new Image();
   img.alt = ''; img.decoding = 'async';
   img.width = 1200; img.height = 800;
   img.sizes = '(max-width: 60rem) 100vw, 52vw';
-  img.srcset = `/loc/${s.src}-640.webp 640w, /loc/${s.src}-1200.webp 1200w, /loc/${s.src}-1920.webp 1920w`;
-  img.src = `/loc/${s.src}-1200.webp`;
+  img.srcset = `${BASE}loc/${s.src}-640.webp 640w, ${BASE}loc/${s.src}-1200.webp 1200w, ${BASE}loc/${s.src}-1920.webp 1920w`;
+  img.src = `${BASE}loc/${s.src}-1200.webp`;
   img.style.objectPosition = s.pos;
   return img;
 }
@@ -102,8 +106,11 @@ function initProjection() {
   track(gsap.to(gate, { keyframes: { autoAlpha: [0, 0.75, 0.3, 0.95, 0.7, 1], easeEach: 'power1.inOut' }, duration: 1.1, delay: 0.2 }));
   track(gsap.to(gate, { scale: 1, duration: 1.6, ease: 'expo.out', delay: 0.2, clearProps: 'transform' }));
 
-  // Les images d'avance : chacune décodée avant sa coupe.
+  // Les images d'avance : chacune décodée avant sa coupe. Le premier plan
+  // reprend l'image de la page (déjà là, à sa taille d'écran) au lieu d'en
+  // demander une autre au retour de la boucle.
   const cache = new Map();
+  if (first) cache.set(0, first);
   const get = (k) => {
     if (!cache.has(k)) {
       const img = shotImg(SHOTS[k]);

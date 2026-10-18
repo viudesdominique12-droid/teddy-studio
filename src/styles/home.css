@@ -7,6 +7,415 @@
    pied de page et l'ouverture, et ne touche jamais à ces blocs.
    ══════════════════════════════════════════════════════════════ */
 
+/* ══════════════════════════════════════════════════════════════
+   VENU DE LA FEUILLE COMMUNE (18/10/2026)
+   Ces règles ne servent qu'à l'accueil : l'ouverture en plan technique,
+   les crochets et le viseur, la galerie, et les blocs de l'ancien accueil
+   que `refonte.js` pilote encore. Elles étaient dans `main.css`, donc
+   téléchargées par les seize autres pages. Leur ordre est celui qu'elles
+   avaient là-bas ; elles restent AVANT tout le reste de ce fichier.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── depuis base.css ── */
+/* Le gate du hero : le contenu est masqué jusqu'à ce que le JS ait posé
+   les états de départ. Sans lui, le texte apparaît un frame puis s'efface. */
+html.hero-gate [data-hero] { opacity: 0; }
+
+/* ── depuis shell.css ── */
+html.is-booting body { overflow: hidden; }
+
+/* ── depuis acts.css ── */
+.why__item { padding-top: var(--s-5); border-top: 1px solid var(--line); }
+.why__item h3 {
+  font-family: var(--ff-d);
+  font-size: clamp(1.25rem, 1.7vw, 1.6rem);
+  line-height: 1.06; letter-spacing: var(--ls-d);
+  font-variation-settings: 'wdth' 104, 'wght' 700;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: var(--s-4);
+}
+.why__item p { font-size: var(--fs-sm); line-height: 1.65; color: var(--cream-2); }
+
+/* ═══════════ LA GALERIE ═══════════ */
+
+.gal {
+  position: relative;
+  /* Pleine hauteur : c'est elle qui décide du nombre de RANGÉES. Sur 558 px la
+     grille n'en tenait qu'une, et une rangée n'est pas un espace — c'est un
+     bandeau. `rows = round(hauteur / celluleH)` : il faut de la hauteur. */
+  height: 100svh;
+  overflow: clip;
+  display: grid; place-items: stretch;
+}
+
+.gal__stage {
+  position: relative; z-index: 1;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  /* les colonnes et les gouttières : lues en JS par sonde, donc n'importe
+     quelle unité CSS fonctionne ici */
+  /* `rows = round(hauteurScène / celluleH)`. Une carte portrait fait
+     `colonne × 16/9` de haut : à 19vw elle mesurait 486 px et il n'en tenait
+     qu'une seule rangée. À 15vw elle en fait 384, et deux rangées tiennent
+     dans un écran — c'est la densité de la référence. */
+  --gallery-col: clamp(9rem, 15vw, 15rem);
+  --gallery-gap-x: clamp(0.7rem, 1.3vw, 1.2rem);
+  --gallery-gap-y: clamp(0.7rem, 1.3vw, 1.2rem);
+}
+.gal__stage:active { cursor: grabbing; }
+.gal__stage:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+.gal__collection { display: flex; will-change: transform; }
+.gal__list { flex: none; }
+.gal__item { display: grid; place-items: center; padding: 0; }
+
+.gal__card {
+  position: relative;
+  width: var(--gallery-col);
+  aspect-ratio: var(--ar, 16 / 9);
+  overflow: hidden;
+  border-radius: var(--r-s);
+  background: var(--night-2);
+  box-shadow: 0 0 0 1px #eae0d030;
+}
+.gal__item[data-ratio="9/16"] .gal__card { --ar: 9 / 16; }
+.gal__card video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transform: scale(1.02);
+  transition: transform 700ms var(--e-out), opacity var(--d-micro) var(--e-out);
+  /* PAS de `filter` ici. Un filtre CSS sur une vidéo la sort du chemin rapide
+     de composition : le navigateur doit repasser chaque trame par un shader au
+     lieu de la poser telle quelle. Avec 24 vignettes dans la grille, c'est le
+     poste le plus cher de la page — pour un grisé que le client a déjà refusé
+     ailleurs (« je veux les vraies couleurs, qu'on voie sans zoomer »).
+     Le repos se marque donc par l'OPACITÉ, qui elle est gratuite. */
+  opacity: 0.88;
+}
+.gal__card.is-playing video { transform: scale(1.06); opacity: 1; }
+
+.gal__hint {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2; pointer-events: none;
+  font-size: clamp(3rem, 9vw, 7rem);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px #eae0d030;
+  transition: opacity var(--d-micro) var(--e-out);
+}
+.gal__stage[data-gallery-status="dragging"] .gal__hint,
+.gal__stage[data-gallery-status="scrolling"] .gal__hint { opacity: 0; }
+/* À la souris, c'est la pastille du curseur qui porte l'invitation : le grand
+   mot ferait doublon. Au doigt, il n'y a pas de curseur — il reste. */
+@media (hover: hover) and (pointer: fine) { .gal__hint { display: none; } }
+
+@media (max-width: 48rem) {
+  /* Le téléphone garde la PLEINE hauteur, comme l'ordinateur : la galerie est
+     un espace dans lequel on se promène, pas un bandeau qu'on fait défiler.
+     Plafonnée à 28rem elle ne tenait qu'une rangée et demie — la promenade
+     redevenait un carrousel. C'est la COLONNE qui rétrécit, pas la scène :
+     4 colonnes × 3 rangées sur un écran de 390, la densité de la référence. */
+  .gal__stage { --gallery-col: clamp(7.5rem, 34vw, 9.5rem); }
+}
+
+/* ── depuis refonte.css ── */
+/* ─────────────── LES CROCHETS ───────────────
+   [ UNE ÉTIQUETTE ] : la voix du moniteur. Le crochet est posé en contenu
+   généré ; la seconde déclaration lui donne un texte alternatif vide, pour
+   que les lecteurs d'écran ne lisent pas « crochet ». */
+.brk {
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: 0.6875rem; letter-spacing: 0.08em; line-height: 1.5;
+  text-transform: uppercase;
+}
+.brk::before { content: '[\00a0'; content: '[\00a0' / ''; opacity: 0.55; }
+.brk::after  { content: '\00a0]'; content: '\00a0]' / ''; opacity: 0.55; }
+
+/* ─────────────── LE VISEUR ───────────────
+   Quatre équerres autour d'un bouton : on cadre l'action. Le cadre est sur
+   un ENVELOPPANT, parce que les boutons rognent ce qui déborde d'eux. Au
+   survol, les équerres s'écartent — la mise au point se fait. */
+.vf { position: relative; display: inline-flex; }
+.vf::after {
+  content: ''; position: absolute; inset: -7px; pointer-events: none;
+  --c: var(--vf-c, var(--cream-2)); --l: 9px; --w: 1.5px;
+  background:
+    linear-gradient(var(--c) 0 0) 0 0 / var(--l) var(--w),
+    linear-gradient(var(--c) 0 0) 0 0 / var(--w) var(--l),
+    linear-gradient(var(--c) 0 0) 100% 0 / var(--l) var(--w),
+    linear-gradient(var(--c) 0 0) 100% 0 / var(--w) var(--l),
+    linear-gradient(var(--c) 0 0) 0 100% / var(--l) var(--w),
+    linear-gradient(var(--c) 0 0) 0 100% / var(--w) var(--l),
+    linear-gradient(var(--c) 0 0) 100% 100% / var(--l) var(--w),
+    linear-gradient(var(--c) 0 0) 100% 100% / var(--w) var(--l);
+  background-repeat: no-repeat;
+  transition: inset 0.6s var(--e-expo);
+}
+.vf:hover::after, .vf:focus-within::after { inset: -12px; }
+
+/* ═══════════════════ L'OUVERTURE ═══════════════════
+   Le plan d'une caméra de tournage, tracé à la main du dessinateur : on
+   clique sur sa lentille, elle s'ouvre, et l'on entre dans le premier plan.
+   Invisible tant que `is-booting` n'est pas posé (donc sans JavaScript). */
+
+.boot { position: fixed; inset: 0; z-index: 400; display: none; color: var(--cream); }
+html.is-booting .boot { display: block; }
+.boot__bp { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.bp__mat { fill: var(--night-2); }
+#bp-grid path { fill: none; stroke: color-mix(in srgb, var(--cream) 6%, transparent); stroke-width: 1; }
+.bp__axis {
+  fill: none; stroke: color-mix(in srgb, var(--cream) 24%, transparent);
+  stroke-width: 1; stroke-dasharray: 26 8 4 8;
+}
+.bp__sheet { fill: none; stroke: color-mix(in srgb, var(--cream) 26%, transparent); stroke-width: 2; }
+.bp__head { stroke: var(--gold); stroke-width: 3; opacity: 0; }
+.bp__notes circle, .bp__notes path {
+  fill: none; stroke: color-mix(in srgb, var(--cream) 72%, transparent); stroke-width: 1.8;
+}
+.bp__notes text, .bp__block text {
+  font-family: var(--ff-m); font-size: 25px; letter-spacing: 0.12em;
+  fill: var(--cream-2);
+}
+.bp__block rect, .bp__block path {
+  fill: none; stroke: color-mix(in srgb, var(--cream) 42%, transparent); stroke-width: 1.8;
+}
+.bp__block text { font-size: 17px; }
+.bp__block .bp__strong { fill: var(--cream); font-weight: 700; }
+@media (max-width: 48rem) { .bp__notes, .bp__block, .bp__sheet { display: none; } }
+
+.boot__top {
+  position: absolute; top: var(--hud-in); left: var(--pad-x); right: var(--pad-x);
+  display: flex; justify-content: space-between; gap: var(--s-4);
+  color: var(--cream-2);
+}
+.boot__top p { margin: 0; }
+
+/* La lentille est le bouton : l'anneau « Click to enter » tourne dans le
+   verre, le point REC au centre. */
+.boot__go {
+  position: absolute; left: var(--lx, 50%); top: var(--ly, 52%);
+  width: clamp(6.5rem, 9vw, 8rem); aspect-ratio: 1;
+  translate: -50% -50%;
+  padding: 0; border: 0; border-radius: 50%;
+  background: none; color: var(--cream); cursor: pointer;
+}
+.boot__ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.boot__ring text {
+  font-family: var(--ff-m); font-size: 15px; letter-spacing: 0.06em;
+  fill: var(--cream);
+}
+.boot__rec {
+  position: absolute; left: 50%; top: 50%;
+  width: 24%; aspect-ratio: 1; translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--gold) 22%, transparent);
+  transition: scale 0.5s var(--e-expo), box-shadow 0.5s var(--e-expo);
+}
+.boot__go:hover .boot__rec, .boot__go:focus-visible .boot__rec {
+  scale: 1.14;
+  box-shadow: 0 0 0 12px color-mix(in srgb, var(--gold) 18%, transparent);
+}
+.boot__go:focus-visible { outline: 2px solid var(--gold); outline-offset: 8px; }
+@media (prefers-reduced-motion: no-preference) {
+  .boot__ring { animation: ring-spin 16s linear infinite; }
+  .boot__go:hover .boot__ring { animation-duration: 5s; }
+}
+@keyframes ring-spin { to { rotate: 360deg; } }
+
+.boot__hint {
+  position: absolute; left: var(--hx, 84%); top: var(--ly, 52%);
+  translate: 0 -50%; margin: 0; color: var(--cream-2);
+}
+.boot__read {
+  position: absolute; left: 50%; bottom: calc(var(--hud-in) + 0.9rem);
+  translate: -50% 0; margin: 0; white-space: nowrap; color: var(--cream-2);
+}
+.boot__read [data-boot-pct] { font-variant-numeric: tabular-nums; color: var(--gold-lt); }
+.boot__gauge { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--line-2); }
+.boot__fill { display: block; height: 100%; background: var(--gold); transform-origin: left center; scale: 0 1; }
+/* L'anneau dit déjà « Click to enter » : l'étiquette ferait doublon sur le plan. */
+.boot__hint { display: none; }
+
+.hero__media {
+  position: absolute; inset: 0; z-index: -1;
+  overflow: hidden;
+  background: var(--night-2) url('/media/sebastopol-poster.jpg') center / cover no-repeat;
+  will-change: transform, clip-path;
+}
+
+/* L'écran du moniteur */
+.hud {
+  position: absolute; z-index: 1; pointer-events: none;
+  inset: calc(var(--bar-h) + var(--hud-in)) var(--hud-in) var(--hud-in);
+  color: var(--cream);
+}
+
+.hero__in { position: relative; z-index: 2; width: 100%; }
+
+.hero__h {
+  font-family: var(--ff-d);
+  font-variation-settings: 'wdth' 62, 'wght' 800; font-weight: 800;
+  line-height: 0.8; letter-spacing: -0.012em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin: 0;
+}
+
+html.hero-gate .hero__h, html.hero-gate .hud { opacity: 0; }
+
+@media (max-width: 48rem) {
+  .hero__media { background-image: url('/media/sebastopol-poster-mobile.jpg'); }
+}
+
+.mq__rail { display: flex; width: max-content; will-change: transform; }
+.mq__track {
+  display: flex; align-items: center; flex: none;
+  list-style: none; margin: 0; padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mq__track { flex-wrap: wrap; justify-content: center; width: 100%; }
+  .mq__rail { width: 100%; }
+  .mq__track[aria-hidden] { display: none; }
+}
+
+.svc__row {
+  position: relative; isolation: isolate;
+  display: grid; align-items: center;
+  grid-template-columns: clamp(4.5rem, 9vw, 9rem) minmax(0, 1fr) minmax(0, 20rem) 9.5rem;
+  gap: var(--s-5);
+  padding: clamp(0.9rem, 1.6vw, 1.4rem) var(--s-4);
+  border-top: 1px solid var(--line);
+  cursor: default;
+  transition: color 0.45s var(--e-expo);
+}
+/* La terre cuite monte dans la ligne, du bas, comme le menu descend. */
+.svc__row::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: var(--gold);
+  transform: scaleY(0); transform-origin: 50% 100%;
+  transition: transform 0.6s var(--e-expo);
+}
+
+@media (hover: hover) {
+  .svc__row:hover { color: var(--basalt); }
+  .svc__row:hover::before { transform: scaleY(1); }
+}
+
+@media (max-width: 56rem) {
+  .svc__row { grid-template-columns: auto minmax(0, 1fr); row-gap: var(--s-2); }
+}
+
+.about__fig { margin: 0; overflow: hidden; aspect-ratio: 1; background: var(--night-2); }
+.about__fig img { width: 100%; height: 100%; object-fit: cover; scale: 1.12; will-change: transform; }
+
+/* ═══════════════════ POURQUOI ═══════════════════ */
+
+.why__item { padding-top: var(--s-5); border-top: 1px solid var(--line); }
+
+.why__item h3 { color: var(--cream); }
+
+.sheet__in {
+  --dim: 0;
+  position: relative;
+  display: grid; gap: var(--s-4) var(--s-6);
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr auto;
+  min-height: min(64vh, 40rem);
+  padding: clamp(1.1rem, 2.2vw, 2.2rem);
+  background: var(--cream); color: var(--basalt);
+  transform-origin: 50% 0;
+  box-shadow: 0 -26px 70px -34px rgb(0 0 0 / 0.75);
+  cursor: zoom-in;
+  will-change: transform;
+}
+.sheet__in::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: var(--basalt); opacity: var(--dim);
+}
+
+@media (max-width: 40rem) {
+  .sheet__in { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; min-height: 0; }
+}
+
+.ring__cyl {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  white-space: nowrap;
+  font-family: var(--ff-d);
+  font-variation-settings: 'wdth' 62, 'wght' 800; font-weight: 800;
+  font-size: clamp(4.6rem, 14vw, 13rem); line-height: 1; text-transform: uppercase;
+  transform-style: preserve-3d;
+}
+
+.ring__ch {
+  position: absolute; left: 50%; top: 50%;
+  backface-visibility: hidden;
+  transition: color 0.45s var(--e-expo);
+}
+
+.cam__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cam__mat { fill: var(--night); }
+.cam__cta {
+  position: absolute; left: var(--hx, 68%); top: var(--hy, 53%);
+  translate: -50% -50%; margin: 0;
+}
+.cam__btn {
+  display: inline-block; padding: 0.95em 1.7em;
+  border: 1px solid color-mix(in srgb, var(--cream) 55%, transparent);
+  background: color-mix(in srgb, var(--night) 62%, transparent);
+  color: var(--cream); white-space: nowrap;
+}
+@media (max-width: 48rem) {
+  .cam__btn { padding: 0.7em 1.05em; font-size: 0.5625rem; }
+}
+
+.lens__scale {
+  position: relative;
+  display: flex; align-items: flex-end; gap: 7px;
+  height: 30px; pointer-events: auto;
+}
+.lens__min {
+  flex: none; width: 1px; height: 9px;
+  background: color-mix(in srgb, var(--cream) 34%, transparent);
+}
+.lens__maj {
+  position: relative; flex: none;
+  width: 1.5px; height: 18px; padding: 0; border: 0;
+  background: color-mix(in srgb, var(--cream) 58%, transparent);
+  cursor: pointer;
+  transition: background 0.3s var(--e-expo), height 0.4s var(--e-expo);
+}
+.lens__maj::before { content: ''; position: absolute; inset: -14px -7px -8px; }
+.lens__maj::after {
+  content: '[\00a0' attr(data-label) '\00a0]';
+  position: absolute; left: 50%; bottom: calc(100% + 18px);
+  translate: -50% 5px; opacity: 0; pointer-events: none;
+  white-space: nowrap;
+  font-family: var(--ff-m); font-stretch: 87.5%;
+  font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--cream);
+  transition: opacity 0.3s var(--e-expo), translate 0.5s var(--e-expo);
+}
+.lens__maj:hover, .lens__maj:focus-visible, .lens__maj.is-on { background: var(--cream); }
+.lens__maj:hover { height: 22px; }
+.lens__maj:hover::after, .lens__maj:focus-visible::after { opacity: 1; translate: -50% 0; }
+.lens__maj:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.lens__idx {
+  position: absolute; left: 0; bottom: 0;
+  width: 2px; height: 30px; margin-left: -1px;
+  background: var(--gold);
+  pointer-events: none;
+}
+
+@media (max-width: 48rem) {
+  .lens__scale { gap: 5px; }
+}
+
+
 .home {
   --hm-y: clamp(4.5rem, 2.9rem + 5.4vw, 8rem);
   --hm-gap: clamp(2rem, 1rem + 3.4vw, 5rem);
@@ -814,8 +1223,6 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 @media (max-width: 40rem) { .hm-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); } }
 
 
-
-
 /* ═══════════════════ LE PIED ═══════════════════
    Plus de fiche ni d'échelle fixées en bas de l'écran : le pied de page
    n'a plus à leur laisser la place. */
@@ -1590,3 +1997,14 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
 .hm-vf__c--bl { border-bottom-width: 1.5px; border-left-width: 1.5px; }
 .hm-vf__c--br { border-bottom-width: 1.5px; border-right-width: 1.5px; }
 .hm-vf.is-btn .hm-vf__c { border-color: var(--gold-lt); }
+
+
+/* ─────────────── LES PETITES ÉTIQUETTES SUR TÉLÉPHONE (F23, 18/10/2026) ───────────────
+   Sous 40 rem, `--fs-nano` passe de 11 à 12 px (tokens.css). Les listes
+   « ce que ça couvre » des services gagnaient une ligne : on resserre
+   l'interlettrage, rien d'autre. L'étiquette des films, écrite à 10 px, prend
+   la même taille de 12 px que les autres. */
+@media (max-width: 40rem) {
+  .sv__covers { letter-spacing: 0.04em; }
+  .hm-film__st { font-size: var(--fs-nano); }
+}

@@ -3,8 +3,9 @@
  *
  * La même coquille que les autres pages (barre, index, curseur, volet,
  * thème, révélations), plus le vocabulaire des divisions :
- *   heroIn()        l'ouverture : les mots du titre montent de leur masque,
- *                   puis la phrase, les appels et les repères ;
+ *   heroIn()        l'ouverture : les mots du titre montent de leur masque
+ *                   (la phrase, les appels et les repères montent en CSS,
+ *                   division.css) ;
  *   spotlight()     la lumière de la division suit le curseur sur les cartes ;
  *   stepsLine()     le filet du processus se remplit au défilement et allume
  *                   chaque étape qu'il atteint ;
@@ -22,11 +23,13 @@ import './scroll.js';
 import { startClocks } from './clock.js';
 import { cursor, indexPanel, bar, reduced } from './motion.js';
 import { initReveals, initMagnets, markReveals, markMagnets } from './reveal.js';
+import { pauseOffscreen } from './offscreen.js';
 import { initWipe } from './wipe.js';
 import { initViewer } from './viewer.js';
 import { applyPalette } from './palette.js';
 import { initInquiries } from './inquiry.js';
 import { initAccordion } from './services.js';
+import { splitWords } from './split-words.js';
 import { byCategory, STATUS, ROLES } from '../data/portfolio.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -34,48 +37,24 @@ gsap.registerPlugin(ScrollTrigger);
 export const LITE = matchMedia('(pointer: coarse)').matches;
 
 /* ─────────────── L'ouverture ─────────────── */
-export function splitWords(el) {
-  if (!el || el.dataset.split) return [];
-  el.dataset.split = '1';
-  const words = [];
-  const walk = (node) => {
-    for (const child of [...node.childNodes]) {
-      if (child.nodeType === 3) {
-        const frag = document.createDocumentFragment();
-        child.textContent.split(/(\s+)/).forEach((part) => {
-          if (!part) return;
-          if (/^\s+$/.test(part)) { frag.append(document.createTextNode(' ')); return; }
-          const mask = document.createElement('span');
-          mask.className = 'dv-w';
-          mask.style.cssText = 'display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:0.08em;margin-bottom:-0.08em';
-          const inner = document.createElement('span');
-          inner.style.display = 'inline-block';
-          inner.textContent = part;
-          mask.append(inner);
-          frag.append(mask);
-          words.push(inner);
-        });
-        child.replaceWith(frag);
-      } else if (child.nodeType === 1 && child.tagName !== 'BR') walk(child);
-    }
-  };
-  walk(el);
-  return words;
-}
+// `splitWords` vit dans son module (l'accueil le prend là) ; il reste
+// exporté d'ici pour les pages qui l'importent du socle (film.js).
+export { splitWords };
 
+/* Les mots du titre montent de leur masque. Le reste de l'ouverture
+   (`[data-in]` : surtitre, phrase, appels, repères) monte en CSS, sans
+   attendre le script (division.css, F08) : la timeline rendue ne porte plus
+   que les mots — events.js s'y accroche pour allumer ses faisceaux. */
 export function heroIn(hero = document.querySelector('.dv-hero')) {
   const root = document.documentElement;
   if (!hero) { root.classList.add('dv-in'); return null; }
   const h1 = hero.querySelector('.dv-h1');
-  const items = hero.querySelectorAll('[data-in]');
   if (reduced()) { root.classList.add('dv-in'); return null; }
   const words = splitWords(h1);
   gsap.set(words, { yPercent: 115 });
-  gsap.set(items, { autoAlpha: 0, y: 22 });
   root.classList.add('dv-in');
   return gsap.timeline({ defaults: { ease: 'expo.out' } })
-    .to(words, { yPercent: 0, duration: 1.35, stagger: 0.06 }, 0.15)
-    .to(items, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.08, ease: 'power3.out', clearProps: 'transform,opacity,visibility' }, 0.45);
+    .to(words, { yPercent: 0, duration: 1.35, stagger: 0.06 }, 0.15);
 }
 
 /* ─────────────── La lumière qui suit le curseur ─────────────── */
@@ -196,6 +175,8 @@ export function bootDivision({ hero = true } = {}) {
   stepsLine();
   drift();
   quickBar();
+  // Les boucles CSS des sections hors de l'écran se mettent en pause.
+  pauseOffscreen('main > *, main > .pin-spacer > *, .ftr');
   requestAnimationFrame(() => ScrollTrigger.refresh());
   watchHeight();
 }

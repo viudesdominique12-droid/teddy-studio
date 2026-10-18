@@ -148,6 +148,11 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 .pf-screen.is-paused .pf-screen__ticks .is-on i::after { animation-play-state: paused; }
 @keyframes pf-tick { to { transform: none; } }
 .pf-screen__ticks button:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 2px; border-radius: 0.2rem; }
+/* La cible au doigt : 44 px de haut, invisible, sur toute la largeur de la
+   jauge ; au doigt, 8 px entre deux jauges. */
+.pf-screen__ticks button { position: relative; }
+.pf-screen__ticks button::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2.75rem; translate: 0 -50%; }
+@media (pointer: coarse) { .pf-screen__ticks { gap: 0.5rem; } }
 
 .pf-screen__cap {
   order: 3;
@@ -614,6 +619,11 @@ body[data-page='portfolio'] .ftr:not(.is-live)::before { animation-play-state: p
 }
 .pf-soon__l a:hover, .pf-soon__l a:focus-visible { transform: translateY(-2px); background: color-mix(in srgb, var(--c) 16%, var(--night-2)); }
 .pf-soon__l a:focus-visible { outline: 2px solid var(--pf-lamp); outline-offset: 2px; }
+/* Au doigt : des onglets de 44 px, à 8 px l'un de l'autre. */
+@media (pointer: coarse) {
+  .pf-soon__l { gap: 0.5rem; }
+  .pf-soon__l a { min-height: 2.75rem; }
+}
 .pf-soon__pull {
   position: absolute; left: 50%; bottom: 1rem; width: 3.6rem; height: 0.45rem; translate: -50% 0; border-radius: 0 0 0.45rem 0.45rem;
   background: linear-gradient(180deg, color-mix(in srgb, var(--pf-brass) 85%, #fff), color-mix(in srgb, var(--pf-brass) 55%, #000));
@@ -973,17 +983,21 @@ body[data-page='portfolio'] .pf-index .dv-next a::after {
    Le charbon de la page, la lampe au ras du sol, et une lumière qui longe
    le filet du haut. La barre du haut et le menu ne changent pas. */
 body[data-page='portfolio'] .ftr {
+  overflow-x: clip;   /* la lumière du filet court plus large que la page */
   border-top-color: color-mix(in srgb, var(--pf-lamp) 14%, transparent);
   background-image:
     radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--pf-lamp) 6%, transparent), transparent 70%),
     radial-gradient(30% 30% at 88% 100%, color-mix(in srgb, var(--dv) 9%, transparent), transparent 70%);
 }
+/* La lumière glisse par une transformation (le compositeur s'en charge) et
+   non plus par la position du fond, qui repeignait la page à chaque image :
+   la bande fait 2,5 fois la largeur et part de −60 % (le même trajet). */
 body[data-page='portfolio'] .ftr::before {
-  content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; pointer-events: none;
-  background: linear-gradient(90deg, transparent 0 42%, rgb(255 241 214 / 0.75) 50%, transparent 58% 100%) 0 0 / 250% 100% no-repeat;
+  content: ''; position: absolute; left: 0; top: -1px; width: 250%; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0 42%, rgb(255 241 214 / 0.75) 50%, transparent 58% 100%);
   animation: pf-sweep 10s ease-in-out infinite;
 }
-@keyframes pf-sweep { from { background-position: 100% 0; } to { background-position: 0% 0; } }
+@keyframes pf-sweep { from { transform: translateX(-60%); } to { transform: none; } }
 body[data-page='portfolio'] .ftr__wl .ln--b { color: var(--dv-lt); }
 
 /* ─────────────── Sans mouvement : tout est là, immobile ─────────────── */

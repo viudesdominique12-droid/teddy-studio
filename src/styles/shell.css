@@ -101,14 +101,6 @@ img.logo__w {
 .burger[aria-expanded='true'] .burger__b:nth-child(2) { transform: translateX(3rem); opacity: 0; }
 .burger[aria-expanded='true'] .burger__b:nth-child(3) { transform: translateY(-0.625rem) rotate(-45deg); }
 
-.bar__clock {
-  margin-left: auto; display: flex; align-items: center; gap: 0.5em;
-  font-variant-numeric: tabular-nums;
-}
-.bar__city { opacity: 0.62; text-transform: uppercase; letter-spacing: 0.1em; }
-.bar__tel { letter-spacing: 0.02em; }
-.bar__tel:hover { color: var(--go); }
-
 /* Un producteur doit pouvoir engager la conversation depuis n'importe quel
    écran. Les studios créatifs peuvent se permettre un simple lien ; un fixer
    qui vend de la logistique, non. */
@@ -123,10 +115,8 @@ img.logo__w {
 }
 .bar__cta:hover { background: var(--go-press); }
 
-@media (max-width: 64rem) { .bar__tel { display: none; } }
 @media (max-width: 52rem) {
   .bar { gap: var(--s-3); }
-  .bar__city { display: none; }
   .bar__cta { padding: 0.55em 0.8em; }
 }
 @media (max-width: 30rem) {
@@ -325,6 +315,15 @@ img.logo__w {
 .ftr__touch p { font-size: var(--fs-sm); color: var(--fg-2); margin-bottom: var(--s-3); }
 .ftr__hours { color: var(--fg-2); }
 
+/* Au doigt, chaque lien du pied de page devient une cible de 40 px et plus :
+   seulement du rembourrage, la même typographie et les mêmes couleurs. Les
+   lignes s'écartent ; à la souris, rien ne bouge (F21, 18/10/2026). */
+@media (max-width: 40rem), (pointer: coarse) {
+  .ftr__nav a, .ftr__touch a, .ftr__soc a { display: inline-block; padding-block: 0.6rem; }
+  .ftr__soc a { min-width: 44px; padding-block: 0.7rem; text-align: center; }
+  .ftr__nav li { margin-bottom: 0; }
+}
+
 /* Le dessin du mortier au-dessus du nom a été retiré le 26/09/2026 à la
    demande de Dominique (« le logo mal fait ») : le nom géant en tient lieu. */
 
@@ -337,8 +336,6 @@ img.logo__w {
 }
 .ftr__legal strong { font-weight: 400; color: var(--fg-2); }
 .ftr__loc { font-variant-numeric: tabular-nums; }
-
-html.is-booting body { overflow: hidden; }
 
 /* ═══════════ LE CHEVRON (transition de page) ═══════════
    Deux panneaux de 175 vw, découpés une fois pour toutes : un rectangle de
@@ -370,70 +367,6 @@ html.is-wiping::before {
 
 @media (prefers-reduced-motion: reduce) { .wipe { display: none; } }
 
-/* ═══════════ LA BARRE DE MONTAGE ═══════════
-   Un banc de montage en bas de page : le numéro de scène à gauche, la bobine
-   au milieu, le timecode à droite. La largeur de chaque segment est la hauteur
-   RÉELLE de sa section — c'est ce qui empêche la barre de mentir. */
-.tl {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
-  display: grid; grid-template-columns: auto 1fr auto;
-  align-items: center; gap: var(--s-4);
-  padding: 0.55rem var(--pad-x) 0.6rem;
-  background: color-mix(in oklab, var(--night-2) 88%, transparent);
-  border-top: 1px solid var(--line-2);
-  backdrop-filter: blur(14px);
-  font-size: var(--fs-nano);
-  letter-spacing: var(--ls-eyebrow);
-  text-transform: uppercase;
-  color: var(--cream-3);
-}
-.tl__scene { margin: 0; white-space: nowrap; color: var(--cream-2); }
-.tl__tc    { margin: 0; white-space: nowrap; color: var(--gold); font-variant-numeric: tabular-nums; }
-
-.tl__strip {
-  position: relative;
-  display: flex; gap: 2px;
-  margin: 0; padding: 0; list-style: none;
-  min-width: 0;
-}
-.tl__seg { position: relative; min-width: 2px; }
-.tl__seg button {
-  display: block; width: 100%; height: 0.75rem;
-  border: 0; padding: 0; margin: 0; cursor: pointer;
-  background: var(--line);
-  /* Le nom reste dans le DOM pour les lecteurs d'écran, mais la barre ne
-     l'affiche pas : dix mots sur une bobine seraient illisibles. */
-  font-size: 0; color: transparent;
-  transition: background var(--d-settle) var(--e-settle),
-              height var(--d-settle) var(--e-response);
-}
-.tl__seg:hover button { background: var(--cream-3); height: 1rem; }
-.tl__seg.is-on button { background: var(--gold); height: 1rem; }
-.tl__seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-
-/* La tête de lecture : un trait fin qui traverse la bobine. */
-.tl__head {
-  position: absolute; top: -0.2rem; bottom: -0.2rem; left: 0;
-  width: 1px; background: var(--cream);
-  box-shadow: 0 0 10px 1px #eae0d066;
-  pointer-events: none;
-  /* La position est écrite par `timeline.js` en `translate3d`, jamais en
-     `left` : c'est le seul élément du site déplacé à chaque image de scroll. */
-  transform: translate3d(-0.5px, 0, 0);
-}
-
-/* La fiche de service remonte au-dessus de la bobine. */
-.has-tl .dock { bottom: calc(var(--s-4) + 2.2rem); }
-
-@media (max-width: 600px) {
-  .tl { gap: var(--s-3); padding-inline: var(--s-4); }
-  .tl__seg button { height: 0.6rem; }
-  .tl__seg:hover button, .tl__seg.is-on button { height: 0.85rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tl__seg button { transition: none; }
-}
-
 /* ═══════════ LE COÛT DU VERRE SUR PETIT ÉCRAN ═══════════
    `backdrop-filter` est la propriété la plus chère du CSS : le navigateur
    recopie ce qu'il y a DERRIÈRE l'élément, le floute, puis compose — à chaque
@@ -445,14 +378,11 @@ html.is-wiping::before {
    On les rend donc OPAQUES en dessous de 768 px : l'effet disparaît, la
    lisibilité ne bouge pas — le fond était déjà à 88-90 % d'opacité. */
 @media (max-width: 767px) {
-  .bar.is-paper,
-  .tl {
+  .bar.is-paper {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
   .bar.is-paper { background: color-mix(in srgb, var(--bg) 97%, transparent); }
-  .tl { background: color-mix(in oklab, var(--night-2) 97%, transparent); }
 }
-
 
 

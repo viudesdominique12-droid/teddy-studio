@@ -59,7 +59,7 @@ em { font-style: normal; }
 }
 .skip:focus { transform: translateY(0); }
 
-.u-sr, .sr-flat {
+.u-sr {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
   clip-path: inset(50%); white-space: nowrap; border: 0;
@@ -154,33 +154,6 @@ em { font-style: normal; }
 .cursor[data-state='drag'] .cursor__d,
 .cursor[data-state='drag'] .cursor__r { opacity: 0; }
 
-/* ── Le preloader ──
-   Pas d'amorce 3-2-1 : une seule donnée se résout, l'horloge d'Addis,
-   et quand elle se pose la marque verte apparaît. */
-.pre {
-  position: fixed; inset: 0; z-index: 400;
-  display: grid; place-items: center;
-  background: var(--bg);
-}
-.pre__in { text-align: center; }
-.pre__k { color: var(--fg-3); margin-bottom: var(--s-3); }
-.pre__clock {
-  font-size: clamp(2.6rem, 9vw, 5.5rem);
-  font-variation-settings: 'wdth' 100, 'wght' 300;
-  letter-spacing: -0.02em;
-  color: var(--fg);
-  line-height: 1;
-}
-.pre__go {
-  display: flex; align-items: center; justify-content: center; gap: var(--s-2);
-  margin-top: var(--s-5);
-  font-family: var(--ff-m); font-size: var(--fs-mono);
-  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
-  color: var(--go-text);
-  opacity: 0;
-}
-html.is-loading body { overflow: hidden; }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 1ms !important;
@@ -188,6 +161,16 @@ html.is-loading body { overflow: hidden; }
     transition-duration: 1ms !important;
   }
 }
+
+/* ── HORS CHAMP, ON COUPE LE MOTEUR (F07, 18/10/2026) ──
+   Une animation CSS infinie tourne même quand personne ne la voit : les
+   points qui pulsent, le défilé des logos… Le JavaScript (`pauseOffscreen`)
+   pose `data-off` sur les sections et le pied de page qui sont loin de
+   l'écran ; tout ce qu'ils contiennent se fige, et repart à l'endroit exact
+   où il s'était arrêté dès qu'ils reviennent. La barre et le menu, qui ne
+   portent jamais `data-off`, restent vivants. */
+[data-off], [data-off]::before, [data-off]::after,
+[data-off] *, [data-off] *::before, [data-off] *::after { animation-play-state: paused !important; }
 
 
 /* ══════════════ TRANSITIONS DE PAGE ══════════════
@@ -205,12 +188,6 @@ html.is-loading body { overflow: hidden; }
    (`src/js/reveal.js`). Aucune règle CSS ne cache plus rien au repos —
    sans JS, ou si un déclencheur est manqué, le contenu est simplement là.
    Une animation ne conditionne jamais l'existence. */
-
-/* ══════════════ LE CIEL ══════════════
-   Quatre calques fixes derrière toute la page. Les étoiles sont peintes une
-   seule fois ; seuls les deux calques de scintillement bougent, et c'est le
-   compositor qui s'en charge — coût JS nul, quel que soit le nombre d'étoiles. */
-
 
 /* ── LA PROFONDEUR ──
    Le fond n'est pas une couleur, c'est un CALQUE. Le même vert `#182d19`,
@@ -258,46 +235,17 @@ html.is-loading body { overflow: hidden; }
       transparent 58%);
 }
 
-
-/* ══════════════ TRANSITIONS DE PAGE ══════════════
-   Elles vivent entièrement dans `src/js/wipe.js` : un chevron à proue qui
-   couvre puis découvre.
-
-   La voie native (`@view-transition { navigation: auto }`) a été retirée après
-   mesure : `onpageswap` est exposé par des navigateurs où la transition
-   inter-documents ne part jamais. La détection passait, le volet JS se mettait
-   en retrait — et il n'y avait plus aucune transition, silencieusement. Un
-   seul système, identique partout. */
-
-/* ── Révélations ──
-   Il n'y a plus qu'un système, et il est entièrement en JS : le blur-in
-   (`src/js/reveal.js`). Aucune règle CSS ne cache plus rien au repos —
-   sans JS, ou si un déclencheur est manqué, le contenu est simplement là.
-   Une animation ne conditionne jamais l'existence. */
-
-/* ══════════════ LE CIEL ══════════════
-   Quatre calques fixes derrière toute la page. Les étoiles sont peintes une
-   seule fois ; seuls les deux calques de scintillement bougent, et c'est le
-   compositor qui s'en charge — coût JS nul, quel que soit le nombre d'étoiles. */
-
-
-
-@media (prefers-reduced-motion: no-preference) {
-  .sky__tw-a { animation: tw-a 4.1s var(--e-inout) -1.3s infinite alternate; }
-  .sky__tw-b { animation: tw-b 5.7s var(--e-inout) -3.1s infinite alternate; }
-}
-@keyframes tw-a { from { opacity: 0.42; } to { opacity: 1; } }
-@keyframes tw-b { from { opacity: 1; } to { opacity: 0.5; } }
-
 /* Le contenu vit au-dessus du ciel. */
-.bar, main, .ftr, .dock, .index, .tl { position: relative; z-index: 1; }
-.tl { position: fixed; }
+.bar, main, .ftr, .dock, .index { position: relative; z-index: 1; }
 .bar { z-index: 90; }
 .index { z-index: 150; }
 
-/* Le gate du hero : le contenu est masqué jusqu'à ce que le JS ait posé
-   les états de départ. Sans lui, le texte apparaît un frame puis s'efface. */
-html.hero-gate [data-hero] { opacity: 0; }
+/* Ce qui dépasse sur le côté (un tampon pas encore posé, un sceau qui entre)
+   élargissait la page sur téléphone : elle glissait de gauche à droite et le
+   navigateur la rapetissait. `clip` coupe sans créer de zone de défilement,
+   donc le `sticky` et les scènes épinglées continuent de fonctionner (F09). */
+main { overflow-x: clip; }
+
 
 /* ═══════════ LE GRAIN ═══════════
    La pellicule, en une pseudo-élément. Deux tuiles du même bruit, décalées de

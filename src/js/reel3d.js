@@ -53,11 +53,18 @@ const rgba = (hex, a) => {
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
 };
 
+/* La sonde WebGL : un seul essai par page, et le contexte d'essai est rendu
+   tout de suite (sur iPhone, les contextes vivants sont comptés). */
+let hasGL = null;
 function webgl() {
+  if (hasGL !== null) return hasGL;
   try {
     const c = document.createElement('canvas');
-    return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
-  } catch { return false; }
+    const ctx = c.getContext('webgl2') || c.getContext('webgl');
+    hasGL = Boolean(ctx);
+    ctx?.getExtension('WEBGL_lose_context')?.loseContext();
+  } catch { hasGL = false; }
+  return hasGL;
 }
 
 export const reelAvailable = (root = document.querySelector('[data-reel]')) =>
@@ -78,7 +85,9 @@ function readPlaces(section) {
       region: li.dataset.region || '',
       about: li.querySelector('.hm-loc__about')?.textContent.trim() || '',
       href: li.querySelector('a')?.getAttribute('href') || '/locations.html',
-      tex: `${base}-1200.webp`,
+      // Sur téléphone, la vue du milieu fait ~400 pixels réels de large : la
+      // photo de 640 y suffit (celle de 1200 sur ordinateur).
+      tex: LITE ? `${base}-640.webp` : `${base}-1200.webp`,
       big: `${base}-1920.webp`
     };
   });
@@ -98,15 +107,19 @@ function loadImage(src) {
 
 /* La vue d'un lieu, peinte une fois : la photo aux coins arrondis, un voile
    léger en pied, le nom, l'altitude et un petit bouton fléché. Le texte est
-   DANS l'image : il ondule avec la bande, comme sur la référence. */
+   DANS l'image : il ondule avec la bande, comme sur la référence.
+   Sur téléphone, peinte en 512 × 342 au lieu de 1024 × 683 (la vue n'y
+   occupe guère plus à l'écran) : quatre fois moins à envoyer à la carte
+   graphique. Tout le dessin suit la même échelle `k`. */
 function paintCard(THREE, img, place, n, maxAniso, th) {
-  const W = 1024;
-  const H = 683;
+  const W = LITE ? 512 : 1024;
+  const H = LITE ? 342 : 683;
+  const k = W / 1024;
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const x = c.getContext('2d');
   x.beginPath();
-  if (x.roundRect) x.roundRect(0, 0, W, H, 24); else x.rect(0, 0, W, H);
+  if (x.roundRect) x.roundRect(0, 0, W, H, 24 * k); else x.rect(0, 0, W, H);
   x.clip();
   const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
   const dw = img.naturalWidth * s;
@@ -124,21 +137,23 @@ function paintCard(THREE, img, place, n, maxAniso, th) {
   // dessous, et un petit bouton rond fléché en bas à droite.
   x.textBaseline = 'alphabetic';
   x.fillStyle = th.ink;
-  x.font = `500 40px ${th.text}`;
-  x.fillText(place.name, 44, H - (place.altitude ? 74 : 48));
+  x.font = `500 ${40 * k}px ${th.text}`;
+  x.fillText(place.name, 44 * k, H - (place.altitude ? 74 : 48) * k);
   if (place.altitude) {
     x.fillStyle = rgba(th.ink, 0.72);
-    x.font = `400 19px ${th.mono}`;
-    x.fillText(place.altitude.toUpperCase(), 46, H - 42);
+    x.font = `400 ${19 * k}px ${th.mono}`;
+    x.fillText(place.altitude.toUpperCase(), 46 * k, H - 42 * k);
   }
-  const bx = W - 70;
-  const by = H - 62;
+  const bx = W - 70 * k;
+  const by = H - 62 * k;
+  const a = 9 * k;
+  const b = 7 * k;
   x.fillStyle = rgba(th.shade, 0.55);
-  x.beginPath(); x.arc(bx, by, 26, 0, Math.PI * 2); x.fill();
+  x.beginPath(); x.arc(bx, by, 26 * k, 0, Math.PI * 2); x.fill();
   x.strokeStyle = rgba(th.ink, 0.9);
-  x.lineWidth = 2.5;
+  x.lineWidth = 2.5 * k;
   x.lineCap = 'round';
-  x.beginPath(); x.moveTo(bx - 9, by); x.lineTo(bx + 9, by); x.moveTo(bx + 2, by - 7); x.lineTo(bx + 9, by); x.lineTo(bx + 2, by + 7); x.stroke();
+  x.beginPath(); x.moveTo(bx - a, by); x.lineTo(bx + a, by); x.moveTo(bx + 2 * k, by - b); x.lineTo(bx + a, by); x.lineTo(bx + 2 * k, by + b); x.stroke();
 
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
@@ -300,7 +315,8 @@ export function initReel(root = document.querySelector('[data-reel]')) {
     if (started) return;
     started = true;
     try {
-      const THREE = await import('three');
+      // Seulement les classes dont la scène se sert (`three-lite.js`).
+      const THREE = await import('./three-lite.js');
       await breathe();
       let th = themeOf(stage);
       const fontsOf = (t) => Promise.all([
@@ -309,7 +325,9 @@ export function initReel(root = document.querySelector('[data-reel]')) {
       ].filter(Boolean)).catch(() => {});
       await fontsOf(th);
 
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+      // Sur écran tactile, sans lissage multi-échantillons (MSAA), comme le
+      // matériel : la petite puce graphique d'un téléphone le paie à chaque image.
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: !LITE, alpha: true, powerPreference: 'high-performance' });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LITE ? 1.25 : 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       await breathe();
@@ -344,15 +362,23 @@ export function initReel(root = document.querySelector('[data-reel]')) {
       three = { THREE, renderer, scene, cam, drum, cards: [], geo };
       size();
 
-      const aniso = renderer.capabilities.getMaxAnisotropy();
+      const max = renderer.capabilities.getMaxAnisotropy();
+      const aniso = LITE ? Math.min(4, max) : max;
       // Les vues arrivent dans l'ordre : celle qu'on voit d'abord est prête la première.
       // Une vue par image : peinte, envoyée tout de suite à la carte
       // graphique (hors champ), puis on respire. Sinon les neuf textures
       // partaient d'un coup à la première image à l'écran : un arrêt de
-      // 180 à 320 ms à l'arrivée sur les lieux, mesuré.
+      // 180 à 320 ms à l'arrivée sur les lieux, mesuré. Sur téléphone, la
+      // préparation commence plus tôt (`early`) et chaque vue attend un
+      // moment où la page ne fait rien (`requestIdleCallback`) : elle n'est
+      // plus faite pendant le défilement d'approche.
+      const quiet = LITE && window.requestIdleCallback
+        ? () => new Promise((done) => window.requestIdleCallback(() => done(), { timeout: 600 }))
+        : () => Promise.resolve();
       for (const p of places) {
         try {
           const img = await loadImage(p.tex);
+          await quiet();
           const tex = paintCard(THREE, img, p, N, aniso, th);
           renderer.initTexture(tex);
           const g = new THREE.CylinderGeometry(R, R, h, 72, 1, true, p.i * step - arc / 2, arc);
@@ -406,6 +432,22 @@ export function initReel(root = document.querySelector('[data-reel]')) {
   new IntersectionObserver((entries, io) => {
     if (entries.some((e) => e.isIntersecting)) { start(); io.disconnect(); }
   }, { rootMargin: '150% 0px' }).observe(stage);
+  /* Sur téléphone, on n'attend pas l'approche : dès que le premier objet du
+     matériel est posé (`kit3d:ready`), ou une fois sa section passée s'il n'en
+     montre aucun, les vues se préparent tranquillement, pendant les temps
+     morts. La scène du matériel garde sa ligne et sa puce graphique pour elle
+     d'abord. */
+  if (LITE) {
+    document.addEventListener('kit3d:ready', () => start(), { once: true });
+    const kit = document.querySelector('[data-kit3d]')?.closest('section');
+    if (kit) {
+      new IntersectionObserver(([e], io) => {
+        if (e.isIntersecting || e.boundingClientRect.top > 0) return;
+        start();
+        io.disconnect();
+      }).observe(kit);
+    }
+  }
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(stage);
   gsap.ticker.add((time) => render(time * 1000));
   window.addEventListener('resize', () => requestAnimationFrame(size));

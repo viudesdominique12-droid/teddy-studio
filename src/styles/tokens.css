@@ -141,7 +141,10 @@
   --s-8: clamp(4.5rem, 3.86rem + 1.90vw, 5.75rem);
   --s-9: clamp(6.5rem, 5.48rem + 3.05vw, 8.5rem);
 
-  --pad-x: clamp(1.25rem, 0.8036rem + 1.831vw, 3.5rem);
+  /* La marge de côté ne descend jamais sous l'encoche : en paysage, sur un
+     iPhone, le logo, le menu et le texte restent hors de la zone masquée
+     (F20). En portrait et sur ordinateur, les deux `env()` valent 0. */
+  --pad-x: max(clamp(1.25rem, 0.8036rem + 1.831vw, 3.5rem), env(safe-area-inset-left), env(safe-area-inset-right));
   --sec-y: clamp(4.5rem, 2.9rem + 6.5vw, 9rem);
   --maxw: 90rem;
   --measure: 62ch;
@@ -192,6 +195,12 @@
   :root { --d-reveal: 1ms; --d-hero: 1ms; --d-micro: 1ms; --blur-in: 0px; }
 }
 
+/* Sur téléphone, la plus petite étiquette passe de 11 à 12 px : c'est le
+   seuil sous lequel une capitale mono se déchiffre au lieu de se lire (F23). */
+@media (max-width: 40rem) {
+  :root { --fs-nano: 0.75rem; }
+}
+
 /* ─────────────── Rôles ───────────────
    Le site n'a plus qu'un monde : la nuit verte. Ces rôles font le pont avec
    les modules déjà écrits, sans les réécrire un par un. */
@@ -226,31 +235,4 @@
 
   --hdr-h: var(--bar-h);
   --maxw: 90rem;
-}
-
-/* ═══════════════════════ LES MONDES ═══════════════════════
-   Tout le site dérive de neuf couleurs : trois fonds, trois encres, trois
-   accents. Changer de monde ne demande donc que de les réécrire — la couche
-   sémantique (`--bg`, `--fg`, `--go`…) suit toute seule, et aucun module n'a
-   à être touché.
-
-   On les essaie en ajoutant `?palette=bleu`, `violet`, `rouge` ou `mono` à
-   l'adresse. Sans paramètre, c'est le vert d'origine.
-
-   Chaque accent a été choisi pour rester lisible sur SON fond : le rapport de
-   contraste encre/fond et accent/fond est vérifié pour chacun. */
-
-/* ═══════════ LA COMPARAISON ═══════════
-   Un seul monde alternatif, et c'est l'ANCIEN : `?palette=vert-ancien`.
-   Il n'est là que pour que le client puisse comparer côte à côte avant de
-   valider. Les quatre autres mondes (bleu, violet, rouge, mono) sont partis :
-   six palettes interchangeables sur un site client, c'est l'aveu d'une
-   direction artistique non tranchée — et la mesure a tranché. */
-[data-palette='vert-ancien'] {
-  --night:   #182d19;   --night-2: #101b13;   --night-3: #1e3720;
-  --cream:   #eae0d0;   --cream-2: #eae0d0b8; --cream-3: #eae0d073;
-  --gold:    #ecc779;   --gold-lt: #ffd989;   --gold-dp: #c9a44f;
-  --line:    #ffffff2e; --line-2:  #ffffff17; --line-ui: #ffffff7a;
-  --shadow-border: #ecc77980;  --shadow-light: #ecc77966;
-  --go-soft: #ecc7791f;
 }
