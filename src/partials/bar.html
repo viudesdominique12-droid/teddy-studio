@@ -15,7 +15,7 @@
   </a>
 
   <button class="burger" id="index-open" type="button" aria-expanded="false" aria-controls="index"
-          aria-label="Open and close the index">
+          aria-label="Open the menu">
     <span class="burger__b" aria-hidden="true"></span>
     <span class="burger__b" aria-hidden="true"></span>
     <span class="burger__b" aria-hidden="true"></span>
@@ -52,36 +52,50 @@
   </nav>
 </header>
 
-<!-- L'INDEX : la page de sommaire du dossier. Elle informe avant de router —
-     chaque rubrique porte sa donnée réelle, alignée à droite comme un bordereau. -->
+<!-- LE MENU DU TÉLÉPHONE (18/10/2026). Dominique, sur son iPhone : « le menu
+     est incompréhensible sur mobile, on va le faire beaucoup plus simple :
+     qu'il s'ouvre de manière latérale et donne les options ». Un panneau qui
+     glisse depuis la droite, une liste claire (Services se déplie sur les
+     sept divisions), l'appel « Start a Project », l'appel et WhatsApp. Sur
+     ordinateur, il n'existe pas : la barre porte tous les liens. -->
 <div class="index" id="index" hidden>
-  <div class="index__in" role="dialog" aria-modal="true" aria-label="Index">
+  <div class="index__scrim" data-index-close aria-hidden="true"></div>
+  <div class="index__in" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="index__head">
+      <span class="index__title">Menu</span>
+      <button class="index__x" type="button" data-index-close aria-label="Close the menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
 
     <nav class="index__nav" aria-label="All sections">
-      <a href="/"><span class="index__n" data-roll><span>Home</span></span><span class="index__v mono">open</span></a>
-      <a href="/services.html"><span class="index__n" data-roll><span>Services</span></span><span class="index__v mono">7 divisions</span></a>
-      <a href="/portfolio.html"><span class="index__n" data-roll><span>Portfolio</span></span><span class="index__v mono">selected work</span></a>
-      <a href="/about.html"><span class="index__n" data-roll><span>About Us</span></span><span class="index__v mono">since Tewodros Teshome</span></a>
-      <a href="/contact.html"><span class="index__n" data-roll><span>Contact</span></span><span class="index__v mono">open now &middot; 24/7</span></a>
-      <div class="index__sub" aria-label="Our divisions">
-        <a class="index__sl" href="/live-streaming.html" style="--c:#ff4a3d"><span>01</span>Live Streaming</a>
-        <a class="index__sl" href="/event-organizing.html" style="--c:#f2a93b"><span>02</span>Event Organizing</a>
-        <a class="index__sl" href="/ai-production.html" style="--c:#8f7cff"><span>03</span>AI Production</a>
-        <a class="index__sl" href="/music-production.html" style="--c:#ff5c8a"><span>04</span>Music Production</a>
-        <a class="index__sl" href="/feature-film.html" style="--c:#e8c27a"><span>05</span>Feature Film</a>
-        <a class="index__sl" href="/documentary.html" style="--c:#c98a52"><span>06</span>Documentary</a>
-        <a class="index__sl" href="/equipment-rentals.html" style="--c:#7fb7d9"><span>07</span>Equipment Rentals</a>
-        <a class="index__sl index__sl--x" href="/locations.html">Filming locations</a>
-        <a class="index__sl index__sl--x" href="/vacancy.html">Careers</a>
+      <a class="index__a" href="/">Home</a>
+      <div class="index__grp">
+        <button class="index__a index__more" type="button" aria-expanded="false" aria-controls="index-svc">Services<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div class="index__svc" id="index-svc" hidden>
+          <a class="index__sl" href="/live-streaming.html" style="--c:#ff4a3d"><i aria-hidden="true"></i>Live Streaming</a>
+          <a class="index__sl" href="/event-organizing.html" style="--c:#f2a93b"><i aria-hidden="true"></i>Event Organizing</a>
+          <a class="index__sl" href="/ai-production.html" style="--c:#8f7cff"><i aria-hidden="true"></i>AI Production</a>
+          <a class="index__sl" href="/music-production.html" style="--c:#ff5c8a"><i aria-hidden="true"></i>Music Production</a>
+          <a class="index__sl" href="/feature-film.html" style="--c:#e8c27a"><i aria-hidden="true"></i>Feature Film</a>
+          <a class="index__sl" href="/documentary.html" style="--c:#c98a52"><i aria-hidden="true"></i>Documentary</a>
+          <a class="index__sl" href="/equipment-rentals.html" style="--c:#7fb7d9"><i aria-hidden="true"></i>Equipment Rentals</a>
+          <a class="index__sl index__sl--all" href="/services.html">All services<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        </div>
+      </div>
+      <a class="index__a" href="/portfolio.html">Portfolio</a>
+      <a class="index__a" href="/about.html">About Us</a>
+      <a class="index__a" href="/contact.html">Contact</a>
+      <div class="index__also">
+        <a href="/locations.html">Filming Locations</a>
+        <a href="/vacancy.html">Careers</a>
       </div>
     </nav>
 
     <div class="index__foot">
-      <p class="index__world mono">
-        <span class="go-dot" aria-hidden="true"></span>
-        <span>Addis Ababa &middot; 24/7</span>
-      </p>
-      <a class="btn btn--go" href="/contact.html#inquiry"><span>Start a Project</span></a>
+      <a class="index__cta" href="/contact.html#inquiry">Start a Project<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      <div class="index__reach">
+        <a href="tel:{{phone}}">Call</a>
+        <a href="https://wa.me/{{whatsapp}}" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
     </div>
   </div>
 </div>

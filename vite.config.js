@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 import htmlInclude from './plugins/html-include.js';
-import { identity } from './src/data/site.js';
+import { identity, inquiry } from './src/data/site.js';
 
 export default defineConfig({
   appType: 'mpa',
@@ -19,6 +19,7 @@ export default defineConfig({
       phone: identity.phone,
       phoneDisplay: identity.phoneDisplay,
       email: identity.email,
+      whatsapp: inquiry.whatsapp,
       year: new Date().getFullYear()
     })
   ],

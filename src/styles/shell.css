@@ -137,121 +137,111 @@ img.logo__w {
 /* ─────────────── L'INDEX ───────────────
    Le sommaire d'un classeur : points de conduite, et la donnée à droite. */
 
-/* ── LA TUILE ──
-   Plein écran, en OR. Les liens sont centrés, énormes, et chacun roule sur
-   place : le `<span>` porte une copie de lui-même 1,3 em plus bas
-   (`text-shadow: 0 1.3em 0`), le `li` est en `overflow: hidden`, et on fait
-   monter le texte — il se remplace par sa propre ombre. Une seule déclaration
-   au lieu d'un second élément à synchroniser. */
-.index { position: fixed; inset: 0; z-index: 150; visibility: hidden; }
-/* `hidden` pilote l'existence, `visibility` la peinture : tant que l'attribut
-   n'est pas remis, la tuile doit rester peinte — sinon elle disparaît d'un coup
-   au lieu de remonter. */
+/* ── LE MENU DU TÉLÉPHONE (18/10/2026) ──
+   Dominique, sur iPhone : « le menu est incompréhensible sur mobile, on va le
+   faire beaucoup plus simple : qu'il s'ouvre de manière latérale et donne les
+   options ». Un panneau qui glisse depuis la droite sur un voile sombre : la
+   liste des rubriques en grandes lignes faciles à toucher, Services qui se
+   déplie sur les sept divisions (chacune avec sa couleur), deux liens
+   secondaires, puis l'appel « Start a Project », l'appel et WhatsApp. Il
+   passe au-dessus de la barre (z-index 170) et porte sa propre croix. */
+.index { position: fixed; inset: 0; z-index: 170; visibility: hidden; }
+/* `hidden` pilote l'existence, `visibility` la peinture : le panneau reste
+   peint le temps de repartir, au lieu de disparaître d'un coup. */
 .index:not([hidden]) { visibility: visible; }
 
-/* La barre crée son propre contexte d'empilement à z-90 : le hamburger ne peut
-   pas en sortir tout seul. C'est la BARRE qu'il faut faire passer au-dessus de
-   la tuile, sinon le bouton qui ouvre est recouvert par ce qu'il a ouvert. */
-html.is-locked .bar { z-index: 160; }
-/* Sur la tuile d'or, la barre n'a plus de fond ni d'encre claire : elle passe
-   en encre nuit, et tout ce qui n'est pas la marque ou le hamburger s'efface —
-   un menu ouvert ne doit pas rester encombré par la page qu'il recouvre. */
-html.is-locked .bar {
-  background: none; backdrop-filter: none; -webkit-backdrop-filter: none;
-  border-bottom-color: transparent; color: var(--basalt); text-shadow: none;
-}
-html.is-locked .bar__clock,
-html.is-locked .bar__tel,
-html.is-locked .bar__cta { opacity: 0; pointer-events: none; transition: opacity 0.3s var(--e-response); }
-html.is-locked .logo { color: var(--basalt); }
-html.is-locked .logo__bar { background: var(--basalt); }
-.index__in {
+.index__scrim {
   position: absolute; inset: 0;
-  background: var(--gold);
-  display: flex; flex-flow: column; justify-content: center; align-items: center;
-  padding: calc(var(--bar-h) + var(--s-6)) var(--pad-x) var(--s-7);
+  background: rgb(5 10 6 / 0.62);
+  opacity: 0; transition: opacity 0.35s var(--e-out);
 }
+.index[data-open] .index__scrim { opacity: 1; }
 
-.index__close { display: none; }
+.index__in {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(88vw, 24rem);
+  display: flex; flex-direction: column;
+  padding: max(0.75rem, env(safe-area-inset-top)) 1.25rem max(1.25rem, env(safe-area-inset-bottom));
+  background: var(--night-2); color: var(--cream);
+  box-shadow: -30px 0 60px -20px rgb(0 0 0 / 0.6), inset 1px 0 0 var(--line);
+  overflow-y: auto; overscroll-behavior: contain;
+  transform: translateX(104%);
+  transition: transform 0.42s var(--e-out);
+}
+.index[data-open] .index__in { transform: none; }
 
-.index__nav {
-  display: flex; flex-direction: column; align-items: center;
-  gap: clamp(0.1rem, 0.4vh, 0.5rem);
-  width: 100%;
+.index__head {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 3.5rem; margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line-2);
 }
-.index__nav a {
-  position: relative; overflow: hidden;
-  display: flex; align-items: baseline; gap: 0.6em;
-  padding: 0 0.075em;
-  color: var(--basalt);
-  line-height: 1.12;
+.index__title {
+  font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--cream-3);
 }
-.index__n {
-  display: block;
-  font-family: var(--ff-p);
-  /* Neuf entrées doivent tenir dans une hauteur d'écran, en-tête et pied
-     compris. `vh` plutôt que `vw` : c'est la hauteur qui contraint, pas la
-     largeur. */
-  font-size: clamp(1.35rem, min(5.4vw, 7.4vh), 4.2rem);
-  font-variation-settings: 'opsz' 144, 'wght' 300, 'SOFT' 0, 'WONK' 1;
-  letter-spacing: -0.03em;
-  overflow: hidden;
+.index__x {
+  display: grid; place-items: center; width: 2.75rem; height: 2.75rem; margin-right: -0.4rem;
+  border: 0; border-radius: 50%; background: color-mix(in srgb, var(--cream) 8%, transparent);
+  color: var(--cream); cursor: pointer;
 }
-/* La copie, 1,3 em plus bas, dans la même encre. */
-.index__n > span {
-  display: block;
-  text-shadow: 0 1.3em 0 currentColor;
-  transition: transform 0.56s var(--e-expressive);
-}
-.index__nav a:hover .index__n > span,
-.index__nav a:focus-visible .index__n > span { transform: translateY(-1.3em); }
+.index__x svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
-.index__v {
-  flex: none; color: color-mix(in srgb, var(--night) 60%, transparent);
-  font-size: var(--fs-nano); letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
-  align-self: center;
+.index__nav { display: flex; flex-direction: column; }
+.index__a {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  width: 100%; min-height: 3.6rem; padding: 0.5rem 0;
+  border: 0; border-bottom: 1px solid var(--line-2); background: none;
+  font-family: var(--ff-t); font-size: 1.35rem; font-weight: 500; letter-spacing: -0.01em; text-align: left;
+  color: var(--cream); cursor: pointer;
 }
-.index__nav a:hover .index__v { color: var(--basalt); }
+.index__a[aria-current='page'] { color: var(--gold-lt); }
+.index__a[aria-current='page']::after {
+  content: ''; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--gold); flex: none;
+}
+.index__more svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s var(--e-out); }
+.index__more[aria-expanded='true'] svg { transform: rotate(180deg); }
+.index__more[aria-expanded='true'] { border-bottom-color: transparent; }
 
-/* L'entrée : la tuile descend d'un bloc, les liens montent l'un après l'autre.
-   Piloté en CSS, donc `prefers-reduced-motion` est gratuit. */
-.index__in { transform: translateY(-100%); transition: transform 0.72s var(--e-expressive); }
-.index[data-open] .index__in { transform: translateY(0); }
-.index__nav a { transform: translateY(110%); opacity: 0; }
-.index[data-open] .index__nav a {
-  transform: none; opacity: 1;
-  transition: transform 0.62s var(--e-expressive) calc(0.18s + var(--i, 0) * 0.045s),
-              opacity 0.3s var(--e-response) calc(0.18s + var(--i, 0) * 0.045s);
+/* Les sept divisions, sous Services. */
+.index__svc { display: grid; padding: 0 0 0.6rem; border-bottom: 1px solid var(--line-2); }
+.index__svc[hidden] { display: none; }
+.index__sl {
+  display: flex; align-items: center; gap: 0.85rem;
+  min-height: 2.9rem; padding: 0.25rem 0.25rem 0.25rem 0.15rem;
+  font-family: var(--ff-t); font-size: 1.05rem; color: var(--cream-2);
 }
+.index__sl i { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--c, var(--gold)); flex: none; box-shadow: 0 0 10px color-mix(in srgb, var(--c, var(--gold)) 60%, transparent); }
+.index__sl[aria-current='page'] { color: var(--cream); font-weight: 600; margin-inline: -0.6rem; padding-left: 0.75rem; border-radius: 0.7rem; background: color-mix(in srgb, var(--c, var(--gold)) 14%, transparent); }
+.index__sl--all { justify-content: flex-start; gap: 0.5rem; margin-top: 0.2rem; font-family: var(--ff-m); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream-3); }
+.index__sl--all svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.index__also { display: flex; flex-wrap: wrap; gap: 0.25rem 1.5rem; padding: 0.9rem 0 0.2rem; }
+.index__also a {
+  display: inline-flex; align-items: center; min-height: 2.75rem;
+  font-family: var(--ff-t); font-size: 1rem; color: var(--cream-2);
+}
+.index__also a[aria-current='page'] { color: var(--gold-lt); }
+
+.index__foot { margin-top: auto; padding-top: 1.25rem; display: grid; gap: 0.75rem; }
+.index__cta {
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  min-height: 3.4rem; border-radius: 999px;
+  background: var(--gold); color: var(--basalt);
+  font-family: var(--ff-t); font-size: 1.05rem; font-weight: 600;
+}
+.index__cta svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.index__reach { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.index__reach a {
+  display: flex; align-items: center; justify-content: center; min-height: 3rem; border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--line); color: var(--cream);
+  font-family: var(--ff-t); font-size: 1rem; font-weight: 500;
+}
+.index__x:focus-visible, .index__a:focus-visible, .index__sl:focus-visible, .index__also a:focus-visible,
+.index__cta:focus-visible, .index__reach a:focus-visible { outline: 2px solid var(--gold-lt); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .index__in, .index__nav a, .index__n > span, .burger__b { transition: none; }
-  .index__nav a { transform: none; opacity: 1; }
+  .index__in, .index__scrim, .burger__b, .index__more svg { transition: none; }
 }
-
-.index__foot {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: var(--s-4); padding-top: var(--s-5); border-top: 1px solid var(--line);
-}
-.index__world {
-  display: inline-flex; align-items: center; gap: 0.6em;
-  font-size: var(--fs-micro); letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
-  color: var(--fg-2);
-  padding: 0.7em 1em; border: 1px solid var(--line);
-}
-/* Ce n'est plus un bouton : c'est l'état du bureau. Pas de survol. */
-/* Sur l'or, le pied reprend l'encre nuit : le filet, la pastille et l'appel
-   à l'action étaient réglés pour le vert, ils y disparaissaient. */
-.index__foot {
-  border-top-color: color-mix(in srgb, var(--night) 19%, transparent);
-  color: var(--basalt);
-}
-.index__world { margin: 0; border-color: color-mix(in srgb, var(--night) 25%, transparent); color: color-mix(in srgb, var(--night) 71%, transparent); }
-.index__world .go-dot { background: var(--basalt); }
-.index__foot .btn {
-  background: var(--basalt); border-color: var(--basalt); color: var(--gold);
-}
-.index__foot .btn:hover { background: var(--basalt-3); border-color: var(--basalt-3); }
 
 /* ─────────────── LA FICHE QUI SUIT ───────────────
    Elle s'écrit toute seule au fil de la visite, puis devient la page. */

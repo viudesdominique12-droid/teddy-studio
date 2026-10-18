@@ -178,9 +178,16 @@ html:not(.js) .re-photo { opacity: 0.9; }
 @media (pointer: coarse) { .re-ctrl__fine { display: none; } .re-ctrl__touch { display: inline; } }
 
 /* ── Tablette et téléphone : la planche au-dessus, le texte dessous ── */
+/* La hauteur de la planche se calcule sur la LARGEUR de l'écran (`vw`), pas
+   sur sa hauteur : sur l'iPhone de Dominique (18/10), la hauteur « svh » ne
+   correspondait pas, et le titre passait sous la caméra. Le texte part
+   toujours sous la planche, quelle que soit la barre du navigateur. */
 @media (max-width: 52rem) {
-  .re-hero { padding-top: calc(var(--bar-h) + min(54svh, 32rem)); }
-  .re-frame { top: calc(var(--bar-h) + 0.25rem); left: var(--pad-x); right: var(--pad-x); bottom: auto; width: auto; height: min(52svh, 31rem); }
+  .re-hero {
+    --re-fh: min(calc((100vw - 2 * var(--pad-x)) * 0.66), 31rem);
+    padding-top: calc(var(--bar-h) + 0.25rem + var(--re-fh) + 4.25rem);
+  }
+  .re-frame { top: calc(var(--bar-h) + 0.25rem); left: var(--pad-x); right: var(--pad-x); bottom: auto; width: auto; height: var(--re-fh); }
   .re-plan { top: calc(var(--bar-h) + 1.5rem); left: 50%; right: auto; width: 150vw; margin-left: -75vw; }
   .re-mesh {
     -webkit-mask-image: radial-gradient(ellipse 80% 40% at 50% 30%, #000 20%, transparent 80%);
@@ -189,7 +196,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
   .re-hero .dv-hero__veil {
     background: linear-gradient(0deg, var(--bg) 0%, var(--bg) 40%, color-mix(in srgb, var(--bg) 60%, transparent) 48%, transparent 58%);
   }
-  .re-ctrl { right: calc(var(--pad-x) + 1rem); left: auto; top: calc(var(--bar-h) + 0.25rem + min(52svh, 31rem) - 2.6rem - 3.3rem); bottom: auto; gap: 0.5rem; }
+  .re-ctrl { right: calc(var(--pad-x) + 1rem); left: auto; top: calc(var(--bar-h) + 0.25rem + var(--re-fh) - 2.6rem - 3.3rem); bottom: auto; gap: 0.5rem; }
   .re-ctrl__t { display: none; }
   .re-lab--tl, .re-lab--bl { left: 1.6rem; }
   .re-lab--tr { right: 1.6rem; }
@@ -202,9 +209,7 @@ html:not(.js) .re-photo { opacity: 0.9; }
   .re-hero .dv-hero__meta { grid-auto-flow: row; gap: 0.4rem; }
   /* Revue croisée (18/10/2026) : sur un iPhone, la planche un peu plus basse
      pour que « Request Rental Quote » tienne dans le premier écran. */
-  .re-hero { padding-top: calc(var(--bar-h) + min(42svh, 32rem)); }
-  .re-frame { height: min(40svh, 31rem); }
-  .re-ctrl { top: calc(var(--bar-h) + 0.25rem + min(40svh, 31rem) - 2.6rem - 3.3rem); }
+  .re-hero { --re-fh: calc((100vw - 2 * var(--pad-x)) * 0.8); }
 }
 
 /* ═══════════════════ LES PLANCHES — 18/10/2026 ═══════════════════

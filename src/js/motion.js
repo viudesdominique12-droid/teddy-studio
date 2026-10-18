@@ -99,55 +99,75 @@ export function indexPanel() {
   const wrap = document.getElementById('index');
   const open = document.getElementById('index-open');
   if (!wrap || !open) return;
+  const panel = wrap.querySelector('.index__in');
+  const more = wrap.querySelector('.index__more');
+  const svc = wrap.querySelector('#index-svc');
+  const links = [...wrap.querySelectorAll('a')];
 
-  const links = [...wrap.querySelectorAll('.index__nav a')];
-  // Le retard de chaque lien est une variable CSS : l'échelonnement vit dans
-  // la feuille de style, pas dans une timeline à tenir à jour.
-  links.forEach((a, i) => a.style.setProperty('--i', String(i)));
+  // La page en cours, marquée dans la liste ; si c'est une division, la
+  // liste des services s'ouvre déjà dessus.
+  for (const a of links) {
+    const u = new URL(a.href, location.href);
+    if (u.origin === location.origin && u.pathname === location.pathname && !u.hash) {
+      a.setAttribute('aria-current', 'page');
+      if (svc?.contains(a)) { svc.hidden = false; more?.setAttribute('aria-expanded', 'true'); }
+    }
+  }
+  more?.addEventListener('click', () => {
+    const on = more.getAttribute('aria-expanded') !== 'true';
+    more.setAttribute('aria-expanded', String(on));
+    svc.hidden = !on;
+  });
 
   let last = null;
+  const focusables = () => [...panel.querySelectorAll('a, button')].filter((n) => n.offsetParent !== null);
 
   const show = () => {
     last = document.activeElement;
     wrap.hidden = false;
-    // Deux frames : sans ça le navigateur fusionne « affiché » et « ouvert »,
-    // et la tuile apparaît déjà en place au lieu de descendre.
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      wrap.dataset.open = '';
-    }));
+    // Deux images : sans ça, le panneau apparaîtrait déjà en place au lieu de glisser.
+    requestAnimationFrame(() => requestAnimationFrame(() => { wrap.dataset.open = ''; }));
     document.documentElement.classList.add('is-locked');
     open.setAttribute('aria-expanded', 'true');
-    links[0]?.focus({ preventScroll: true });
+    wrap.querySelector('.index__x')?.focus({ preventScroll: true });
     window.dispatchEvent(new CustomEvent('index:open'));
   };
 
   const hide = () => {
+    if (wrap.hidden) return;
     delete wrap.dataset.open;
     document.documentElement.classList.remove('is-locked');
     open.setAttribute('aria-expanded', 'false');
     const done = () => { wrap.hidden = true; last?.focus({ preventScroll: true }); };
     if (reduced()) done();
-    else window.setTimeout(done, 520);
+    else window.setTimeout(done, 420);
     window.dispatchEvent(new CustomEvent('index:close'));
   };
 
-  // Un seul bouton : il ouvre et il ferme, comme la référence.
-  open.addEventListener('click', () => {
-    open.getAttribute('aria-expanded') === 'true' ? hide() : show();
-  });
+  open.addEventListener('click', () => (open.getAttribute('aria-expanded') === 'true' ? hide() : show()));
+  wrap.querySelectorAll('[data-index-close]').forEach((b) => b.addEventListener('click', hide));
   for (const a of links) a.addEventListener('click', hide);
 
-  // Sur ordinateur, la barre porte tous les liens : le rond de l'index n'y
-  // est plus (Dominique, 18/10). Une fenêtre qu'on élargit index ouvert le
-  // referme, sinon il resterait sans bouton pour le fermer.
+  // Glisser le panneau vers la droite le referme.
+  let x0 = null, y0 = 0;
+  panel.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  panel.addEventListener('touchend', (e) => {
+    if (x0 === null) return;
+    const t = e.changedTouches[0];
+    if (t.clientX - x0 > 70 && Math.abs(t.clientY - y0) < 60) hide();
+    x0 = null;
+  }, { passive: true });
+
+  // Sur ordinateur, la barre porte tous les liens : le menu n'y existe pas.
+  // Une fenêtre qu'on élargit menu ouvert le referme.
   const wide = matchMedia('(min-width: 60rem)');
-  wide.addEventListener?.('change', (e) => { if (e.matches && !wrap.hidden) hide(); });
+  wide.addEventListener?.('change', (e) => { if (e.matches) hide(); });
 
   document.addEventListener('keydown', (e) => {
     if (wrap.hidden) return;
     if (e.key === 'Escape') { e.preventDefault(); hide(); return; }
     if (e.key !== 'Tab') return;
-    const f = [open, ...links].filter((n) => n && n.offsetParent !== null);
+    const f = focusables();
     if (!f.length) return;
     const first = f[0], lastEl = f[f.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastEl.focus(); }
