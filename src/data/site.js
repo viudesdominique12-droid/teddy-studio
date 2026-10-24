@@ -165,13 +165,19 @@ export const resources = [
 
 export const worksIntro = "We've Worked On";
 
-/** Les 5 titres du site. `poster` = visuel d'origine du site (basse définition). */
+/** Les 7 titres du site. `poster` = visuel d'origine du site (basse définition).
+ *  23/10/2026 : Sost Maezen 1 prend sa vraie affiche (l'ancien visuel portait
+ *  « TRIANGLE 2 ») ; Seol et Abay Weys Vegas s'ajoutent, `sourceLabel` tel que
+ *  le client les a écrits. Leurs affiches sont en hauteur : le préfixe mène à
+ *  `-240.webp`, `-full.webp` et `-bd.webp` (src/data/portfolio.js). */
 export const works = [
   { slug: 'fikir-siferd',  label: 'Fikir Siferd',  sourceLabel: 'Fiker Siferd',  poster: null },
-  { slug: 'sost-maezen-1', label: 'Sost Maezen 1', altTitle: 'Triangle',         poster: '/works/p-1' },
+  { slug: 'sost-maezen-1', label: 'Sost Maezen 1', altTitle: 'Triangle',         poster: '/works/sost-maezen-1' },
   { slug: 'sost-maezen-2', label: 'Sost Maezen 2', altTitle: 'Triangle II',      poster: '/works/p-2' },
   { slug: 'sele-enat-meder', label: 'Sele Enat Meder',                           poster: '/works/p-4' },
-  { slug: 'kezkaza-welafen', label: 'Kezkaza Welafen', sourceLabel: 'Kezkaza Wolafen', poster: '/works/p-5' }
+  { slug: 'kezkaza-welafen', label: 'Kezkaza Welafen', sourceLabel: 'Kezkaza Wolafen', poster: '/works/p-5' },
+  { slug: 'seol', label: 'Seol', sourceLabel: 'Seol', poster: '/works/seol' },
+  { slug: 'abay-weys-vegas', label: 'Abay Weys Vegas', sourceLabel: 'Abay weys vegas', poster: '/works/abay-weys-vegas' }
 ];
 
 /** Champs du formulaire court — libellés exacts du site. */

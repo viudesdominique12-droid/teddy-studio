@@ -230,6 +230,18 @@ function softGrain() {
 const BULBS = `<svg class="fi-bulbs" aria-hidden="true" focusable="false">${['off', 'halo', 'on']
   .map((k) => `<rect class="fi-bulbs__${k}" width="100%" height="100%" rx="4" pathLength="128"/>`).join('')}</svg>`;
 
+/* L'affiche en hauteur (`portrait`, 23/10/2026) : entière dans la vitrine,
+   sa copie floutée en fond de la même image (`--bd`) pour remplir les côtés ;
+   ses vraies dimensions, et l'original pour les écrans denses. */
+function posterImg(p) {
+  if (!p.portrait || !p.posterSize) {
+    return `<img src="${esc(p.poster)}" alt="" width="560" height="420" loading="lazy" decoding="async" draggable="false">`;
+  }
+  const [w, h] = p.posterSize.poster;
+  const [fw] = p.posterSize.full;
+  return `<img src="${esc(p.poster)}" srcset="${esc(p.poster)} ${w}w, ${esc(p.posterFull)} ${fw}w" sizes="(max-width: 44rem) 36vw, 11rem"${p.backdrop ? ` style="--bd:url('${esc(p.backdrop)}')"` : ''} alt="" width="${w}" height="${h}" loading="lazy" decoding="async" draggable="false">`;
+}
+
 function filmCard(p, i, n) {
   const title = esc(p.title);
   const stills = p.stills || [];
@@ -239,8 +251,8 @@ function filmCard(p, i, n) {
   return `<li class="fi-film" data-view-group>
     <div class="fi-film__case">
       ${BULBS}
-      <button class="fi-film__fig" type="button" data-view="${esc(p.posterFull || p.poster)}" data-view-label="${title} — poster" aria-label="View the poster of ${title}">
-        <img src="${esc(p.poster)}" alt="" width="560" height="420" loading="lazy" decoding="async" draggable="false">
+      <button class="fi-film__fig${p.portrait ? ' is-portrait' : ''}" type="button" data-view="${esc(p.posterFull || p.poster)}" data-view-label="${title} — poster" aria-label="View the poster of ${title}">
+        ${posterImg(p)}
         ${stills.map((s) => `<img class="fi-film__pv" data-src="${esc(s)}" alt="" width="1280" height="720" draggable="false">`).join('')}
         <span class="fi-film__st">${esc(STATUS[p.status] || '')}</span>
         <span class="fi-film__open" aria-hidden="true">${stills.length ? 'Poster &amp; stills' : 'View poster'}</span>

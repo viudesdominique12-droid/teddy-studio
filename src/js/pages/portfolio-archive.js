@@ -76,16 +76,20 @@ export function loupe(gridEl) {
     const jacket = card.classList.contains('is-big') && card.classList.contains('has-bg') ? card.querySelector('.pf-card__img') : null;
     const jr = jacket?.getBoundingClientRect();
     const onJacket = jr && last.clientX >= jr.left && last.clientX <= jr.right && last.clientY >= jr.top && last.clientY <= jr.bottom;
-    const inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height && !onJacket;
-    card.classList.toggle('is-loupe', inside);
-    if (cur) cur.dataset.state = inside ? 'loupe' : 'view';
-    if (!inside) return;
-    // L'image est « cover » (et un rien agrandie) : on retrouve où tombe le pointeur.
+    // L'image est « cover » (et un rien agrandie) : on retrouve où tombe le
+    // pointeur. Une affiche en hauteur est « contain » (23/10/2026) : la loupe
+    // ne grossit qu'elle, jamais sa copie floutée sur les côtés.
+    const tall = card.classList.contains('is-portrait') && img.classList.contains('pf-card__img');
     const nw = img.naturalWidth || 1280, nh = img.naturalHeight || 720;
-    const sc = Math.max(r.width / nw, r.height / nh) * 1.03;
+    const sc = tall ? Math.min(r.width / nw, r.height / nh) : Math.max(r.width / nw, r.height / nh) * 1.03;
     const dw = nw * sc, dh = nh * sc;
     const fx = img.classList.contains('pf-card__bg') ? 0.7 : 0.5;
     const ox = (r.width - dw) * fx, oy = (r.height - dh) / 2;
+    const onPoster = !tall || (x >= ox && x <= ox + dw && y >= oy && y <= oy + dh);
+    const inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height && !onJacket && onPoster;
+    card.classList.toggle('is-loupe', inside);
+    if (cur) cur.dataset.state = inside ? 'loupe' : 'view';
+    if (!inside) return;
     const L = lens.offsetWidth || 150;
     const src = img.currentSrc || img.src;
     if (lens.dataset.src !== src) { lens.dataset.src = src; lens.style.backgroundImage = `url("${src}")`; }

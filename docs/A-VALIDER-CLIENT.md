@@ -19,18 +19,33 @@ de l'entreprise est marquée `<!-- À VALIDER : client -->` dans le code de la p
 
 ## 2. Les films (le portfolio)
 
-- [ ] **Le rôle de l'entreprise sur chacun des 5 films** : production maison, projet client,
+- [ ] **Le rôle de l'entreprise sur chacun des 7 films** : production maison, projet client,
       partenaire de production, prestataire technique ou contribution. Aujourd'hui, ils portent
       seulement l'étiquette « Worked on », la formule du site d'origine (« We've worked on »).
-- [ ] **Les affiches** : l'image de Sost Maezen 1 (Triangle), reprise du site d'origine,
-      porte en gros « TRIANGLE 2 · 2016 ». Est-ce la bonne ?
-      Fournir de meilleures affiches pour Fikir Siferd (300 px, logo DEKIKA FLIX) et
+- [x] **L'affiche de Sost Maezen 1 (Triangle)** : l'image reprise du site d'origine portait en
+      gros « TRIANGLE 2 · 2016 ». Réglé le 23/10/2026 : le film montre désormais sa vraie
+      affiche (« SOST MAEZEN », trouvée sur teddystudios.com, l'ancien site du studio).
+- [ ] **De meilleures affiches** pour Fikir Siferd (300 px, logo DEKIKA FLIX) et
       Sost Maezen 2 (640 px). Le 18/10, le client a demandé « clearer posters » : on garde les
       images actuelles telles quelles et on reprendra les nouvelles dès qu'elles seront sur son
-      site (ethiopianfilmoffice.com).
-- [ ] **Seol** et **Abay Weys Vegas** (« New movies », message du 18/10) : à ajouter quand leurs
-      affiches seront sur le site d'origine (vérifié le 18/10 : pas encore). Confirmer
-      l'orthographe.
+      site (ethiopianfilmoffice.com). Depuis le 23/10, l'accueil montre les films un peu plus
+      grands (quatre par rangée au lieu de cinq) : Fikir Siferd, qui n'existe qu'en 300 px,
+      y paraît plus flou que les autres. Une version plus grande est la plus urgente.
+- [x] **Seol** et **Abay Weys Vegas** (« New movies we have to include ») : ajoutés le
+      23/10/2026, comme les autres films, avec leur affiche officielle et leur nom seulement
+      (toutes deux reprises de teddystudios.com, l'ancien site du studio). Ils apparaissent partout où sont
+      les films : l'accueil, le portfolio, Feature Film et About.
+- [ ] **L'affiche d'Abay Weys Vegas** : il en existe deux versions. Le site montre, depuis le
+      24/10/2026, celle de teddystudios.com, l'ancien site du studio (424 × 600 px). EtMDB et
+      Wikipedia en amharique montrent l'autre (personnages inversés, autre éclairage). Si
+      l'affiche de sortie en salle est l'autre, la remplacer.
+- [ ] **Les fichiers d'origine des trois affiches** (Seol, Abay Weys Vegas, Sost Maezen 1) :
+      celles du site sont petites (337, 424 et 400 px de large). Elles restent nettes parce
+      qu'on ne les agrandit jamais, mais elles paraissent petites dans la fiche du portfolio.
+- [ ] **L'orthographe de Seol** : le site suit l'écriture du client, mais l'affiche écrit
+      « SIOL » (ሲዖል). Laquelle garder ? **Et celle d'Abay Weys Vegas** : en lettres
+      latines, l'affiche écrit « ABAY VS VEGAS » (en amharique : አባይ ወይስ ቬጋስ) ; le site suit
+      l'écriture du client, « Abay weys vegas ».
 - [ ] **L'orthographe du fondateur** : « Theodros Teshome » sur l'affiche de Triangle II,
       « Tewodros Teshome » partout ailleurs.
 - [ ] Pour chaque film : année, court résumé, générique, bande-annonce.

@@ -1,8 +1,9 @@
 /**
  * L'ACCUEIL — « WE'VE WORKED ON », LE MUR D'AFFICHES (18/10/2026).
  *
- * Les cinq affiches sont accrochées comme dans le hall d'une maison de
- * production : chacune a sa lampe de tableau au-dessus d'elle. Quand le mur
+ * Les sept affiches (cinq jusqu'au 23/10/2026), quatre puis trois au
+ * milieu, sont accrochées comme dans le hall d'une maison de production :
+ * chacune a sa lampe de tableau au-dessus d'elle. Quand le mur
  * arrive, les lampes s'allument l'une après l'autre (un petit grésillement).
  * Au survol (souris), la lampe de l'affiche monte, la lumière suit le
  * pointeur sur le verre, l'affiche se penche à peine vers vous ; les autres

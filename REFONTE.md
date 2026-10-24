@@ -643,6 +643,61 @@ Black, le texte en IBM Plex Sans, les chiffres en Barlow Condensed**.
   avant les relectures croisées prévues : à refaire au calme (titres de chaque page, chiffres
   restés en étiquettes, règle de la piste Music en canvas).
 
+### Vague 18 — deux films de plus (23/10/2026)
+
+Le client : « Seol / Kezkaza welafen / Fikir siferd / Abay weys vegas — New movies we have to
+include ». Kezkaza Welafen et Fikir Siferd étaient déjà là. Dominique a choisi, parmi les
+affiches officielles trouvées en ligne (la planche `affiches-trouvees.jpg`, à côté du
+dépôt) :
+- **Seol** et **Abay Weys Vegas** s'ajoutent, comme les autres films : l'affiche et le nom,
+  rien de plus (« Worked on », ni année, ni générique, ni résumé). Les titres suivent
+  l'écriture du client ; l'affiche de Seol écrit « SIOL » (ሲዖል) : question posée
+  (`docs/A-VALIDER-CLIENT.md` §2, et un `À VALIDER` dans le code).
+- **Sost Maezen 1** prend sa vraie affiche : l'ancien visuel (`p-1-*`) portait « TRIANGLE 2 ·
+  2016 ». Seuls `p-1-280`, `p-1-560` et `p-1-full` restent dans `public/works/` : les pages
+  archivées de `docs/archive/` les montrent encore. `p-1-720`, que plus rien ne montrait, est
+  retiré.
+- Les sources (`CREDITS.md`) : teddystudios.com, l'ancien site du studio, par l'Internet
+  Archive (Seol, Sost Maezen, et Abay Weys Vegas depuis le 24/10 : Dominique a choisi la version
+  du studio, `2234.jpg`, 424 × 600, plutôt que celle d'EtMDB, une autre version de la même
+  affiche, personnages inversés). Images dérivées avec Pillow
+  (Lanczos, webp q86), jamais agrandies : `-240` (la vignette), `-full` (l'original), `-bd`
+  (le fond des côtés). On n'a retiré que des bords vides : la bande de toile noire du haut
+  d'Abay (54 px, aucun pixel allumé) et un liseré d'1 px en bas de Seol et d'Abay.
+- **Les affiches en hauteur** : tous les cadres du site sont en largeur et recadrent l'image.
+  Une fiche `portrait: true` (`src/data/portfolio.js` ; `data-portrait` sur l'accueil) montre
+  son affiche entière, titre lisible, au milieu du cadre, et `-bd.webp` remplit les côtés :
+  une lueur douce et sombre des couleurs de l'affiche (réduite à 40 × 30, floutée, assombrie
+  vers les bords ; préparée d'avance, le navigateur n'a rien à calculer). Là où sont les
+  films aujourd'hui : le mur de l'accueil, les tirages du portfolio (la loupe ne grossit que
+  l'affiche), la fiche et sa vignette, la vitrine de Feature Film, les cartes de projet
+  (About). L'écran de l'ouverture du portfolio et la jaquette de la grande carte savent aussi
+  la montrer, mais aucune affiche en hauteur n'y passe pour l'instant (l'écran prend les
+  photos de tournage des films mis en avant, la grande carte est toujours Sost Maezen 2).
+  Les quatre autres films ne changent pas.
+- **Les relectures** (même jour) : au survol, l'affiche en hauteur ne grossit plus (elle
+  remplit toute la hauteur du cadre, qui la rognait) ; seule sa lueur s'avance. La fiche du
+  portfolio ne la montre jamais plus grande que ses pixels (`object-fit: scale-down`, sinon
+  floue) ; sur téléphone, la salle de la fiche se dresse alors (3:4) pour qu'elle y tienne
+  presque à sa vraie taille. L'étiquette « Worked on » se dresse dans la lueur de gauche
+  (Feature Film, About) et l'appel « View poster » de Feature Film n'y garde que son « + » :
+  elles couvraient le titre de Seol et l'enseigne d'Abay sur téléphone. Le filet de couleur d'un tirage tombe sur
+  4 px de lueur, plus sur la dernière ligne de l'affiche.
+- **Sept affiches** : le mur de l'accueil passe à quatre, puis trois au milieu (huit colonnes,
+  dès 1024 px) ; sur tablette (641 à 1023 px), trois, trois, puis la septième au milieu ; la
+  rangée du téléphone ne change pas. Même disposition sur About. Au Portfolio, la dernière
+  rangée incomplète se centre (`centerLast()`, « All » comme « Feature Films »). Les cadres
+  de l'accueil sont plus grands qu'avec cinq (320 px de large au lieu de 250 à 1440) :
+  Fikir Siferd, qui n'existe qu'en 300 px, y prend son plus grand fichier (`p-0-full`) mais
+  reste un peu flou ; une version plus grande est demandée au client.
+- **Au doigt** : les titres du mur et « The full portfolio » ont une cible invisible de
+  44 px de haut ; les vignettes des photos de tournage (Feature Film) passent à 78 × 44.
+- Contrôles : 0 erreur sur l'accueil, le Portfolio, Feature Film et About (1440, 1280, 1024,
+  768, téléphone 390 et 360) ; pins de l'accueil alignés (1440 × 900, 768 × 1024 et téléphone ;
+  `docs/outils/pinalign.mjs` défile désormais à la main sur téléphone, où Lenis ne tourne
+  pas) ; version construite et version GitHub Pages (chemins des nouvelles affiches rebasés)
+  sans faute.
+
 ## Pistes pour la suite
 
 - **À faire valider par le client avant la mise en ligne** : les neuf présentations des lieux (vague 5 bis), et les explications de Transportation, Accommodation et Editing (vague 6 bis).

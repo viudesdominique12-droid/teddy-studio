@@ -10,7 +10,9 @@
  *              un écran, la légende dit lequel et ce qu'il est ; le faisceau
  *              du projecteur (portfolio-beam.js) vacille à chaque image ;
  *   grid()     les tirages sur la table lumineuse, les mises en avant
- *              d'abord ; les tiroirs (Tout + les sept catégories)
+ *              d'abord, la dernière rangée centrée ; une affiche en hauteur
+ *              s'y montre entière (`portrait`, src/data/portfolio.js) ;
+ *              les tiroirs (Tout + les sept catégories)
  *              changent la table en fondu enchaîné et s'écrivent dans
  *              l'adresse (?cat=film) ; une catégorie vide ouvre un tiroir sur
  *              une boîte de bobine scellée qui mène à sa division ; les
@@ -63,6 +65,12 @@ const imagesOf = (p) => [...new Set([p.posterFull || p.poster, ...(p.stills || [
    (la loupe de l'ordinateur la lit). */
 const posterSet = (p) => (p.posterMid && p.posterFull
   ? ` srcset="${esc(p.posterMid)} 720w, ${esc(p.posterFull)} 1280w" sizes="(max-width: 44rem) 60vw, 1280px"` : '');
+/* L'affiche en hauteur (`portrait`, 23/10/2026) : entière dans le cadre
+   (`object-fit: contain`), sa copie floutée en fond de la même image (`--bd`)
+   pour remplir les côtés. L'original suffit partout (≤ 424 px) et la loupe
+   le lit. */
+const bdOf = (p) => (p.portrait && p.backdrop ? ` style="--bd:url('${esc(p.backdrop)}')"` : '');
+const fullDims = (p) => (p.portrait && p.posterSize ? p.posterSize.full : [1280, 720]);
 const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
 
 const still = reduced();
@@ -145,12 +153,21 @@ function initScreen() {
   if (!slides.length) { box.hidden = true; return; }
 
   const first = frame.querySelector('img');
+  // Une affiche en hauteur passe entière sur l'écran, sa copie floutée autour.
+  const tall = (img, s) => {
+    const on = !!(s.p.portrait && s.src === s.p.posterFull);
+    img.classList.toggle('is-portrait', on);
+    if (!on) return;
+    if (s.p.backdrop) img.style.setProperty('--bd', `url('${s.p.backdrop}')`);
+    if (s.p.posterSize) [img.width, img.height] = s.p.posterSize.full;
+  };
   const imgs = slides.map((s, i) => {
-    if (i === 0 && first) { first.src = s.src; first.alt = `${s.p.title}${s.p.aka ? ` (${s.p.aka})` : ''}`; return first; }
+    if (i === 0 && first) { first.src = s.src; first.alt = `${s.p.title}${s.p.aka ? ` (${s.p.aka})` : ''}`; tall(first, s); return first; }
     const img = new Image();
     img.className = 'pf-screen__img'; img.alt = `${s.p.title}${s.p.aka ? ` (${s.p.aka})` : ''}`;
     img.decoding = 'async'; img.loading = 'lazy'; img.width = 1280; img.height = 720;
     img.src = s.src;
+    tall(img, s);
     frame.insertBefore(img, frame.querySelector('.pf-screen__hit'));
     return img;
   });
@@ -226,11 +243,12 @@ function initGrid() {
     const cat = catOf(p.category);
     const meta = [p.credit, ROLES[p.role] && `Our role: ${ROLES[p.role]}`, p.year].filter(Boolean).join(' · ');
     const bg = p.stills?.[0];
-    return `<article class="pf-card${bg ? ' has-bg' : ''}" data-slug="${esc(p.slug)}" data-cat="${esc(p.category)}" data-st="${esc(p.status)}" style="--c:${accentOf(p.category)};--tilt:${TILT[i % TILT.length]}deg">
+    const [fw, fh] = fullDims(p);
+    return `<article class="pf-card${bg ? ' has-bg' : ''}${p.portrait ? ' is-portrait' : ''}" data-slug="${esc(p.slug)}" data-cat="${esc(p.category)}" data-st="${esc(p.status)}" style="--c:${accentOf(p.category)};--tilt:${TILT[i % TILT.length]}deg">
       <div class="pf-card__fig">
         <div class="pf-card__pic">
           ${bg ? `<img class="pf-card__bg" src="${esc(bg)}" alt="" loading="lazy" decoding="async" width="1280" height="720">` : ''}
-          <img class="pf-card__img" src="${esc(p.posterFull || p.poster)}"${posterSet(p)} alt="" loading="lazy" decoding="async" width="1280" height="720">
+          <img class="pf-card__img" src="${esc(p.posterFull || p.poster)}"${posterSet(p)}${bdOf(p)} alt="" loading="lazy" decoding="async" width="${fw}" height="${fh}">
           <span class="pf-card__flip" aria-hidden="true"></span>
         </div>
         <p class="pf-card__strip"><span class="pf-badge"><span class="pf-mark pf-mark--${esc(p.status)}" aria-hidden="true"></span>${esc(STATUS[p.status] || '')}</span><span class="pf-card__no" aria-hidden="true">No. ${pad(i + 1)}</span></p>
@@ -379,6 +397,28 @@ function initGrid() {
   const box = table || gridEl;           // la table : la galerie ET le tiroir vide
   let swap = null;
 
+  /* Une dernière rangée incomplète se centre (23/10/2026 : avec sept films,
+     « All » laissait un trou après la tuile « More work on the way », et
+     « Feature Films » un tirage seul à gauche). Douze colonnes : trois tirages
+     par rangée à l'ordinateur (deux à côté de la grande carte), deux sur
+     tablette ; sur téléphone, une seule colonne. */
+  const mid = matchMedia('(max-width: 64rem)');
+  const one = matchMedia('(max-width: 44rem)');
+  const centerLast = () => {
+    items.forEach((el) => el.style.removeProperty('grid-column'));
+    if (one.matches) return;
+    const vis = items.filter((el) => !el.classList.contains('is-hidden'));
+    const per = mid.matches ? 2 : 3;
+    let rest = vis.filter((el) => !el.classList.contains('is-big'));
+    if (!mid.matches && vis[0]?.classList.contains('is-big')) rest = rest.slice(2);
+    const k = rest.length % per;
+    if (!k) return;
+    const span = 12 / per;
+    const at = (12 - k * span) / 2 + 1;
+    rest.slice(-k).forEach((el, j) => { el.style.gridColumn = `${at + j * span} / span ${span}`; });
+  };
+  [mid, one].forEach((m) => m.addEventListener?.('change', centerLast));
+
   const render = (catId, animate) => {
     items.forEach((el) => {
       const show = el.hasAttribute('data-soon') ? catId === 'all' : (catId === 'all' || el.dataset.cat === catId);
@@ -387,6 +427,7 @@ function initGrid() {
     });
     const vis = visibleCards();
     if (vis.length >= 3) vis[0].classList.add('is-big');
+    centerLast();
     setCount();
     nearby?.watch(vis);
 
@@ -562,16 +603,22 @@ function initSheet() {
     return vis.includes(at) ? vis : ordered.map((p) => p.slug);
   };
 
-  /* Une nouvelle image : l'obturateur bat, la lampe éclaire la suivante. */
-  const showImage = (src, alt, animate) => {
+  /* Une nouvelle image : l'obturateur bat, la lampe éclaire la suivante.
+     Une affiche en hauteur (`tall`) n'est jamais montrée plus grande que ses
+     pixels (`is-portrait`, comme dans les visionneuses de l'accueil et de
+     Feature Film) ; sur téléphone, la salle passe alors en hauteur
+     (`is-tall`) pour qu'elle y tienne à sa vraie taille. */
+  const media = main.closest('.pf-dlg__media');
+  const showImage = (src, alt, animate, tall = false) => {
     const img = new Image();
     img.src = src; img.alt = alt; img.decoding = 'async';
-    img.className = 'pf-dlg__img';
+    img.className = `pf-dlg__img${tall ? ' is-portrait' : ''}`;
     const old = [...main.querySelectorAll('img')];
-    if (!animate || still) { main.append(img); old.forEach((o) => o.remove()); return; }
+    const put = () => { media?.classList.toggle('is-tall', tall); main.append(img); old.forEach((o) => o.remove()); };
+    if (!animate || still) { put(); return; }
     gsap.timeline()
       .to(shutter, { autoAlpha: 1, duration: 0.11, ease: 'power1.in' })
-      .add(() => { main.append(img); old.forEach((o) => o.remove()); })
+      .add(put)
       .fromTo(img, { scale: 1.035 }, { scale: 1, duration: 0.9, ease: 'expo.out' })
       .to(shutter, { autoAlpha: 0, duration: 0.42, ease: 'power2.out' }, '<');
   };
@@ -601,15 +648,18 @@ function initSheet() {
     // Les images : l'affiche, puis les photos de tournage, sur une bande de pellicule.
     const imgs = imagesOf(p);
     const altOf = (i) => (i === 0 ? `${p.title}, poster` : `${p.title}, still ${i}`);
-    showImage(imgs[0], altOf(0), animate);
+    const tallOf = (src) => !!(p.portrait && src === p.posterFull);
+    showImage(imgs[0], altOf(0), animate, tallOf(imgs[0]));
+    // L'affiche en hauteur reste entière jusque dans sa vignette.
+    const tallThumb = (src) => (tallOf(src) ? ` class="is-portrait"${bdOf(p)}` : '');
     thumbs.innerHTML = imgs.length > 1
-      ? imgs.map((src, i) => `<button type="button" class="${i ? '' : 'is-on'}" aria-pressed="${i ? 'false' : 'true'}" aria-label="${esc(altOf(i))}"><img src="${esc(src)}" alt="" decoding="async"></button>`).join('')
+      ? imgs.map((src, i) => `<button type="button" class="${i ? '' : 'is-on'}" aria-pressed="${i ? 'false' : 'true'}" aria-label="${esc(altOf(i))}"><img src="${esc(src)}"${tallThumb(src)} alt="" decoding="async"></button>`).join('')
       : '';
     thumbs.hidden = imgs.length < 2;
     [...thumbs.children].forEach((b, i) => b.addEventListener('click', () => {
       if (b.classList.contains('is-on')) return;
       [...thumbs.children].forEach((x, j) => { x.classList.toggle('is-on', j === i); x.setAttribute('aria-pressed', String(j === i)); });
-      showImage(imgs[i], altOf(i), true);
+      showImage(imgs[i], altOf(i), true, tallOf(imgs[i]));
     }));
 
     // Les voisins

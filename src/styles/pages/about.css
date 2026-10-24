@@ -771,11 +771,15 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
 }
 
 /* ═══════════════════ NOS FILMS ═══════════════════
-   Les cinq titres sur une seule rangée, sous passe-partout (un liseré de
-   papier, un filet de laiton) ; au survol, l'épreuve se soulève et un reflet
-   la traverse. Dessous, un rail de laiton dont la lumière respire depuis le
-   milieu. */
-.ab-films .dv-port { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
+   Les titres sous passe-partout (un liseré de papier, un filet de laiton) ;
+   au survol, l'épreuve se soulève et un reflet la traverse. Dessous, un rail
+   de laiton dont la lumière respire depuis le milieu.
+   Sept titres depuis le 23/10/2026 (cinq, sur une seule rangée, avant) :
+   quatre, puis trois au milieu, comme sur l'accueil ; plus étroit, trois par
+   rangée puis deux, la dernière rangée toujours centrée. */
+.ab-films .dv-port { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
+.ab-films .dv-proj { grid-column: span 2; }
+.ab-films .dv-proj:nth-child(5):nth-last-child(3) { grid-column: 2 / span 2; }
 .ab-films .dv-proj { align-content: start; }
 .ab-films .dv-proj__fig {
   aspect-ratio: 4 / 3; border-radius: 0.12rem; overflow: hidden;
@@ -804,11 +808,21 @@ html.js:not(.dv-in) :is(.ab-frame__in, .ab-seal, .ab-mount) { opacity: 0; animat
   animation: ab-breathe 5.8s var(--e-inout) infinite alternate;
 }
 @keyframes ab-breathe { from { transform: scaleX(0.12); opacity: 1; } to { transform: scaleX(1); opacity: 0.3; } }
-@media (max-width: 72rem) { .ab-films .dv-port { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 72rem) {
+  .ab-films .dv-port { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .ab-films .dv-proj, .ab-films .dv-proj:nth-child(5):nth-last-child(3) { grid-column: span 2; }
+  .ab-films .dv-proj:nth-child(3n + 1):last-child { grid-column: 3 / span 2; }
+  .ab-films .dv-proj:nth-child(3n + 1):nth-last-child(2) { grid-column: 2 / span 2; }
+}
 @media (max-width: 44rem) {
-  .ab-films .dv-port { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
+  .ab-films .dv-port { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-6) var(--s-4); }
+  .ab-films .dv-proj, .ab-films .dv-proj:nth-child(3n + 1):is(:last-child, :nth-last-child(2)) { grid-column: span 2; }
+  .ab-films .dv-proj:nth-child(odd):last-child { grid-column: 2 / span 2; }
   .ab-films .dv-proj__h { font-size: 1.05rem; }
   .ab-films .dv-proj__st { left: 0.4rem; top: 0.4rem; padding: 0.25rem 0.45rem; font-size: 0.75rem; }
+  /* Debout dans la lueur d'une affiche en hauteur : un rien plus serrée, pour
+     ne pas mordre sur l'affiche à 360 px (la lueur n'y fait que 33 px). */
+  .ab-films .dv-proj.is-portrait .dv-proj__st { left: 0.3rem; top: 0.3rem; padding: 0.45rem 0.2rem; }
 }
 
 /* ═══════════════════ NOS CLIENTS ═══════════════════

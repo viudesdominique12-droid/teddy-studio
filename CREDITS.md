@@ -5,7 +5,9 @@
 | Fichier | Origine | Note |
 |---|---|---|
 | `public/media/sebastopol-hero*.mp4/.jpg` | Extrait de `vid/movie.mp4` du site actuel — carton d'ouverture **Sebastopol Entertainment** (canon Sebastopol 3D). | Société du même fondateur, Tewodros Teshome. **À confirmer avant mise en ligne.** |
-| `public/works/p-*.webp` | Visuels de films du site actuel (Triangle, Triangle II, Sele Enat Meder, Kezkaza Welafen). | Basse définition (≤ 1280 px). **Demander les originaux.** |
+| `public/works/p-*.webp` | Visuels de films du site actuel (Triangle, Triangle II, Sele Enat Meder, Kezkaza Welafen). | Basse définition (≤ 1280 px). **Demander les originaux.** `p-1-*` (« TRIANGLE 2 · 2016 ») n'est plus affiché depuis le 23/10/2026 : seuls `p-1-280`, `p-1-560` et `p-1-full` restent, pour les pages archivées de `docs/archive/` (`p-1-720` est retiré). |
+| `public/works/seol-*.webp`, `sost-maezen-1-*.webp` | Affiches officielles de Seol et de Sost Maezen (1), reprises de **teddystudios.com**, l'ancien site du studio, consulté par l'Internet Archive (web.archive.org), le 23/10/2026. | Petites (337 × 500 et 400 × 560 px), jamais agrandies. `-bd` : une copie floutée et assombrie, faite ici, qui remplit les côtés du cadre. **Demander les originaux.** |
+| `public/works/abay-weys-vegas-*.webp` | Affiche officielle d'Abay Weys Vegas, reprise de **teddystudios.com**, l'ancien site du studio (`images/productions/2234.jpg`), consulté par l'Internet Archive, choisie le 24/10/2026 (424 × 600). EtMDB et Wikipedia en amharique montrent une autre version de la même affiche (personnages inversés, autre éclairage). | Jamais agrandie ; seules les 28 lignes vides du haut sont retirées. `-bd` : la lueur des côtés, tirée du seul dessin. **Demander l'original.** |
 | `public/clients/*.png` | Logos clients du site actuel. | Manquent : Ethiopia Defence Force, Wosti Jnvis. |
 | `public/kit/*.webp` | Photos de matériel du site actuel. | **À vérifier** : ont l'aspect de photos de catalogue fabricant, pas de leur parc réel. |
 

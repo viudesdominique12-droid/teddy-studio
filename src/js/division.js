@@ -121,10 +121,20 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
    généré. Une fiche du portfolio peut porter `ai: 'assisted' | 'generated'`. */
 export const AI_LABEL = { assisted: 'AI-assisted', generated: 'AI-generated' };
 
+/* L'affiche en hauteur (`portrait`, 23/10/2026) : entière dans le cadre, sa
+   copie floutée en fond de la même image (`--bd`, division.css), ses vraies
+   dimensions et l'original pour les écrans denses. */
+function projectImg(p) {
+  if (!p.portrait || !p.posterSize) return `<img src="${esc(p.poster)}" alt="${esc(p.title)}" width="560" height="420" loading="lazy" decoding="async">`;
+  const [w, h] = p.posterSize.poster;
+  const bd = p.backdrop ? ` style="--bd:url('${esc(p.backdrop)}')"` : '';
+  return `<img src="${esc(p.poster)}" srcset="${esc(p.poster)} ${w}w, ${esc(p.posterFull)} ${p.posterSize.full[0]}w" sizes="(max-width: 44rem) 24vw, 10rem"${bd} alt="${esc(p.title)}" width="${w}" height="${h}" loading="lazy" decoding="async">`;
+}
+
 export function projectCard(p) {
   const meta = [p.aka && `Released as ${p.aka}`, p.year, ROLES[p.role]].filter(Boolean).join(' · ');
-  return `<article class="dv-proj">
-    <div class="dv-proj__fig">${p.poster ? `<img src="${esc(p.poster)}" alt="${esc(p.title)}" width="560" height="420" loading="lazy" decoding="async">` : ''}
+  return `<article class="dv-proj${p.portrait ? ' is-portrait' : ''}">
+    <div class="dv-proj__fig">${p.poster ? projectImg(p) : ''}
       <span class="dv-proj__st">${esc(STATUS[p.status] || '')}</span>${AI_LABEL[p.ai] ? `<span class="dv-proj__st dv-proj__st--ai">${AI_LABEL[p.ai]}</span>` : ''}</div>
     <h3 class="dv-proj__h"><a href="/portfolio.html#${esc(p.slug)}">${esc(p.title)}</a></h3>
     ${meta ? `<p class="dv-proj__m">${esc(meta)}</p>` : ''}
