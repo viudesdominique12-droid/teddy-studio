@@ -133,7 +133,7 @@ function contactForm() {
 
     note.textContent = 'Opening your mail app so the message reaches us directly.';
     window.location.href =
-      `mailto:info@ethiopianfilmoffice.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      `mailto:tedystudios1@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   });
 }
 

@@ -10,8 +10,11 @@ de l'entreprise est marquée `<!-- À VALIDER : client -->` dans le code de la p
 - [ ] **Service de formulaires** : créer le compte (Formspree, Web3Forms, Basin…), puis
       donner l'adresse d'envoi. Elle se colle dans `src/data/site.js` → `inquiry.endpoints`.
       D'ici là, chaque formulaire ouvre la messagerie du visiteur.
+- [x] **Adresse email** : tedystudios1@gmail.com, donnée par Dominique le 02/11/2026. Elle
+      remplace info@ethiopianfilmoffice.com partout sur le site (pied de page, Contact, Book,
+      Careers, formulaires, données pour les moteurs de recherche, flyer).
 - [ ] **Adresses de réception** par division, si chaque équipe a la sienne. Sinon, tout arrive à
-      info@ethiopianfilmoffice.com, avec l'étiquette de la division au début de l'objet :
+      tedystudios1@gmail.com, avec l'étiquette de la division au début de l'objet :
       [LIVE], [EVENT], [AI], [MUSIC], [FILM], [DOC], [RENTAL], [PROJECT].
 - [ ] **Numéro WhatsApp** : confirmer le +251 911 204 388.
 - [ ] **Adresse et horaires** : Finfine Building, 5ᵉ étage, en face de Meskel Square.

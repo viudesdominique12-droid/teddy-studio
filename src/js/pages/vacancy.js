@@ -430,7 +430,7 @@ function tabs() {
   const flyer = box?.closest('[data-vc-flyer]');
   if (!box) return;
   const n = window.innerWidth < 640 ? 5 : 6;
-  box.innerHTML = Array.from({ length: n }, (_, i) => `<span class="vc-tab" style="--i:${i}">info@ethiopianfilmoffice.com</span>`).join('');
+  box.innerHTML = Array.from({ length: n }, (_, i) => `<span class="vc-tab" style="--i:${i}">tedystudios1@gmail.com</span>`).join('');
   liveWhenSeen([flyer]);
   if (STILL) return;
   const link = flyer.querySelector('.lnk');

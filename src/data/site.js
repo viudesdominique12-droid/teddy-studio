@@ -15,7 +15,7 @@ export const identity = {
   founder: 'Tewodros Teshome',
   phone: '+251911204388',
   phoneDisplay: '+251 911 204 388',
-  email: 'info@ethiopianfilmoffice.com',
+  email: 'tedystudios1@gmail.com',
   address: 'Addis Ababa / Ethiopia, In front of Meskel Square, Finfine Building, 5th Floor',
   addressShort: 'Meskel Square · Finfine Building, 5th Floor',
   city: 'Addis Ababa',
@@ -47,14 +47,14 @@ export const inquiry = {
   whatsapp: '251911204388',
   endpoints: { general: '', live: '', events: '', ai: '', music: '', film: '', doc: '', rentals: '' },
   emails: {
-    general: 'info@ethiopianfilmoffice.com',
-    live: 'info@ethiopianfilmoffice.com',
-    events: 'info@ethiopianfilmoffice.com',
-    ai: 'info@ethiopianfilmoffice.com',
-    music: 'info@ethiopianfilmoffice.com',
-    film: 'info@ethiopianfilmoffice.com',
-    doc: 'info@ethiopianfilmoffice.com',
-    rentals: 'info@ethiopianfilmoffice.com'
+    general: 'tedystudios1@gmail.com',
+    live: 'tedystudios1@gmail.com',
+    events: 'tedystudios1@gmail.com',
+    ai: 'tedystudios1@gmail.com',
+    music: 'tedystudios1@gmail.com',
+    film: 'tedystudios1@gmail.com',
+    doc: 'tedystudios1@gmail.com',
+    rentals: 'tedystudios1@gmail.com'
   }
 };
 
@@ -197,7 +197,7 @@ export const vacancy = {
   archiveTitle: 'Vacancy Announcement',
   published: 'January 28, 2025',
   deadline: 'February 28, 2025',
-  applyTo: 'info@ethiopianfilmoffice.com',
+  applyTo: 'tedystudios1@gmail.com',
   applyLine: 'Send us your cover letter and resume',
   roles: [
     {

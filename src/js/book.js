@@ -185,7 +185,7 @@ form?.addEventListener('submit', (ev) => {
     // dizaines de brouillons avaient bloqué le Mac de Dominique).
     if (navigator.webdriver) return;
     window.location.href =
-      `mailto:info@ethiopianfilmoffice.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      `mailto:tedystudios1@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }, 420);
 });
 
