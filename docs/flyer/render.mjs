@@ -9,7 +9,7 @@ const require = createRequire('/Users/dominiqueviudes/.npm/_npx/705bc6b22212b352
 const { chromium } = require('playwright-core');
 const out = process.argv[2] || 'out';
 fs.mkdirSync(out, { recursive: true });
-const URL = 'https://viudesdominique12-droid.github.io/teddy-studio/';
+const URL = 'https://tedystudios.com/';
 const tpl = fs.readFileSync('flyer.tpl.html', 'utf8');
 const qr = fs.readFileSync('qr.svg', 'utf8');
 const make = (b, pw, ph) => tpl.replaceAll('{{ROOT}}', 'file://' + ROOT).replaceAll('{{FONTS}}', 'file://' + fs.realpathSync('fonts')).replaceAll('{{QR}}', qr).replaceAll('{{URL1}}', 'viudesdominique12-droid.github.io').replaceAll('{{URL2}}', '/teddy-studio/').replaceAll('{{B}}', b).replaceAll('{{PW}}', pw).replaceAll('{{PH}}', ph);
