@@ -105,3 +105,10 @@
 ## 25/09/2026 — GO Phase 1
 
 Dominique donne le GO pour la Phase 1 : trois directions dans CONCEPTS.md, forme seulement, photos et textes intouchés. Arrêt au STOP suivant pour son choix. Aucun code avant.
+
+## 05/11/2026 — Les demandes du client (message du 04/11)
+
+- **Fonds d'affiche** : Sost Maezen sur Live, Abay Weys Vegas sur Music, Selemenna sur AI, sous les animations, qui ne changent pas. Sources : les photos WhatsApp officielles, redressées par `docs/affiches/affiches.py`. Les versions refaites par IA (Gemini) sont écartées : crédits, nom de réalisateur et décors inventés.
+- **Accueil** : « The most trusted film production and event organizing company in Ethiopia. », puis « Termed as the industry leader » en plus petit. Aperçu de lien `public/og/home.jpg` refait.
+- **Music Production** : « Commercial jingles » devient une ligne à part entière, aussi sur Services.
+- **Flyer double** (Teddy Studio + Honest Global) : `docs/flyer-double/`.

@@ -581,8 +581,9 @@ html.js .hx__roll > span + span { visibility: visible; opacity: 0; }
 /* L'Archivo Black est 46 % plus large que la Fraunces d'avant : le titre
    passe un cran plus petit (85 px contre 98 à 1440 px), sur une ligne. */
 .hx__h {
+  max-width: 64rem; margin-inline: auto;
   font-family: var(--ff-p);
-  font-size: clamp(2.5rem, 0.8rem + 5vw, 6rem);
+  font-size: clamp(2.1rem, 0.9rem + 3.5vw, 4.4rem);
   font-weight: 400;
   line-height: 1; letter-spacing: var(--ls-hero);
   color: var(--ink);
@@ -596,7 +597,7 @@ html.js .hx__roll > span + span { visibility: visible; opacity: 0; }
 .hx__h-b {
   margin-top: 0.3em;
   font-family: var(--ff-t); font-weight: 400;
-  font-size: 0.5em; line-height: 1.15; letter-spacing: -0.012em;
+  font-size: 0.42em; line-height: 1.15; letter-spacing: -0.012em;
   color: color-mix(in srgb, var(--gold-lt) 88%, var(--ink));
   text-wrap: balance;
 }
@@ -708,8 +709,8 @@ html.js:not(.hx-in) .hx__h { opacity: 0; animation: hx-failsafe 0s 3.5s forwards
   .hx__city { display: none; }
   /* Le titre du brief remplit l'écran du téléphone : la promesse sur deux
      lignes, ce qui la porte dessous. (Le sélecteur bat celui des thèmes.) */
-  :root .hx .hx__h { font-size: clamp(2.9rem, 13.4vw, 4.4rem); line-height: 1.02; }
-  :root .hx .hx__h-b { font-size: 0.5em; margin-top: 0.3em; }
+  :root .hx .hx__h { font-size: clamp(1.95rem, 8.6vw, 3rem); line-height: 1.06; }
+  :root .hx .hx__h-b { font-size: 0.56em; margin-top: 0.4em; }
   .hx__cta { flex-direction: column; gap: 0.75rem; }
   /* La bande : l'étiquette passe au-dessus des logos. */
   .hx__cli { grid-template-columns: 1fr; }

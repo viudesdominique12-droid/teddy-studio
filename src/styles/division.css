@@ -254,6 +254,16 @@ html[data-palette='papier'] :is(.dv-h1 em, .dv-card:hover .dv-card__n, .dv-caps 
 }
 .dv-hero__stage { position: absolute; inset: 0; z-index: -2; }
 .dv-hero__stage canvas, .dv-hero__stage video, .dv-hero__stage img { display: block; }
+/* Le fond d'affiche (demande du client, 04/11/2026) : sous la pièce signature,
+   qui ne change pas. `--poster-o` règle sa présence, division par division. */
+.dv-hero__poster { position: absolute; inset: 0; display: block; }
+.dv-hero__poster img { width: 100%; height: 100%; object-fit: cover; opacity: var(--poster-o, 0.5); }
+/* Sur téléphone, le texte occupe le bas de l'ouverture : l'affiche se lit en
+   haut, le voile (`--poster-veil`) la ramène à la nuit avant le titre. */
+@media (max-width: 40rem) {
+  .dv-hero__poster img { object-position: 50% 0; }
+  .dv-hero { --poster-veil: linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 92%, transparent) 46%, color-mix(in srgb, var(--bg) 56%, transparent) 62%, transparent 84%); }
+}
 .dv-hero__veil {
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background:

@@ -12,6 +12,9 @@
 .mu-hero--leds .mu-stage { background: var(--bg); }
 
 .mu-leds { position: absolute; inset: 0; will-change: transform; }
+/* Le fond d'affiche : au-dessus des diodes, qui sont opaques, et mêlé à elles
+   par `lighten` pour que le mur continue de vivre à travers l'image. */
+.mu-hero--leds .dv-hero__poster { z-index: 1; mix-blend-mode: lighten; pointer-events: none; --poster-o: 0.46; }
 .mu-hero--leds .mu-leds canvas {
   position: absolute; inset: 0; width: 100%; height: 100%;
   display: block; will-change: auto;
@@ -26,8 +29,10 @@
 /* Le voile : le mur se fond dans la nuit de la section suivante, en bas
    seulement (le reste de l'assombrissement est fait diode par diode). */
 .mu-hero--leds .dv-hero__veil {
-  background: linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 78%, transparent) 5%, color-mix(in srgb, var(--bg) 30%, transparent) 12%, transparent 22%);
+  background: radial-gradient(50% 42% at 50% 64%, color-mix(in srgb, var(--bg) 70%, transparent), transparent), linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 78%, transparent) 5%, color-mix(in srgb, var(--bg) 30%, transparent) 12%, transparent 22%);
 }
+
+@media (max-width: 40rem) { .mu-hero--leds .dv-hero__veil { background: var(--poster-veil); } }
 
 /* La lueur du temps fort derrière « Your Identity. » : plus large, plus
    douce, comme le rose du mur qui passe à travers le titre. */

@@ -64,6 +64,10 @@
        trame fixe en CSS ; en mouvement réduit, une seule image. -->
   <section class="dv-hero ai-hero" id="top" aria-labelledby="hero-h" data-bar-clear>
     <div class="dv-hero__stage ai-hero__stage" aria-hidden="true" data-field>
+      <picture class="dv-hero__poster">
+        <source media="(max-width: 40rem)" srcset="/film/selemenna-poster-v828.webp" width="828" height="1011">
+        <img src="/film/selemenna-poster-w1600.webp" alt="" width="1600" height="848" decoding="async">
+      </picture>
       <div class="ai-hero__still"></div>
       <canvas class="ai-hero__gl" data-field-gl></canvas>
     </div>

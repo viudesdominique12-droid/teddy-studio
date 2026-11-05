@@ -48,9 +48,10 @@ html[data-palette='papier'] body[data-dv='live'] #main .dv-night { --dv-ink: #0c
 .lv-hero .dv-hero__veil {
   background:
     linear-gradient(0deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 80%, transparent) 24%, transparent 62%),
-    linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 88%, transparent) 30%, color-mix(in srgb, var(--bg) 20%, transparent) 62%, transparent 80%);
+    linear-gradient(90deg, color-mix(in srgb, var(--bg) 62%, transparent) 0%, color-mix(in srgb, var(--bg) 46%, transparent) 30%, color-mix(in srgb, var(--bg) 14%, transparent) 62%, transparent 80%);
 }
-.lv-hero .dv-hero__stage { perspective: 1600px; }
+.lv-hero .dv-hero__stage { perspective: 1600px; --poster-o: 0.8; }
+@media (max-width: 40rem) { .lv-hero .dv-hero__veil { background: var(--poster-veil); } }
 /* L'affiche un cran sous celle des autres divisions (97 px à 1440) : le
    « Live » reste sous le synthé « Live from Addis Ababa » du programme, et
    la marge garde l'air au-dessus du chapeau. */
@@ -1251,7 +1252,7 @@ html[data-palette='papier'] .lv-desk {
    le bandeau et le minutage ne traînent plus derrière le titre. */
 @media (max-width: 40rem) {
   .lv-wall {
-    right: -40%; width: 160%; opacity: 0.6;
+    right: -40%; width: 160%; opacity: 0.96;
     -webkit-mask-image: linear-gradient(180deg, #000 28%, transparent 66%);
     mask-image: linear-gradient(180deg, #000 28%, transparent 66%);
   }

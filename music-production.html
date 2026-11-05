@@ -47,7 +47,12 @@
        même temps. En mouvement réduit : une seule image fixe. Sans canevas :
        un fond de lignes en CSS. -->
   <section class="dv-hero mu-hero mu-hero--leds" id="top" aria-labelledby="hero-h" data-bar-clear>
-    <div class="dv-hero__stage mu-stage" data-spectrum aria-hidden="true"></div>
+    <div class="dv-hero__stage mu-stage" data-spectrum aria-hidden="true">
+      <picture class="dv-hero__poster">
+        <source media="(max-width: 40rem)" srcset="/film/abay-poster-v828.webp" width="828" height="1227">
+        <img src="/film/abay-poster-w1600.webp" alt="" width="1600" height="903" decoding="async">
+      </picture>
+    </div>
     <div class="dv-hero__veil"></div>
 
     <div class="dv-wrap dv-hero__in mu-hero__in">
@@ -194,8 +199,8 @@
           <ul class="mu-ch__list">
             <li>Original music for films and documentaries</li>
             <li>Sound design</li>
-            <li>Jingles and advertising music</li>
-            <li>Intro and outro music</li>
+            <li>Commercial jingles</li>
+            <li>Advertising, intro and outro music</li>
           </ul>
           <a class="mu-ch__go" href="?type=score#inquiry">Ask about this<span class="mu-vh">: music for picture and brands</span></a>
           <div class="mu-fader" aria-hidden="true">
@@ -445,7 +450,7 @@
                 <option value="beat">Beat or instrumental</option>
                 <option value="mix-master">Editing, mixing or mastering</option>
                 <option value="score">Music for a film or documentary</option>
-                <option value="commercial">Jingle, advertising, intro or outro music</option>
+                <option value="commercial">Commercial jingle, advertising, intro or outro music</option>
                 <option value="sound-design">Sound design</option>
                 <option value="podcast">Podcast or spoken-word audio</option>
                 <option value="development">Artist or music project development</option>
